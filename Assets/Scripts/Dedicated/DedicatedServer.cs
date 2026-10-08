@@ -14,6 +14,7 @@ using Multiplayer.Entity.Server;
 using Newtonsoft.Json;
 using Save;
 using Steamworks;
+using Unity.Jobs.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -68,6 +69,10 @@ namespace Dedicated
 
             // No rendering, so without a cap the main loop spins a whole core.
             QualitySettings.vSyncCount = 0;
+            // Unity starts a job worker per extra core and each wakes every frame; on a 6-core box
+            // that was half the idle CPU (19% vs 10% of a core) for a server with almost no jobs.
+            // ponytail: one worker; raise it if profiling under load shows the main thread waiting on jobs.
+            JobsUtility.JobWorkerCount = 1;
             Application.targetFrameRate = Mathf.RoundToInt(1f / Time.fixedDeltaTime);
             Time.maximumDeltaTime = 0.1f;
 
