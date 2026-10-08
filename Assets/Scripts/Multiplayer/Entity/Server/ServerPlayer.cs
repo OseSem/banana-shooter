@@ -653,11 +653,9 @@ namespace Multiplayer.Entity.Server
         [MessageHandler((ushort) ClientToServerId.SpecterMode, NetworkServerManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void SpecterMode(ushort fromClient, Message message)
         {
-            ulong SteamId = list[fromClient].SteamId;
-            
             if (list.TryGetValue(fromClient, out var player))
             {
-                if (fromClient == 1 || RolesManager.Instance.CheckIsAdmin(SteamId))
+                if (fromClient == 1 || RolesManager.Instance.CheckIsAdmin(player.SteamId))
                 {
                     bool flag = message.GetBool();
                     if (player.Dead && flag) return;
@@ -672,6 +670,14 @@ namespace Multiplayer.Entity.Server
             if (list.TryGetValue(fromClient, out var player))
             {
                 short weaponId = message.GetShort();
+                int replaceIndex = message.GetInt();
+                short[] w = player.Weapons;
+
+                if (!ClientInputValidation.IsValidPurchase(weaponId, replaceIndex, NetworkServerManager.Instance.weaponInfo.Count, w.Length))
+                {
+                    return;
+                }
+                
                 WeaponStat stat = NetworkServerManager.Instance.weaponInfo[weaponId];
 
                 if (player.Cash < stat.price)
@@ -680,8 +686,6 @@ namespace Multiplayer.Entity.Server
                 }
 
                 player.Cash -= stat.price;
-                int replaceIndex = message.GetInt();
-                short[] w = player.Weapons;
                 w[replaceIndex] =weaponId;
                 player.CurrentWeaponIndex = replaceIndex;
                 
@@ -720,6 +724,7 @@ namespace Multiplayer.Entity.Server
                 if (Endless.Instance && Endless.Instance.serverStarted)
                 {
                     NetworkServerManager.Instance.Server.DisconnectClient(fromClient);
+                    return;
                 }
             }
             ulong groupId = message.GetULong();
@@ -732,23 +737,22 @@ namespace Multiplayer.Entity.Server
             int len = message.GetInt();
             byte[] serializedInventory = message.GetBytes();
 
-            ulong steamId = 0;
-            foreach (var pair in NetworkServerManager.SteamIDToClient)
-            {
-                if (pair.Value.Item1 == fromClient)
-                {
-                    steamId = pair.Key.m_SteamID;
-                    break;
-                }
-            }
-
-            if (steamId == 0)
+            if (!NetworkServerManager.TryGetAuthorizedSteamId(fromClient, out ulong steamId))
             {
                 NetworkServerManager.Instance.Server.DisconnectClient(fromClient);
                 return;
             }
+
             if (NetworkServerManager.BannedPlayer.Contains(steamId))
             {
+                NetworkServerManager.Instance.Server.DisconnectClient(fromClient);
+                return;
+            }
+            if (!ClientInputValidation.IsValidLoadout(weapons, 3, NetworkServerManager.Instance.weaponInfo.Count)
+                || !ClientInputValidation.IsValidPerks(perks, 3, (int) Perk.Bot)
+                || !ClientInputValidation.TryStartInventory(len, serializedInventory, out var inventory, out var inventoryReceived))
+            {
+                Debug.LogWarning($"Client {fromClient} sent invalid init data");
                 NetworkServerManager.Instance.Server.DisconnectClient(fromClient);
                 return;
             }
@@ -769,13 +773,14 @@ namespace Multiplayer.Entity.Server
             }
 
             data.InventoryLength = len;
-
-            data.SerializeInventory = serializedInventory;
             
-            if (len <= NetworkManager.MaxSplitPacketSize)
+            data.SerializeInventory = inventory;
+            data.InventoryReceived = inventoryReceived;
+            
+            if (len == inventoryReceived)
             {
                 data.SerializeInventoryInitialized = true;
-                InventoryManager.Instance.DeserializeInventory(serializedInventory,data);
+                InventoryManager.Instance.DeserializeInventory(inventory,data);
             }
             else
             {
@@ -792,16 +797,18 @@ namespace Multiplayer.Entity.Server
                 if (data.SerializeInventoryInitialized) return;
 
                 byte[] newFragmentData = message.GetBytes();
+                int received = data.InventoryReceived;
 
-                byte[] currentData = (byte[])data.SerializeInventory.Clone();
+                if (!ClientInputValidation.TryAppendInventory(data.SerializeInventory, ref received, newFragmentData))
+                {
+                    Debug.LogWarning($"Client {fromClient} sent more inventory data than it declared");
+                    NetworkServerManager.Instance.Server.DisconnectClient(fromClient);
+                    return;
+                }
 
-                data.SerializeInventory = new byte[currentData.Length + newFragmentData.Length];
-                
-                Array.Copy(currentData,0,data.SerializeInventory, 0, currentData.Length);
-                Array.Copy(newFragmentData,0,data.SerializeInventory, currentData.Length, newFragmentData.Length);
+                data.InventoryReceived = received;
 
-
-                if (data.SerializeInventory.Length >= data.InventoryLength)
+                if (received == data.InventoryLength)
                 {
                     data.SerializeInventoryInitialized = true;
                     
@@ -816,6 +823,8 @@ namespace Multiplayer.Entity.Server
         {
             ushort[] p = message.GetUShorts();
 
+            if (!ClientInputValidation.IsValidPerks(p, 3, (int) Perk.Bot)) return;
+            
             if (list.TryGetValue(fromClient,out var player))
             {
                 if (NetworkServerManager.ClientData.TryGetValue(fromClient, out var data))

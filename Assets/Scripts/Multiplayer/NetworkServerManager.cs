@@ -50,6 +50,8 @@ namespace Multiplayer
 
         public byte[] SerializeInventory { get; set; }
 
+        public int InventoryReceived { get; set; }
+
         public bool SerializeInventoryInitialized { get; set; } = false;
         
         public ClientData(ushort id,string name,ulong steamId, bool ownedDlc,ulong groupId,string desc,int exp,bool displayTag, bool eliminated,short[] weapons,ushort[] perks)
@@ -287,9 +289,9 @@ namespace Multiplayer
         
         public string CurrentMap { private set; get; } = String.Empty;
         
-        static readonly List<CSteamID> AuthorizedUsers = new();
+        static readonly ClientAuthentication Authentication = new();
         
-        public static Dictionary<CSteamID, Tuple<ushort,string>> SteamIDToClient = new Dictionary<CSteamID, Tuple<ushort,string>>();
+        public static bool TryGetAuthorizedSteamId(ushort client, out ulong steamId) => Authentication.TryGetAuthorizedSteamId(client, out steamId);
         
         protected Callback<ValidateAuthTicketResponse_t> m_ValidateAuthTicketResponse;
 
@@ -459,17 +461,16 @@ namespace Multiplayer
         
         public void StopServer()
         {
-            foreach (var id in AuthorizedUsers)
+            foreach (var id in Authentication.SteamIds)
             {
-                SteamUser.EndAuthSession(id);
+                SteamUser.EndAuthSession(new CSteamID(id));
             }
-            AuthorizedUsers.Clear();
+            Authentication.Clear();
             Server.Stop();
             SetGameState(GameState.None,false);
             ServerGameMode = GameMode.Brawl;
             SetServerType(ServerType.Normal);
             BannedPlayer.Clear();
-            SteamIDToClient.Clear();
             _userHasDlc.Clear();
         }
 
@@ -759,8 +760,8 @@ namespace Multiplayer
 
         [MessageHandler((ushort) ClientToServerId.ManageServer, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         public static void ManageServer(ushort fromClient, Message message)
-        {
-            if (!RolesManager.Instance.CheckIsAdmin(ServerPlayer.list[fromClient].SteamId)) return;
+        { 
+            if (!TryGetAuthorizedSteamId(fromClient, out var senderSteamId) || !RolesManager.Instance.CheckIsAdmin(senderSteamId)) return;
         
             ManageType type = (ManageType) message.GetUShort();
 
@@ -798,19 +799,33 @@ namespace Multiplayer
 
             byte[] ticket = message.GetBytes();
             CSteamID id =new CSteamID( message.GetULong());
-            string userName = message.GetString();
             
-            if(!SteamIDToClient.ContainsKey(id))
-                SteamIDToClient.Add(id,new Tuple<ushort, string>(fromClient, userName));
+            ulong transportSteamId = Instance.Server.TryGetClient(fromClient, out var connection) && connection is SteamConnection steamConnection
+                ? steamConnection.SteamId.m_SteamID
+                : 0;
+            
+
+            if (!Authentication.TryBind(fromClient, transportSteamId, id.m_SteamID))
+            {
+                Debug.LogWarning($"Client {fromClient} claimed Steam ID {id}, which does not match its connection");
+                Instance.Server.DisconnectClient(fromClient, GetDisconnectMessage("Ticket Invalid"));
+                return;
+            }
 
             var result = SteamUser.BeginAuthSession(ticket, ticket.Length, id);
+
+            if (result == EBeginAuthSessionResult.k_EBeginAuthSessionResultDuplicateRequest)
+            {
+                SteamUser.EndAuthSession(id);
+                result = SteamUser.BeginAuthSession(ticket, ticket.Length, id);
+            }
 
             switch (result)
             {
                 case EBeginAuthSessionResult.k_EBeginAuthSessionResultOK:
                     _userHasDlc[id.m_SteamID] = SteamUser.UserHasLicenseForApp(id, new AppId_t(2238100));
-                    Debug.Log($"Ticket is valid for this game {1949740} and this Steam ID {id}.");
-                    break;
+                    Debug.Log($"Ticket is valid for this game 1949740 and this Steam ID {id}.");
+                    return;
                 case EBeginAuthSessionResult.k_EBeginAuthSessionResultInvalidTicket:
                     Debug.Log("The ticket is invalid.");
                     break;
@@ -828,6 +843,9 @@ namespace Multiplayer
                     Debug.Log("Ticket has expired.");
                     break;
             }
+            
+            Authentication.Remove(fromClient, out _);
+            Instance.Server.DisconnectClient(fromClient, GetDisconnectMessage("Ticket Invalid"));
         }
         #endregion
 
@@ -840,26 +858,23 @@ namespace Multiplayer
             bool kick = false;
             string reason = String.Empty;
             
-            Tuple<ushort, string> tuple;
+            ushort client;
 
             switch (param.m_eAuthSessionResponse)
             {
                 case EAuthSessionResponse.k_EAuthSessionResponseOK:
                     Debug.Log($"{param.m_SteamID} Got Authorized");
-                    if (AuthorizedUsers.Contains(param.m_SteamID))
-                        AuthorizedUsers.Remove(param.m_SteamID);
-                    AuthorizedUsers.Add(param.m_SteamID);
                     
-                    if (SteamIDToClient.TryGetValue(param.m_SteamID, out tuple))
+                    if (Authentication.TryAuthorize(param.m_SteamID.m_SteamID, out client))
                     {
                         Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.Authorized);
                             
-                        Instance.Server.Send(message,tuple.Item1);
+                        Instance.Server.Send(message, client);
                             
-                        if (PlayerVoteList.ContainsKey(tuple.Item1))
-                            PlayerVoteList.Remove(tuple.Item1);
+                        if (PlayerVoteList.ContainsKey(client))
+                            PlayerVoteList.Remove(client);
             
-                        PlayerVoteList.Add(tuple.Item1, new Tuple<short, string>(-1,String.Empty));
+                        PlayerVoteList.Add(client, new Tuple<short, string>(-1,String.Empty));
             
                         if (GameState == GameState.None)
                         {
@@ -876,6 +891,7 @@ namespace Multiplayer
                     break;
                 case EAuthSessionResponse.k_EAuthSessionResponseAuthTicketCanceled:
                     Debug.Log($"{param.m_SteamID}'s Tick Got Canceled");
+                    Authentication.Revoke(param.m_SteamID.m_SteamID);
                     break;
                 case EAuthSessionResponse.k_EAuthSessionResponseVACBanned:
                     Debug.Log($"{param.m_SteamID} Got VAC Banned");
@@ -912,11 +928,10 @@ namespace Multiplayer
 
             if (kick)
             {
-                if (AuthorizedUsers.Contains(param.m_SteamID))
-                    AuthorizedUsers.Remove(param.m_SteamID);
+                Authentication.Revoke(param.m_SteamID.m_SteamID);
                     
-                if (SteamIDToClient.TryGetValue(param.m_SteamID, out tuple))
-                    Instance.Server.DisconnectClient(tuple.Item1, GetDisconnectMessage(reason));
+                if (Authentication.TryGetClient(param.m_SteamID.m_SteamID, out client))
+                    Instance.Server.DisconnectClient(client, GetDisconnectMessage(reason));
             }
         }
 
@@ -963,25 +978,18 @@ namespace Multiplayer
         {
             AnticheatManager.Instance.Heartbeats.Remove(e.Client.Id);
             PlayerVoteList.Remove(e.Client.Id);
-            _userHasDlc.Remove(e.Client.Id);
+            
+            if (Authentication.Remove(e.Client.Id, out var steamId))
+            {
+                SteamUser.EndAuthSession(new CSteamID(steamId));
+                _userHasDlc.Remove(steamId);
+            }
             
             if (ClientData.TryGetValue(e.Client.Id,out var data))
             {
-                CSteamID id = new CSteamID(data.SteamId);
-                SteamUser.EndAuthSession(id);
-                if (AuthorizedUsers.Contains(id))
-                {
-                    AuthorizedUsers.Remove(id);
-                }
-
                 if (InventoryManager.Instance.PendingUserSteamIds.Contains(data))
                 {
                     InventoryManager.Instance.PendingUserSteamIds.Remove(data);
-                }
-
-                if (SteamIDToClient.ContainsKey(id))
-                {
-                    SteamIDToClient.Remove(id);
                 }
                 
                 ClientData.Remove(e.Client.Id);
