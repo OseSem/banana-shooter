@@ -12,6 +12,9 @@ namespace Multiplayer
     public class LagCompensationManager : MonoBehaviour
     {
         public static LagCompensationManager Instance;
+
+        private const int MaxPendingShots = 1024;
+        private const int MaxShotsPerPhysicsStep = 128;
         
         private Queue<ShootLagCompensationData> _shootQueue = new();
 
@@ -22,9 +25,17 @@ namespace Multiplayer
 
         private void FixedUpdate()
         {
-            if (_shootQueue.Count > 0)
+            int shotsToProcess = Math.Min(_shootQueue.Count, MaxShotsPerPhysicsStep);
+            for (int i = 0; i < shotsToProcess; i++)
             {
                 ShootLagCompensationData data = _shootQueue.Dequeue();
+                if (!ServerPlayer.list.TryGetValue(data.PlayerServer.Id, out var player) ||
+                    !ReferenceEquals(player, data.PlayerServer) ||
+                    !NetworkServerManager.Instance.Server.TryGetClient(data.PlayerServer.Id, out _) ||
+                    data.Weapon?.Stat == null ||
+                    !ReferenceEquals(player.GetCurrentWeapon(), data.Weapon))
+                    continue;
+                
                 EShootingResult result = data.IsInfected ? EShootingResult.EResultOk : data.Weapon.DoAttack();
                 
                 // Debug.Log("Client: " + lookDir);
@@ -55,6 +66,8 @@ namespace Multiplayer
         [MessageHandler((ushort)ClientToServerId.Shoot, NetworkServerManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void Shoot(ushort fromClient, Message message)
         {
+            if (Instance == null || Instance._shootQueue.Count >= MaxPendingShots) return;
+            
             if (ServerPlayer.list.TryGetValue(fromClient,out var player))
             {
                 player.DisableInvincible();
