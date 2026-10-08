@@ -28,12 +28,12 @@ namespace Multiplayer
         {
             Instance = this;
 
-            _officialServers.Add(1836836131);
-            _officialServers.Add(267100932);
-            _officialServers.Add(760055535);
-            _officialServers.Add(763938292);
-            _officialServers.Add(2371835460);
-            _officialServers.Add(3227753154);
+            // _officialServers.Add(1836836131);
+            // _officialServers.Add(267100932);
+            // _officialServers.Add(760055535);
+            // _officialServers.Add(763938292);
+            // _officialServers.Add(2371835460);
+            // _officialServers.Add(3227753154);
         }
 
         private void Start()
@@ -106,6 +106,12 @@ namespace Multiplayer
         }
         private void OnRefreshComplete(HServerListRequest hRequest, EMatchMakingServerResponse response)
         {
+            if (hRequest == _lanRequest) _lanRequest = HServerListRequest.Invalid;
+            else if (hRequest == _favouriteRequest) _favouriteRequest = HServerListRequest.Invalid;
+            else if (hRequest == _internetRequest) _internetRequest = HServerListRequest.Invalid;
+            else if (hRequest == _historyRequest) _historyRequest = HServerListRequest.Invalid;
+            else if (hRequest == _friendRequest) _friendRequest = HServerListRequest.Invalid;
+            
             SteamMatchmakingServers.ReleaseRequest(hRequest);
             switch (response)
             {

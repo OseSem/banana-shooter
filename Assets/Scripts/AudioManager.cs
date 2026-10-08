@@ -422,14 +422,14 @@ namespace Audio
 			}
 			// PlayClipAtPoint(GetSound(n), point, volume, minDistance,5f, soundEffect);
 			
+			AudioClip clip = n == "start_slide" ? startSlide.clip : GetSound(n);
+			if (clip == null) return;
+			
 			AudioSource source = Instantiate(soundEffect3D,point,Quaternion.identity).GetComponent<AudioSource>();
-			source.clip = n == "start_slide" ? startSlide.clip : GetSound(n);
+			source.clip = clip;
 			source.volume = volume;
 			source.Play();
-			if (source.clip != null)
-			{
-				Destroy(source.gameObject, source.clip.length * (Time.timeScale < 0.009999999776482582 ? 0.01f : Time.timeScale));
-			}
+			Destroy(source.gameObject, source.clip.length * (Time.timeScale < 0.009999999776482582 ? 0.01f : Time.timeScale));
 	    }
 		
 		public void SoundEffect3D(string n, Vector3 point,float volume,float minDistance)

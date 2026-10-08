@@ -1106,6 +1106,7 @@ namespace Demo
             try
             {
                 ReplayDemo = await Task.Run((() => JsonConvert.DeserializeObject<DemoData>(demo,_jsonSerializerSettings)));
+                if (ReplayDemo == null) throw new InvalidDataException("The demo file is empty");
                 OnDemoLoad?.Invoke(false);
             }
             catch (Exception e)
