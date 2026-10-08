@@ -36,3 +36,4 @@ jobs:
         with:
           unityVersion: auto   # reads ProjectSettings/ProjectVersion.txt
           testMode: editmode
+          githubToken: ${{ secrets.GITHUB_TOKEN }}
