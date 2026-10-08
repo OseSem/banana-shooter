@@ -42,10 +42,20 @@ On first start the server writes `Servers/<server>/Config.json` in the working d
 - `Server_Type`: `1` Normal or `5` Knockout. Other types need a host client and fall back to Normal.
 - `Enable_Update_Restart`: quits when Steam reports a game update (after 3 minutes if players are on). Run the server under a supervisor that updates and restarts it.
 
+## Workshop maps
+
+`Servers/<server>/SteamWorkshopConfig.json` (written on first start, same format as the old server):
+
+```json
+{ "enabled": true, "fileUlongIds": [3811095731, 3771974830] }
+```
+
+The server downloads the items into `Servers/<server>/Workshop/Content` before it opens for players. While workshop is on, every match is a workshop map, and King of the Hill falls back to Brawl. Items that fail to download are skipped, and the log says which ones.
+
 ## Console
 
 Type into the server's stdin: `status`, `kick <id>`, `start` (skip voting), `quit`. Linux builds only. `SIGTERM` (`docker stop`, systemd) also shuts down cleanly.
 
 ## Not supported yet
 
-Workshop maps, Endless, Shooting Range, 1v1, Lua mods, scheduled daily restarts (use a cron job or systemd timer).
+Endless, Shooting Range, 1v1, Lua mods, scheduled daily restarts (use a cron job or systemd timer).

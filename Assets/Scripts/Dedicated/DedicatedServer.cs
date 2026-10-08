@@ -1,14 +1,18 @@
 #if UNITY_SERVER
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading.Tasks;
+using CodingDaniel.MapEditor.MEEditor.MESave;
 using Manager;
 using MapEditor;
 using Multiplayer;
 using Multiplayer.Entity.Server;
 using Newtonsoft.Json;
+using Save;
 using Steamworks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -26,17 +30,23 @@ namespace Dedicated
 
         const float UpdateCheckInterval = 300f;
         const float UpdateShutdownDelay = 180f;
+        const float SteamLogOnTimeout = 30f;
+        const float WorkshopDownloadTimeout = 300f;
+        static readonly AppId_t AppId = new(1949740);
 
         string _serverId = "MyServer";
         ushort _port = 27015;
         ushort _maxPlayers = 40;
         Config _config;
+        string _serverDir;
+        bool _loggedOn;
 
         readonly StringBuilder _consoleInput = new();
         bool _consoleOpen = true;
 
         Callback<SteamServersConnected_t> _steamConnected;
         Callback<SteamServerConnectFailure_t> _steamFailed;
+        Callback<DownloadItemResult_t> _workshopDownloaded;
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Boot()
@@ -48,7 +58,8 @@ namespace Dedicated
         IEnumerator Start()
         {
             ParseArgs();
-            _config = LoadConfig(Path.Combine(Directory.GetCurrentDirectory(), "Servers", _serverId, "Config.json"));
+            _serverDir = Path.Combine(Directory.GetCurrentDirectory(), "Servers", _serverId);
+            _config = LoadJson<Config>(Path.Combine(_serverDir, "Config.json"));
 
             // Managers come from the boot scene; GameManager also applies the client frame cap when it finishes.
             float deadline = Time.realtimeSinceStartup + 10f;
@@ -75,6 +86,12 @@ namespace Dedicated
 
             RolesManager.Instance.TryToInitialize();
 
+            // Workshop downloads need the Steam login, and players need the maps before they can vote on them.
+            float logOnDeadline = Time.realtimeSinceStartup + SteamLogOnTimeout;
+            yield return new WaitUntil(() => _loggedOn || Time.realtimeSinceStartup > logOnDeadline);
+            yield return DownloadWorkshopMaps();
+            SetGameTags();
+
             NetworkServerManager.ClientData.Clear();
             NetworkServerManager.SetIsPlaying(false);
             NetworkServerManager.Instance.Server.Start(_port, _maxPlayers, NetworkManager.PlayerHostedDemoMessageHandlerGroupId);
@@ -99,11 +116,14 @@ namespace Dedicated
             SteamGameServer.SetGameDescription("Banana Shooter");
             SteamGameServer.SetDedicatedServer(true);
             SteamGameServer.SetServerName(_config.Browser.ServerName);
-            // The server browser reads these by position: server type; workshop; DLC only; description.
-            SteamGameServer.SetGameTags($"{(int)NetworkServerManager.ServerType};0;{(_config.Server.DlcOnly ? 1 : 0)};{_config.Browser.DescriptionShort}");
+            SetGameTags();
             SteamGameServer.SetMaxPlayerCount(_maxPlayers);
 
-            _steamConnected = Callback<SteamServersConnected_t>.CreateGameServer(_ => Debug.Log($"[Dedicated] Logged in to Steam as {SteamGameServer.GetSteamID()}"));
+            _steamConnected = Callback<SteamServersConnected_t>.CreateGameServer(_ =>
+            {
+                _loggedOn = true;
+                Debug.Log($"[Dedicated] Logged in to Steam as {SteamGameServer.GetSteamID()}");
+            });
             _steamFailed = Callback<SteamServerConnectFailure_t>.CreateGameServer(r => Debug.LogError($"[Dedicated] Steam login failed: {r.m_eResult}"));
 
             if (string.IsNullOrEmpty(_config.Server.LoginToken))
@@ -113,6 +133,56 @@ namespace Dedicated
 
             SteamGameServer.SetAdvertiseServerActive(true);
             return true;
+        }
+
+        // The server browser reads these by position: server type; workshop; DLC only; description.
+        void SetGameTags()
+        {
+            SteamGameServer.SetGameTags($"{(int)NetworkServerManager.ServerType};{(NetworkServerManager.ServerEnableWorkshop ? 1 : 0)};{(_config.Server.DlcOnly ? 1 : 0)};{_config.Browser.DescriptionShort}");
+        }
+
+        IEnumerator DownloadWorkshopMaps()
+        {
+            var workshop = LoadJson<WorkshopConfig>(Path.Combine(_serverDir, "SteamWorkshopConfig.json"));
+            if (!workshop.Enabled || workshop.Items.Count == 0) yield break;
+
+            string content = Path.Combine(_serverDir, "Workshop", "Content");
+            Directory.CreateDirectory(content);
+            if (!SteamGameServerUGC.BInitWorkshopForGameServer(new DepotId_t(AppId.m_AppId), content))
+            {
+                Debug.LogError("[Dedicated] Could not start the Steam Workshop for this server, workshop maps are off");
+                yield break;
+            }
+
+            var pending = new HashSet<ulong>(workshop.Items);
+            _workshopDownloaded = Callback<DownloadItemResult_t>.CreateGameServer(result =>
+            {
+                if (result.m_unAppID == AppId && pending.Remove(result.m_nPublishedFileId.m_PublishedFileId))
+                    RegisterWorkshopMap(result.m_nPublishedFileId, result.m_eResult);
+            });
+
+            Debug.Log($"[Dedicated] Downloading {pending.Count} workshop maps");
+            foreach (var id in workshop.Items)
+                if (!SteamGameServerUGC.DownloadItem(new PublishedFileId_t(id), true) && pending.Remove(id))
+                    RegisterWorkshopMap(new PublishedFileId_t(id), EResult.k_EResultFail);
+
+            float deadline = Time.realtimeSinceStartup + WorkshopDownloadTimeout;
+            yield return new WaitUntil(() => pending.Count == 0 || Time.realtimeSinceStartup > deadline);
+            foreach (var id in pending)
+                RegisterWorkshopMap(new PublishedFileId_t(id), EResult.k_EResultTimeout);
+
+            NetworkServerManager.SetServerEnableWorkshop(NetworkServerManager.EnabledWorkshopMaps.Count > 0);
+            NetworkServerManager.SetWorkshopMapVote();
+            Debug.Log($"[Dedicated] {NetworkServerManager.EnabledWorkshopMaps.Count}/{workshop.Items.Count} workshop maps ready");
+        }
+
+        // A failed download can still leave a copy from an earlier run, which is better than dropping the map.
+        static void RegisterWorkshopMap(PublishedFileId_t id, EResult result)
+        {
+            if (SteamGameServerUGC.GetItemInstallInfo(id, out _, out var folder, 1024, out _) && MapSaver.Instance.LoadWorkshopMap(folder, id))
+                NetworkServerManager.EnabledWorkshopMaps.Add(id);
+            else
+                Debug.LogError($"[Dedicated] Workshop item {id} is not available: {result}");
         }
 
         void Update()
@@ -141,9 +211,16 @@ namespace Dedicated
 
             // Game modes enable themselves by comparing against the client-side mode.
             NetworkManager.ClientGameMode = NetworkServerManager.ServerGameMode;
-            SteamGameServer.SetMapName(server.CurrentMap);
 
-            yield return SceneManager.LoadSceneAsync(server.CurrentMap);
+            if (server.IsWorkshopMap)
+            {
+                yield return LoadWorkshopMap(server.WorkshopMap);
+            }
+            else
+            {
+                SteamGameServer.SetMapName(server.CurrentMap);
+                yield return SceneManager.LoadSceneAsync(server.CurrentMap);
+            }
 
             server.SetGameState(GameState.Warmup);
 
@@ -152,6 +229,36 @@ namespace Dedicated
             NetworkManager.Instance.game = game;
 
             server.StartGameFromLoad();
+        }
+
+        // Same steps as the client's LoadingManager.JoinWorkshopMap: read the map file, load the empty
+        // CustomMap scene, then build the map's geometry (and colliders) into it.
+        IEnumerator LoadWorkshopMap(PublishedFileId_t id)
+        {
+            if (!MapSaver.WorkshopMaps.TryGetValue(id, out var file))
+            {
+                Debug.LogError($"[Dedicated] Workshop map {id} is not downloaded");
+                yield break;
+            }
+
+            var read = new CoroutineWithData(this, SaveSystem.ReadFileAsyncThread(file.FullName));
+            yield return read.coroutine;
+            var parse = Task.Run(() => JsonConvert.DeserializeObject<MapData>(read.result.ToString()));
+            yield return new WaitUntil(() => parse.IsCompleted);
+
+            MapData data = parse.IsFaulted ? null : parse.Result;
+            if (data == null || string.IsNullOrEmpty(data.name))
+            {
+                Debug.LogError($"[Dedicated] Workshop map {id} could not be read");
+                yield break;
+            }
+
+            data.path = file.FullName.Substring(0, file.FullName.Length - file.Name.Length);
+            SteamGameServer.SetMapName(data.name);
+
+            yield return SceneManager.LoadSceneAsync("CustomMap");
+            var build = MapSaver.Instance.LoadWorkshopMap(id, data);
+            yield return new WaitUntil(() => build.IsCompleted);
         }
 
         /// <summary>On a listen server the host's scene reset does this when voting starts or a map loads.</summary>
@@ -229,7 +336,8 @@ namespace Dedicated
             switch (args[0].ToLowerInvariant())
             {
                 case "status":
-                    Debug.Log($"[Dedicated] {NetworkServerManager.GameState}, map '{server.CurrentMap}', {server.Server.ClientCount}/{_maxPlayers} players");
+                    string map = server.IsWorkshopMap ? $"workshop {server.WorkshopMap}" : server.CurrentMap;
+                    Debug.Log($"[Dedicated] {NetworkServerManager.GameState}, map '{map}', {server.Server.ClientCount}/{_maxPlayers} players");
                     foreach (var data in NetworkServerManager.ClientData.Values)
                         Debug.Log($"  {data.Id}  {data.SteamId}  {data.Name}");
                     break;
@@ -269,26 +377,33 @@ namespace Dedicated
             }
         }
 
-        static Config LoadConfig(string path)
+        static T LoadJson<T>(string path) where T : new()
         {
             if (File.Exists(path))
             {
                 try
                 {
-                    return JsonConvert.DeserializeObject<Config>(File.ReadAllText(path)) ?? new Config();
+                    return JsonConvert.DeserializeObject<T>(File.ReadAllText(path)) ?? new T();
                 }
                 catch (JsonException e)
                 {
                     Debug.LogError($"[Dedicated] {path} is invalid, using defaults: {e.Message}");
-                    return new Config();
+                    return new T();
                 }
             }
 
-            var config = new Config();
+            var config = new T();
             Directory.CreateDirectory(Path.GetDirectoryName(path));
             File.WriteAllText(path, JsonConvert.SerializeObject(config, Formatting.Indented));
             Debug.Log($"[Dedicated] Wrote default config to {path}");
             return config;
+        }
+
+        // Same file and keys as the old dedicated server's SteamWorkshopConfig.json.
+        class WorkshopConfig
+        {
+            [JsonProperty("enabled")] public bool Enabled;
+            [JsonProperty("fileUlongIds")] public List<ulong> Items = new();
         }
 
         // Same keys as the old dedicated server's Config.json, so existing files keep working.
