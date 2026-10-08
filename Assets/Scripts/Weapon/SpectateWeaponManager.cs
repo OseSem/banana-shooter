@@ -12,12 +12,12 @@ namespace Weapon
         {
             _weaponManager = weaponManager;
         }
-        
+
         public void Update()
         {
-            if (!_weaponManager.CurrentWeapon || _weaponManager.CurrentWeapon.weaponType==Firearms.WeaponType.Knife || _weaponManager.CurrentWeapon.weaponType==Firearms.WeaponType.LaserGun)
+            if (!_weaponManager.CurrentWeapon || _weaponManager.CurrentWeapon.weaponType == Firearms.WeaponType.Knife || _weaponManager.CurrentWeapon.weaponType == Firearms.WeaponType.LaserGun)
             {
-                if(GameUIManager.Instance) GameUIManager.Instance.bulletText.SetText("");
+                if (GameUIManager.Instance) GameUIManager.Instance.bulletText.SetText("");
                 return;
             }
 

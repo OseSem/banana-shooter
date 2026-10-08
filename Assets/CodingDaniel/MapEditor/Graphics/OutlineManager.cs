@@ -15,10 +15,10 @@ using UnityEngine.Serialization;
 
 namespace CodingDaniel.MapEditor.Graphics
 {
-    public class OutlineManager : MonoBehaviour ,IOutlineManager
+    public class OutlineManager : MonoBehaviour, IOutlineManager
     {
         public static OutlineManager Instance { private set; get; }
-        
+
         [FormerlySerializedAs("m_cache")]
         public IRenderersCache _cache;
 
@@ -250,7 +250,7 @@ namespace CodingDaniel.MapEditor.Graphics
 
         private void OnDisable()
         {
-            if(_editor != null)
+            if (_editor != null)
             {
                 if (_selectionOverride != null)
                 {
@@ -267,12 +267,12 @@ namespace CodingDaniel.MapEditor.Graphics
         {
             if (_editor != null)
             {
-                if(_editor.Selection != null)
+                if (_editor.Selection != null)
                 {
                     _editor.Selection.SelectionChanged -= OnRuntimeEditorSelectionChanged;
                 }
 
-                if(_editor.Object != null)
+                if (_editor.Object != null)
                 {
                     _editor.Object.Enabled -= OnObjectEnabled;
                     _editor.Object.Disabled -= OnObjectDisabled;
@@ -289,12 +289,12 @@ namespace CodingDaniel.MapEditor.Graphics
                 StopCoroutine(_coUpdate);
                 _coUpdate = null;
             }
-          
+
         }
 
         private void OnObjectEnabled(ExposeToEditor obj)
         {
-            if(_coUpdate == null)
+            if (_coUpdate == null)
             {
                 _coUpdate = CoUpdate();
                 StartCoroutine(_coUpdate);
@@ -444,7 +444,7 @@ namespace CodingDaniel.MapEditor.Graphics
 
         public void RecreateCommandBuffer()
         {
-        
+
         }
 
         public bool ContainsRenderer(Renderer renderer)

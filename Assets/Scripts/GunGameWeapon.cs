@@ -14,7 +14,7 @@ public class GunGameWeapon : MonoBehaviour
 
     public RawImage[] weaponImages;
 
-    public bool start=false, next=false;
+    public bool start = false, next = false;
 
     public float offset = 280;
 
@@ -22,7 +22,7 @@ public class GunGameWeapon : MonoBehaviour
 
     public GameObject firstArrow;
 
-    [SerializeField]private CanvasGroup canvas;
+    [SerializeField] private CanvasGroup canvas;
     [Serializable]
     class GunGameWeaponItemUI
     {
@@ -50,7 +50,7 @@ public class GunGameWeapon : MonoBehaviour
             mask.SetActive(true);
             for (int i = 0; i < weaponTrans.Length; i++)
             {
-                qWeapon.Enqueue(new GunGameWeaponItemUI(weaponTrans[i],weaponImages[i]));
+                qWeapon.Enqueue(new GunGameWeaponItemUI(weaponTrans[i], weaponImages[i]));
             }
         }
         else
@@ -62,7 +62,7 @@ public class GunGameWeapon : MonoBehaviour
     void Show()
     {
         desiredAlpha = 1f;
-        Invoke(nameof(Disable),5f);
+        Invoke(nameof(Disable), 5f);
     }
 
     void Disable()
@@ -77,7 +77,7 @@ public class GunGameWeapon : MonoBehaviour
         canvas.alpha = 0f;
         desiredAlpha = 0;
         CancelInvoke(nameof(Show));
-        Invoke(nameof(Show),GunGame.Instance.started ? 0.8f : 8.5f);
+        Invoke(nameof(Show), GunGame.Instance.started ? 0.8f : 8.5f);
 
         SetTexture(weaponLevel);
     }
@@ -99,7 +99,7 @@ public class GunGameWeapon : MonoBehaviour
     void SetTexture(int weaponLevel)
     {
         int of = start ? -1 : 0;
-        int i = next ? weaponLevel-1 : weaponLevel;
+        int i = next ? weaponLevel - 1 : weaponLevel;
         foreach (var weaponItemUI in qWeapon)
         {
             weaponItemUI.image.texture = NetworkManager.Instance.weaponInfo[weaponIndexs[of + i]].texture;
@@ -117,12 +117,12 @@ public class GunGameWeapon : MonoBehaviour
             x = 0;
             target = 0;
         }
-        else 
+        else
         {
             x = -offset;
             if (next)
             {
-                x = -offset*2;
+                x = -offset * 2;
                 if (Math.Abs(qWeapon.Peek().item.localPosition.x - x) < 1f)
                 {
                     GunGameWeaponItemUI t = qWeapon.Dequeue();
@@ -139,7 +139,7 @@ public class GunGameWeapon : MonoBehaviour
         foreach (var t in qWeapon)
         {
             Vector3 desiredPos = new Vector3(x, 0, 0);
-            t.item.localPosition = Vector3.Lerp(t.item.localPosition,desiredPos,Time.deltaTime*15f);
+            t.item.localPosition = Vector3.Lerp(t.item.localPosition, desiredPos, Time.deltaTime * 15f);
             x += offset;
             Color color = Color.white;
             color.a = index == target ? 1 : 80 / 255f;

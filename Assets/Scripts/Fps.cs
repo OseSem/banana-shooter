@@ -9,11 +9,11 @@ using UnityEngine.Profiling;
 public class Fps : MonoBehaviour
 {
     public static Fps Instance;
-    
+
     private float deltaTime;
     public TextMeshProUGUI fps;
 
-    public bool enableNetworkingStats = false,enableMemoryStatics=false;
+    public bool enableNetworkingStats = false, enableMemoryStatics = false;
 
     private void Awake()
     {
@@ -23,7 +23,7 @@ public class Fps : MonoBehaviour
             fps.SetText("");
             DontDestroyOnLoad(gameObject);
         }
-        else if(Instance!=this)
+        else if (Instance != this)
         {
             Destroy(gameObject);
         }
@@ -67,7 +67,7 @@ public class Fps : MonoBehaviour
             text.Append(
                 $"memory usage: {totalAllocated}mb | {totalReserved}mb / {sysMemorySize}mb\ngpu memory size: {gpuMemorySize}mb");
         }
-        
+
         fps.SetText(text.ToString());
     }
 }

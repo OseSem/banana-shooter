@@ -21,7 +21,7 @@ namespace Audio
         public override void OnBeat()
         {
             base.OnBeat();
-            
+
             StopCoroutine(nameof(MoveToScale));
             StartCoroutine(nameof(MoveToScale), beatScale);
         }

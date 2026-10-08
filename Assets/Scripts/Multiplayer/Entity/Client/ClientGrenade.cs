@@ -22,7 +22,7 @@ namespace Multiplayer.Entity.Client
         public Vector3 ThrowDirection { get; private set; }
 
         public Throwable throwable;
-        
+
         public DemoThrowable DemoThrowable { get; private set; }
 
         private bool expoloded = false;
@@ -38,23 +38,23 @@ namespace Multiplayer.Entity.Client
             }
         }
 
-        [MessageHandler((ushort) ServerToClientId.ThrowObj, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.ThrowObj, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void ThrowObj(Message message)
         {
             ushort id = message.GetUShort();
-        
-            ThrowObjectMenu.ThrowObjectType type = (ThrowObjectMenu.ThrowObjectType) message.GetInt();
+
+            ThrowObjectMenu.ThrowObjectType type = (ThrowObjectMenu.ThrowObjectType)message.GetInt();
             ushort playerId = message.GetUShort();
 
             Vector3 pos = message.GetVector3();
             Vector3 dir = message.GetVector3();
 
-            ClientGrenade obj = Throwable.InstantiateThrowable(type,pos).GetComponent<ClientGrenade>();
+            ClientGrenade obj = Throwable.InstantiateThrowable(type, pos).GetComponent<ClientGrenade>();
 
-            obj.Initialize(id,playerId,type,dir);
+            obj.Initialize(id, playerId, type, dir);
         }
 
-        [MessageHandler((ushort) ServerToClientId.ThrowObjExplode, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.ThrowObjExplode, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void ThrowObjExplode(Message message)
         {
             ushort id = message.GetUShort();
@@ -66,7 +66,7 @@ namespace Multiplayer.Entity.Client
             }
         }
 
-        [MessageHandler((ushort) ServerToClientId.FlashBang, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.FlashBang, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void FlashBang(Message message)
         {
             ushort getHitId = message.GetUShort();
@@ -78,8 +78,8 @@ namespace Multiplayer.Entity.Client
             {
                 if (getHitId == NetworkManager.Instance.Client.Id)
                 {
-                    GameManager.Instance.SetExposure(Mathf.Min((180f / angle)*2f,10));
-                    
+                    GameManager.Instance.SetExposure(Mathf.Min((180f / angle) * 2f, 10));
+
                     AchievementManager.Instance.SetStatsPlusOne(AchievementManager.EStats.GET_BLIND_AMOUNT);
                 }
 
@@ -91,13 +91,13 @@ namespace Multiplayer.Entity.Client
                     AudioManager.Instance.Play("Hit3");
                     AudioManager.Instance.Play("Hit4");
                     HitMarker.Instance.StartHitMarker(Color.cyan);
-                    
-                    
+
+
                     QuestManager.Instance.GetProgress(QuestType.Flash);
                 }
             }
         }
-        public void Initialize(ushort id,ushort _playerId,ThrowObjectMenu.ThrowObjectType type, Vector3 dir, bool isLocal=false)
+        public void Initialize(ushort id, ushort _playerId, ThrowObjectMenu.ThrowObjectType type, Vector3 dir, bool isLocal = false)
         {
             Id = id;
 
@@ -106,14 +106,14 @@ namespace Multiplayer.Entity.Client
             this.type = type;
 
             ThrowDirection = dir;
-        
-            Destroy(gameObject,15f);
+
+            Destroy(gameObject, 15f);
 
             DemoThrowable = gameObject.GetComponent<DemoThrowable>();
-            
+
             DemoManager.Instance.AddThrowableSpawned(this);
-            
-            throwable.Initialize(this.type, dir, isLocal,PlayerMovement.Instance ? PlayerMovement.Instance.GetCollider() : null);
+
+            throwable.Initialize(this.type, dir, isLocal, PlayerMovement.Instance ? PlayerMovement.Instance.GetCollider() : null);
 
             if (PlayerId == NetworkManager.Instance.Client.Id)
             {
@@ -129,8 +129,8 @@ namespace Multiplayer.Entity.Client
                         StartCoroutine(ExplodeByTime(10f));
                         break;
                 }
-                
-                
+
+
             }
             else
             {
@@ -139,14 +139,14 @@ namespace Multiplayer.Entity.Client
                     Destroy(list[id].gameObject);
                     list.Remove(id);
                 }
-                list.Add(id,this);
+                list.Add(id, this);
             }
         }
 
         IEnumerator ExplodeByTime(float time)
         {
             yield return new WaitForSeconds(time);
-            
+
             Explode(transform.position);
         }
 
@@ -158,11 +158,11 @@ namespace Multiplayer.Entity.Client
         private void OnCollisionEnter(Collision other)
         {
             if (DemoManager.Replaying) return;
-            if(expoloded || PlayerId != NetworkManager.Instance.Client.Id)return;
-            
+            if (expoloded || PlayerId != NetworkManager.Instance.Client.Id) return;
+
             Vector3 normal = other.contacts[0].normal;
             Vector3 pos = other.contacts[0].point;
-            
+
             switch (type)
             {
                 case ThrowObjectMenu.ThrowObjectType.MolotovCocktail:
@@ -185,7 +185,7 @@ namespace Multiplayer.Entity.Client
                     break;
             }
         }
-        
+
         private void OnDestroy()
         {
             if (list.ContainsKey(Id))

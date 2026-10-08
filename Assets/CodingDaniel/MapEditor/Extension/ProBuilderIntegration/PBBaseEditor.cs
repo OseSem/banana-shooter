@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 {
-    public abstract class PBBaseEditor : MonoBehaviour,IMeshEditor
+    public abstract class PBBaseEditor : MonoBehaviour, IMeshEditor
     {
         public virtual int GraphicsLayer
         {
@@ -49,7 +49,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             get { return Quaternion.identity; }
         }
-        
+
         public abstract GameObject Target
         {
             get;
@@ -90,22 +90,22 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public virtual void Bridge()
         {
-            
+
         }
 
         public virtual void InsertEdgeLoop()
         {
-            
+
         }
 
         public virtual void InsertFace()
         {
-            
+
         }
 
         public virtual void SetSelection(MeshSelection selection)
         {
-            
+
         }
 
         public virtual MeshSelection GetSelection()
@@ -115,7 +115,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public virtual void Hover(Camera camera, Vector3 pointer)
         {
-            
+
         }
 
         public virtual void BeginMove()
@@ -184,9 +184,9 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public virtual void SetState(MeshEditorState state)
         {
-            
+
         }
-        
-        
+
+
     }
 }

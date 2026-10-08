@@ -44,7 +44,7 @@ namespace Multiplayer
         public short[] Weapons { get; set; }
 
         public InventoryManager.CosmeticIndex CosmeticIndex;
-        public List<Perk> Perks { get; set; } = new(){Perk.None,Perk.None,Perk.None} ;
+        public List<Perk> Perks { get; set; } = new() { Perk.None, Perk.None, Perk.None };
 
         public int InventoryLength { get; set; } = -1;
 
@@ -53,8 +53,8 @@ namespace Multiplayer
         public int InventoryReceived { get; set; }
 
         public bool SerializeInventoryInitialized { get; set; } = false;
-        
-        public ClientData(ushort id,string name,ulong steamId, bool ownedDlc,ulong groupId,string desc,int exp,bool displayTag, bool eliminated,short[] weapons,ushort[] perks)
+
+        public ClientData(ushort id, string name, ulong steamId, bool ownedDlc, ulong groupId, string desc, int exp, bool displayTag, bool eliminated, short[] weapons, ushort[] perks)
         {
             Id = id;
             OwnedDlc = ownedDlc;
@@ -68,14 +68,14 @@ namespace Multiplayer
             Eliminated = eliminated;
             for (int i = 0; i < perks.Length; i++)
             {
-                Perks[i] = (Perk) perks[i];
+                Perks[i] = (Perk)perks[i];
             }
         }
-        
+
         public void InitializeCosmetics(InventoryManager.CosmeticIndex cosmeticIndex)
         {
             CosmeticIndex = cosmeticIndex;
-            
+
             SendToAllClient();
         }
 
@@ -98,25 +98,25 @@ namespace Multiplayer
 
         public void SendEliminated()
         {
-            Message message = Message.Create(MessageSendMode.Reliable, (ushort) ServerToClientId.ClientEliminated);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.ClientEliminated);
 
             message.Add(Id);
             message.Add(Eliminated);
-            
+
             NetworkServerManager.Instance.Server.SendToAll(message);
         }
 
         public void SendToClient(ushort client)
         {
             Message message = GetMessage();
-            
-            NetworkServerManager.Instance.Server.Send(message,client);
+
+            NetworkServerManager.Instance.Server.Send(message, client);
         }
-        
+
         void SendToAllClient()
         {
             Message message = GetMessage();
-            
+
             NetworkServerManager.Instance.Server.SendToAll(message);
 
             if (NetworkServerManager.GameState == GameState.Voting)
@@ -134,7 +134,7 @@ namespace Multiplayer
 
         Message GetMessage()
         {
-            Message message = Message.Create(MessageSendMode.Reliable, (ushort) ServerToClientId.AddClientData);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.AddClientData);
 
             message.Add(Id);
             message.Add(Name);
@@ -167,13 +167,13 @@ namespace Multiplayer
 
     public enum GameState
     {
-        None=0,
+        None = 0,
         Voting,
         Loading,
         Warmup,
         MidMatch,
     }
-    
+
     [DefaultExecutionOrder(-105)]
     public class NetworkServerManager : MonoBehaviour, INetworkServer
     {
@@ -199,18 +199,18 @@ namespace Multiplayer
                 }
             }
         }
-        
+
         //Server
         public Riptide.Server Server { get; private set; }
 
         public SteamServer CashedSteamServer { get; private set; }
-        
+
         //The type of this server
-        public static ServerType ServerType { get;private set; } = ServerType.Normal;
-        
+        public static ServerType ServerType { get; private set; } = ServerType.Normal;
+
         //The current game mode of the server
         public static GameMode ServerGameMode { get; set; } = GameMode.None;
-        
+
         //Cheats
         public static bool CheatsEnabled { get; private set; } = false;
 
@@ -220,34 +220,34 @@ namespace Multiplayer
         public static bool IsPlaying { get; private set; } = false;
 
         private const float MaxWallBangDistance = 3f;
-        
+
         //The banned player from server
         public static List<ulong> BannedPlayer = new List<ulong>();
         //The weapons that server allows to use
         public static List<bool> AllowedWeapon = new List<bool>();
         //Store the client datas
         public static Dictionary<ushort, ClientData> ClientData = new Dictionary<ushort, ClientData>();
-        
+
         //A dictionary of map voting
         public static Dictionary<string, ushort> MapVote = new Dictionary<string, ushort>();
         //A dictionary of gamemode voting
         public static Dictionary<ushort, ushort> GameModeVote = new Dictionary<ushort, ushort>();
-        
+
         //A dictionary of workshop map voting
         public static Dictionary<ulong, ushort> WorkshopMapVote = new();
 
         private static Dictionary<ulong, EUserHasLicenseForAppResult> _userHasDlc = new();
-        
+
         public static bool ServerRandomMap = false, ServerRandomGameMode = false;
-        
+
         //A Boolean which set the special weapon enable or disable
         public static bool ServerDisableSpecialWeapon { get; set; } = false;
-        
-        
+
+
         //The Server player prefab
         [SerializeField] public GameObject serverPlayerPrefab;
         public GameObject ServerPlayerPrefab => serverPlayerPrefab;
-        
+
         //Maps
         public Dictionary<GameMode, List<Map.Map>> Maps { get; } = new();
 
@@ -264,16 +264,16 @@ namespace Multiplayer
         #endregion
 
         #region Workshop
-        
+
         //Workshop supported?
         public static bool ServerEnableWorkshop { get; private set; } = false;
 
         public static HashSet<PublishedFileId_t> EnabledWorkshopMaps = new HashSet<PublishedFileId_t>();
 
         public static Action OnEnabledMapsChanged;
-        
+
         public PublishedFileId_t WorkshopMap { private set; get; }
-        
+
         public bool IsWorkshopMap { private set; get; }
 
         #endregion
@@ -286,13 +286,13 @@ namespace Multiplayer
         public static Entity.Entity Entity = new();
 
         public static GameState GameState { private set; get; } = GameState.None;
-        
+
         public string CurrentMap { private set; get; } = String.Empty;
-        
+
         static readonly ClientAuthentication Authentication = new();
-        
+
         public static bool TryGetAuthorizedSteamId(ushort client, out ulong steamId) => Authentication.TryGetAuthorizedSteamId(client, out steamId);
-        
+
         protected Callback<ValidateAuthTicketResponse_t> m_ValidateAuthTicketResponse;
 
         private float _votingTime;
@@ -309,51 +309,51 @@ namespace Multiplayer
             if (Instance == this)
             {
                 //Special Gamemode
-                Maps.Add(GameMode.SpecialGameMode,new List<Map.Map>(){MapManager.Instance.NameToMap["Endless"]});
-                
+                Maps.Add(GameMode.SpecialGameMode, new List<Map.Map>() { MapManager.Instance.NameToMap["Endless"] });
+
                 //Special Normal Gamemode
-                Maps.Add(GameMode.SpecialNormalGameMode, new List<Map.Map>(){MapManager.Instance.NameToMap["ShootingRange"]});
-                
+                Maps.Add(GameMode.SpecialNormalGameMode, new List<Map.Map>() { MapManager.Instance.NameToMap["ShootingRange"] });
+
                 //Brawl
-                List<Map.Map> m = new List<Map.Map>();   
+                List<Map.Map> m = new List<Map.Map>();
 
                 for (int i = 2; i < MapManager.Instance.maps.Count; i++)
                 {
                     m.Add(MapManager.Instance.maps[i]);
                 }
-                
-                Maps.Add(GameMode.Brawl,m);
-                
+
+                Maps.Add(GameMode.Brawl, m);
+
                 //TDM
-                Maps.Add(GameMode.TeamDeathMatch,m);
+                Maps.Add(GameMode.TeamDeathMatch, m);
 
                 //INfected
-                Maps.Add(GameMode.Infected,m);
-                
+                Maps.Add(GameMode.Infected, m);
+
                 //Kill Confirm
-                Maps.Add(GameMode.KillConfirm,m);
+                Maps.Add(GameMode.KillConfirm, m);
 
                 //Randomizer
-                Maps.Add(GameMode.Randomizer,m);
-                
+                Maps.Add(GameMode.Randomizer, m);
+
                 //King of the hill
-                Maps.Add(GameMode.KingOfTheHill,m);
-                
+                Maps.Add(GameMode.KingOfTheHill, m);
+
                 //Gun Game
-                Maps.Add(GameMode.GunGame,m);
-                
+                Maps.Add(GameMode.GunGame, m);
+
                 //Catch The Banana
-                Maps.Add(GameMode.CatchTheBanana,m);
-                
+                Maps.Add(GameMode.CatchTheBanana, m);
+
                 //One shoe one kill
-                Maps.Add(GameMode.OneShotOneKill,m);
-                
+                Maps.Add(GameMode.OneShotOneKill, m);
+
                 //Rocket mode
-                Maps.Add(GameMode.RocketMode,m);
-                
+                Maps.Add(GameMode.RocketMode, m);
+
                 // PVE
                 // Maps.Add(GameMode.PVE,m);
-                
+
                 foreach (var map in MapManager.Instance.maps)
                 {
                     MapVote.TryAdd(map.name, 0);
@@ -384,15 +384,15 @@ namespace Multiplayer
             {
                 return;
             }
-            
+
 #if UNITY_EDITOR
             RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 #else
             RiptideLogger.Initialize(Debug.Log, true);
 #endif
-            
+
             m_ValidateAuthTicketResponse = Callback<ValidateAuthTicketResponse_t>.Create(OnValidateAuthTicketResponse);
-            
+
             InitGame();
         }
 
@@ -413,7 +413,7 @@ namespace Multiplayer
         private void FixedUpdate()
         {
             if (!SteamManager.Initialized) return;
-            
+
             if (Server.IsRunning)
             {
                 Server.Update();
@@ -447,7 +447,7 @@ namespace Multiplayer
         #endregion
 
         #region Networking
-        
+
         void InitGame()
         {
             CashedSteamServer = new SteamServer();
@@ -455,10 +455,10 @@ namespace Multiplayer
 
             Server.ClientConnected += NewPlayerConnect;
             Server.ClientDisconnected += ClientDisconnect;
-            
+
             InitializeIds();
         }
-        
+
         public void StopServer()
         {
             foreach (var id in Authentication.SteamIds)
@@ -467,7 +467,7 @@ namespace Multiplayer
             }
             Authentication.Clear();
             Server.Stop();
-            SetGameState(GameState.None,false);
+            SetGameState(GameState.None, false);
             ServerGameMode = GameMode.Brawl;
             SetServerType(ServerType.Normal);
             BannedPlayer.Clear();
@@ -508,39 +508,39 @@ namespace Multiplayer
 
             Server.SendToAll(message);
         }
-        
+
         public void StartRound()
         {
             Server.SendToAll(GetRoundMessage());
         }
         public void StartRound(ushort toClient)
         {
-            Server.Send(GetRoundMessage(),toClient);
+            Server.Send(GetRoundMessage(), toClient);
         }
 
         Message GetRoundMessage()
         {
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.StartRound);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.StartRound);
 
             message.Add(game.EndTick);
 
             return message;
         }
-        
+
         public bool SetInfectedPlayer(ushort id, ushort fromClient)
         {
-            if (ServerPlayer.list.TryGetValue(id,out var infectedPlayer))
+            if (ServerPlayer.list.TryGetValue(id, out var infectedPlayer))
             {
                 infectedPlayer.Kills = 0;
                 infectedPlayer.IsInfected = true;
                 infectedPlayer.MaxHealth = 200;
                 if (infectedPlayer.HasPerk(Perk.Fat))
                     infectedPlayer.MaxHealth =
-                        (int) (infectedPlayer.MaxHealth * PerkManager.FatMultiplier);
+                        (int)(infectedPlayer.MaxHealth * PerkManager.FatMultiplier);
                 infectedPlayer.Health = infectedPlayer.MaxHealth;
 
 
-                Message message = Message.Create(MessageSendMode.Reliable, (ushort) ServerToClientId.PlayerInfect);
+                Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.PlayerInfect);
 
                 message.Add(id);
                 message.Add(fromClient);
@@ -566,33 +566,33 @@ namespace Multiplayer
 
         public void BananaManMusic()
         {
-            
+
         }
 
         public void SendServerSetting(string serverName)
         {
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort)ServerToClientId.ServerSetting);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.ServerSetting);
             message.Add(ServerRandomMap);
             message.Add(ServerRandomGameMode);
             message.Add(ServerDisableSpecialWeapon);
             message.Add(serverName);
             Server.SendToAll(message);
         }
-        
+
         public void SendClientInitialized(ushort client)
         {
             Message msg;
             switch (ServerType)
             {
                 case ServerType.ShootingRange:
-                    msg = Message.Create(MessageSendMode.Reliable, (ushort) ServerToClientId.OtherMode);
+                    msg = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.OtherMode);
 
                     msg.Add("ShootingRange");
 
                     Server.Send(msg, client);
                     break;
                 case ServerType.Endless:
-                    msg = Message.Create(MessageSendMode.Reliable, (ushort) ServerToClientId.OtherMode);
+                    msg = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.OtherMode);
 
                     msg.Add("Endless");
 
@@ -603,13 +603,13 @@ namespace Multiplayer
                     {
                         if (!VerifyVote())
                         {
-                            msg = Message.Create(MessageSendMode.Reliable, (ushort) ServerToClientId.Voting);
+                            msg = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.Voting);
 
                             msg.Add(_votingTime);
 
                             msg.AddUShort(CurrentServer.OverrideMinimalPlayerCount(2));
 
-                            msg.Add((ushort) ClientData.Count);
+                            msg.Add((ushort)ClientData.Count);
 
                             foreach (var d in ClientData.Values)
                             {
@@ -623,14 +623,14 @@ namespace Multiplayer
                             Server.Send(msg, client);
                         }
                     }
-                    else if(GameState == GameState.MidMatch)
+                    else if (GameState == GameState.MidMatch)
                     {
-                        msg = Message.Create(MessageSendMode.Reliable, (ushort) ServerToClientId.StartGame);
+                        msg = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.StartGame);
 
                         msg.Add((ushort)GameState);
                         msg.Add(IsWorkshopMap);
-                        
-                        msg.Add((ushort) ServerGameMode);
+
+                        msg.Add((ushort)ServerGameMode);
                         msg.Add(IsWorkshopMap
                             ? WorkshopMap.ToString()
                             : CurrentMap);
@@ -639,9 +639,9 @@ namespace Multiplayer
                             msg.Add(KingOfTheHill.Instance.serverIndex);
                         }
 
-                        if ( CurrentMap == "ProcMap" )
+                        if (CurrentMap == "ProcMap")
                         {
-                            msg.Add( Seed );
+                            msg.Add(Seed);
                         }
                         if (IsWorkshopMap)
                         {
@@ -658,14 +658,14 @@ namespace Multiplayer
         #endregion
 
         #region Packet Handle
-        
-        [MessageHandler((ushort) ClientToServerId.VoteMap, PlayerHostedDemoMessageHandlerGroupId)]
+
+        [MessageHandler((ushort)ClientToServerId.VoteMap, PlayerHostedDemoMessageHandlerGroupId)]
         private static void VoteMap(ushort fromClient, Message message)
         {
             if (ServerRandomMap) return;
             if (GameState != GameState.Voting) return;
 
-            if (PlayerVoteList.TryGetValue(fromClient,out var item))
+            if (PlayerVoteList.TryGetValue(fromClient, out var item))
             {
                 bool workshopMap = message.GetBool();
                 string map = message.GetString();
@@ -673,11 +673,11 @@ namespace Multiplayer
                 ushort currnetMapVoteCount = 0;
                 if (workshopMap)
                 {
-                    ulong id ;
-                    if(!string.IsNullOrEmpty(item.Item2))
+                    ulong id;
+                    if (!string.IsNullOrEmpty(item.Item2))
                     {
                         id = ulong.Parse(item.Item2);
-                        if(WorkshopMapVote.ContainsKey(id))
+                        if (WorkshopMapVote.ContainsKey(id))
                             lastMapVoteCount = --WorkshopMapVote[id];
                     }
                     id = ulong.Parse(map);
@@ -688,9 +688,9 @@ namespace Multiplayer
                 }
                 else
                 {
-                    if(!string.IsNullOrEmpty(item.Item2))
+                    if (!string.IsNullOrEmpty(item.Item2))
                     {
-                        if(MapVote.ContainsKey(item.Item2))
+                        if (MapVote.ContainsKey(item.Item2))
                             lastMapVoteCount = --MapVote[item.Item2];
                     }
                     if (MapVote.ContainsKey(map))
@@ -701,8 +701,8 @@ namespace Multiplayer
 
                 if (string.IsNullOrEmpty(item.Item2))
                     VoteCount++;
-            
-                Message msg = Message.Create(MessageSendMode.Reliable,(ushort)ServerToClientId.VoteMap);
+
+                Message msg = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.VoteMap);
                 msg.Add(item.Item2);
                 msg.Add(map);
                 msg.Add(lastMapVoteCount);
@@ -710,60 +710,60 @@ namespace Multiplayer
 
                 PlayerVoteList[fromClient] = new Tuple<short, string>(item.Item1, map);
                 Instance.Server.SendToAll(msg);
-                
+
                 Instance.VerifyVote();
             }
         }
-        
-        [MessageHandler((ushort) ClientToServerId.VoteGameMode, PlayerHostedDemoMessageHandlerGroupId)]
+
+        [MessageHandler((ushort)ClientToServerId.VoteGameMode, PlayerHostedDemoMessageHandlerGroupId)]
         private static void VoteGameMode(ushort fromClient, Message message)
         {
             if (ServerRandomGameMode) return;
             if (GameState != GameState.Voting) return;
-            if (PlayerVoteList.TryGetValue(fromClient,out var item))
+            if (PlayerVoteList.TryGetValue(fromClient, out var item))
             {
                 ushort gameMode = message.GetUShort();
                 ushort lastVoteCount = 0, currentVoteCount = 0;
-                if(item.Item1 != -1 && GameModeVote.ContainsKey((ushort)item.Item1))
+                if (item.Item1 != -1 && GameModeVote.ContainsKey((ushort)item.Item1))
                     lastVoteCount = --GameModeVote[(ushort)item.Item1];
 
-                if(GameModeVote.ContainsKey(gameMode))
+                if (GameModeVote.ContainsKey(gameMode))
                     currentVoteCount = ++GameModeVote[gameMode];
-                if (item.Item1==-1)
+                if (item.Item1 == -1)
                     VoteCount++;
 
                 //Debug.Log($"{gameMode} : {NetworkServerManager.Instance.gameModeVote[gameMode]}");
-            
-                Message msg = Message.Create(MessageSendMode.Reliable,(ushort)ServerToClientId.VoteGameMode);
+
+                Message msg = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.VoteGameMode);
                 msg.Add(item.Item1);
                 msg.Add(gameMode);
                 msg.AddUShort(lastVoteCount);
                 msg.AddUShort(currentVoteCount);
                 PlayerVoteList[fromClient] = new Tuple<short, string>((short)gameMode, item.Item2);
                 Instance.Server.SendToAll(msg);
-                
+
                 Instance.VerifyVote();
             }
 
         }
 
-        [MessageHandler((ushort) ClientToServerId.GetOneBox, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ClientToServerId.GetOneBox, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         public static void SomeOneGotBox(ushort fromClient, Message message)
         {
             int itemdefid = message.GetInt();
-        
-            Message msg = Message.Create(MessageSendMode.Reliable,(ushort)ServerToClientId.SomeoneGetBox);
+
+            Message msg = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.SomeoneGetBox);
             msg.Add(fromClient);
             msg.Add(itemdefid);
             Instance.Server.SendToAll(msg);
         }
 
-        [MessageHandler((ushort) ClientToServerId.ManageServer, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ClientToServerId.ManageServer, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         public static void ManageServer(ushort fromClient, Message message)
-        { 
+        {
             if (!TryGetAuthorizedSteamId(fromClient, out var senderSteamId) || !RolesManager.Instance.CheckIsAdmin(senderSteamId)) return;
-        
-            ManageType type = (ManageType) message.GetUShort();
+
+            ManageType type = (ManageType)message.GetUShort();
 
             ushort id = 0;
             ulong steamId = 0;
@@ -776,13 +776,13 @@ namespace Multiplayer
                     //     if (LoadingManager.Instance.menuType == LoadingManager.MenuType.None)LoadingManager.Instance.menuType= LoadingManager.MenuType.Kick;
                     //     LobbyManager.Instance.LeaveLobby();
                     // }
-                    Instance.Server.DisconnectClient(id,Message.Create());
+                    Instance.Server.DisconnectClient(id, Message.Create());
                     break;
                 case ManageType.Ban:
                     id = message.GetUShort();
                     if (id == NetworkManager.Instance.Client.Id)
                     {
-                        if (LoadingManager.Instance.menuType == LoadingManager.MenuType.None)LoadingManager.Instance.menuType= LoadingManager.MenuType.Kick;
+                        if (LoadingManager.Instance.menuType == LoadingManager.MenuType.None) LoadingManager.Instance.menuType = LoadingManager.MenuType.Kick;
                         LobbyManager.Instance.LeaveLobby();
                     }
                     steamId = message.GetULong();
@@ -791,19 +791,19 @@ namespace Multiplayer
                     break;
             }
         }
-        
-        [MessageHandler((ushort) ClientToServerId.Authorize, PlayerHostedDemoMessageHandlerGroupId)]
+
+        [MessageHandler((ushort)ClientToServerId.Authorize, PlayerHostedDemoMessageHandlerGroupId)]
         public static void AuthorizeClient(ushort fromClient, Message message)
         {
             Debug.Log($"Client {fromClient} trys to authorize");
 
             byte[] ticket = message.GetBytes();
-            CSteamID id =new CSteamID( message.GetULong());
-            
+            CSteamID id = new CSteamID(message.GetULong());
+
             ulong transportSteamId = Instance.Server.TryGetClient(fromClient, out var connection) && connection is SteamConnection steamConnection
                 ? steamConnection.SteamId.m_SteamID
                 : 0;
-            
+
 
             if (!Authentication.TryBind(fromClient, transportSteamId, id.m_SteamID))
             {
@@ -843,51 +843,51 @@ namespace Multiplayer
                     Debug.Log("Ticket has expired.");
                     break;
             }
-            
+
             Authentication.Remove(fromClient, out _);
             Instance.Server.DisconnectClient(fromClient, GetDisconnectMessage("Ticket Invalid"));
         }
         #endregion
 
         #endregion
-        
+
         #region CallBack
 
         private void OnValidateAuthTicketResponse(ValidateAuthTicketResponse_t param)
         {
             bool kick = false;
             string reason = String.Empty;
-            
+
             ushort client;
 
             switch (param.m_eAuthSessionResponse)
             {
                 case EAuthSessionResponse.k_EAuthSessionResponseOK:
                     Debug.Log($"{param.m_SteamID} Got Authorized");
-                    
+
                     if (Authentication.TryAuthorize(param.m_SteamID.m_SteamID, out client))
                     {
-                        Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.Authorized);
-                            
+                        Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.Authorized);
+
                         Instance.Server.Send(message, client);
-                            
+
                         if (PlayerVoteList.ContainsKey(client))
                             PlayerVoteList.Remove(client);
-            
-                        PlayerVoteList.Add(client, new Tuple<short, string>(-1,String.Empty));
-            
+
+                        PlayerVoteList.Add(client, new Tuple<short, string>(-1, String.Empty));
+
                         if (GameState == GameState.None)
                         {
-                            SetGameState(GameState.Voting,false);
+                            SetGameState(GameState.Voting, false);
 
                             int playerCount = Server.ClientCount;
-                
-                            _votingTime = playerCount > 20 ? 75 : playerCount > 10 ? 60 : playerCount>5 ? 45 : 30;
-                
+
+                            _votingTime = playerCount > 20 ? 75 : playerCount > 10 ? 60 : playerCount > 5 ? 45 : 30;
+
                             VoteCount = 0;
                         }
                     }
-                    
+
                     break;
                 case EAuthSessionResponse.k_EAuthSessionResponseAuthTicketCanceled:
                     Debug.Log($"{param.m_SteamID}'s Tick Got Canceled");
@@ -895,13 +895,13 @@ namespace Multiplayer
                     break;
                 case EAuthSessionResponse.k_EAuthSessionResponseVACBanned:
                     Debug.Log($"{param.m_SteamID} Got VAC Banned");
-                    
+
                     // if (SteamIDToClient.TryGetValue(param.m_SteamID, out tuple))
                     //     Instance.Server.DisconnectClient(tuple.Item1);
                     break;
                 case EAuthSessionResponse.k_EAuthSessionResponseUserNotConnectedToSteam:
                     Debug.Log($"{param.m_SteamID} Not Connected to Steam");
-                    
+
                     kick = true;
                     reason = "Not Connected to Steam";
                     break;
@@ -913,23 +913,23 @@ namespace Multiplayer
                     break;
                 case EAuthSessionResponse.k_EAuthSessionResponseAuthTicketInvalid:
                     Debug.Log($"{param.m_SteamID}'s Ticket Invalid");
-                    
+
                     kick = true;
                     reason = "Ticket Invalid";
                     break;
                 case EAuthSessionResponse.k_EAuthSessionResponseVACCheckTimedOut:
                     Debug.Log($"{param.m_SteamID} Vac Check Timeout");
-                    
+
                     kick = true;
                     reason = "Vac Check Timeout";
                     break;
-                
+
             }
 
             if (kick)
             {
                 Authentication.Revoke(param.m_SteamID.m_SteamID);
-                    
+
                 if (Authentication.TryGetClient(param.m_SteamID.m_SteamID, out client))
                     Instance.Server.DisconnectClient(client, GetDisconnectMessage(reason));
             }
@@ -943,7 +943,7 @@ namespace Multiplayer
         {
             AnticheatManager.Instance.Heartbeats[e.Client.Id] = Time.time;
 
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.Init);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.Init);
 
             message.Add((ushort)ServerType);
             message.Add(ServerRandomMap);
@@ -964,12 +964,12 @@ namespace Multiplayer
             {
                 message.Add((ulong)id);
             }
-            
-            Server.Send(message,e.Client.Id);
+
+            Server.Send(message, e.Client.Id);
 
             foreach (var data in ClientData.Values)
             {
-                if(data.SerializeInventoryInitialized)
+                if (data.SerializeInventoryInitialized)
                     data.SendToClient(e.Client.Id);
             }
         }
@@ -978,20 +978,20 @@ namespace Multiplayer
         {
             AnticheatManager.Instance.Heartbeats.Remove(e.Client.Id);
             PlayerVoteList.Remove(e.Client.Id);
-            
+
             if (Authentication.Remove(e.Client.Id, out var steamId))
             {
                 SteamUser.EndAuthSession(new CSteamID(steamId));
                 _userHasDlc.Remove(steamId);
             }
-            
-            if (ClientData.TryGetValue(e.Client.Id,out var data))
+
+            if (ClientData.TryGetValue(e.Client.Id, out var data))
             {
                 if (InventoryManager.Instance.PendingUserSteamIds.Contains(data))
                 {
                     InventoryManager.Instance.PendingUserSteamIds.Remove(data);
                 }
-                
+
                 ClientData.Remove(e.Client.Id);
             }
             if (SceneManager.GetActiveScene().name != "Menu")
@@ -1044,7 +1044,7 @@ namespace Multiplayer
                                 break;
                         }
                     }
-                    
+
                     ServerPlayer.list[e.Client.Id].Destroy();
                     ServerPlayer.list.Remove(e.Client.Id);
                 }
@@ -1063,9 +1063,9 @@ namespace Multiplayer
             {
                 return false;
             }
-            
+
             int playerCount = GetAvailableClientCount();
-            
+
             if (playerCount == 1)
             {
                 return false;
@@ -1111,7 +1111,7 @@ namespace Multiplayer
         void SendStartGame()
         {
             SetGameState(GameState.Loading);
-            
+
             PlayerRagdoll.ragdolls.Clear();
             ServerPlayer.AlliancePlayers = 0;
             ServerPlayer.RebelPlayers = 0;
@@ -1165,25 +1165,25 @@ namespace Multiplayer
                     cnt = GameModeVote[(ushort)GameMode.GunGame];
                     g = GameMode.GunGame;
                 }
-                
+
                 if (GameModeVote[(ushort)GameMode.CatchTheBanana] > cnt)
                 {
                     cnt = GameModeVote[(ushort)GameMode.CatchTheBanana];
                     g = GameMode.CatchTheBanana;
                 }
-                
+
                 if (GameModeVote[(ushort)GameMode.OneShotOneKill] > cnt)
                 {
                     cnt = GameModeVote[(ushort)GameMode.OneShotOneKill];
                     g = GameMode.OneShotOneKill;
                 }
-                
+
                 if (GameModeVote[(ushort)GameMode.RocketMode] > cnt)
                 {
                     cnt = GameModeVote[(ushort)GameMode.RocketMode];
                     g = GameMode.RocketMode;
                 }
-                
+
                 // if (GameModeVote[(ushort)GameMode.PVE] > cnt)
                 // {
                 //     cnt = GameModeVote[ (ushort)GameMode.PVE ];
@@ -1192,12 +1192,12 @@ namespace Multiplayer
             }
 
             // bool isWorkshopMap = ServerEnableWorkshop && Random.Range(0, 10) < 6;
-            if ( g == GameMode.PVE )
+            if (g == GameMode.PVE)
             {
                 IsWorkshopMap = false;
 
                 CurrentMap = "ProcMap";
-                Seed = (uint)( DateTime.Now.Ticks % uint.MaxValue );
+                Seed = (uint)(DateTime.Now.Ticks % uint.MaxValue);
             }
             else
             {
@@ -1224,7 +1224,7 @@ namespace Multiplayer
                 }
                 else
                 {
-                    string m = ServerRandomMap ?  GetRandomMap(g) : "Water";
+                    string m = ServerRandomMap ? GetRandomMap(g) : "Water";
                     if (!ServerRandomMap)
                     {
                         cnt = 0;
@@ -1245,27 +1245,27 @@ namespace Multiplayer
                         }
                     }
                     CurrentMap = m;
-                    
-                    Seed = (uint)( DateTime.Now.Ticks % uint.MaxValue );
+
+                    Seed = (uint)(DateTime.Now.Ticks % uint.MaxValue);
                 }
             }
-                
+
             ServerGameMode = g;
 
-            Message message = Message.Create(MessageSendMode.Reliable, (ushort) ServerToClientId.StartGame);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.StartGame);
             message.Add((ushort)GameState);
             message.Add(IsWorkshopMap);
-            message.Add((ushort) ServerGameMode);
+            message.Add((ushort)ServerGameMode);
             message.Add(IsWorkshopMap ? WorkshopMap.ToString() : CurrentMap);
 
             if (ServerGameMode == GameMode.KingOfTheHill)
             {
-                message.AddInt( 0 );
+                message.AddInt(0);
             }
-            
-            if ( CurrentMap == "ProcMap" )
+
+            if (CurrentMap == "ProcMap")
             {
-                message.AddUInt( Seed );
+                message.AddUInt(Seed);
             }
 
             if (IsWorkshopMap)
@@ -1279,12 +1279,12 @@ namespace Multiplayer
             {
                 if (data.SerializeInventoryInitialized)
                 {
-                    Server.Send( message, data.Id, false );
+                    Server.Send(message, data.Id, false);
                 }
             }
             message.Release();
         }
-        
+
         public void StopGame()
         {
             if (ServerType == ServerType.Endless) return;
@@ -1292,7 +1292,7 @@ namespace Multiplayer
 
             SetGameState(GameState.None);
             game.StopGameServer();
-        
+
             StopAllCoroutines();
 
             foreach (var map in Maps)
@@ -1320,29 +1320,29 @@ namespace Multiplayer
 
             ServerGrenade.nextId = 0;
             ServerCollectable.nextId = 0;
-            
+
             StartCoroutine(GotoReady());
         }
 
         IEnumerator GotoReady()
         {
             yield return new WaitForSeconds(15f);
-            SetGameState(GameState.Voting,false);
+            SetGameState(GameState.Voting, false);
             int playerCount = Server.ClientCount;
-                
-            _votingTime = playerCount > 20 ? 75 : playerCount > 10 ? 60 : playerCount>5 ? 45 : 30;
-                
+
+            _votingTime = playerCount > 20 ? 75 : playerCount > 10 ? 60 : playerCount > 5 ? 45 : 30;
+
             VoteCount = 0;
 
             if (!VerifyVote())
             {
-                Message message = Message.Create(MessageSendMode.Reliable, (ushort) ServerToClientId.Voting);
+                Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.Voting);
 
                 message.Add(_votingTime);
-                
+
                 message.AddUShort(CurrentServer.OverrideMinimalPlayerCount(2));
 
-                message.Add((ushort) ClientData.Count);
+                message.Add((ushort)ClientData.Count);
 
                 foreach (var d in ClientData.Values)
                 {
@@ -1356,11 +1356,11 @@ namespace Multiplayer
                 Server.SendToAll(message);
             }
         }
-        
+
         IEnumerator KickLoadFailedPlayer()
         {
             yield return new WaitForSeconds(10);
-            
+
             foreach (var client in ClientData.Values)
             {
                 if (!ServerPlayer.list.ContainsKey(client.Id))
@@ -1376,33 +1376,33 @@ namespace Multiplayer
             {
                 yield return null;
             }
-            
+
             if (!IsPlaying) IsPlaying = true;
             if (!Server.IsRunning) yield break;
-            
+
             game.leftTime = CurrentServer.OverrideGameTime(game.leftTime);
             game.SetTick();
-            
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.BeforeGameStart);
+
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.BeforeGameStart);
 
             message.AddUInt(game.StartTick);
             message.AddUInt(game.EndTick);
-            
+
             if (ServerType == ServerType.KnockoutRound)
             {
                 message.AddBool(GetAvailableClientCount() <= 2);
                 message.AddInt(((KnockoutServer)CurrentServer).Round);
             }
-            
+
             Server.SendToAll(message);
         }
-        
+
         public void StartGameFromLoad()
         {
             StartCoroutine(StartGame());
         }
-        
-        public void ShootLagCompensation(uint tick, Vector3 lookDir,Vector3 raycastPos,ushort fromClient, ActiveWeapon weapon)
+
+        public void ShootLagCompensation(uint tick, Vector3 lookDir, Vector3 raycastPos, ushort fromClient, ActiveWeapon weapon)
         {
             uint finalTick = tick;
 
@@ -1431,22 +1431,22 @@ namespace Multiplayer
                         {
                             Vector3 predictPos = transformUpdate.Position;
 
-                            if (ShouldSpawnHitbox(serverPlayer,fromPlayer))
+                            if (ShouldSpawnHitbox(serverPlayer, fromPlayer))
                             {
                                 LagCompensationHitbox hitbox = ObjectPooler.Instance.SpawnFromPool("PlayerHitbox", predictPos, Quaternion.identity).GetComponent<LagCompensationHitbox>();
-                                
-                                hitbox.Initialize(serverPlayer.Id,finalTick);
-                                
+
+                                hitbox.Initialize(serverPlayer.Id, finalTick);
+
                                 hitboxes.Add(hitbox);
                             }
                         }
                     }
-                    
+
                     //Enemy Hitbox
                     foreach (var serverEnemy in ServerEnemy.list.Values)
                     {
                         TransformUpdate transformUpdate = serverEnemy.TransformBuffer[finalTick % ServerPlayer.MaxTickStore];
-                        
+
                         if (transformUpdate != null)
                         {
                             Vector3 predictPos = transformUpdate.Position;
@@ -1473,15 +1473,15 @@ namespace Multiplayer
                             }
 
                             LagCompensationHitbox hitbox = ObjectPooler.Instance.SpawnFromPool(enemy, predictPos, Quaternion.identity).GetComponent<LagCompensationHitbox>();
-                                
-                            hitbox.Initialize(serverEnemy.Id,finalTick);
-                                
+
+                            hitbox.Initialize(serverEnemy.Id, finalTick);
+
                             hitboxes.Add(hitbox);
-                        }  
+                        }
                     }
-                    
+
                     Physics.SyncTransforms();
-                    
+
                     RaycastHit[] hits = new RaycastHit[10];
                     Vector3 dir;
                     int cnt;
@@ -1493,7 +1493,7 @@ namespace Multiplayer
                             GameManager.Instance.lagCompensationHitboxLayer, QueryTriggerInteraction.Ignore);
 
                         bool flag = false;
-                        
+
                         for (int i = 0; i < cnt; i++)
                         {
                             RaycastHit hit = hits[i];
@@ -1502,12 +1502,12 @@ namespace Multiplayer
 
                             if (hitbox != null)
                             {
-                                hitbox.TakeDamage(fromClient,finalTick,false, aiming,LagCompensationHitbox.HitboxType.Player, hit.point,hit.collider.gameObject.CompareTag("Head"),3);
+                                hitbox.TakeDamage(fromClient, finalTick, false, aiming, LagCompensationHitbox.HitboxType.Player, hit.point, hit.collider.gameObject.CompareTag("Head"), 3);
                                 flag = true;
                                 break;
                             }
                         }
-                        
+
                         cnt = Physics.SphereCastNonAlloc(raycastPos, 1.3f, dir, hits, 4f,
                             GameManager.Instance.lagCompensationHitboxLayer, QueryTriggerInteraction.Ignore);
 
@@ -1521,7 +1521,7 @@ namespace Multiplayer
 
                                 if (hitbox != null)
                                 {
-                                    hitbox.TakeDamage(fromClient,finalTick,false, aiming,LagCompensationHitbox.HitboxType.Player, hit.point, hit.collider.gameObject.CompareTag("Head"),3);
+                                    hitbox.TakeDamage(fromClient, finalTick, false, aiming, LagCompensationHitbox.HitboxType.Player, hit.point, hit.collider.gameObject.CompareTag("Head"), 3);
                                     break;
                                 }
                             }
@@ -1537,7 +1537,7 @@ namespace Multiplayer
                                     GameManager.Instance.lagCompensationHitboxLayer, QueryTriggerInteraction.Ignore);
 
                                 bool flag = false;
-                                
+
                                 for (int i = 0; i < cnt; i++)
                                 {
                                     RaycastHit hit = hits[i];
@@ -1546,12 +1546,12 @@ namespace Multiplayer
 
                                     if (hitbox != null)
                                     {
-                                        hitbox.TakeDamage(fromClient,finalTick,false, aiming,LagCompensationHitbox.HitboxType.Player, hit.point,hit.collider.gameObject.CompareTag("Head"));
+                                        hitbox.TakeDamage(fromClient, finalTick, false, aiming, LagCompensationHitbox.HitboxType.Player, hit.point, hit.collider.gameObject.CompareTag("Head"));
                                         flag = true;
                                         break;
                                     }
                                 }
-                                
+
                                 cnt = Physics.SphereCastNonAlloc(raycastPos, 1.3f, dir, hits, 4f,
                                     GameManager.Instance.lagCompensationHitboxLayer, QueryTriggerInteraction.Ignore);
 
@@ -1565,14 +1565,14 @@ namespace Multiplayer
 
                                         if (hitbox != null)
                                         {
-                                            hitbox.TakeDamage(fromClient,finalTick,false,aiming, LagCompensationHitbox.HitboxType.Player, hit.point, hit.collider.gameObject.CompareTag("Head"));
+                                            hitbox.TakeDamage(fromClient, finalTick, false, aiming, LagCompensationHitbox.HitboxType.Player, hit.point, hit.collider.gameObject.CompareTag("Head"));
                                             break;
                                         }
                                     }
                                 }
-                                
 
-                                
+
+
                                 break;
                             case WeaponStat.WeaponType.Taser:
                                 dir = lookDir.normalized;
@@ -1587,11 +1587,11 @@ namespace Multiplayer
 
                                     if (hitbox != null)
                                     {
-                                        hitbox.TakeDamage(fromClient,finalTick,false, aiming,LagCompensationHitbox.HitboxType.Player, hit.point, hit.collider.gameObject.CompareTag("Head"));
+                                        hitbox.TakeDamage(fromClient, finalTick, false, aiming, LagCompensationHitbox.HitboxType.Player, hit.point, hit.collider.gameObject.CompareTag("Head"));
                                         break;
                                     }
                                 }
-                            
+
                                 break;
                             default:
                                 for (int i = 0; i < weapon.Stat.bulletAmount; i++)
@@ -1620,7 +1620,7 @@ namespace Multiplayer
                                         {
                                             Vector3 hitboxPos = hitbox.transform.position;
                                             RaycastHit[] wallHits = new RaycastHit[10];
-                                            
+
                                             int wallCnt = Physics.RaycastNonAlloc(hitboxPos, (raycastPos - hitboxPos).normalized,
                                                 wallHits, Vector3.Distance(hitboxPos, raycastPos),
                                                 GameManager.Instance.lagCompensationHitboxLayer,
@@ -1639,10 +1639,10 @@ namespace Multiplayer
                                             }
 
                                             // if (wallDistance > MaxWallBangDistance) continue;
-                                            
-                                            hitbox.TakeDamage(fromClient,finalTick,wallDistance > 0, aiming,LagCompensationHitbox.HitboxType.Player, hit.point, hit.collider.gameObject.CompareTag("Head"));
 
-                    #if UNITY_EDITOR
+                                            hitbox.TakeDamage(fromClient, finalTick, wallDistance > 0, aiming, LagCompensationHitbox.HitboxType.Player, hit.point, hit.collider.gameObject.CompareTag("Head"));
+
+#if UNITY_EDITOR
                                             // if (false)
                                             // {
                                             //     LagCompensationTest newTest = new GameObject($"Player {fromClient} Shoot Player {hitbox.Id}").AddComponent<LagCompensationTest>();
@@ -1652,28 +1652,28 @@ namespace Multiplayer
                                             //     newTest.hitPos = hit.point;
                                             //     newTest.hitPlayerOgPos = ServerPlayer.list[hitbox.Id].PlayerTransform.position;
                                             // }       
-                    #endif
+#endif
                                             break;
                                         }
-                                        
+
                                     }
                                 }
                                 break;
                         }
                     }
-                    
+
                     foreach (var hitbox in hitboxes)
                     {
                         hitbox.gameObject.SetActive(false);
                     }
-                    
+
                     hitboxes.Clear();
                 }
             }
-            
+
         }
-        
-        IEnumerator ExplosiveAmmoLagCompensation(uint tick,Vector3 startPos,Vector3 dir,ushort fromClient, int useGravity,IPlayerServer fromPlayer)
+
+        IEnumerator ExplosiveAmmoLagCompensation(uint tick, Vector3 startPos, Vector3 dir, ushort fromClient, int useGravity, IPlayerServer fromPlayer)
         {
             List<LagCompensationHitbox> hitboxes = new List<LagCompensationHitbox>();
             bool aiming = fromPlayer.IsAiming;
@@ -1684,12 +1684,12 @@ namespace Multiplayer
 
             uint predictTick = tick;
 
-            for (float t = 0; t < 50; t+=Time.fixedDeltaTime)
+            for (float t = 0; t < 50; t += Time.fixedDeltaTime)
             {
                 Vector3 newPoint = startPos + t * startVel;
                 newPoint.y = startPos.y + startVel.y * t + Physics.gravity.y / 2f * t * t * useGravity;
-                
-                int cnt = Physics.OverlapSphereNonAlloc(newPoint, 0.5f,cols, GameManager.Instance.lagCompensationHitboxLayer,QueryTriggerInteraction.Ignore);
+
+                int cnt = Physics.OverlapSphereNonAlloc(newPoint, 0.5f, cols, GameManager.Instance.lagCompensationHitboxLayer, QueryTriggerInteraction.Ignore);
 
                 if (cnt > 0)
                 {
@@ -1697,7 +1697,7 @@ namespace Multiplayer
                     yield return new WaitForSeconds(t);
 
                     predictTick += (uint)(t / 0.02f);
-                    
+
                     //Player hitbox
                     foreach (var serverPlayer in ServerPlayer.list.Values)
                     {
@@ -1707,22 +1707,22 @@ namespace Multiplayer
                         {
                             Vector3 predictPos = transformUpdate.Position;
 
-                            if (ShouldSpawnHitbox(serverPlayer,fromPlayer))
+                            if (ShouldSpawnHitbox(serverPlayer, fromPlayer))
                             {
                                 LagCompensationHitbox hitbox = ObjectPooler.Instance.SpawnFromPool("PlayerHitbox", predictPos, Quaternion.identity).GetComponent<LagCompensationHitbox>();
-                                
-                                hitbox.Initialize(serverPlayer.Id,tick);
-                                
+
+                                hitbox.Initialize(serverPlayer.Id, tick);
+
                                 hitboxes.Add(hitbox);
                             }
-                        }  
+                        }
                     }
-                    
+
                     //Enemy Hitbox
                     foreach (var serverEnemy in ServerEnemy.list.Values)
                     {
                         TransformUpdate transformUpdate = serverEnemy.TransformBuffer[predictTick % ServerPlayer.MaxTickStore];
-                        
+
                         if (transformUpdate != null)
                         {
                             Vector3 predictPos = transformUpdate.Position;
@@ -1749,16 +1749,16 @@ namespace Multiplayer
                             }
 
                             LagCompensationHitbox hitbox = ObjectPooler.Instance.SpawnFromPool(enemy, predictPos, Quaternion.identity).GetComponent<LagCompensationHitbox>();
-                                
-                            hitbox.Initialize(serverEnemy.Id,tick);
-                                
+
+                            hitbox.Initialize(serverEnemy.Id, tick);
+
                             hitboxes.Add(hitbox);
-                        }  
+                        }
                     }
-                    
+
                     Physics.SyncTransforms();
-                    
-                    cnt = Physics.OverlapSphereNonAlloc(newPoint, 18f,cols, GameManager.Instance.lagCompensationHitboxLayer,QueryTriggerInteraction.Ignore);
+
+                    cnt = Physics.OverlapSphereNonAlloc(newPoint, 18f, cols, GameManager.Instance.lagCompensationHitboxLayer, QueryTriggerInteraction.Ignore);
 
                     HashSet<ushort> alreadyHitted = new HashSet<ushort>();
 
@@ -1766,23 +1766,23 @@ namespace Multiplayer
                     {
                         if (cols[i].transform.root.TryGetComponent(out LagCompensationHitbox hitbox) && alreadyHitted.Add(hitbox.Id))
                         {
-                            hitbox.TakeDamage(fromClient,tick,false, aiming,LagCompensationHitbox.HitboxType.Player, cols[i].bounds.ClosestPoint(newPoint));
+                            hitbox.TakeDamage(fromClient, tick, false, aiming, LagCompensationHitbox.HitboxType.Player, cols[i].bounds.ClosestPoint(newPoint));
                         }
                     }
-                    
+
                     foreach (var hitbox in hitboxes)
                     {
                         hitbox.gameObject.SetActive(false);
                     }
-                
+
                     hitboxes.Clear();
-                    
+
                     yield break;
                 }
             }
         }
-        
-        public bool ShouldSpawnHitbox(IPlayerServer serverPlayer, IPlayer fromPlayer) 
+
+        public bool ShouldSpawnHitbox(IPlayerServer serverPlayer, IPlayer fromPlayer)
         {
             return serverPlayer.Id != fromPlayer.Id && !serverPlayer.Dead
                                                     && (ServerGameMode != GameMode.TeamDeathMatch ||
@@ -1790,7 +1790,7 @@ namespace Multiplayer
                                                     && (ServerGameMode != GameMode.Infected ||
                                                         serverPlayer.IsInfected != fromPlayer.IsInfected);
         }
-        
+
         #endregion
 
         #region Returns of the server properties
@@ -1805,7 +1805,7 @@ namespace Multiplayer
 
             return count;
         }
-        
+
         public bool IsTeamMode()
         {
             return ServerGameMode == GameMode.TeamDeathMatch || ServerType == ServerType.Endless;
@@ -1852,7 +1852,7 @@ namespace Multiplayer
         {
             foreach (var map in Maps)
             {
-                if (map.Key == mode && map.Key!= GameMode.None && map.Key!=GameMode.SpecialGameMode)
+                if (map.Key == mode && map.Key != GameMode.None && map.Key != GameMode.SpecialGameMode)
                 {
                     int rand = Random.Range(0, map.Value.Count);
 
@@ -1874,7 +1874,7 @@ namespace Multiplayer
 
             return 0;
         }
-        
+
         public static Message GetDisconnectMessage(string reason)
         {
             Message message = Message.Create();
@@ -1900,15 +1900,15 @@ namespace Multiplayer
         {
             return _userHasDlc.GetValueOrDefault(steamID, EUserHasLicenseForAppResult.k_EUserHasLicenseResultNoAuth);
         }
-        
+
         #endregion
 
         #region Set server properties
-        
+
         public enum ServerPropertiesType : ushort
         {
             CheatsEnabled = 0,
-            
+
         }
 
         public void SetIsWorkshopMap(bool flag)
@@ -1931,7 +1931,7 @@ namespace Multiplayer
 
         void SendServerProperty(ServerPropertiesType type)
         {
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.ServerProperties);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.ServerProperties);
 
             message.Add((ushort)type);
 
@@ -1941,7 +1941,7 @@ namespace Multiplayer
                     message.Add(CheatsEnabled);
                     break;
             }
-            
+
             Server.SendToAll(message);
         }
 
@@ -1964,7 +1964,7 @@ namespace Multiplayer
                     }
                 }
             }
-            
+
             GameModeVote[(ushort)GameMode.Brawl] = 0;
             GameModeVote[(ushort)GameMode.TeamDeathMatch] = 0;
             GameModeVote[(ushort)GameMode.Infected] = 0;
@@ -1974,25 +1974,25 @@ namespace Multiplayer
             GameModeVote[(ushort)GameMode.GunGame] = 0;
             GameModeVote[(ushort)GameMode.CatchTheBanana] = 0;
             StopAllCoroutines();
-            SetGameState(GameState.None,false);
+            SetGameState(GameState.None, false);
             ServerRandomMap = false;
             ServerRandomGameMode = false;
             ServerGameMode = GameMode.None;
-            
+
             for (int i = 0; i < weaponInfo.Count; i++)
             {
                 AllowedWeapon[i] = true;
             }
-            
+
             foreach (var serverPlayer in ServerPlayer.list.Values)
             {
-                if(serverPlayer!=null)
+                if (serverPlayer != null)
                     serverPlayer.Destroy();
             }
             ServerPlayer.list.Clear();
         }
 
-        public void SetGameState(GameState state,bool send=true)
+        public void SetGameState(GameState state, bool send = true)
         {
             GameState = state;
 
@@ -2014,18 +2014,18 @@ namespace Multiplayer
 
                 foreach (var id in PlayerVoteList.Keys.ToList())
                 {
-                    PlayerVoteList[id] = new Tuple<short, string>(-1,String.Empty);
+                    PlayerVoteList[id] = new Tuple<short, string>(-1, String.Empty);
                 }
-                
-                
+
+
             }
 
             if (send)
             {
-                Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.SetGameState);
+                Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.SetGameState);
 
-                message.Add((ushort) state);
-            
+                message.Add((ushort)state);
+
                 Server.SendToAll(message);
             }
         }

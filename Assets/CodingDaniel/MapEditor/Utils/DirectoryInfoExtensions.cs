@@ -9,19 +9,19 @@ namespace CodingDaniel.MapEditor.Utils
             string basePath = Path.Combine(destinationDir, directory.Name);
             if (!Directory.Exists(basePath))
             {
-                Directory.CreateDirectory(basePath); 
-                
+                Directory.CreateDirectory(basePath);
+
             }
-            foreach (string dir in Directory.GetDirectories(directory.FullName, "*", SearchOption.AllDirectories)) 
+            foreach (string dir in Directory.GetDirectories(directory.FullName, "*", SearchOption.AllDirectories))
             {
-                string dirToCreate = dir.Replace(directory.FullName, Path.Combine(destinationDir,directory.Name)); 
-                Directory.CreateDirectory(dirToCreate); 
-            } 
-            
-            foreach (string newPath in Directory.GetFiles(directory.FullName, "*.*", SearchOption.AllDirectories)) 
-            { 
-                File.Copy(newPath, newPath.Replace(directory.FullName, Path.Combine(destinationDir,directory.Name)), true); 
-            } 
-        } 
+                string dirToCreate = dir.Replace(directory.FullName, Path.Combine(destinationDir, directory.Name));
+                Directory.CreateDirectory(dirToCreate);
+            }
+
+            foreach (string newPath in Directory.GetFiles(directory.FullName, "*.*", SearchOption.AllDirectories))
+            {
+                File.Copy(newPath, newPath.Replace(directory.FullName, Path.Combine(destinationDir, directory.Name)), true);
+            }
+        }
     }
 }

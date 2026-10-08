@@ -9,7 +9,7 @@ using UnityEngine;
 public class ClientFire : MonoBehaviour
 {
 
-    [MessageHandler((ushort) ServerToClientId.FireInit, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+    [MessageHandler((ushort)ServerToClientId.FireInit, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
     private static void FireInit(Message message)
     {
 
@@ -17,7 +17,7 @@ public class ClientFire : MonoBehaviour
 
         ClientFire fire = Instantiate(PrefabManager.Instance.GetPrefab("ClientFire"), pos, Quaternion.identity)
             .GetComponent<ClientFire>();
-        
+
     }
 
 

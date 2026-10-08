@@ -15,9 +15,9 @@ namespace CodingDaniel.MapEditor.UI.AddObject
     public class AddObjectMenu : MonoBehaviour
     {
         public static AddObjectMenu Instance { private set; get; }
-        
+
         [SerializeField] private GameObject window;
-        
+
         [SerializeField] private ScrollRect scroll;
         [SerializeField] private RectTransform content;
 
@@ -33,7 +33,7 @@ namespace CodingDaniel.MapEditor.UI.AddObject
         [SerializeField] private Canvas rootCanvas;
         [SerializeField] private RectTransform maskRect;
 
-        [SerializeField] private Transform meshItemsParent,decorationItemsParent,lightItemsParent,decalItemsParent,specialItemsParent;
+        [SerializeField] private Transform meshItemsParent, decorationItemsParent, lightItemsParent, decalItemsParent, specialItemsParent;
 
         [SerializeField] private List<MeshObjectItem> meshItems = new List<MeshObjectItem>();
         [SerializeField] private List<ObjectItem> decorationItems = new List<ObjectItem>();
@@ -53,50 +53,50 @@ namespace CodingDaniel.MapEditor.UI.AddObject
 
             _playerSpawnPointMaterial = Resources.Load<Material>("player_spawn_point");
 
-            _me=MEBase.Instance;
-            _selectionComponent=MESelectionComponent.Instance;
+            _me = MEBase.Instance;
+            _selectionComponent = MESelectionComponent.Instance;
             createBtn.interactable = false;
 
             foreach (var item in meshItems)
             {
                 ObjectItemUI ui = Instantiate(prefab, meshItemsParent);
-                
-                ui.Init(item.type, item.ObjectName, item.icon, 0,rootCanvas,maskRect,true, item);
+
+                ui.Init(item.type, item.ObjectName, item.icon, 0, rootCanvas, maskRect, true, item);
             }
-            
+
             foreach (var item in decorationItems)
             {
                 ObjectItemUI ui = Instantiate(prefab, decorationItemsParent);
-                
-                ui.Init(item.type, item.ObjectName, item.icon, 0,rootCanvas,maskRect,true, item);
+
+                ui.Init(item.type, item.ObjectName, item.icon, 0, rootCanvas, maskRect, true, item);
             }
-            
+
             foreach (var item in lightItems)
             {
                 ObjectItemUI ui = Instantiate(prefab, lightItemsParent);
-                
-                ui.Init(item.type, item.ObjectName, item.icon, 0,rootCanvas,maskRect,true, item);
+
+                ui.Init(item.type, item.ObjectName, item.icon, 0, rootCanvas, maskRect, true, item);
             }
-            
+
             foreach (var item in decalItems)
             {
                 ObjectItemUI ui = Instantiate(prefab, decalItemsParent);
-                
-                ui.Init(item.type, item.ObjectName, item.icon, 0,rootCanvas,maskRect,true, item);
+
+                ui.Init(item.type, item.ObjectName, item.icon, 0, rootCanvas, maskRect, true, item);
             }
-            
+
             foreach (var item in specialItems)
             {
                 ObjectItemUI ui = Instantiate(prefab, specialItemsParent);
-                
-                ui.Init(item.type, item.ObjectName, item.icon, 0,rootCanvas,maskRect,true, item);
+
+                ui.Init(item.type, item.ObjectName, item.icon, 0, rootCanvas, maskRect, true, item);
             }
 
             foreach (var t in staysTopObjects)
             {
                 t.SetAsLastSibling();
             }
-            
+
             scroll.onValueChanged.AddListener(OnScrollChanged);
             createBtn.onClick.AddListener(Create);
         }
@@ -107,8 +107,8 @@ namespace CodingDaniel.MapEditor.UI.AddObject
             createBtn.onClick.RemoveListener(Create);
         }
 
-        
-        
+
+
         public void MoveTo(int index)
         {
             content.anchoredPosition = new Vector2(0, offsets[index]);
@@ -125,18 +125,18 @@ namespace CodingDaniel.MapEditor.UI.AddObject
                     break;
                 }
             }
-            
+
             AddExternalObjectMenu.Instance.CloseEditBar();
         }
 
-        
+
         public void OpenWindow()
         {
             // _selectedItem = null;
             window.SetActive(true);
         }
 
-        private ObjectItem _selectedItem=null;
+        private ObjectItem _selectedItem = null;
 
         public ObjectItem SelectedItem
         {
@@ -147,7 +147,7 @@ namespace CodingDaniel.MapEditor.UI.AddObject
         {
             AddExternalObjectMenu.Instance.CloseEditBar();
             _selectedItem = item;
-            
+
             createBtn.interactable = true;
 
             AddExternalObjectMenu.Instance.SelectItem = null;
@@ -159,16 +159,16 @@ namespace CodingDaniel.MapEditor.UI.AddObject
             {
                 ExposeToEditor exposeToEditor;
                 IMESelectionComponent selectionComponent = _selectionComponent;
-                switch(_selectedItem.type)
+                switch (_selectedItem.type)
                 {
                     case ObjectType.Mesh:
-                        ProBuilderTool.Instance.CreateNewShapeAndRecord((int)((MeshObjectItem)_selectedItem).shapeType,_selectedItem);
+                        ProBuilderTool.Instance.CreateNewShapeAndRecord((int)((MeshObjectItem)_selectedItem).shapeType, _selectedItem);
                         break;
                     case ObjectType.Light:
                         exposeToEditor = CreateLightExposeToEditor(((LightObjectItem)(_selectedItem)).lightType);
-                        
+
                         exposeToEditor.transform.SetParent(_me.EditedObject.transform);
-                        
+
                         exposeToEditor.gameObject.AddComponent<MapSaveObject>().Init(_selectedItem);
 
                         _me.Undo.BeginRecord();
@@ -182,11 +182,11 @@ namespace CodingDaniel.MapEditor.UI.AddObject
                         break;
                     case ObjectType.PlayerSpawnPoint:
                         exposeToEditor = CreatePlayerSpawnPointExposeToEditor();
-                        
+
                         exposeToEditor.transform.SetParent(_me.EditedObject.transform);
-                        
+
                         exposeToEditor.gameObject.AddComponent<MapSaveObject>().Init(_selectedItem);
-            
+
 
                         _me.Undo.BeginRecord();
                         if (selectionComponent == null || selectionComponent.CanSelect)
@@ -199,11 +199,11 @@ namespace CodingDaniel.MapEditor.UI.AddObject
                         break;
                     case ObjectType.Decal:
                         exposeToEditor = CreateDecalExposeToEditor(((DecalObjectItem)_selectedItem).material);
-                        
+
                         exposeToEditor.transform.SetParent(_me.EditedObject.transform);
-                        
+
                         exposeToEditor.gameObject.AddComponent<MapSaveObject>().Init(_selectedItem);
-            
+
 
                         _me.Undo.BeginRecord();
                         if (selectionComponent == null || selectionComponent.CanSelect)
@@ -216,11 +216,11 @@ namespace CodingDaniel.MapEditor.UI.AddObject
                         break;
                     case ObjectType.Decoration:
                         Transform t = _selectedItem.prefab.transform;
-                        exposeToEditor = CreateDecorationExposeToEditor(_selectedItem.prefab,_me.EditedObject.transform,t.position,t.rotation,t.localScale ,
-                           (int)((DecorationObjectItem) _selectedItem).eDecorationType,true , true);
-                        
+                        exposeToEditor = CreateDecorationExposeToEditor(_selectedItem.prefab, _me.EditedObject.transform, t.position, t.rotation, t.localScale,
+                           (int)((DecorationObjectItem)_selectedItem).eDecorationType, true, true);
+
                         exposeToEditor.gameObject.AddComponent<MapSaveObject>().Init(_selectedItem);
-                        
+
                         _me.Undo.BeginRecord();
                         if (selectionComponent == null || selectionComponent.CanSelect)
                         {
@@ -232,7 +232,7 @@ namespace CodingDaniel.MapEditor.UI.AddObject
                         break;
                 }
             }
-            
+
             window.SetActive(false);
         }
 
@@ -246,7 +246,7 @@ namespace CodingDaniel.MapEditor.UI.AddObject
 
             return r;
         }
-        
+
         public static GameObject CreateLight(LightType lightType)
         {
             GameObject obj = new GameObject();
@@ -257,7 +257,7 @@ namespace CodingDaniel.MapEditor.UI.AddObject
             l.shadowStrength = 0.9f;
             l.color = Color.white;
 
-            
+
             return obj;
         }
 
@@ -268,17 +268,17 @@ namespace CodingDaniel.MapEditor.UI.AddObject
         public static ExposeToEditor CreatePlayerSpawnPointExposeToEditor()
         {
             ExposeToEditor r = CreatePlayerSpawnPoint().AddComponent<ExposeToEditor>();
-            
+
             r.transform.position = GetPosition();
-            
+
             return r;
         }
         public static GameObject CreatePlayerSpawnPoint()
         {
             GameObject obj = new GameObject();
 
-            obj.AddComponent<PlayerSpawnPoint>().Init(Instance.capsuleMesh,Instance._playerSpawnPointMaterial);
-            
+            obj.AddComponent<PlayerSpawnPoint>().Init(Instance.capsuleMesh, Instance._playerSpawnPointMaterial);
+
             return obj;
         }
 
@@ -310,17 +310,17 @@ namespace CodingDaniel.MapEditor.UI.AddObject
 
         #region Decoration
 
-        public static ExposeToEditor CreateDecorationExposeToEditor(GameObject prefab,Transform parent, Vector3 pos, Quaternion rot,Vector3 scale, int type, bool enableCollision,bool create=false,bool editor=true)
+        public static ExposeToEditor CreateDecorationExposeToEditor(GameObject prefab, Transform parent, Vector3 pos, Quaternion rot, Vector3 scale, int type, bool enableCollision, bool create = false, bool editor = true)
         {
-            if(create)
+            if (create)
                 pos = GetPosition();
-            var r = CreateDecoration(prefab,parent,pos,rot,scale,type,enableCollision,editor).AddComponent<ExposeToEditor>();
+            var r = CreateDecoration(prefab, parent, pos, rot, scale, type, enableCollision, editor).AddComponent<ExposeToEditor>();
             return r;
         }
 
-        public static GameObject CreateDecoration(GameObject prefab,Transform parent, Vector3 pos, Quaternion rot,Vector3 scale, int type, bool enableCollision,bool editor=false)
+        public static GameObject CreateDecoration(GameObject prefab, Transform parent, Vector3 pos, Quaternion rot, Vector3 scale, int type, bool enableCollision, bool editor = false)
         {
-            GameObject go = Instantiate(prefab,parent);
+            GameObject go = Instantiate(prefab, parent);
 
             Transform t = go.transform;
 
@@ -354,7 +354,7 @@ namespace CodingDaniel.MapEditor.UI.AddObject
                             col.gameObject.AddComponent<Water>();
                             col.gameObject.layer = LayerMask.NameToLayer("Water");
                             col.isTrigger = true;
-                            
+
                             if (col is BoxCollider waterCol)
                             {
                                 GameObject water = new GameObject();

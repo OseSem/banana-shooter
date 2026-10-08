@@ -13,7 +13,7 @@ namespace Multiplayer.Entity.Client.Enemy.Animation
         public override void Update()
         {
             base.Update();
-            
+
             Animator.SetFloat(X, InputInterpolate.x);
             Animator.SetFloat(Y, InputInterpolate.z);
         }

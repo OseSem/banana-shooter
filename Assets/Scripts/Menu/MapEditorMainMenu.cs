@@ -16,7 +16,7 @@ using UnityEngine.UI;
 
 namespace Menu
 {
-    public class MapEditorMainMenu : MonoBehaviour,IPointerClickHandler
+    public class MapEditorMainMenu : MonoBehaviour, IPointerClickHandler
     {
         public static MapEditorMainMenu Instance { private set; get; }
 
@@ -25,14 +25,14 @@ namespace Menu
             Instance = this;
 
             Vector2 delta = previewImg.rectTransform.sizeDelta;
-            previewTexture = new Texture2D((int)delta.x, (int)delta.y,TextureFormat.RGB24,false);
+            previewTexture = new Texture2D((int)delta.x, (int)delta.y, TextureFormat.RGB24, false);
         }
 
         [SerializeField] private Transform content;
         [SerializeField] private MapItemUI prefab;
 
         [SerializeField] private GameObject detail;
-        [SerializeField] private TextMeshProUGUI mapNameText,mapDescriptionText;
+        [SerializeField] private TextMeshProUGUI mapNameText, mapDescriptionText;
         [SerializeField] private LocalizeStringEvent createdDateText;
 
         [SerializeField] private RawImage previewImg;
@@ -46,7 +46,7 @@ namespace Menu
             foreach (var data in MapSaver.Instance.EditingMaps)
             {
                 MapItemUI ui = Instantiate(prefab, content);
-                
+
                 ui.Init(data);
             }
         }
@@ -55,7 +55,7 @@ namespace Menu
         private FileInfo _selectedMap;
         private GameObject _selectObj;
 
-        public void SelectMap(FileInfo data,MapMetadata md,GameObject obj,bool join, uint per)
+        public void SelectMap(FileInfo data, MapMetadata md, GameObject obj, bool join, uint per)
         {
             if (join)
             {
@@ -63,7 +63,7 @@ namespace Menu
                 return;
             }
 
-            if (data==null)
+            if (data == null)
             {
                 _selectedMap = null;
                 _selectObj = null;
@@ -72,21 +72,21 @@ namespace Menu
             }
             for (int i = 0; i < 5; i++)
             {
-                scores[i].SetActive(i <= (int)(per-1));
+                scores[i].SetActive(i <= (int)(per - 1));
             }
 
             _selectObj = obj;
             _selectedMap = data;
             detail.SetActive(true);
             enterBtn.SetActive(true);
-            
+
             mapNameText.SetText(md.Name);
             mapDescriptionText.SetText(string.IsNullOrEmpty(md.Description) ? "(empty)" : md.Description);
 
-            createdDateText.StringReference.Arguments = new List<object>() {data.CreationTime};
+            createdDateText.StringReference.Arguments = new List<object>() { data.CreationTime };
             createdDateText.RefreshString();
-            
-            LoadPreviewImg(data.Name.Substring(0,data.Name.Length-4));
+
+            LoadPreviewImg(data.Name.Substring(0, data.Name.Length - 4));
         }
 
         async void LoadPreviewImg(string n)
@@ -107,11 +107,11 @@ namespace Menu
             }
         }
 
-        
+
         public void EnterMap()
         {
             MapSaver.CurrentMapFile = _selectedMap;
-            
+
             MusicManager.Instance.ChangeMusic(MusicManager.MusicType.None);
             SceneManager.LoadSceneAsync("MapEditor", LoadSceneMode.Single);
             editBar.gameObject.SetActive(false);
@@ -120,11 +120,11 @@ namespace Menu
         }
 
         public Transform editBar;
-        
+
         public void RemoveMap()
         {
             if (_selectedMap == null || _selectObj == null) return;
-            string basePath = _selectedMap.FullName.Substring(0,_selectedMap.FullName.Length-4);
+            string basePath = _selectedMap.FullName.Substring(0, _selectedMap.FullName.Length - 4);
 
             string bsmPath = basePath + ".bsm";
 
@@ -139,7 +139,7 @@ namespace Menu
                     Debug.Log(e);
                     throw;
                 }
-                
+
                 Destroy(_selectObj);
 
                 if (MapSaver.Instance.EditingMaps.Contains(_selectedMap))
@@ -162,7 +162,7 @@ namespace Menu
                     throw;
                 }
             }
-            
+
             string mmdPath = basePath + ".metadata";
 
             if (File.Exists(mmdPath))
@@ -179,26 +179,26 @@ namespace Menu
             }
 
             string texturePath = basePath + "_texture";
-            
+
             if (Directory.Exists(texturePath))
             {
-                Directory.Delete(texturePath,true);
+                Directory.Delete(texturePath, true);
             }
-            
+
             string decalPath = basePath + "_decal_texture";
-            
+
             if (Directory.Exists(decalPath))
             {
-                Directory.Delete(decalPath,true);
+                Directory.Delete(decalPath, true);
             }
-            
+
             string audioPath = basePath + "_audio";
-            
+
             if (Directory.Exists(audioPath))
             {
-                Directory.Delete(audioPath,true);
+                Directory.Delete(audioPath, true);
             }
-            
+
             editBar.gameObject.SetActive(false);
             detail.SetActive(false);
             enterBtn.SetActive(false);

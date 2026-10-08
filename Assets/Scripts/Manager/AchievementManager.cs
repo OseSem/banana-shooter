@@ -11,7 +11,7 @@ namespace Manager
         public enum EAchievements
         {
             BANANA_GO_BRRRRRR = 0,
-            FIRST_KILL=1,
+            FIRST_KILL = 1,
             BECOME_DEV,
             I_AM_GOOT_AT_GRAPPLING,
             THIS_IS_A_BETRAY,
@@ -34,16 +34,16 @@ namespace Manager
             MMM_SODA,
             ZOMBIE_SLAYER
         }
-    
-    
+
+
         public enum EStats
         {
-            SNIPER_SHOT=0,
-            START_GAME_1000 ,
-            DEATHS ,
-            AL48_SHOT ,
-            LASER_SHOT ,
-            KNIFE_KILL ,
+            SNIPER_SHOT = 0,
+            START_GAME_1000,
+            DEATHS,
+            AL48_SHOT,
+            LASER_SHOT,
+            KNIFE_KILL,
             WINS,
             TARGET_SCORE,
             PARKOUR_TIME,
@@ -66,26 +66,26 @@ namespace Manager
         public uint appId;
         private void Awake()
         {
-            if(Instance==null)
+            if (Instance == null)
                 Instance = this;
             else if (Instance != this)
                 return;
 
-        
+
         }
 
         private void Start()
         {
             if (Instance != this)
                 return;
-        
+
             if (!SteamManager.Initialized) return;
             appId = SteamUtils.GetAppID().m_AppId;
             Debug.Log(RequestStats() ? "Init stats complete" : "Init stats fail");
 
-        
+
             achievementStored = Callback<UserAchievementStored_t>.Create(OnStatsStored);
-        
+
             SteamUserStats.GetAchievement("BECOME_DEV", out bool achieved);
             achievedDev = achieved;
         }
@@ -113,11 +113,11 @@ namespace Manager
                     SteamUserStats.SetStat(stats.ToString(), (int)score);
                     break;
                 case StatsType.Float:
-                    SteamUserStats.SetStat(stats.ToString(),score);
+                    SteamUserStats.SetStat(stats.ToString(), score);
                     break;
             }
             SteamUserStats.StoreStats();
-        
+
         }
 
         public int GetStat(EStats stats)
@@ -132,8 +132,8 @@ namespace Manager
             {
                 if (param.m_nCurProgress == param.m_nMaxProgress)
                 {
-                    if(NetworkManager.Instance.Client.IsConnected)
-                        NetworkManager.Instance.SendMsg($"{NetworkManager.Instance.PersonalName} achieve the {param.m_rgchAchievementName} achievement",1);
+                    if (NetworkManager.Instance.Client.IsConnected)
+                        NetworkManager.Instance.SendMsg($"{NetworkManager.Instance.PersonalName} achieve the {param.m_rgchAchievementName} achievement", 1);
                 }
             }
         }
@@ -153,7 +153,7 @@ namespace Manager
         {
             if (achievedDev) return;
 
-            if (Input.anyKeyDown&&
+            if (Input.anyKeyDown &&
                 !Input.GetKeyDown(KeyCode.C) &&
                 !Input.GetKeyDown(KeyCode.O) &&
                 !Input.GetKeyDown(KeyCode.D) &&
@@ -169,15 +169,15 @@ namespace Manager
             {
                 devLen = 0;
             }
-        
-            if (devLen==0 && Input.GetKeyDown(KeyCode.C))
+
+            if (devLen == 0 && Input.GetKeyDown(KeyCode.C))
             {
                 devLen = 1;
             }
 
             if (Input.GetKeyDown(KeyCode.O))
             {
-                if (devLen == 1 )
+                if (devLen == 1)
                 {
                     devLen = 2;
                 }
@@ -186,19 +186,19 @@ namespace Manager
                     devLen = 0;
                 }
             }
-        
 
-            if ( devLen == 2&&Input.GetKeyDown(KeyCode.D))
+
+            if (devLen == 2 && Input.GetKeyDown(KeyCode.D))
             {
                 devLen = 3;
             }
-        
-            if (devLen==3&&Input.GetKeyDown(KeyCode.I))
+
+            if (devLen == 3 && Input.GetKeyDown(KeyCode.I))
             {
                 devLen = 4;
             }
-        
-            if (devLen==4&& Input.GetKeyDown(KeyCode.N))
+
+            if (devLen == 4 && Input.GetKeyDown(KeyCode.N))
             {
                 devLen = 5;
             }
@@ -209,12 +209,12 @@ namespace Manager
                 else
                     devLen = 0;
             }
-        
-            if (devLen == 6&&Input.GetKeyDown(KeyCode.D))
+
+            if (devLen == 6 && Input.GetKeyDown(KeyCode.D))
             {
                 devLen = 7;
             }
-        
+
             if (Input.GetKeyDown(KeyCode.A))
             {
                 if (devLen == 7)
@@ -222,11 +222,11 @@ namespace Manager
                 else
                     devLen = 0;
             }
-            if (devLen == 8 &&Input.GetKeyDown(KeyCode.N))
+            if (devLen == 8 && Input.GetKeyDown(KeyCode.N))
             {
                 devLen = 9;
             }
-            if (devLen == 9&& Input.GetKeyDown(KeyCode.I))
+            if (devLen == 9 && Input.GetKeyDown(KeyCode.I))
             {
                 devLen = 10;
             }
@@ -237,7 +237,7 @@ namespace Manager
                 else
                     devLen = 0;
             }
-            if ( Input.GetKeyDown(KeyCode.L))
+            if (Input.GetKeyDown(KeyCode.L))
             {
                 if (devLen == 11)
                     devLen = 12;

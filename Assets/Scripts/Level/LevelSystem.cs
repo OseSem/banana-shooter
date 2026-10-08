@@ -9,8 +9,8 @@ namespace Level
     {
         public event EventHandler OnLevelChanged;
         public event EventHandler OnExpChanged;
-    
-        private int experience,level,expToNext;
+
+        private int experience, level, expToNext;
 
         public LevelSystem(int exp)
         {
@@ -25,20 +25,20 @@ namespace Level
             SetLevel();
             if (lastLevel < level)
             {
-                OnLevelChanged?.Invoke(this,EventArgs.Empty);
+                OnLevelChanged?.Invoke(this, EventArgs.Empty);
             }
 
-            OnExpChanged?.Invoke(this,EventArgs.Empty);
-            AchievementManager.Instance.SetStat(AchievementManager.EStats.EXPERIENCE,AchievementManager.StatsType.Int,GetExp());
+            OnExpChanged?.Invoke(this, EventArgs.Empty);
+            AchievementManager.Instance.SetStat(AchievementManager.EStats.EXPERIENCE, AchievementManager.StatsType.Int, GetExp());
         }
         public int GetMinExp()
         {
             float total = 0;
-            for (int i = 1; i < level+1; i++)
+            for (int i = 1; i < level + 1; i++)
             {
                 total += Mathf.Floor(i + 300 * Mathf.Pow(2, i / 7f));
             }
-            return level==0 ? 0: (int)total;
+            return level == 0 ? 0 : (int)total;
         }
 
         void SetLevel()
@@ -49,7 +49,7 @@ namespace Level
                 total += Mathf.Floor(i + 300 * Mathf.Pow(2, i / 7f));
                 if (total > experience)
                 {
-                    level= i-1;
+                    level = i - 1;
                     expToNext = (int)total;
                     return;
                 }

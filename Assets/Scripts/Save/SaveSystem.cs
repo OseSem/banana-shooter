@@ -19,16 +19,16 @@ namespace Save
     public static class SaveSystem
     {
         private static readonly string keyword = "asdgasf";
-    
+
         public static bool SaveData(string saveName, object data)
         {
             string path = GetPath(saveName);
             BinaryFormatter formatter = GetBinaryFormatter();
 
             using FileStream file = File.Create(path);
-        
-            formatter.Serialize(file,data);
-        
+
+            formatter.Serialize(file, data);
+
             return true;
         }
         static BinaryFormatter GetBinaryFormatter()
@@ -59,12 +59,12 @@ namespace Save
                 return null;
             }
         }
-    
+
         public static async Task<bool> SaveDataAsync(string saveName, object obj)
         {
             string path = GetPath(saveName);
 
-            bool flag=false;
+            bool flag = false;
 
             try
             {
@@ -79,7 +79,7 @@ namespace Save
 
             return flag;
         }
-    
+
         private static byte[] SerializeToBinary(object obj)
         {
             BinaryFormatter formatter = GetBinaryFormatter();
@@ -87,7 +87,7 @@ namespace Save
             formatter.Serialize(stream, obj);
             return stream.ToArray();
         }
-    
+
         public static IEnumerator LoadBinaryDataAsync(string saveName)
         {
             string path = GetPath(saveName);
@@ -128,48 +128,54 @@ namespace Save
 
             yield return data;
         }
-    
+
         [Obsolete]
-        public static void SaveToJSON<T> (List<T> toSave, string filename) {
+        public static void SaveToJSON<T>(List<T> toSave, string filename)
+        {
             // Debug.Log (GetPath (filename));
-            string content = JsonHelper.ToJson<T> (toSave.ToArray ());
-            WriteFile (GetPath (filename), content);
+            string content = JsonHelper.ToJson<T>(toSave.ToArray());
+            WriteFile(GetPath(filename), content);
         }
         [Obsolete]
-        public static void SaveToJSON<T> (T toSave, string filename)
+        public static void SaveToJSON<T>(T toSave, string filename)
         {
             string content = JsonUtility.ToJson(toSave);
-            WriteFile (GetPath (filename), content);
+            WriteFile(GetPath(filename), content);
         }
 
         [Obsolete]
-        public static void SaveToJSONConvert<T> (T toSave, string filename) {
-            string content = JsonConvert.SerializeObject(toSave,Formatting.None,new JsonSerializerSettings()
+        public static void SaveToJSONConvert<T>(T toSave, string filename)
+        {
+            string content = JsonConvert.SerializeObject(toSave, Formatting.None, new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
-            
+
             });
-            WriteFile (GetPath (filename), content);
+            WriteFile(GetPath(filename), content);
         }
 
         [Obsolete]
-        public static List<T> ReadListFromJSON<T> (string filename) {
-            string content = ReadFile (GetPath (filename));
+        public static List<T> ReadListFromJSON<T>(string filename)
+        {
+            string content = ReadFile(GetPath(filename));
 
-            if (string.IsNullOrEmpty (content) || content == "{}"|| (!content.Contains("{") || !content.Contains("}"))) {
-                return new List<T> ();
+            if (string.IsNullOrEmpty(content) || content == "{}" || (!content.Contains("{") || !content.Contains("}")))
+            {
+                return new List<T>();
             }
 
-            List<T> res = JsonHelper.FromJson<T> (content).ToList ();
+            List<T> res = JsonHelper.FromJson<T>(content).ToList();
 
             return res;
 
         }
-        public static T ReadFromJSON<T> (string filename) {
-            string content = ReadFile (GetPath (filename));
+        public static T ReadFromJSON<T>(string filename)
+        {
+            string content = ReadFile(GetPath(filename));
 
-            if (string.IsNullOrEmpty (content) || content == "{}" || (!content.Contains("{") || !content.Contains("}"))) {
-                return default (T);
+            if (string.IsNullOrEmpty(content) || content == "{}" || (!content.Contains("{") || !content.Contains("}")))
+            {
+                return default(T);
             }
 
             T res = JsonUtility.FromJson<T>(content);
@@ -177,36 +183,39 @@ namespace Save
             return res;
 
         }
-        public static T ReadFromJSONConvert<T> (string filename) {
-            string content = ReadFile (GetPath (filename));
+        public static T ReadFromJSONConvert<T>(string filename)
+        {
+            string content = ReadFile(GetPath(filename));
 
-            if (string.IsNullOrEmpty (content) || content == "{}" || (!content.Contains("{") || !content.Contains("}"))) {
-                return default (T);
+            if (string.IsNullOrEmpty(content) || content == "{}" || (!content.Contains("{") || !content.Contains("}")))
+            {
+                return default(T);
             }
 
-            T res = JsonConvert.DeserializeObject<T> (content);
+            T res = JsonConvert.DeserializeObject<T>(content);
 
             return res;
 
         }
-        public static string GetPath (string filename) {
+        public static string GetPath(string filename)
+        {
             return Application.persistentDataPath + "/" + filename;
         }
 
-        public static void WriteFile (string path, string content)
+        public static void WriteFile(string path, string content)
         {
             FileStream fileStream = File.Create(path);
 
-            using StreamWriter writer = new StreamWriter (fileStream);
-            writer.Write (EncryptDecrypt(content));
+            using StreamWriter writer = new StreamWriter(fileStream);
+            writer.Write(EncryptDecrypt(content));
         }
-        
-        public static void WriteFileUnEncrypt (string path, string content)
+
+        public static void WriteFileUnEncrypt(string path, string content)
         {
             FileStream fileStream = File.Create(path);
 
-            using StreamWriter writer = new StreamWriter (fileStream);
-            writer.Write (content);
+            using StreamWriter writer = new StreamWriter(fileStream);
+            writer.Write(content);
         }
 
         public static Task<float> WriteToFileAsync(string path, string content)
@@ -219,7 +228,7 @@ namespace Save
             string temporaryPath = path + ".tmp";
             try
             {
-                using (FileStream writer = new FileStream(temporaryPath,FileMode.Create,FileAccess.Write))
+                using (FileStream writer = new FileStream(temporaryPath, FileMode.Create, FileAccess.Write))
                 {
                     await writer.WriteAsync(bytes, 0, bytes.Length);
                 }
@@ -238,7 +247,7 @@ namespace Save
             stopwatch.Stop();
             return stopwatch.ElapsedMilliseconds / 1000f;
         }
-        public static Task<float> WriteToFileAsyncThread(string path,string content)
+        public static Task<float> WriteToFileAsyncThread(string path, string content)
         {
             return WriteToFileAsync(path, content);
         }
@@ -246,7 +255,7 @@ namespace Save
         {
             return WriteToFileAsync(path, bytes);
         }
-        public static async void WriteToFileAsyncThread(string path, byte[] bytes,Action action)
+        public static async void WriteToFileAsyncThread(string path, byte[] bytes, Action action)
         {
             try
             {
@@ -271,7 +280,7 @@ namespace Save
             }
             return buffer;
         }
-    
+
         public static byte[] ReadByteFromFile(string path)
         {
             using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
@@ -287,27 +296,33 @@ namespace Save
                 return buffer;
             }
         }
-        public static string ReadFile (string path) {
-            if (File.Exists (path)) {
-                using (StreamReader reader = new StreamReader (path)) {
-                    string content = reader.ReadToEnd ();
-                
+        public static string ReadFile(string path)
+        {
+            if (File.Exists(path))
+            {
+                using (StreamReader reader = new StreamReader(path))
+                {
+                    string content = reader.ReadToEnd();
+
                     return EncryptDecrypt(content);
                 }
             }
             return "";
         }
-        public static string ReadFileNormally (string path) {
-            if (File.Exists (path)) {
-                using (StreamReader reader = new StreamReader (path)) {
-                    string content = reader.ReadToEnd ();
-                
+        public static string ReadFileNormally(string path)
+        {
+            if (File.Exists(path))
+            {
+                using (StreamReader reader = new StreamReader(path))
+                {
+                    string content = reader.ReadToEnd();
+
                     return content;
                 }
             }
             return "";
         }
-    
+
         public static IEnumerator ReadFileAsyncThread(string path)
         {
             //Plain File I/O instead of UnityWebRequest. UnityWebRequest.Get() wants a URI, not a
@@ -329,7 +344,7 @@ namespace Save
             yield return EncryptDecrypt(readTask.Result);
         }
 
-        public static IEnumerator ReadFileAsyncTask(string path,TaskCompletionSource<bool> tcs)
+        public static IEnumerator ReadFileAsyncTask(string path, TaskCompletionSource<bool> tcs)
         {
             Task<string> readTask = Task.Run(() => File.ReadAllText(path));
 
@@ -347,15 +362,15 @@ namespace Save
 
             yield return EncryptDecrypt(readTask.Result);
         }
-    
-    
+
+
         static string EncryptDecrypt(string data)
         {
             StringBuilder result = new StringBuilder("");
 
             for (int i = 0; i < data.Length; i++)
             {
-                result.Append((char) (data[i] ^ keyword[i % keyword.Length]));
+                result.Append((char)(data[i] ^ keyword[i % keyword.Length]));
             }
 
             return result.ToString();
@@ -394,26 +409,31 @@ namespace Save
         }
     }
 
-    public static class JsonHelper {
-        public static T[] FromJson<T> (string json) {
-            Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>> (json);
+    public static class JsonHelper
+    {
+        public static T[] FromJson<T>(string json)
+        {
+            Wrapper<T> wrapper = JsonUtility.FromJson<Wrapper<T>>(json);
             return wrapper.Items;
         }
 
-        public static string ToJson<T> (T[] array) {
-            Wrapper<T> wrapper = new Wrapper<T> ();
+        public static string ToJson<T>(T[] array)
+        {
+            Wrapper<T> wrapper = new Wrapper<T>();
             wrapper.Items = array;
-            return JsonUtility.ToJson (wrapper);
+            return JsonUtility.ToJson(wrapper);
         }
 
-        public static string ToJson<T> (T[] array, bool prettyPrint) {
-            Wrapper<T> wrapper = new Wrapper<T> ();
+        public static string ToJson<T>(T[] array, bool prettyPrint)
+        {
+            Wrapper<T> wrapper = new Wrapper<T>();
             wrapper.Items = array;
-            return JsonUtility.ToJson (wrapper, prettyPrint);
+            return JsonUtility.ToJson(wrapper, prettyPrint);
         }
 
         [Serializable]
-        private class Wrapper<T> {
+        private class Wrapper<T>
+        {
             public T[] Items;
         }
     }

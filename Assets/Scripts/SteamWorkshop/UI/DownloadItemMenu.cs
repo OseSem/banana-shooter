@@ -24,11 +24,11 @@ namespace SteamWorkshop.UI
             Instance = this;
 
             _cancel = backBtn.GetComponent<Button>();
-            
+
             SteamWorkshopManager.OnItemDownloaded += OnItemDownloaded;
             SteamWorkshopManager.OnItemStartDownloading += OnItemStartDownloading;
         }
-        
+
         private void OnDestroy()
         {
             SteamWorkshopManager.OnItemDownloaded -= OnItemDownloaded;
@@ -45,7 +45,7 @@ namespace SteamWorkshop.UI
         [SerializeField] private Slider downloadingSlider;
         [SerializeField] private TextMeshProUGUI downloadProgressText;
 
-        private ulong _totalOfDownloadingMapBytes = 0,_downloadBytes=0;
+        private ulong _totalOfDownloadingMapBytes = 0, _downloadBytes = 0;
 
         private HashSet<PublishedFileId_t> _downloadingMaps = new HashSet<PublishedFileId_t>();
 
@@ -94,7 +94,7 @@ namespace SteamWorkshop.UI
             downloadingPanel.SetActive(downloading);
         }
 
-        
+
         public void Cancel()
         {
             AudioManager.Instance.PlayButton();
@@ -106,12 +106,12 @@ namespace SteamWorkshop.UI
             UIManager.Instance.disConnectBtn.onClick.Invoke();
         }
 
-        
+
         public void Connect()
         {
             panel.SetActive(false);
             AudioManager.Instance.PlayButton();
-            
+
             // NetworkServerManager.EnabledWorkshopMaps.Clear();
 
             foreach (var item in items)
@@ -119,15 +119,15 @@ namespace SteamWorkshop.UI
                 if (SteamUGC.GetItemInstallInfo(item.Key, out _, out var path, 1000, out _))
                 {
                     // DateTime date = DateTimeOffset.FromUnixTimeSeconds(timeStamp).LocalDateTime;
-            
-                    MapSaver.Instance.LoadWorkshopMap(path,item.Key);
+
+                    MapSaver.Instance.LoadWorkshopMap(path, item.Key);
                 }
             }
 
             NetworkManager.Instance.TryToAuthorize();
         }
 
-        
+
         public void Download()
         {
             AudioManager.Instance.PlayButton();
@@ -136,10 +136,10 @@ namespace SteamWorkshop.UI
             _totalOfDownloadingMapBytes = 0;
             progress = 0;
             _downloadingMaps.Clear();
-            
+
             foreach (var item in items)
             {
-                if ((item.Value.itemState & EItemState.k_EItemStateInstalled) == EItemState.k_EItemStateNone || 
+                if ((item.Value.itemState & EItemState.k_EItemStateInstalled) == EItemState.k_EItemStateNone ||
                     (item.Value.itemState & EItemState.k_EItemStateNeedsUpdate) == EItemState.k_EItemStateNeedsUpdate)
                 {
                     SteamWorkshopManager.Instance.DownloadItemTemp(item.Key);
@@ -147,7 +147,7 @@ namespace SteamWorkshop.UI
             }
         }
 
-        public void AddBytes(PublishedFileId_t id,ulong down, ulong total)
+        public void AddBytes(PublishedFileId_t id, ulong down, ulong total)
         {
             if (_downloadingMaps.Contains(id))
             {
@@ -165,9 +165,9 @@ namespace SteamWorkshop.UI
 
             if (_totalOfDownloadingMapBytes == 0)
                 progress = 0;
-            else progress = _downloadBytes / (float) _totalOfDownloadingMapBytes;
-            
-            downloadProgressText.SetText((progress*100f).ToString("F0")+"%");
+            else progress = _downloadBytes / (float)_totalOfDownloadingMapBytes;
+
+            downloadProgressText.SetText((progress * 100f).ToString("F0") + "%");
         }
 
         private void Update()
@@ -183,13 +183,13 @@ namespace SteamWorkshop.UI
                 ResetPanel();
             }
         }
-        
+
         private void OnItemStartDownloading(PublishedFileId_t fileId)
         {
             if (items.TryGetValue(fileId, out var item))
             {
                 item.InitState(EItemState.k_EItemStateDownloading);
-                
+
                 item.StartGetDownloadProgress();
                 ResetPanel();
             }
@@ -212,7 +212,7 @@ namespace SteamWorkshop.UI
                     downloading = (itemUI.itemState & EItemState.k_EItemStateDownloading) == EItemState.k_EItemStateDownloading;
                 }
             }
-            
+
             backBtn.SetActive(canJoin || !downloading);
             joinBtn.SetActive(canJoin);
             downloadBtn.SetActive(!canJoin && !downloading);

@@ -23,7 +23,7 @@ namespace SteamWorkshop.UI
 
         public PublishedFileId_t fileId;
 
-        public void Init(string mapName, string url,PublishedFileId_t fileIdt,CustomMapMenu obj)
+        public void Init(string mapName, string url, PublishedFileId_t fileIdt, CustomMapMenu obj)
         {
             fileId = fileIdt;
             try
@@ -34,25 +34,25 @@ namespace SteamWorkshop.UI
             {
                 text.SetText($"Failed to load: {e.Message}");
             }
-            
+
             toggle.onValueChanged.AddListener(OnToggle);
 
             bool flag = NetworkServerManager.EnabledWorkshopMaps.Contains(fileIdt);
             toggle.SetIsOnWithoutNotify(flag);
-            
+
             checkMark.SetActive(!flag);
 
             bg.color = flag ? Color.white : Color.gray;
-            
+
             bg.gameObject.SetActive(false);
-            
+
             if (bg.texture != null && bg.texture != PrefabManager.Instance.errorTexture)
             {
                 Destroy(bg.texture);
             }
 
             bg.texture = null;
-            
+
             loading.SetActive(true);
             obj.StartCoroutine(LoadTextureToItem(url));
         }
@@ -60,11 +60,11 @@ namespace SteamWorkshop.UI
         void SetTexture(Texture2D texture2D)
         {
             if (texture2D == null) return;
-            
+
             bg.texture = texture2D;
-            
+
             bg.gameObject.SetActive(true);
-            
+
             loading.SetActive(false);
         }
 
@@ -84,7 +84,7 @@ namespace SteamWorkshop.UI
                 SetTexture(texture);
             }
         }
-        
+
         [SerializeField] private GameObject loading;
 
         void OnToggle(bool flag)
@@ -92,7 +92,7 @@ namespace SteamWorkshop.UI
             checkMark.SetActive(!flag);
 
             bg.color = flag ? Color.white : Color.gray;
-            
+
             if (fileId == PublishedFileId_t.Invalid) return;
 
             bool contain = NetworkServerManager.EnabledWorkshopMaps.Contains(fileId);

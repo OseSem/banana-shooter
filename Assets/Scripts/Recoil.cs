@@ -30,11 +30,11 @@ public class Recoil : MonoBehaviour
 
     public void CalculateRecoil()
     {
-        targetRotation = Vector3.Lerp(targetRotation,Vector3.zero, returnSpeed*Time.fixedDeltaTime);
-        currentRotation = Vector3.Slerp(currentRotation,targetRotation,Time.fixedDeltaTime*snappiness);
+        targetRotation = Vector3.Lerp(targetRotation, Vector3.zero, returnSpeed * Time.fixedDeltaTime);
+        currentRotation = Vector3.Slerp(currentRotation, targetRotation, Time.fixedDeltaTime * snappiness);
     }
     public void RecoilFir(float x, float y, float z)
     {
-        targetRotation += recoilFactor*new Vector3(x, Random.Range(-y, y), Random.Range(-z, z));
+        targetRotation += recoilFactor * new Vector3(x, Random.Range(-y, y), Random.Range(-z, z));
     }
 }

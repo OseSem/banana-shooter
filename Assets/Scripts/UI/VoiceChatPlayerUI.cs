@@ -9,9 +9,9 @@ namespace UI
     public class VoiceChatPlayerUI : MonoBehaviour
     {
         [SerializeField] private CanvasGroup canvasGroup;
-        
+
         [SerializeField] private TextMeshProUGUI nameText;
-        
+
         public AudioSource VoiceSource { get; private set; }
 
         private float _desiredAlpha = 0f;
@@ -23,11 +23,11 @@ namespace UI
             VoiceSource = gameObject.AddComponent<AudioSource>();
 
             VoiceSource.outputAudioMixerGroup = MusicManager.Instance.master;
-            
+
             nameText.SetText(clientData.Name);
 
             Peer = new SteamVoiceChatPeer(VoiceSource);
-            
+
             gameObject.SetActive(false);
         }
 
@@ -35,7 +35,7 @@ namespace UI
         {
             canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, _desiredAlpha, Time.deltaTime * 15f);
 
-            if (Mathf.Abs(canvasGroup.alpha-0.001f) <= 0.1f)
+            if (Mathf.Abs(canvasGroup.alpha - 0.001f) <= 0.1f)
             {
                 gameObject.SetActive(false);
             }
@@ -47,7 +47,7 @@ namespace UI
 
             CancelInvoke(nameof(StopSpeak));
             Invoke(nameof(StopSpeak), 1f);
-            
+
             gameObject.SetActive(true);
         }
 

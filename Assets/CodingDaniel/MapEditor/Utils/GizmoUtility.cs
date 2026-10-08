@@ -24,9 +24,9 @@ namespace CodingDaniel.MapEditor.Utils
         public static float HandleScale
         {
             get { return _handleScale; }
-            set 
+            set
             {
-                if(_handleScale != value)
+                if (_handleScale != value)
                 {
                     _handleScale = value;
 
@@ -38,7 +38,7 @@ namespace CodingDaniel.MapEditor.Utils
                     ConeHandles = CreateConeHandles(HandleScale * 3);
                     Selection = CreateHandlesMesh(HandleScale * 3, new[] { Vector3.zero }, new[] { Vector3.back });
                 }
-                
+
             }
         }
 
@@ -46,13 +46,13 @@ namespace CodingDaniel.MapEditor.Utils
         public static float LineScale
         {
             get { return _lineScale; }
-            set 
+            set
             {
-                if(_lineScale != value)
+                if (_lineScale != value)
                 {
                     _lineScale = value;
                     LinesMaterial.SetFloat("_Scale", LineScale);
-                }   
+                }
             }
         }
 
@@ -244,7 +244,7 @@ namespace CodingDaniel.MapEditor.Utils
             Matrix4x4 transform = Matrix4x4.TRS(position, rotation, Vector3.Scale(scale, bounds.extents));
             commandBuffer.DrawMesh(WireCube, transform, LinesMaterial, 0, 0, properties);
         }
-        
+
         public static void DrawWireSphere(CommandBuffer commandBuffer, Camera camera, Vector3 position, Quaternion rotation, Vector3 scale, MaterialPropertyBlock properties)
         {
             Matrix4x4 xTranform = Matrix4x4.TRS(Vector3.zero, rotation * Quaternion.AngleAxis(-90, Vector3.up), Vector3.one);

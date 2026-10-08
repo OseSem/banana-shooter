@@ -10,12 +10,12 @@ namespace Multiplayer.Entity.Client
     {
         [SerializeField] private PlayerState playerState;
 
-        private PlayerMovement  _playerMovement;
+        private PlayerMovement _playerMovement;
         private DemoPlayer _demoPlayer;
 
         private void Awake()
         {
-            _playerMovement  = GetComponentInChildren<PlayerMovement>();
+            _playerMovement = GetComponentInChildren<PlayerMovement>();
             _demoPlayer = GetComponent<DemoPlayer>();
             playerState.SetValues(true, NetworkManager.Instance.steamId.m_SteamID, SteamFriends.GetPersonaName(), Team.Rebel, false);
         }

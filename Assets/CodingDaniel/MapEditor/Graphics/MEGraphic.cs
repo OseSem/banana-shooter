@@ -16,7 +16,7 @@ namespace CodingDaniel.MapEditor.Graphics
         void DestroySharedMeshesCache(IMeshesCache cache);
     }
     [DefaultExecutionOrder(-60)]
-    public class MEGraphic : MonoBehaviour , IMEGraphic
+    public class MEGraphic : MonoBehaviour, IMEGraphic
     {
 
         private Dictionary<Camera, Dictionary<CameraEvent, MECamera>> _cameras = new Dictionary<Camera, Dictionary<CameraEvent, MECamera>>();
@@ -32,12 +32,12 @@ namespace CodingDaniel.MapEditor.Graphics
                 MEECameras = cameras;
             }
         }
-        
+
         private readonly Dictionary<IMeshesCache, Data> _meshesCache = new Dictionary<IMeshesCache, Data>();
         private void Awake()
         {
 
-            
+
             RegisterCamera(Camera.main);
         }
 
@@ -49,7 +49,7 @@ namespace CodingDaniel.MapEditor.Graphics
                 Data data = kvp.Value;
                 CreateMECamera(camera.gameObject, data.Event, cache, data.MEECameras);
             }
-            
+
             if (!_cameras.ContainsKey(camera))
             {
                 _cameras.Add(camera, new Dictionary<CameraEvent, MECamera>());
@@ -63,12 +63,12 @@ namespace CodingDaniel.MapEditor.Graphics
                 Data data = kvp.Value;
                 DestroyRTECameras(camera, data);
             }
-            
-            
+
+
             Dictionary<CameraEvent, MECamera> rteCameras;
-            if(_cameras.TryGetValue(camera, out rteCameras))
+            if (_cameras.TryGetValue(camera, out rteCameras))
             {
-                foreach(IMECamera meCamera in rteCameras.Values)
+                foreach (IMECamera meCamera in rteCameras.Values)
                 {
                     meCamera.Destroy();
                 }
@@ -85,9 +85,9 @@ namespace CodingDaniel.MapEditor.Graphics
             }
 
             MECamera rteCamera;
-            if(!rteCameras.TryGetValue(cameraEvent, out rteCamera))
+            if (!rteCameras.TryGetValue(cameraEvent, out rteCamera))
             {
-                rteCamera = _CreateCamera(camera, cameraEvent,  true);
+                rteCamera = _CreateCamera(camera, cameraEvent, true);
                 rteCameras.Add(cameraEvent, rteCamera);
             }
 
@@ -98,7 +98,7 @@ namespace CodingDaniel.MapEditor.Graphics
         {
             return _CreateCamera(camera, cameraEvent, createRenderersCache);
         }
-        
+
         private MECamera _CreateCamera(Camera camera, CameraEvent cameraEvent, bool createRenderersCache)
         {
             bool wasActive = camera.gameObject.activeSelf;
@@ -114,7 +114,7 @@ namespace CodingDaniel.MapEditor.Graphics
             camera.gameObject.SetActive(wasActive);
             return rteCamera;
         }
-        
+
         public IMeshesCache CreateSharedMeshesCache(CameraEvent cameraEvent)
         {
             MeshesCache cache = gameObject.AddComponent<MeshesCache>();
@@ -129,7 +129,7 @@ namespace CodingDaniel.MapEditor.Graphics
             _meshesCache.Add(cache, new Data(cache, cameraEvent, rteCameras));
             return cache;
         }
-        
+
         private static void CreateMECamera(GameObject camera, CameraEvent cameraEvent, IMeshesCache cache, List<MECamera> rteCameras)
         {
             bool wasActive = camera.gameObject.activeSelf;
@@ -142,7 +142,7 @@ namespace CodingDaniel.MapEditor.Graphics
 
             camera.SetActive(wasActive);
         }
-        
+
         public void DestroySharedMeshesCache(IMeshesCache cache)
         {
             Data tuple;
@@ -156,7 +156,7 @@ namespace CodingDaniel.MapEditor.Graphics
                 _meshesCache.Remove(cache);
             }
         }
-        
+
         private static void DestroyRTECameras(Camera camera, Data data)
         {
             List<MECamera> rteCameras = data.MEECameras;

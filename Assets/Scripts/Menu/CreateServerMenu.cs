@@ -13,15 +13,15 @@ namespace Menu
 {
     public class CreateServerMenu : SingletonObject<CreateServerMenu>
     {
-        
+
         [SerializeField] private TextMeshProUGUI maxPlayerText;
         public string serverName;
-        public int maxPlayer=10;
+        public int maxPlayer = 10;
         public ELobbyType lobbyType;
 
         private int currentLobbyTypeIndex = 0;
         private int _currentServerTypeIndex = 0;
-        
+
         private Coroutine createLobbyAsync;
         private void Awake()
         {
@@ -30,19 +30,19 @@ namespace Menu
             randomMap.onValueChanged.AddListener(SetRandomMap);
             randomGameMode.onValueChanged.AddListener(SetRandomGameMode);
         }
-        
+
         public void SetServername(string name)
         {
             serverName = name;
         }
-        
+
         public void SetMaxPlayer(float c)
         {
             maxPlayer = (int)c;
             maxPlayerText.SetText(maxPlayer.ToString());
         }
-        
-        
+
+
         public void NextLobbyType(int i)
         {
             currentLobbyTypeIndex = i;
@@ -62,19 +62,19 @@ namespace Menu
             }
             lobbyType = type;
         }
-        
+
         public void NextServerType(int i)
         {
             _currentServerTypeIndex = i;
             // if (_currentServerTypeIndex > 1) _currentServerTypeIndex = 0;
             // else if (_currentServerTypeIndex < 0) _currentServerTypeIndex = 1;
-            ServerType t = (ServerType) (1+_currentServerTypeIndex);
+            ServerType t = (ServerType)(1 + _currentServerTypeIndex);
 
             NetworkServerManager.SetServerType(t);
-        
+
             // string text = $"sm_{t.ToString().ToLower()}";
         }
-        
+
         public void CreateLobby(bool shootingRange)
         {
             GameMode g = GameMode.Brawl;
@@ -86,7 +86,7 @@ namespace Menu
             }
 
             UIManager.Instance.StartConnecting();
-            
+
             foreach (var gameObject in UIManager.Instance.withoutLoading)
             {
                 gameObject.SetActive(false);
@@ -94,7 +94,7 @@ namespace Menu
             UIManager.Instance.SetButton(LobbyMenu.Instance.button);
             NetworkServerManager.ServerGameMode = shootingRange ? GameMode.SpecialGameMode : g;
             NetworkManager.Instance.GameModeChanged?.Invoke(NetworkServerManager.ServerGameMode);
-            if(createLobbyAsync!=null)
+            if (createLobbyAsync != null)
                 StopCoroutine(createLobbyAsync);
             createLobbyAsync = StartCoroutine(CreateLobbyAsync());
         }
@@ -102,7 +102,7 @@ namespace Menu
         {
             while (NetworkManager.Instance.connecting)
             {
-            
+
                 yield return null;
             }
             LobbyManager.Instance.CreateLobby();

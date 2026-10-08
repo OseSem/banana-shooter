@@ -11,18 +11,18 @@ namespace CodingDaniel.MapEditor.Graphics
     public class MapBoundVisual : MonoBehaviour
     {
         public static MapBoundVisual Instance { private set; get; }
-        
+
         private MaterialPropertyBlock _lineProperties;
         protected MaterialPropertyBlock LineProperties
         {
             get { return _lineProperties; }
         }
-        
+
         protected Camera SceneCamera
         {
             get { return MEBase.Instance.Camera; }
         }
-        
+
         private Vector3 _prevPosition;
         private Quaternion _prevRotation;
         private Vector3 _prevScale;
@@ -37,7 +37,7 @@ namespace CodingDaniel.MapEditor.Graphics
             get { return _refreshOnCameraChanged; }
             set { _refreshOnCameraChanged = value; }
         }
-        
+
         private IMECamera _rteCamera;
         public IMECamera MECamera
         {
@@ -53,8 +53,8 @@ namespace CodingDaniel.MapEditor.Graphics
         {
             get { return false; }
         }
-        
-        
+
+
         private Vector3[] _handlesNormals;
         private Vector3[] _handlesPositions;
         protected virtual Vector3[] HandlesPositions
@@ -66,7 +66,7 @@ namespace CodingDaniel.MapEditor.Graphics
         {
             get { return _handlesNormals; }
         }
-        
+
         private IME me;
         void Awake()
         {
@@ -75,7 +75,7 @@ namespace CodingDaniel.MapEditor.Graphics
             _handlesNormals = GizmoUtility.GetHandlesNormals();
 
             _lineProperties = new MaterialPropertyBlock();
-            
+
             me = MEBase.Instance;
 
         }
@@ -88,26 +88,26 @@ namespace CodingDaniel.MapEditor.Graphics
                 _rteCamera.RefreshCommandBuffer();
             }
         }
-        
+
         void Start()
         {
 
             if (_rteCamera == null && SceneCamera != null)
             {
                 IMEGraphic graphics = MEBase.Instance.Graphics;
-                if(graphics != null)
+                if (graphics != null)
                 {
                     _rteCamera = graphics.GetOrCreateCamera(SceneCamera, CameraEvent);
                 }
-                                
-                if(_rteCamera == null)
+
+                if (_rteCamera == null)
                 {
                     _rteCamera = SceneCamera.gameObject.AddComponent<MECamera>();
                     _rteCamera.Event = CameraEvent;
                 }
             }
 
-            if(_rteCamera != null)
+            if (_rteCamera != null)
             {
                 _prevPosition = transform.position;
                 _prevRotation = transform.rotation;
@@ -121,7 +121,7 @@ namespace CodingDaniel.MapEditor.Graphics
                 // so a disabled MapBoundVisual kept drawing. See BaseHandle for the same fix.
                 _rteCamera.RefreshCommandBuffer();
             }
-            
+
             enabled = false;
         }
 
@@ -140,7 +140,7 @@ namespace CodingDaniel.MapEditor.Graphics
             // me.Undo.UndoCompleted += OnUndo;
             // me.Undo.RedoCompleted += OnUndo;
         }
-        
+
         void OnDisable()
         {
             if (_rteCamera != null)
@@ -168,7 +168,7 @@ namespace CodingDaniel.MapEditor.Graphics
                     _prevScale = transform.localScale;
 
                     _rteCamera.RefreshCommandBuffer();
-                }  
+                }
             }
         }
 
@@ -193,10 +193,10 @@ namespace CodingDaniel.MapEditor.Graphics
         void OnCommandBufferRefresh(IMECamera camera)
         {
             LineProperties.SetColor("_Color", MEBase.Instance.Appearance.Colors.BoundsColor);
-            
+
             Bounds bounds = Bounds;
             Vector3 scale = bounds.extents;
-            
+
             GizmoUtility.DrawWireCube(camera.CommandBuffer, bounds, bounds.center, Quaternion.identity, scale, LineProperties);
 
         }

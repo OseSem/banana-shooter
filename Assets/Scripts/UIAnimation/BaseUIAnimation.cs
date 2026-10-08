@@ -5,10 +5,10 @@ using UnityEngine.UI;
 
 namespace UIAnimation
 {
-    public abstract class BaseUIAnimation : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,IPointerDownHandler,IPointerUpHandler
+    public abstract class BaseUIAnimation : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler, IPointerUpHandler
     {
         public bool isToggle = false;
-        
+
         public bool IsSelected { get; set; }
 
         public UIAnimationToggleGroup group;
@@ -33,7 +33,7 @@ namespace UIAnimation
                     _canvas.overrideSorting = false;
 
                     gameObject.AddComponent<GraphicRaycaster>();
-                
+
                 }
 
                 _parentCanvas = new Canvas[parent.Length];
@@ -47,12 +47,12 @@ namespace UIAnimation
                         _parentCanvas[i] = parent[i].AddComponent<Canvas>();
 
                         _parentCanvas[i].overrideSorting = false;
-                    
+
                         parent[i].AddComponent<GraphicRaycaster>();
                     }
                 }
             }
-            
+
         }
 
         public virtual void OnPointerEnter(PointerEventData eventData)
@@ -67,7 +67,7 @@ namespace UIAnimation
                     c.sortingOrder = 5;
                 }
             }
-            
+
         }
 
         public virtual void OnPointerExit(PointerEventData eventData)
@@ -81,7 +81,7 @@ namespace UIAnimation
                 //     c.sortingOrder = 1;
                 // }
             }
-            
+
         }
 
 
@@ -107,7 +107,7 @@ namespace UIAnimation
 
         public virtual void OnPointerUp(PointerEventData eventData)
         {
-            
+
         }
 
         public void Select()

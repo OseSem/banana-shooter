@@ -1,4 +1,4 @@
-﻿// This file is provided under The MIT License as part of RiptideSteamTransport.
+// This file is provided under The MIT License as part of RiptideSteamTransport.
 // Copyright (c) Tom Weiland
 // For additional information please see the included LICENSE.md file or view it on GitHub:
 // https://github.com/tom-weiland/RiptideSteamTransport/blob/main/LICENSE.md
@@ -40,19 +40,19 @@ namespace Riptide.Transports.Steam
         {
             connection = null;
 
-//             try
-//             {
-// #if UNITY_SERVER
-//                 SteamGameServerNetworkingUtils.InitRelayNetworkAccess();
-// #else
-//                 SteamNetworkingUtils.InitRelayNetworkAccess();
-// #endif
-//             }
-//             catch (Exception ex)
-//             {
-//                 connectError = $"Couldn't connect: {ex}";
-//                 return false;
-//             }
+            //             try
+            //             {
+            // #if UNITY_SERVER
+            //                 SteamGameServerNetworkingUtils.InitRelayNetworkAccess();
+            // #else
+            //                 SteamNetworkingUtils.InitRelayNetworkAccess();
+            // #endif
+            //             }
+            //             catch (Exception ex)
+            //             {
+            //                 connectError = $"Couldn't connect: {ex}";
+            //                 return false;
+            //             }
 
             connectError = $"Invalid host address '{hostAddress}'! Expected '{LocalHostIP}' or '{LocalHostName}' for local connections, or a valid Steam ID.";
             if (hostAddress == LocalHostIP || hostAddress == LocalHostName)
@@ -76,7 +76,7 @@ namespace Riptide.Transports.Steam
             {
                 int colonIndex = hostAddress.IndexOf(':');
 
-                if (string.IsNullOrEmpty(hostAddress) ||colonIndex == -1)
+                if (string.IsNullOrEmpty(hostAddress) || colonIndex == -1)
                 {
                     connectError = $"Invalid host address: {hostAddress}.";
                     return false;
@@ -91,13 +91,13 @@ namespace Riptide.Transports.Steam
                     return false;
                 }
 
-                if(!ushort.TryParse(portString, out var port))
+                if (!ushort.TryParse(portString, out var port))
                 {
                     connectError = "The provided Port is unavailable";
                     return false;
                 }
 
-                connection = steamConnection = TryConnect(ipAddress,port);
+                connection = steamConnection = TryConnect(ipAddress, port);
                 return connection != null;
             }
         }
@@ -146,8 +146,8 @@ namespace Riptide.Transports.Steam
         {
             try
             {
-                RiptideLogger.Log(LogType.Info,LogName,$"Connecting to {ipAddress}:{port}...");
-                
+                RiptideLogger.Log(LogType.Info, LogName, $"Connecting to {ipAddress}:{port}...");
+
                 connectionStatusChanged = Callback<SteamNetConnectionStatusChangedCallback_t>.Create(OnConnectionStatusChanged);
 
                 SteamNetworkingIPAddr ipAddr = new SteamNetworkingIPAddr();
@@ -170,7 +170,7 @@ namespace Riptide.Transports.Steam
             Task timeOutTask = Task.Delay(6000); // TODO: use Riptide Client's TimeoutTime
             await Task.WhenAny(timeOutTask);
 
-            if (steamConnection!=null &&!steamConnection.IsConnected)
+            if (steamConnection != null && !steamConnection.IsConnected)
                 OnConnectionFailed();
         }
 

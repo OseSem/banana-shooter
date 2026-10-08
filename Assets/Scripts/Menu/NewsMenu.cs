@@ -13,7 +13,7 @@ namespace Menu
     {
         [SerializeField] private GameObject obj;
         [SerializeField] private Button btn;
-        
+
         [SerializeField] private RawImage thumbnail;
         [SerializeField] private TextMeshProUGUI text;
 
@@ -22,7 +22,7 @@ namespace Menu
         private void Start()
         {
             btn.onClick.AddListener(OpenNewsPage);
-            
+
             if (NewsManager.Instance.IsNewsLoaded())
             {
                 DisplayNews();
@@ -38,7 +38,7 @@ namespace Menu
             NewsManager.Instance.NewsImageLoaded += OnNewsImageLoaded;
             NewsManager.Instance.NewsLoaded += NewsLoaded;
         }
-        
+
         private void OnDisable()
         {
             NewsManager.Instance.NewsImageLoaded -= OnNewsImageLoaded;
@@ -57,23 +57,23 @@ namespace Menu
                 }
             }
         }
-        
+
         private void NewsLoaded()
         {
             _displayIndex = 0;
             DisplayNews();
         }
-        
+
         private void OnNewsImageLoaded(int arg1, Texture2D arg2)
         {
-            if(_displayIndex == arg1)
+            if (_displayIndex == arg1)
                 thumbnail.texture = arg2;
         }
 
         void DisplayNews()
         {
             CancelInvoke(nameof(RepeatNextPage));
-            
+
             var newsItems = NewsManager.Instance.AppNewsResult.AppNews.NewsItems;
             if (newsItems.Count > _displayIndex)
             {
@@ -83,29 +83,29 @@ namespace Menu
 
                 int index = newsItem.Contents.IndexOf('\n');
 
-                if(index!=-1)
-                    sb.Append(newsItem.Contents.Substring(0,index).SteamRichTextToUnityRichText());
+                if (index != -1)
+                    sb.Append(newsItem.Contents.Substring(0, index).SteamRichTextToUnityRichText());
                 else
                     sb.Append(newsItem.Contents.SteamRichTextToUnityRichText());
                 if (NewsManager.Instance.NewsImages.TryGetValue(newsItem.ImageUrl, out var texture2D))
                 {
                     thumbnail.texture = texture2D;
                 }
-                
+
                 text.SetText(sb.ToString());
             }
-            
-            Invoke(nameof(RepeatNextPage),5f);
+
+            Invoke(nameof(RepeatNextPage), 5f);
         }
 
-        
+
         public void NextPage(int index)
         {
             _displayIndex += index;
 
             if (_displayIndex >= NewsManager.Instance.AppNewsResult.AppNews.NewsItems.Count) _displayIndex = 0;
             else if (_displayIndex < 0) _displayIndex = NewsManager.Instance.AppNewsResult.AppNews.NewsItems.Count;
-            
+
             DisplayNews();
         }
 

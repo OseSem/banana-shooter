@@ -16,13 +16,13 @@ public class LookPlayer : MonoBehaviour
     //
     // private float threshold = 15f;
 
-    [SerializeField]private float scaleFactor = 1f;
+    [SerializeField] private float scaleFactor = 1f;
 
     [SerializeField] private GameObject dot, nameObj;
     private void Awake()
     {
         _transform = transform;
-        
+
         SetTarget(ListenerManager.Instance.cameraTransform);
     }
 
@@ -44,7 +44,7 @@ public class LookPlayer : MonoBehaviour
             _camera = null;
             return;
         }
-        
+
         _player = t;
         _camera = _player.GetComponentInChildren<Camera>();
         _transform.LookAt(_player);
@@ -61,11 +61,11 @@ public class LookPlayer : MonoBehaviour
             float fovScaleFactor = Mathf.Tan(Mathf.Deg2Rad * (_camera.fieldOfView * 0.5f)) * 2f;
 
             float scale = fovScaleFactor * dis;
-            
+
             _transform.localScale = scaleFactor * scale * Vector3.one;
 
             bool flag = scale > 35;
-            
+
             nameObj.SetActive(!flag);
             dot.SetActive(flag);
         }

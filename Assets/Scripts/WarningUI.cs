@@ -15,7 +15,7 @@ public class WarningUI : MonoBehaviour
 
     private float desiredAlpha = 0f;
 
-    [SerializeField]private TextMeshProUGUI timerText;
+    [SerializeField] private TextMeshProUGUI timerText;
     private float timer;
     public static float time = 3f;
     private void Awake()
@@ -24,9 +24,9 @@ public class WarningUI : MonoBehaviour
 
         groupObj = @group.gameObject;
     }
-    
 
-    private float maxY,maxX,minX,maxZ,minZ;
+
+    private float maxY, maxX, minX, maxZ, minZ;
 
     private MapBound _bound;
     public bool playerSpawn;
@@ -36,7 +36,7 @@ public class WarningUI : MonoBehaviour
     {
         get
         {
-            if (NetworkManager.Instance.Client.Connection != null&&_player == null && ClientPlayer.list.ContainsKey(NetworkManager.Instance.Client.Id))
+            if (NetworkManager.Instance.Client.Connection != null && _player == null && ClientPlayer.list.ContainsKey(NetworkManager.Instance.Client.Id))
             {
                 return _player = ClientPlayer.list[NetworkManager.Instance.Client.Id];
             }
@@ -59,23 +59,23 @@ public class WarningUI : MonoBehaviour
 
     void GetPlayer()
     {
-        playerSpawn= Player != null;
-        if(!playerSpawn)
-            Invoke(nameof(GetPlayer),1f);
+        playerSpawn = Player != null;
+        if (!playerSpawn)
+            Invoke(nameof(GetPlayer), 1f);
     }
 
     private void Start()
     {
         _bound = MapBound.Instance;
         maxY = _bound.maxY;
-        
+
         maxX = _bound.maxX;
         maxZ = _bound.maxZ;
-        
+
         minX = _bound.minX;
         minZ = _bound.minZ;
-        
-        Invoke(nameof(GetPlayer),1f);
+
+        Invoke(nameof(GetPlayer), 1f);
     }
 
     private bool alreadyWarn = false;
@@ -87,7 +87,7 @@ public class WarningUI : MonoBehaviour
             return;
         }
 
-        
+
 
         if (!Player.Dead)
         {
@@ -116,11 +116,11 @@ public class WarningUI : MonoBehaviour
                         alreadyWarn = false;
                         desiredAlpha = 0;
                         CancelInvoke(nameof(DisableGroup));
-                        Invoke(nameof(DisableGroup),1.2f);
+                        Invoke(nameof(DisableGroup), 1.2f);
                     }
                 }
             }
-            
+
         }
         else
         {
@@ -129,14 +129,14 @@ public class WarningUI : MonoBehaviour
                 alreadyWarn = false;
                 desiredAlpha = 0;
                 CancelInvoke(nameof(DisableGroup));
-                Invoke(nameof(DisableGroup),1.2f);
+                Invoke(nameof(DisableGroup), 1.2f);
             }
         }
 
         @group.alpha = Mathf.Lerp(@group.alpha, desiredAlpha, Time.deltaTime * 15f);
-        
+
         timerText.SetText(timer.ToString("F2"));
-        
+
     }
 
     void DisableGroup()

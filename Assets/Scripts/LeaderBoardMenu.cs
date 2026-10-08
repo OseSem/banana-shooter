@@ -15,7 +15,7 @@ public class LeaderBoardMenu : MonoBehaviour
         Instance = this;
     }
 
-    public Transform winContent,parkourContent,targetScoreContent;
+    public Transform winContent, parkourContent, targetScoreContent;
 
     public Button preview, next;
     public TextMeshProUGUI text;
@@ -38,15 +38,15 @@ public class LeaderBoardMenu : MonoBehaviour
                         winContent).GetComponent<LeaderBoardItem>();
 
                 LeaderboardManager.LeaderBoardIndex index = LeaderboardManager.Instance.winIndex[i];
-                item.SetValue(index.steamId,index.rank,index.score);
+                item.SetValue(index.steamId, index.rank, index.score);
             }
         }
 
         if (LeaderboardManager.Instance.myWin != null)
         {
-            winItem.SetValue(LeaderboardManager.Instance.myWin.steamId,LeaderboardManager.Instance.myWin.rank,LeaderboardManager.Instance.myWin.score);
+            winItem.SetValue(LeaderboardManager.Instance.myWin.steamId, LeaderboardManager.Instance.myWin.rank, LeaderboardManager.Instance.myWin.score);
         }
-        
+
         if (LeaderboardManager.Instance.parkourIndex.Count > 0)
         {
             for (int i = 0; i < LeaderboardManager.Instance.parkourIndex.Count; i++)
@@ -56,15 +56,15 @@ public class LeaderBoardMenu : MonoBehaviour
                         parkourContent).GetComponent<LeaderBoardItem>();
 
                 LeaderboardManager.LeaderBoardIndex index = LeaderboardManager.Instance.parkourIndex[i];
-                item.SetValue(index.steamId,index.rank,index.score);
+                item.SetValue(index.steamId, index.rank, index.score);
             }
         }
-        
+
         if (LeaderboardManager.Instance.myParkour != null)
         {
-            parkourItem.SetValue(LeaderboardManager.Instance.myParkour.steamId,LeaderboardManager.Instance.myParkour.rank,LeaderboardManager.Instance.myParkour.score);
+            parkourItem.SetValue(LeaderboardManager.Instance.myParkour.steamId, LeaderboardManager.Instance.myParkour.rank, LeaderboardManager.Instance.myParkour.score);
         }
-        
+
         if (LeaderboardManager.Instance.scoreIndex.Count > 0)
         {
             for (int i = 0; i < LeaderboardManager.Instance.scoreIndex.Count; i++)
@@ -74,22 +74,22 @@ public class LeaderBoardMenu : MonoBehaviour
                         targetScoreContent).GetComponent<LeaderBoardItem>();
 
                 LeaderboardManager.LeaderBoardIndex index = LeaderboardManager.Instance.scoreIndex[i];
-                item.SetValue(index.steamId,index.rank,index.score);
+                item.SetValue(index.steamId, index.rank, index.score);
             }
         }
         if (LeaderboardManager.Instance.myScore != null)
         {
-            parkourItem.SetValue(LeaderboardManager.Instance.myScore.steamId,LeaderboardManager.Instance.myScore.rank,LeaderboardManager.Instance.myScore.score);
+            parkourItem.SetValue(LeaderboardManager.Instance.myScore.steamId, LeaderboardManager.Instance.myScore.rank, LeaderboardManager.Instance.myScore.score);
         }
-        
+
     }
 
     void NextLeaderBoard(int ind)
     {
         EventSystem.current.SetSelectedGameObject(null);
         cIndex += ind;
-        if (cIndex < 0) cIndex = boards.Length-1;
-        if (cIndex > boards.Length-1) cIndex = 0;
+        if (cIndex < 0) cIndex = boards.Length - 1;
+        if (cIndex > boards.Length - 1) cIndex = 0;
         SetLeaderBoard();
     }
 
@@ -104,7 +104,7 @@ public class LeaderBoardMenu : MonoBehaviour
     {
         for (int i = 0; i < boards.Length; i++)
         {
-            boards[i].SetActive(i==cIndex);
+            boards[i].SetActive(i == cIndex);
         }
         text.SetText(leaderboards[cIndex]);
     }

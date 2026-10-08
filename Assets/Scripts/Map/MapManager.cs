@@ -7,7 +7,7 @@ namespace Map
     [DefaultExecutionOrder(-106)]
     public class MapManager : MonoBehaviour
     {
-        public static MapManager Instance { get;private set; }
+        public static MapManager Instance { get; private set; }
 
         public List<Map> maps = new List<Map>();
 
@@ -19,10 +19,10 @@ namespace Map
 
             foreach (var map in maps)
             {
-                NameToMap.Add(map.name,map);
+                NameToMap.Add(map.name, map);
             }
         }
-        
+
         public Texture2D GetMapTexture(string n)
         {
             foreach (var map in maps)
@@ -34,7 +34,7 @@ namespace Map
             }
 
             return null;
-        } 
+        }
         public MapExternal GetMapExternal(string n)
         {
             foreach (var map in maps)

@@ -28,7 +28,7 @@ public class InfectedHand : MonoBehaviour
     SkinnedMeshRenderer arm;
 
     public Rig armRig;
-    public bool isInfected=false;
+    public bool isInfected = false;
     public GameObject clawKnife;
     public Transform fpsArm;
 
@@ -48,13 +48,13 @@ public class InfectedHand : MonoBehaviour
 
         if (arm == null)
             arm = WeaponManager.Instance.arm;
-        if(armAnim==null)
+        if (armAnim == null)
             armAnim = WeaponManager.Instance.armAnimator;
-        
-        armAnim.SetBool(IsInfected,flag);
-        armAnim.SetInteger(WeaponIndex,flag || WeaponManager.Instance.CurrentWeapon==null ? -1 : WeaponManager.Instance.CurrentWeapon.weaponIndex);
+
+        armAnim.SetBool(IsInfected, flag);
+        armAnim.SetInteger(WeaponIndex, flag || WeaponManager.Instance.CurrentWeapon == null ? -1 : WeaponManager.Instance.CurrentWeapon.weaponIndex);
         arm.material.color = flag ? Color.green : Color.white;
-        
+
         arm.enabled = flag && GameManager.Instance.setting.useArm;
         clawKnife.SetActive(flag);
 
@@ -68,12 +68,12 @@ public class InfectedHand : MonoBehaviour
         SpeedBob();
 
         Vector3 defaultPos = startPos;
-        
+
         bool cursorVisible = Cursor.visible;
-            
+
         float mx = cursorVisible ? 0 : Input.GetAxis("Mouse X");
         float my = cursorVisible ? 0 : Input.GetAxis("Mouse Y");
-        
+
         if (!WeaponManager.Instance.CurrentPlayer.selfControlled)
         {
             mx = WeaponManager.Instance.CurrentPlayer.GetDeltaX();
@@ -81,13 +81,13 @@ public class InfectedHand : MonoBehaviour
             // Debug.Log(mx.ToString("F2") + " " + my.ToString("F2"));
         }
 
-        float b = -mx * gunDrag * currentGunDragMultiplier*drag;
-        float b2 = -my * gunDrag * currentGunDragMultiplier*drag;
+        float b = -mx * gunDrag * currentGunDragMultiplier * drag;
+        float b2 = -my * gunDrag * currentGunDragMultiplier * drag;
         desX = Mathf.Lerp(desX, b, Time.unscaledDeltaTime * 10f);
         desY = Mathf.Lerp(desY, b2, Time.unscaledDeltaTime * 10f);
         Rotation(new Vector2(desX, desY));
-        Vector3 b3=defaultPos+ desiredBob + speedBob +new Vector3(desX, desY, 0f);
-        
+        Vector3 b3 = defaultPos + desiredBob + speedBob + new Vector3(desX, desY, 0f);
+
         fpsArm.localPosition = Vector3.Lerp(fpsArm.localPosition, b3, Time.unscaledDeltaTime * 15f);
         if (NetworkManager.Instance.CantPlay())
         {
@@ -108,9 +108,9 @@ public class InfectedHand : MonoBehaviour
     {
         attacking = true;
         AttackVisual();
-        Invoke(nameof(StopAttack),0.23f);
-        
-        Message message = Message.Create(MessageSendMode.Reliable,(ushort)ClientToServerId.Shoot);
+        Invoke(nameof(StopAttack), 0.23f);
+
+        Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.Shoot);
 
         message.Add(NetworkManager.Instance.InterpolationTick);
         message.Add(playerCam.forward);
@@ -122,12 +122,12 @@ public class InfectedHand : MonoBehaviour
         #region AttackHit
 
         int cnt = Physics.RaycastNonAlloc(playerCam.position,
-            playerCam.forward,hits, 5f,PrefabManager.Instance.whatIsHittable);
-        
-        
+            playerCam.forward, hits, 5f, PrefabManager.Instance.whatIsHittable);
+
+
         if (cnt > 0)
         {
-            for(int i= 0;i<cnt;i++)
+            for (int i = 0; i < cnt; i++)
             {
                 RaycastHit hit = hits[i];
                 if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ClientPlayer"))
@@ -136,15 +136,15 @@ public class InfectedHand : MonoBehaviour
                     if (hitPlayer.Contains(clientPlayer)) continue;
                     hitPlayer.Add(clientPlayer);
                 }
-            
-                Hit(hit,false,thump);
+
+                Hit(hit, false, thump);
             }
             return;
         }
         cnt = Physics.SphereCastNonAlloc(playerCam.position, 1,
-            playerCam.forward,hits, 5f,PrefabManager.Instance.whatIsHittable);
+            playerCam.forward, hits, 5f, PrefabManager.Instance.whatIsHittable);
 
-        for(int i=0;i<cnt;i++)
+        for (int i = 0; i < cnt; i++)
         {
             RaycastHit hit = hits[i];
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ClientPlayer"))
@@ -154,10 +154,10 @@ public class InfectedHand : MonoBehaviour
                 hitPlayer.Add(clientPlayer);
             }
 
-            Hit(hit,false,thump);
+            Hit(hit, false, thump);
         }
 
-        
+
         // Message msg = Message.Create(MessageSendMode.unreliable,(ushort)ClientToServerId.Shoot);
         //
         // msg.Add(bulletCount);
@@ -175,59 +175,59 @@ public class InfectedHand : MonoBehaviour
         AudioManager.Instance.Play("knifeAttack");
         thump = !thump;
         armAnim.SetTrigger(Attack1);
-        armAnim.SetBool(Thump,thump);
+        armAnim.SetBool(Thump, thump);
     }
 
     public int damage = 50;
     public int thumpDamage = 100;
-    
-    void Hit(RaycastHit hit,bool wall,bool thump)
+
+    void Hit(RaycastHit hit, bool wall, bool thump)
     {
         Rigidbody rb = hit.collider.gameObject.GetComponent<Rigidbody>();
-        int actualDamage = thump? thumpDamage : damage;
-        if (rb&& hit.collider.gameObject.layer != LayerMask.NameToLayer("ClientPlayer"))
+        int actualDamage = thump ? thumpDamage : damage;
+        if (rb && hit.collider.gameObject.layer != LayerMask.NameToLayer("ClientPlayer"))
         {
-            rb.AddForce(-hit.normal*1000f,ForceMode.Impulse);
+            rb.AddForce(-hit.normal * 1000f, ForceMode.Impulse);
         }
         if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ground") || hit.collider.gameObject.layer == LayerMask.NameToLayer("EnemySpawner"))
         {
             if (GameManager.Instance.setting.spawnParticle)
             {
-                ObjectPooler.Instance.SpawnFromPool("BulletHit",hit.point,Quaternion.LookRotation(hit.normal));
+                ObjectPooler.Instance.SpawnFromPool("BulletHit", hit.point, Quaternion.LookRotation(hit.normal));
             }
-            int rand = Random.Range(0, PrefabManager.Instance.broadSwordHit.Length );
+            int rand = Random.Range(0, PrefabManager.Instance.broadSwordHit.Length);
             AudioManager.Instance.PlayGunReload(PrefabManager.Instance.broadSwordHit[rand]);
         }
         else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ShootingTarget"))
         {
             ShootingTarget target = hit.transform.root.GetComponent<ShootingTarget>();
-            ShootingTarget2 target2 =  hit.transform.root.GetComponent<ShootingTarget2>();
-            if(target!=null)
+            ShootingTarget2 target2 = hit.transform.root.GetComponent<ShootingTarget2>();
+            if (target != null)
                 target.Hit();
-            else if(target2!=null)
+            else if (target2 != null)
                 target2.SetTargetPos();
             if (GameManager.Instance.setting.spawnParticle)
             {
-                ObjectPooler.Instance.SpawnFromPool("BulletHit",hit.point,Quaternion.LookRotation(hit.normal));
+                ObjectPooler.Instance.SpawnFromPool("BulletHit", hit.point, Quaternion.LookRotation(hit.normal));
             }
             HitMarker.Instance.StartHitMarker(Color.white);
-            HitMarker3D h = ObjectPooler.Instance.SpawnFromPool("HitMarker",hit.point, Quaternion.LookRotation(MoveCamera.Instance.transform.position-hit.point)).GetComponent<HitMarker3D>();
+            HitMarker3D h = ObjectPooler.Instance.SpawnFromPool("HitMarker", hit.point, Quaternion.LookRotation(MoveCamera.Instance.transform.position - hit.point)).GetComponent<HitMarker3D>();
             h.text.SetText(actualDamage.ToString());
         }
         else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ClientPlayer"))
         {
             ClientPlayer player = hit.transform.root.GetComponent<ClientPlayer>();
-            if (GameManager.Instance.setting.enableGore&&GameManager.Instance.setting.spawnParticle)
+            if (GameManager.Instance.setting.enableGore && GameManager.Instance.setting.spawnParticle)
             {
                 ObjectPooler.Instance.SpawnFromPool("Blood", hit.point, Quaternion.LookRotation(hit.normal));
             }
-            if (NetworkManager.Instance.IsTeamMode(player.playerState) || (NetworkManager.ClientGameMode==GameMode.Infected && player.playerState.IsInfected==isInfected)) return;
+            if (NetworkManager.Instance.IsTeamMode(player.playerState) || (NetworkManager.ClientGameMode == GameMode.Infected && player.playerState.IsInfected == isInfected)) return;
             HitMarker.Instance.StartHitMarker(Color.green);
             // NetworkManager.Instance.TakeDamage(player.Id,thump,wall,1001);
 
             // HitMarker3D h = ObjectPooler.Instance.SpawnFromPool("HitMarker",hit. point, Quaternion.LookRotation(MoveCamera.Instance.transform.position-hit.point)).GetComponent<HitMarker3D>();
             // h.text.SetText(actualDamage.ToString());
- 
+
         }
     }
 
@@ -246,7 +246,7 @@ public class InfectedHand : MonoBehaviour
             num = 0f - num;
         }
         float y = offset.y;
-        Vector3 euler = new Vector3(y: (0f - offset.x) * 40f, x: y * 80f , z: num * 50f);
+        Vector3 euler = new Vector3(y: (0f - offset.x) * 40f, x: y * 80f, z: num * 50f);
         try
         {
             if (!(Time.deltaTime <= 0f))
@@ -273,13 +273,13 @@ public class InfectedHand : MonoBehaviour
     }
     private void SpeedBob()
     {
-        Vector2 vector = WeaponManager.Instance.CurrentPlayer.FindVelRelativeToLook()*drag;
+        Vector2 vector = WeaponManager.Instance.CurrentPlayer.FindVelRelativeToLook() * drag;
         Vector3 vector2 = new Vector3(vector.x, WeaponManager.Instance.CurrentPlayer.GetVelocity().y, vector.y);
         vector2 *= -0.01f;
         vector2 = Vector3.ClampMagnitude(vector2, 0.1f);
         speedBob = Vector3.Lerp(speedBob, vector2, Time.deltaTime * 10f);
     }
-    private Vector3 startPos=new Vector3(0,-0.5f,0);
+    private Vector3 startPos = new Vector3(0, -0.5f, 0);
     private float drag = 0.3f;
     private Vector3 desiredBob;
 
@@ -290,7 +290,7 @@ public class InfectedHand : MonoBehaviour
     private float zBob = 0.1f;
 
     private float bobSpeed = 0.45f;
-    
+
 
     private float rVel;
 

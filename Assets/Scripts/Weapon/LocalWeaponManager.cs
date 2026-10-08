@@ -16,15 +16,15 @@ namespace Weapon
     public class LocalWeaponManager : IWeaponManager
     {
         private WeaponManager _weaponManager;
-        
+
         private PlayerState _currentPlayer;
-        
+
         private bool _shooting;
         private float _lastSwitchTime = 0;
 
         private bool _aiming = false;
 
-        public LocalWeaponManager(WeaponManager weaponManager,PlayerState currentPlayer)
+        public LocalWeaponManager(WeaponManager weaponManager, PlayerState currentPlayer)
         {
             _weaponManager = weaponManager;
             _currentPlayer = currentPlayer;
@@ -36,10 +36,10 @@ namespace Weapon
             {
                 return;
             }
-            
-            if (!_weaponManager.CurrentWeapon || _weaponManager.CurrentWeapon.weaponType==Firearms.WeaponType.Knife || _weaponManager.CurrentWeapon.weaponType==Firearms.WeaponType.LaserGun)
+
+            if (!_weaponManager.CurrentWeapon || _weaponManager.CurrentWeapon.weaponType == Firearms.WeaponType.Knife || _weaponManager.CurrentWeapon.weaponType == Firearms.WeaponType.LaserGun)
             {
-                if(GameUIManager.Instance) GameUIManager.Instance.bulletText.SetText("");
+                if (GameUIManager.Instance) GameUIManager.Instance.bulletText.SetText("");
                 return;
             }
 
@@ -53,18 +53,18 @@ namespace Weapon
             if (_weaponManager.CurrentWeapon.currentAmmo.GetValue() <= _weaponManager.CurrentWeapon.maxAmmo / 6) color = "red";
             GameUIManager.Instance.bulletText.SetText($"<color={color}><size=40>{_weaponManager.CurrentWeapon.currentAmmo.GetValue()} </size></color>/ {_weaponManager.CurrentWeapon.maxAmmo}");
         }
-        
+
         public void SwitchWeapon(int index)
         {
             _shooting = false;
 
             //TODO: Set the client player variable
-            if(ClientPlayer.LocalPlayer)
+            if (ClientPlayer.LocalPlayer)
                 ClientPlayer.LocalPlayer.playerState.WeaponManager.CurrentWeaponIndex = index;
             //Record if needed
             if (NetworkManager.Instance.Client.Connection != null)
             {
-                DemoManager.Instance.AddPlayerWeaponSwitched(ClientPlayer.LocalPlayer.demoPlayer.Id,index);
+                DemoManager.Instance.AddPlayerWeaponSwitched(ClientPlayer.LocalPlayer.demoPlayer.Id, index);
             }
 
             if (_weaponManager.CurrentWeapon != null)
@@ -75,12 +75,12 @@ namespace Weapon
             {
                 ClientPlayer.LocalPlayer.playerState.WeaponManager.CurrentWeapon = null;
             }
-        
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort)ClientToServerId.UpdateWeaponIndex);
+
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.UpdateWeaponIndex);
 
             message.Add(index);
             NetworkManager.Instance.SendByte += message.WrittenLength;
-        
+
             NetworkManager.Instance.Client.Send(message);
         }
 
@@ -125,11 +125,11 @@ namespace Weapon
             if (GameUIManager.Instance && GameUIManager.Instance.scoreBoard.activeSelf) return false;
             if (_weaponManager.CurrentWeapon == null || _currentPlayer.grappling.hitGrapplePoint) return false;
             if (!_weaponManager.CurrentWeapon.allowToAim || _weaponManager.CurrentWeapon.isReload) return false;
-            
+
             PlayerMovement.Instance.sensMultiplier = GameManager.Instance.setting.aimSensitivityMultiplier;
-            
+
             _aiming = true;
-            
+
             SendAim(true);
 
             return true;
@@ -155,10 +155,10 @@ namespace Weapon
 
         void SendAim(bool flag)
         {
-            Message message = Message.Create(MessageSendMode.Unreliable, (ushort) ClientToServerId.PlayerAim);
+            Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ClientToServerId.PlayerAim);
 
             message.Add(flag);
-            
+
             NetworkManager.Instance.Client.Send(message);
         }
 
@@ -170,7 +170,7 @@ namespace Weapon
         {
             if (NetworkManager.Instance.CantPlay()) return false;
             if (_weaponManager.CurrentWeapon == null) return false;
-            if (_weaponManager.CurrentWeapon.weaponType==Firearms.WeaponType.Knife || _weaponManager.CurrentWeapon.weaponType==Firearms.WeaponType.LaserGun) return false;
+            if (_weaponManager.CurrentWeapon.weaponType == Firearms.WeaponType.Knife || _weaponManager.CurrentWeapon.weaponType == Firearms.WeaponType.LaserGun) return false;
 
             return true;
         }
@@ -178,7 +178,7 @@ namespace Weapon
         #endregion
 
         #region Switch
-        
+
         public bool TryToSwitchWeapon()
         {
             if (NetworkManager.Instance.CantPlay()) return false;
@@ -189,24 +189,24 @@ namespace Weapon
         public int NextWeapon(InputAction.CallbackContext ctx, int currentWeaponIndex)
         {
             if (TabHolder.Instance != null) return -1;
-            if (NetworkManager.Instance.CantPlay() ) return -1;
+            if (NetworkManager.Instance.CantPlay()) return -1;
             float y = ctx.ReadValue<Vector2>().y;
             if (_lastSwitchTime + 0.001f > Time.time) return -1;
             _lastSwitchTime = Time.time;
-            if(_weaponManager.CurrentWeapon)
+            if (_weaponManager.CurrentWeapon)
             {
             }
 
-            int temp= 0;
+            int temp = 0;
             if (y > 0)
             {
-                temp= currentWeaponIndex-1;
-                if (temp <0)
+                temp = currentWeaponIndex - 1;
+                if (temp < 0)
                     temp = 2;
             }
-            else if(y<0)
+            else if (y < 0)
             {
-                temp= currentWeaponIndex+1;
+                temp = currentWeaponIndex + 1;
 
                 if (temp > 2)
                     temp = 0;
@@ -219,6 +219,6 @@ namespace Weapon
 
         #endregion
 
-        
+
     }
 }

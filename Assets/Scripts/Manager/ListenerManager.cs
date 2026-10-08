@@ -15,7 +15,7 @@ namespace Manager
             {
                 Instance = this;
                 _transform = transform;
-            
+
                 DontDestroyOnLoad(gameObject);
             }
             else if (Instance != this)
@@ -27,7 +27,7 @@ namespace Manager
         public Transform cameraTransform;
 
         private Transform _transform;
-        
+
         private void LateUpdate()
         {
             if (cameraTransform != null)

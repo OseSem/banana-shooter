@@ -85,7 +85,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             set
             {
                 var newValue = (AutoUnwrapSettings.Anchor)value;
-                if(newValue != _settings.anchor)
+                if (newValue != _settings.anchor)
                 {
                     _settings.anchor = newValue;
                     RaiseChanged();
@@ -96,10 +96,10 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public float rotation
         {
-            get { return _settings.rotation;  }
+            get { return _settings.rotation; }
             set
             {
-                if(_settings.rotation != value)
+                if (_settings.rotation != value)
                 {
                     float clampedValue = value - Mathf.CeilToInt(value / 360f) * 360f;
                     if (clampedValue < 0)
@@ -118,7 +118,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             get { return _settings.offset; }
             set
             {
-                if(_settings.offset != value)
+                if (_settings.offset != value)
                 {
                     _settings.offset = value;
                     RaiseChanged();
@@ -131,7 +131,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             get { return _settings.scale; }
             set
             {
-                if(_settings.scale != value)
+                if (_settings.scale != value)
                 {
                     _settings.scale = value;
                     RaiseChanged();
@@ -144,7 +144,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             get { return (Fill)_settings.fill; }
             set
             {
-                var newValue = (AutoUnwrapSettings.Fill)value; 
+                var newValue = (AutoUnwrapSettings.Fill)value;
                 if (_settings.fill != newValue)
                 {
                     _settings.fill = newValue;
@@ -158,7 +158,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             get { return _settings.swapUV; }
             set
             {
-                if(_settings.swapUV != value)
+                if (_settings.swapUV != value)
                 {
                     _settings.swapUV = value;
                     RaiseChanged();
@@ -171,7 +171,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             get { return _settings.flipV; }
             set
             {
-                if(_settings.flipV != value)
+                if (_settings.flipV != value)
                 {
                     _settings.flipV = value;
                     RaiseChanged();
@@ -184,7 +184,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             get { return _settings.flipU; }
             set
             {
-                if(_settings.flipU != value)
+                if (_settings.flipU != value)
                 {
                     _settings.flipU = value;
                     RaiseChanged();
@@ -197,7 +197,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             get { return _settings.useWorldSpace; }
             set
             {
-                if(_settings.useWorldSpace != value)
+                if (_settings.useWorldSpace != value)
                 {
                     _settings.useWorldSpace = value;
                     RaiseChanged();
@@ -212,7 +212,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         private void RaiseChanged()
         {
-            if(Changed != null)
+            if (Changed != null)
             {
                 Changed();
             }
@@ -238,7 +238,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             return new PBAutoUnwrapSettings(settings);
         }
     }
-    public class PBAutoUVEditor : MonoBehaviour,IAutoUVEditor
+    public class PBAutoUVEditor : MonoBehaviour, IAutoUVEditor
     {
         public bool HasAutoUV(MeshSelection selection, bool auto)
         {
@@ -258,7 +258,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 for (int i = 0; i < faces.Count; ++i)
                 {
                     Face face = faces[i];
-                    if(auto)
+                    if (auto)
                     {
                         if (!face.manualUV)
                         {
@@ -287,7 +287,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             selection = selection.ToFaces(false, false);
 
             List<Face> faces = new List<Face>();
-            foreach(KeyValuePair<GameObject, IList<int>> kvp in selection.SelectedFaces)
+            foreach (KeyValuePair<GameObject, IList<int>> kvp in selection.SelectedFaces)
             {
                 ProBuilderMesh mesh = kvp.Key.GetComponent<ProBuilderMesh>();
 
@@ -317,7 +317,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 faces.Clear();
                 mesh.GetFaces(kvp.Value, faces);
 
-                for(int i = 0; i < faces.Count; ++i)
+                for (int i = 0; i < faces.Count; ++i)
                 {
                     faces[i].uv = AutoUnwrapSettings.defaultAutoUnwrapSettings;
                 }
@@ -358,7 +358,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                 mesh.ToMesh();
                 mesh.Refresh();
-            }    
+            }
         }
 
         public PBAutoUnwrapSettings GetSettings(MeshSelection selection)
@@ -432,28 +432,28 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public MeshSelection SelectFaceGroup(MeshSelection currentSelection)
         {
-            if(currentSelection == null)
+            if (currentSelection == null)
             {
                 return null;
             }
 
             currentSelection = currentSelection.ToFaces(false);
-            if(!currentSelection.HasFaces)
+            if (!currentSelection.HasFaces)
             {
                 return null;
             }
 
-            
+
             ProBuilderMesh mesh = currentSelection.SelectedFaces.Last().Key.GetComponent<ProBuilderMesh>();
             IList<int> currentlySelectedFaces = currentSelection.SelectedFaces.Last().Value;
-            if(currentlySelectedFaces.Count == 0)
+            if (currentlySelectedFaces.Count == 0)
             {
                 return currentSelection;
             }
             //HashSet<int> facesHs = new HashSet<int>(currentlySelectedFaces);
             int faceIndex = currentlySelectedFaces.Last();
             int textureGroup = mesh.faces[faceIndex].textureGroup;
-            if(textureGroup == -1)
+            if (textureGroup == -1)
             {
                 return currentSelection;
             }

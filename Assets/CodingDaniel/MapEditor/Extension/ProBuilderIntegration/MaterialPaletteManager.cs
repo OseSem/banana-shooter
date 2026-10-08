@@ -24,7 +24,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             get;
         }
-        
+
         void CreateMaterial();
         void AddMaterial(Material material, bool setUniqueName = false);
         void ReplaceMaterial(Material oldMaterial, Material newMaterial);
@@ -32,7 +32,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         void ApplyTexture(Material material, Texture texture);
     }
     [DefaultExecutionOrder(-50)]
-    public class MaterialPaletteManager : MonoBehaviour,IMaterialPaletteManager
+    public class MaterialPaletteManager : MonoBehaviour, IMaterialPaletteManager
     {
         public static MaterialPaletteManager Instance { private set; get; }
         public event Action<Material> MaterialCreated;
@@ -60,13 +60,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             Instance = this;
             _rte = MEBase.Instance;
-            
+
             _proBuilderTool = ProBuilderTool.Instance;
 
             InitPalette();
             IsReady = true;
         }
-        
+
 
         private void InitPalette()
         {
@@ -88,7 +88,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             material.name = PathHelper.GetUniqueName("Material", _palette.Materials.Select(m => m.name).ToList());
             _palette.Materials.Add(material);
 
-            if(MaterialCreated != null)
+            if (MaterialCreated != null)
             {
                 MaterialCreated(material);
             }
@@ -96,13 +96,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public void AddMaterial(Material material, bool setUniqueName)
         {
-            if(setUniqueName)
+            if (setUniqueName)
             {
                 material.name = PathHelper.GetUniqueName("Material", _palette.Materials.Select(m => m.name).ToList());
             }
 
             _palette.Materials.Add(material);
-            if(MaterialAdded != null)
+            if (MaterialAdded != null)
             {
                 MaterialAdded(material);
             }
@@ -112,11 +112,11 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             int index = _palette.Materials.IndexOf(oldMaterial);
             _palette.Materials.RemoveAt(index);
-            if(!_palette.Materials.Contains(newMaterial))
+            if (!_palette.Materials.Contains(newMaterial))
             {
                 _palette.Materials.Insert(index, newMaterial);
             }
-            if(MaterialReplaced != null)
+            if (MaterialReplaced != null)
             {
                 MaterialReplaced(oldMaterial, newMaterial);
             }
@@ -125,7 +125,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public void RemoveMaterial(Material material)
         {
             _palette.Materials.Remove(material);
-            if(MaterialRemoved != null)
+            if (MaterialRemoved != null)
             {
                 MaterialRemoved(material);
             }
@@ -173,7 +173,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     return;
                 }
             }
-            
+
             if (!Input.GetKey(KeyCode.LeftAlt) && !Input.GetKey(KeyCode.RightAlt) && !Input.GetKey(KeyCode.AltGr))
             {
                 return;
@@ -200,11 +200,11 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                         break;
                     }
 
-                    if(select)
+                    if (select)
                     {
                         _proBuilderTool.SelectFaces(material);
                     }
-                    else if(unselect)
+                    else if (unselect)
                     {
                         _proBuilderTool.UnselectFaces(material);
                     }

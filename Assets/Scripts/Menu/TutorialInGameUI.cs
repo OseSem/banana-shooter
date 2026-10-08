@@ -25,12 +25,12 @@ namespace Menu
         private Camera camera;
         private bool init = false;
         private Transform cameraTransform;
-    
+
         private RectTransform canvasRect;
         float multiplier = 0.85f;
 
         [SerializeField] private CanvasGroup canvasGroup;
-        private float _desiredAlpha=0;
+        private float _desiredAlpha = 0;
         private void Start()
         {
             canvasRect = GetComponent<RectTransform>();
@@ -61,7 +61,7 @@ namespace Menu
         private Transform _trackTarget;
         [SerializeField] private Transform item;
         [SerializeField] private LocalizeStringEvent text;
-        public void ChangeState(TutorialState s,Vector3 pos,Transform target = null)
+        public void ChangeState(TutorialState s, Vector3 pos, Transform target = null)
         {
             if (!GameManager.Instance.setting.enableTutorial)
             {
@@ -79,7 +79,7 @@ namespace Menu
                     desiredPos = pos;
                     text.gameObject.SetActive(true);
                     text.SetEntry("Endless_tutorial_1");
-                    break;  
+                    break;
                 case TutorialState.BuyStation:
                     item.gameObject.SetActive(true);
                     desiredPos = pos;
@@ -98,15 +98,15 @@ namespace Menu
             }
 
             if (!init) return;
-            Vector3 targetPos = VectorExtension.CalculateWorldPosition(desiredPos,cameraTransform);
+            Vector3 targetPos = VectorExtension.CalculateWorldPosition(desiredPos, cameraTransform);
             Vector2 screenPoint = camera.WorldToScreenPoint(targetPos);
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, null, out localPoint);
-    
+
             Vector2 sizeDelta = canvasRect.sizeDelta;
-    
+
             Vector2 max = new Vector2(sizeDelta.x / 2f, sizeDelta.y / 2f) * multiplier;
             Vector2 min = new Vector2(-sizeDelta.x / 2f, -sizeDelta.y / 2f) * multiplier;
-            
+
             if (localPoint.x > max.x)
             {
                 localPoint.x = max.x;
@@ -123,13 +123,13 @@ namespace Menu
             {
                 localPoint.y = min.y;
             }
-    
+
             if (targetPos != desiredPos)
             {
                 localPoint = -localPoint;
                 localPoint.y = min.y;
             }
-            _desiredAlpha = Mathf.Clamp(localPoint.magnitude / 700, .25f,1f);
+            _desiredAlpha = Mathf.Clamp(localPoint.magnitude / 700, .25f, 1f);
 
             if (Vector3.Distance(cameraTransform.position, desiredPos) < 6)
             {
@@ -137,10 +137,10 @@ namespace Menu
             }
 
             canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, _desiredAlpha, Time.deltaTime * 10f);
-            
+
             item.localPosition = localPoint;
         }
-        
-        
+
+
     }
 }

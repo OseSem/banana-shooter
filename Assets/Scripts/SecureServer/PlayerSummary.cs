@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Newtonsoft.Json;
 
 namespace SecureServer
@@ -8,12 +8,12 @@ namespace SecureServer
         public ulong SteamId;
 
         public string PersonaName = String.Empty;
-    
+
         public string Avatar = String.Empty;
-    
-    
+
+
         [JsonConstructor]
-        public PlayerSummary(ulong steamId,string personaName,string avatar)
+        public PlayerSummary(ulong steamId, string personaName, string avatar)
         {
             SteamId = steamId;
             PersonaName = personaName;
@@ -22,7 +22,7 @@ namespace SecureServer
 
         public PlayerSummary()
         {
-        
+
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿// This file is provided under The MIT License as part of RiptideSteamTransport.
+// This file is provided under The MIT License as part of RiptideSteamTransport.
 // Copyright (c) Tom Weiland
 // For additional information please see the included LICENSE.md file or view it on GitHub:
 // https://github.com/tom-weiland/RiptideSteamTransport/blob/main/LICENSE.md
@@ -50,7 +50,7 @@ namespace Riptide.Transports.Steam
                         Marshal.Copy(data.m_pData, receiveBuffer, 0, data.m_cbSize);
                         OnDataReceived(receiveBuffer, byteCount, fromConnection);
                     }
-                    
+
                     SteamNetworkingMessage_t.Release(ptrs[i]);
                 }
             }

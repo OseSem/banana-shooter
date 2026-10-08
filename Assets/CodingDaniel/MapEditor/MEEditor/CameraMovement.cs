@@ -12,9 +12,9 @@ namespace CodingDaniel.MapEditor.MEEditor
     public class CameraMovement : MonoBehaviour
     {
         public static CameraMovement Instance { private set; get; }
-        private bool isRotating=false,isMoving=false;
+        private bool isRotating = false, isMoving = false;
 
-        [SerializeField] private float speed=12f;
+        [SerializeField] private float speed = 12f;
         public float sensitivity = 150;
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace CodingDaniel.MapEditor.MEEditor
         {
             GameManager.InputManager.MapEditor.Look.started += StartLooking;
             GameManager.InputManager.MapEditor.Look.canceled += StopLooking;
-            
+
             GameManager.InputManager.MapEditor.Pan.started += StartPanning;
             GameManager.InputManager.MapEditor.Pan.canceled += StopPanning;
         }
@@ -64,20 +64,20 @@ namespace CodingDaniel.MapEditor.MEEditor
         {
             GameManager.InputManager.MapEditor.Look.started -= StartLooking;
             GameManager.InputManager.MapEditor.Look.canceled -= StopLooking;
-            
+
             GameManager.InputManager.MapEditor.Pan.started -= StartPanning;
             GameManager.InputManager.MapEditor.Pan.canceled -= StopPanning;
         }
 
         #region Input
-        
+
         private void StartPanning(InputAction.CallbackContext obj)
         {
             if (TabHolder.Instance.UsingUI()) return;
             isMoving = true;
             CursorHelper.Instance.SetCursor(FreeMoveTexture, Vector2.one * 0.5f, CursorMode.Auto);
         }
-        
+
         private void StopPanning(InputAction.CallbackContext obj)
         {
             isMoving = false;
@@ -100,10 +100,10 @@ namespace CodingDaniel.MapEditor.MEEditor
         private void ScrollMove()
         {
             if (TabHolder.Instance.UsingUI()) return;
-            float s = Mathf.Clamp(Input.GetAxis("Mouse ScrollWheel")*100f,-10,10f);
+            float s = Mathf.Clamp(Input.GetAxis("Mouse ScrollWheel") * 100f, -10, 10f);
             // desiredPos += speed*Time.deltaTime*s*_transform.forward ;
-            var size = speed * Time.deltaTime * s*_transform.forward;
-            
+            var size = speed * Time.deltaTime * s * _transform.forward;
+
             //Add the vector to the final pos
             desiredPos += size;
         }
@@ -170,20 +170,20 @@ namespace CodingDaniel.MapEditor.MEEditor
             {
                 StopRotate();
             }
-            else if(!Input.GetKey(KeyCode.LeftAlt) && !Input.GetMouseButtonDown(0))
+            else if (!Input.GetKey(KeyCode.LeftAlt) && !Input.GetMouseButtonDown(0))
             {
                 StopRotate();
             }
 
             if (isRotating)
             {
-                Vector3 angle = 5f*sensitivity * Time.deltaTime*(-Input.GetAxisRaw("Mouse Y")*_transform.right +Input.GetAxisRaw("Mouse X")*_transform.up);
+                Vector3 angle = 5f * sensitivity * Time.deltaTime * (-Input.GetAxisRaw("Mouse Y") * _transform.right + Input.GetAxisRaw("Mouse X") * _transform.up);
 
                 var pos = _transform.position;
-               
-                desiredPos = RotatePointAroundPivot(pos,pivot , angle);
 
-                var rot = Quaternion.LookRotation(pivot-desiredPos);
+                desiredPos = RotatePointAroundPivot(pos, pivot, angle);
+
+                var rot = Quaternion.LookRotation(pivot - desiredPos);
 
                 Vector3 euler = rot.eulerAngles;
 
@@ -191,8 +191,8 @@ namespace CodingDaniel.MapEditor.MEEditor
                 {
                     return;
                 }
-                
-                _transform.position  = desiredPos;
+
+                _transform.position = desiredPos;
                 _transform.rotation = rot;
 
                 xRotation = euler.x;
@@ -200,7 +200,7 @@ namespace CodingDaniel.MapEditor.MEEditor
             }
         }
 
-        private float _pivotDis=0;
+        private float _pivotDis = 0;
 
         private bool looking = false;
         void Look()
@@ -208,9 +208,9 @@ namespace CodingDaniel.MapEditor.MEEditor
             if (looking)
             {
                 float sensMultiplier = 2f;
-                float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime*sensMultiplier;
-                float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime*sensMultiplier;
-        
+                float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.deltaTime * sensMultiplier;
+                float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.deltaTime * sensMultiplier;
+
                 //Find current look rotation
                 // Vector3 rot = _transform.localRotation.eulerAngles;
                 desiredX += mouseX;
@@ -228,7 +228,7 @@ namespace CodingDaniel.MapEditor.MEEditor
 
                 float multiplier = Input.GetKey(KeyCode.LeftShift) ? 3 : 1;
 
-                desiredPos += speed * Time.deltaTime *multiplier * (_transform.forward * v + _transform.right * h);
+                desiredPos += speed * Time.deltaTime * multiplier * (_transform.forward * v + _transform.right * h);
 
                 VerticalMove();
             }
@@ -243,24 +243,24 @@ namespace CodingDaniel.MapEditor.MEEditor
             {
                 float v = -Input.GetAxis("Mouse X");
                 float h = -Input.GetAxis("Mouse Y");
-                
-                desiredPos += 4*speed*Time.deltaTime*(_transform.right*v+_transform.up*h);
+
+                desiredPos += 4 * speed * Time.deltaTime * (_transform.right * v + _transform.up * h);
             }
-            
+
             Look();
-            
+
             pivot += (desiredPos - p);
             var position = _transform.position;
             _pivotDis = Vector3.Distance(pivot, position);
-            
-            
+
+
             ScrollMove();
 
             position = Vector3.Lerp(position, desiredPos, Time.deltaTime * 15f);
             _transform.position = position;
 
 
-            MEBase.Instance.Tools.IsViewing = isMoving||isRotating|| looking;
+            MEBase.Instance.Tools.IsViewing = isMoving || isRotating || looking;
 
             // Held for the remainder of this frame so a tool hotkey pressed on the same frame the
             // camera control ends is still treated as a camera key rather than a tool switch.
@@ -302,7 +302,7 @@ namespace CodingDaniel.MapEditor.MEEditor
             }
             float objSize = Mathf.Max(bounds.extents.y, bounds.extents.x, bounds.extents.z) * 2.0f;
             Focus(bounds.center, objSize);
-            
+
             // if (focusMode == FocusMode.Selected || focusMode == FocusMode.Default)
             // {
             //     if (Selection.activeTransform != null)
@@ -336,10 +336,11 @@ namespace CodingDaniel.MapEditor.MEEditor
             // Focus(distance, objSize);
         }
         private Vector3 pivot = Vector3.zero;
-        
-        
-        
-        static Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Vector3 angles) {
+
+
+
+        static Vector3 RotatePointAroundPivot(Vector3 point, Vector3 pivot, Vector3 angles)
+        {
             return Quaternion.Euler(angles) * (point - pivot) + pivot;
         }
     }

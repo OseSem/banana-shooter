@@ -16,7 +16,7 @@ public class MusicManager : MonoBehaviour
         MainMenu,
         WinningMusic
     }
-    
+
     [Serializable]
     public class MusicBox
     {
@@ -24,9 +24,9 @@ public class MusicManager : MonoBehaviour
         public AssetReference winningMusicAsset;
         public uint ticksToPlayWin;
     }
-    
+
     public static MusicManager Instance;
-    
+
     public AudioMixerGroup master;
 
     public float volumeMultiplier = 1f;
@@ -52,7 +52,7 @@ public class MusicManager : MonoBehaviour
         if (Instance == null)
         {
             Instance = this;
-            
+
             _source = gameObject.AddComponent<AudioSource>();
 
             _source.outputAudioMixerGroup = master;
@@ -63,12 +63,12 @@ public class MusicManager : MonoBehaviour
             _source.playOnAwake = true;
         }
     }
-    
+
     private void Update()
     {
-        _source.volume = _playing ? Mathf.Lerp(_source.volume, _desiredVolume*volumeMultiplier, Time.deltaTime) : Mathf.Lerp(_source.volume, 0, Time.deltaTime);
+        _source.volume = _playing ? Mathf.Lerp(_source.volume, _desiredVolume * volumeMultiplier, Time.deltaTime) : Mathf.Lerp(_source.volume, 0, Time.deltaTime);
     }
-    
+
     public void ChangeMusic(MusicType type)
     {
         music = type;
@@ -100,11 +100,11 @@ public class MusicManager : MonoBehaviour
                     }
                 };
                 AudioSpectrum.Running = true;
-                
+
                 break;
             case MusicType.WinningMusic:
                 _loadedAsset = musicBox.winningMusicAsset;
-                
+
                 operationHandle = _loadedAsset.LoadAssetAsync<AudioClip>();
 
                 operationHandle.Completed += handle =>

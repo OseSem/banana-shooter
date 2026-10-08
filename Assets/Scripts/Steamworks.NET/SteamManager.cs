@@ -20,10 +20,11 @@ using Utils;
 //
 namespace Steamworks.NET
 {
-	[DisallowMultipleComponent]
-	
-	[DefaultExecutionOrder(-100)]
-	public class SteamManager : MonoBehaviour {
+    [DisallowMultipleComponent]
+
+    [DefaultExecutionOrder(-100)]
+    public class SteamManager : MonoBehaviour
+    {
 #if !DISABLESTEAMWORKS
 		protected static bool s_EverInitialized = false;
 
@@ -223,11 +224,13 @@ namespace Steamworks.NET
 			SteamFriends.ActivateGameOverlayToWebPage(url);
 		}
 #else
-	public static bool Initialized {
-		get {
-			return false;
-		}
-	}
+        public static bool Initialized
+        {
+            get
+            {
+                return false;
+            }
+        }
 #endif // !DISABLESTEAMWORKS
-	}
+    }
 }

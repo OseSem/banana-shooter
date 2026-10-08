@@ -13,9 +13,9 @@ namespace Demo.Editor
             {
                 EditorGUILayout.LabelField("Recording...", EditorStyles.boldLabel);
             }
-            
+
             GUILayout.Space(Space);
-            
+
             EditorGUI.indentLevel = 0;
             GUILayout.BeginVertical("Box");
             EditorGUILayout.LabelField("Record & Save", EditorStyles.boldLabel);

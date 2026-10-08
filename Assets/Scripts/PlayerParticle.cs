@@ -7,15 +7,15 @@ using UnityEngine;
 public class PlayerParticle : MonoBehaviour
 {
     public static PlayerParticle Instance { get; private set; }
-    
+
     private bool _initialized = false;
-    
+
     private PlayerState _currentPlayer;
 
     private float currentVol;
 
     private float volVel;
-    
+
     [SerializeField] private Transform playerCam;
     public float speedLineMultiplier = 3f;
 
@@ -24,7 +24,7 @@ public class PlayerParticle : MonoBehaviour
     public void InitializePlayer(PlayerState currentPlayer)
     {
         _currentPlayer = currentPlayer;
-        
+
         _initialized = true;
     }
 
@@ -51,7 +51,7 @@ public class PlayerParticle : MonoBehaviour
         CameraShaker.Instance.ShakeOnce(num, 0.1f * num, 0.25f, 0.2f);
         // Invoke(nameof(CameraShake), 0.2f);
     }
-    
+
     private void FixedUpdate()
     {
         SpeedLines();
@@ -77,7 +77,7 @@ public class PlayerParticle : MonoBehaviour
         {
             num = 1f;
         }
-        float rateOverTimeMultiplier = _currentPlayer.GetVelocity().magnitude*speedLineMultiplier / num;
+        float rateOverTimeMultiplier = _currentPlayer.GetVelocity().magnitude * speedLineMultiplier / num;
         if (!_currentPlayer.Grounded)
         {
             rateOverTimeMultiplier /= 2;
@@ -107,10 +107,10 @@ public class PlayerParticle : MonoBehaviour
         }
         num *= 1f;
         currentVol = Mathf.SmoothDamp(currentVol, num, ref volVel, 0.2f);
-        if ( GameUIManager.Instance&& GameUIManager.Instance.pause)
+        if (GameUIManager.Instance && GameUIManager.Instance.pause)
         {
             currentVol = 0f;
         }
-        wind.volume = currentVol*0.5f;
+        wind.volume = currentVol * 0.5f;
     }
 }

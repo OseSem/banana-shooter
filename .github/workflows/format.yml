@@ -1,0 +1,19 @@
+name: Format check
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  format:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - name: Check C# whitespace formatting
+        run: |
+          dotnet format whitespace . --folder --verify-no-changes \
+            --include Assets/ \
+            --exclude Assets/Plugins Assets/ThirdParty Assets/TextMesh\ Pro

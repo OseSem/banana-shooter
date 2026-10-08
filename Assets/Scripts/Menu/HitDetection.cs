@@ -11,7 +11,7 @@ namespace Menu
     {
         public static HitDetection Instance;
 
-        
+
         private void Awake()
         {
             Instance = this;
@@ -48,7 +48,7 @@ namespace Menu
             RectTransform arrowRot = redArrow.GetComponent<RectTransform>();
             arrowRot.localPosition = Vector3.zero;
             RectTransform arrowImage = redArrow.GetComponentInChildren<RectTransform>();
-            Quaternion tRot = Quaternion.LookRotation(dir-orientation.position);
+            Quaternion tRot = Quaternion.LookRotation(dir - orientation.position);
             tRot.z = -tRot.y;
             tRot.x = 0f;
             tRot.y = 0f;
@@ -58,22 +58,22 @@ namespace Menu
             arrowImage.localScale = new Vector3(2.5f, 2.5f, 2.5f);
             float scale = 0.5f;
             Vector3 desiredSize = new Vector3(scale, scale, scale);
-            while ((Vector3.Distance(arrowImage.localScale,desiredSize)>0.2f) 
-                   || redArrowGroup.alpha!=0f)
+            while ((Vector3.Distance(arrowImage.localScale, desiredSize) > 0.2f)
+                   || redArrowGroup.alpha != 0f)
             {
-                tRot = Quaternion.LookRotation(dir-orientation.position);
+                tRot = Quaternion.LookRotation(dir - orientation.position);
                 tRot.z = -tRot.y;
                 tRot.x = 0f;
                 tRot.y = 0f;
 
                 northDir = new Vector3(0, 0, orientation.eulerAngles.y);
-            
+
                 arrowRot.localRotation = tRot * Quaternion.Euler(northDir);
-                arrowImage.localScale = Vector3.Lerp(arrowImage.localScale,desiredSize,Time.deltaTime*3f);
-                redArrowGroup.alpha = Mathf.Lerp(redArrowGroup.alpha, 0f, Time.deltaTime*1.5f);
+                arrowImage.localScale = Vector3.Lerp(arrowImage.localScale, desiredSize, Time.deltaTime * 3f);
+                redArrowGroup.alpha = Mathf.Lerp(redArrowGroup.alpha, 0f, Time.deltaTime * 1.5f);
                 yield return null;
             }
-        
+
             Destroy(redArrow);
         }
     }

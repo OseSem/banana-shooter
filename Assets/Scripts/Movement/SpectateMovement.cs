@@ -35,7 +35,7 @@ namespace Movement
         public static Dictionary<string, CameraState> SavePoints = new();
 
         public CameraState CurrentState;
-        public EPerspective Perspective { get;private set; }
+        public EPerspective Perspective { get; private set; }
 
         private InputAction _inputAction;
 
@@ -81,10 +81,10 @@ namespace Movement
         private int _currentSelectedPlayer = -1;
 
         #region Target
-        
+
         public ITarget Target { get; private set; }
 
-        private int _boneIndex=0;
+        private int _boneIndex = 0;
 
         private Transform TargetTransform { get; set; }
 
@@ -108,7 +108,7 @@ namespace Movement
                 depthOfField = false;
 
                 _camera = cameraTransform.GetComponentInChildren<Camera>();
-                
+
             }
             else if (Instance != this)
             {
@@ -119,7 +119,7 @@ namespace Movement
         private void Start()
         {
             _depthOfField = GameManager.Instance.GetDepthOfField();
-            
+
             cameraTransform.gameObject.SetActive(false);
         }
 
@@ -127,7 +127,7 @@ namespace Movement
         {
             if (Locked || !Spectating) return;
 
-            if ( NetworkManager.Instance.CantPlay()) return;
+            if (NetworkManager.Instance.CantPlay()) return;
 
             if (Perspective == EPerspective.Spectate)
             {
@@ -140,7 +140,7 @@ namespace Movement
             {
                 ChangePerspective(EPerspective.FirstPerson);
             }
-            else if(Keyboard.current.vKey.wasPressedThisFrame)
+            else if (Keyboard.current.vKey.wasPressedThisFrame)
             {
                 LoopPerspective();
             }
@@ -149,7 +149,7 @@ namespace Movement
         private void LateUpdate()
         {
             CurrentState.Position = cameraTransform.localPosition;
-            
+
             if (TargetTransform)
             {
                 cameraParent.position = TargetTransform.position;
@@ -181,10 +181,10 @@ namespace Movement
             _actualSpeed = Input.GetKey(KeyCode.LeftShift) ? speed * 2f :
                 Input.GetKey(KeyCode.Space) ? speed / 2 : speed;
             _actualSpeed *= moveSpeedMultiplier;
-            
+
             _desiredPos += _actualSpeed * Time.fixedDeltaTime *
                            (cameraTransform.forward * _vertical + cameraTransform.right * _horizontal);
-            
+
             if (Keyboard.current.eKey.isPressed)
             {
                 _desiredPos += _actualSpeed * Time.fixedDeltaTime * Vector3.up;
@@ -269,7 +269,7 @@ namespace Movement
 
                     break;
                 case EDoFMode.TargetFocus:
-                    if(TargetTransform == null)
+                    if (TargetTransform == null)
                         break;
                     var selfPosition = cameraTransform.position;
                     _raycast = new Ray(selfPosition, (TargetTransform.position - selfPosition).normalized * 100f);
@@ -310,7 +310,7 @@ namespace Movement
                     Target = target;
 
                     _boneIndex = 0;
-                    
+
                     SetTargetTransform(Target.Bones[_boneIndex]);
                     return true;
                 }
@@ -325,7 +325,7 @@ namespace Movement
             Debug.Log("Current Target: " + t.name);
 
             Vector3 pos = t.InverseTransformPoint(cameraTransform.position);
-            
+
             _desiredPos = pos;
             cameraTransform.localPosition = pos;
         }
@@ -337,7 +337,7 @@ namespace Movement
             if (Target != null)
             {
                 _boneIndex = Math.Clamp(_boneIndex, 0, Target.Bones.Length - 1);
-                
+
                 SetTargetTransform(Target.Bones[_boneIndex]);
             }
         }
@@ -432,7 +432,7 @@ namespace Movement
                 WeaponManager.Instance.ResetAim();
 
             _depthOfField.active = false;
-            
+
             if (GameUIManager.Instance)
             {
                 GameUIManager.Instance.gameScene.SetActive(true);
@@ -446,31 +446,31 @@ namespace Movement
             int newPerspective = (int)Perspective + 1;
 
             if (newPerspective > 1) newPerspective = 0;
-                
+
             ChangePerspective((EPerspective)newPerspective);
         }
 
         public void ChangePerspective(EPerspective perspective)
         {
             OnStopFirstPersonSpectate?.Invoke();
-            
+
             Perspective = perspective;
 
             switch (Perspective)
             {
                 case EPerspective.FirstPerson:
-                    
+
                     LoopFirstPerson();
                     break;
                 case EPerspective.Spectate:
                     //TODO: Set Audio listener transform
                     ListenerManager.Instance.SetCamera(cameraTransform);
                     moveCamera.DeInitialize();
-                    
+
                     GameUIManager.Instance.gameSceneImportant.SetActive(false);
                     cameraTransform.gameObject.SetActive(true);
                     moveCamera.gameObject.SetActive(false);
-                    
+
                     // //TODO: Reset Position
                     // cameraTransform.position = Vector3.zero;
                     // _desiredPos = Vector3.zero;
@@ -485,30 +485,30 @@ namespace Movement
                 ++_currentSelectedPlayer;
 
                 if (_currentSelectedPlayer >= PlayerState.PlayerStates.Count) _currentSelectedPlayer = 0;
-                
+
                 //Set Player
                 if (!PlayerState.PlayerStates[_currentSelectedPlayer].selfControlled && PlayerState.PlayerStates[_currentSelectedPlayer].CanSpectate)
                 {
                     GameUIManager.Instance.gameScene.SetActive(true);
                     GameUIManager.Instance.gameSceneImportant.SetActive(true);
-                    
+
                     cameraTransform.gameObject.SetActive(false);
                     moveCamera.gameObject.SetActive(true);
-                        
+
                     ListenerManager.Instance.SetCamera(moveCamera.camTransform);
-                        
+
                     WeaponManager.Instance.InitializePlayer(PlayerState.PlayerStates[_currentSelectedPlayer]);
-            
+
                     PlayerParticle.Instance.InitializePlayer(PlayerState.PlayerStates[_currentSelectedPlayer]);
                     SlideAudio.Instance.InitializePlayer(PlayerState.PlayerStates[_currentSelectedPlayer]);
 
                     PickInteractor.Instance.DeInitialize();
                     Interactor.Instance.DeInitialize();
-                        
+
                     moveCamera.SetPlayer(PlayerState.PlayerStates[_currentSelectedPlayer]);
-                        
+
                     OnFirstPersonSpectatePlayer?.Invoke(PlayerState.PlayerStates[_currentSelectedPlayer]);
-                    
+
                     break;
                 }
             }
@@ -526,19 +526,19 @@ namespace Movement
 
             cameraTransform.gameObject.SetActive(false);
             moveCamera.gameObject.SetActive(true);
-            
+
             ListenerManager.Instance.SetCamera(moveCamera.camTransform);
-            
+
             moveCamera.SetPlayer(ps);
-            
+
             WeaponManager.Instance.InitializePlayer(ps);
-            
+
             PlayerParticle.Instance.InitializePlayer(ps);
-            
+
             SlideAudio.Instance.InitializePlayer(ps);
-            
+
             PickInteractor.Instance.InitializePlayer(ps);
-            
+
             Interactor.Instance.InitializePlayer(ps);
         }
 
@@ -582,7 +582,7 @@ namespace Movement
             }
         }
 
-        public void CameraShake(float amplitude,float frequency,float duration)
+        public void CameraShake(float amplitude, float frequency, float duration)
         {
             CameraShaker.GetInstance("DebugCamera").ShakeOnce(amplitude, frequency, 0.1f, duration + 0.1f);
         }
@@ -660,11 +660,11 @@ namespace Movement
         }
     }
 
-    
+
     public class CameraState : ICloneable
     {
         public static float DefaultFov = 75f, MaxFov = 130, MinFov = 5;
-        
+
         public Vector3 Position;
 
         public float XRotation, DesiredX, Tilt, Fov = DefaultFov;

@@ -5,13 +5,13 @@ using IRenderPipelineCameraUtility = CodingDaniel.MapEditor.Utils.IRenderPipelin
 
 namespace CodingDaniel.MapEditor.Graphics
 {
-    public class CameraUtilityURP : MonoBehaviour,IRenderPipelineCameraUtility
+    public class CameraUtilityURP : MonoBehaviour, IRenderPipelineCameraUtility
     {
         public static CameraUtilityURP Instance { private set; get; }
         public event Action<Camera, bool> PostProcessingEnabled;
 
         private void Awake()
-        {            
+        {
             Instance = this;
         }
 
@@ -44,7 +44,7 @@ namespace CodingDaniel.MapEditor.Graphics
             }
             cameraData.renderPostProcessing = value;
 
-            if(PostProcessingEnabled != null)
+            if (PostProcessingEnabled != null)
             {
                 PostProcessingEnabled(camera, value);
             }
@@ -53,13 +53,13 @@ namespace CodingDaniel.MapEditor.Graphics
         public void Stack(Camera baseCamera, Camera overlayCamera)
         {
             UniversalAdditionalCameraData overlayData = overlayCamera.GetComponent<UniversalAdditionalCameraData>();
-            if(overlayData == null)
+            if (overlayData == null)
             {
                 overlayData = overlayCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
             }
             overlayData.renderType = CameraRenderType.Overlay;
             UniversalAdditionalCameraData baseData = baseCamera.GetComponent<UniversalAdditionalCameraData>();
-            if(baseData == null)
+            if (baseData == null)
             {
                 baseData = baseCamera.gameObject.AddComponent<UniversalAdditionalCameraData>();
             }

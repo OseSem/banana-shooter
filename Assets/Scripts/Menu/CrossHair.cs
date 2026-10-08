@@ -14,15 +14,15 @@ namespace Menu
         public float height;
         [Header("上下（左右）两条准星之间的距离")]
         public float distance;
- 
+
         private Texture tex;            //  准星背景辅助参数
- 
+
         public Color color = Color.white;
 
-        public RectTransform left, up, right, bottom,dotTransform;
+        public RectTransform left, up, right, bottom, dotTransform;
         public RawImage[] rawImages;
 
-        public bool enableDot=true;
+        public bool enableDot = true;
 
         public GameObject dot;
         private void Awake()
@@ -38,7 +38,7 @@ namespace Menu
             SetHeight(GameManager.Instance.setting.crossHairHeight);
             SetDistance(GameManager.Instance.setting.crossHairDistance);
             SetDot(GameManager.Instance.setting.enableDot);
-            SetColor(new Color(GameManager.Instance.setting.csR/255f,  GameManager.Instance.setting.csG/255f, GameManager.Instance.setting.csB/255f));
+            SetColor(new Color(GameManager.Instance.setting.csR / 255f, GameManager.Instance.setting.csG / 255f, GameManager.Instance.setting.csB / 255f));
             SetValue();
         }
 
@@ -46,7 +46,7 @@ namespace Menu
         {
             enableDot = arg;
             SetValue();
-        } 
+        }
         void SetValue()
         {
             float costant = 0;
@@ -60,7 +60,7 @@ namespace Menu
             up.sizeDelta = new Vector2(height, width);
             bottom.sizeDelta = new Vector2(height, width);
 
-            if(dotTransform!=null)
+            if (dotTransform != null)
                 dotTransform.sizeDelta = new Vector2(height, height);
 
             foreach (var i in rawImages)

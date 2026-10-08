@@ -1,7 +1,7 @@
 
 using Console;
 using UnityEngine;
-[CreateAssetMenu(fileName = "Fps Command",menuName = "Utilities/DeveloperConsole/Commands/Fps Command")]
+[CreateAssetMenu(fileName = "Fps Command", menuName = "Utilities/DeveloperConsole/Commands/Fps Command")]
 public class FpsCommand : ConsoleCommand
 {
     public override bool Process(string[] args)

@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Cosmetic
 {
-    public class CosmeticPrefab : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler
+    public class CosmeticPrefab : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         public SteamItemStored ItemStored;
         public CosmeticItem selectItem;
@@ -28,7 +28,7 @@ namespace Cosmetic
                     {
                         if (i + 2 <= description.Length)
                         {
-                            string temp = description.Substring(i,2);
+                            string temp = description.Substring(i, 2);
                             if (temp.ToLower() == "\\n")
                             {
                                 description = description.Replace(temp, Environment.NewLine);
@@ -38,7 +38,7 @@ namespace Cosmetic
                 }
             }
             CosmeticMenu.Instance.description.SetText(description);
-            Invoke(nameof(ShowDetailed),.5f);
+            Invoke(nameof(ShowDetailed), .5f);
         }
 
         public RectTransform detailed;
@@ -59,7 +59,7 @@ namespace Cosmetic
                     {
                         if (i + 2 <= description.Length)
                         {
-                            string temp = description.Substring(i,2);
+                            string temp = description.Substring(i, 2);
                             if (temp.ToLower() == "\\n")
                             {
                                 description = description.Replace(temp, Environment.NewLine);
@@ -68,12 +68,12 @@ namespace Cosmetic
                     }
                 }
             }
-        
-        
+
+
             CosmeticMenu.Instance.description.SetText(description);
             CosmeticMenu.Instance.fitter.SetLayoutVertical();
             CosmeticMenu.Instance.detailed.position = detailed.position;
-        
+
             CosmeticMenu.Instance.detailedGroup.alpha = 1;
         }
 
@@ -89,7 +89,7 @@ namespace Cosmetic
             CancelInvoke(nameof(ShowDetailed));
         }
 
-        public void SetItem(CosmeticItem cosmeticItem,bool myInventory = false,SteamItemStored newItem = null)
+        public void SetItem(CosmeticItem cosmeticItem, bool myInventory = false, SteamItemStored newItem = null)
         {
             selectItem = cosmeticItem;
             ItemStored = newItem;
@@ -99,44 +99,44 @@ namespace Cosmetic
             Color color = cosmeticItem.GetColor();
             text.color = color;
             bg.color = color;
-            
+
 
             if (newItem != null)
             {
                 newItemTag.SetActive(newItem.New);
-                
-                selected.SetActive(myInventory&&InventoryManager.Instance.cosmeticIndex.ids.Contains(newItem.itemDetails.m_itemId
-                    .m_SteamItemInstanceID) || myInventory&&InventoryManager.Instance.cosmeticIndex.weaponIds.Contains(newItem.itemDetails.m_itemId
+
+                selected.SetActive(myInventory && InventoryManager.Instance.cosmeticIndex.ids.Contains(newItem.itemDetails.m_itemId
+                    .m_SteamItemInstanceID) || myInventory && InventoryManager.Instance.cosmeticIndex.weaponIds.Contains(newItem.itemDetails.m_itemId
                     .m_SteamItemInstanceID));
-                
-                nameText = selectItem.displayName + " (" + selectItem.GetRarity()+")\n";
+
+                nameText = selectItem.displayName + " (" + selectItem.GetRarity() + ")\n";
                 if (ItemStored.properties.ContainsKey("color"))
                 {
                     nameText += $"Color : <color={ItemStored.GetColorString()}>{ItemStored.properties["color"]}</color>\n";
                 }
-                if (ItemStored.properties.ContainsKey("shiny") && ItemStored.properties["shiny"]!="0")
+                if (ItemStored.properties.ContainsKey("shiny") && ItemStored.properties["shiny"] != "0")
                 {
                     nameText += $"Shiny : {ItemStored.properties["shiny"]}\n";
                 }
-                if (ItemStored.properties.TryGetValue("particle",out var particle))
+                if (ItemStored.properties.TryGetValue("particle", out var particle))
                 {
-                
-                    nameText+=($"Particle : <color=yellow>{particle}</color>)\n");
+
+                    nameText += ($"Particle : <color=yellow>{particle}</color>)\n");
                 }
 
                 nameText += $"Rarity Score : {ItemStored.GetRarityScore()}\n";
                 // nameText += $"Index : {ItemStored.Time}\n";
-                
-                if(newItem.properties.ContainsKey("color"))
+
+                if (newItem.properties.ContainsKey("color"))
                     nameWithColor.Append($"<color={newItem.GetColorString()}>{newItem.properties["color"]}</color>\n");
-                if(newItem.properties.TryGetValue("particle",out var p))
+                if (newItem.properties.TryGetValue("particle", out var p))
                     nameWithColor.Append($"Particle : {p}\n");
                 if (newItem.properties.ContainsKey("shiny"))
                 {
-                    if(newItem.properties["shiny"]!="0")
+                    if (newItem.properties["shiny"] != "0")
                         nameWithColor.Append("<color=yellow>shiny " + newItem.properties["shiny"] + "</color>");
                 }
-                
+
                 if (newItem.amountGained > 1)
                 {
                     amountText.SetText(newItem.amountGained.ToString());
@@ -146,7 +146,7 @@ namespace Cosmetic
                 // {
                 //     nameWithColor = new StringBuilder(newItem.amountGained + " " + nameWithColor);
                 // }
-                
+
                 // if (myInventory)
                 // {
                 //     if (InventoryManager.Instance.cosmeticIndex.ids != null)
@@ -192,13 +192,13 @@ namespace Cosmetic
                 //     
                 // }
             }
-            
+
             text.SetText(nameWithColor);
-       
-            if(myInventory)
-                btn.onClick.AddListener(delegate { CosmeticMenu.Instance.SelectCosmetic(cosmeticItem,newItem); });
-            else if(newItem!=null)
-                btn.onClick.AddListener(delegate { CosmeticMenu.Instance.SelectUseCosmetic(cosmeticItem,newItem); });
+
+            if (myInventory)
+                btn.onClick.AddListener(delegate { CosmeticMenu.Instance.SelectCosmetic(cosmeticItem, newItem); });
+            else if (newItem != null)
+                btn.onClick.AddListener(delegate { CosmeticMenu.Instance.SelectUseCosmetic(cosmeticItem, newItem); });
 
             // if (CosmeticMenu.Instance!=null && gameObject.activeSelf)
             // {
@@ -211,7 +211,7 @@ namespace Cosmetic
         [SerializeField] public GameObject selected;
         [SerializeField] private TextMeshProUGUI text;
 
-        [SerializeField] private RawImage bg,icon;
+        [SerializeField] private RawImage bg, icon;
         [SerializeField] private Button btn;
     }
 }

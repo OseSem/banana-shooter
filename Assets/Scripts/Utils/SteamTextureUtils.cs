@@ -13,11 +13,11 @@ namespace Utils
             {
                 byte[] image = new byte[width * height * 4];
 
-                isValid = SteamUtils.GetImageRGBA(iImage, image, (int) (width * height * 4));
+                isValid = SteamUtils.GetImageRGBA(iImage, image, (int)(width * height * 4));
 
                 if (isValid)
                 {
-                    texture2D = new Texture2D((int) width, (int) height, TextureFormat.RGBA32, false);
+                    texture2D = new Texture2D((int)width, (int)height, TextureFormat.RGBA32, false);
                     texture2D.LoadRawTextureData(image);
                     texture2D.Apply();
                 }

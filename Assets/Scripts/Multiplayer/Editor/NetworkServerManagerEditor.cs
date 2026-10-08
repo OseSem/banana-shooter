@@ -21,16 +21,16 @@ namespace Multiplayer.Editor
                 return;
 
             float space = 10f;
-            
+
             EditorGUI.indentLevel = 0;
             GUILayout.BeginVertical("Box");
             EditorGUILayout.LabelField("Player", EditorStyles.boldLabel);
             EditorGUI.indentLevel = 1;
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(_networkServer.serverPlayerPrefab)), new GUIContent("Server Player", "Spawn this when players join"));
             GUILayout.EndVertical();
-            
+
             GUILayout.Space(space);
-            
+
             EditorGUI.indentLevel = 0;
             GUILayout.BeginVertical("Box");
             EditorGUILayout.LabelField("Weapons", EditorStyles.boldLabel);

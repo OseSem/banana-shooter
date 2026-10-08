@@ -34,7 +34,7 @@ namespace Menu
 
             dlcServerTab.SetActive(SteamApps.BIsDlcInstalled(new AppId_t(2238100)));
         }
-        
+
         private void OnEnable()
         {
             if (SteamManager.SteamServersConnected) OnSteamServerConnected();
@@ -73,7 +73,7 @@ namespace Menu
 
         [SerializeField] private Transform cam;
 
-        private Vector3 desiredPos,defaultPos;
+        private Vector3 desiredPos, defaultPos;
 
         private void Start()
         {
@@ -99,14 +99,14 @@ namespace Menu
 
             defaultPos = cam.localPosition;
             desiredPos = defaultPos;
-        
+
             SteamFriends.SetRichPresence("steam_display", "#Status_AtMainMenu");
 
             foreach (var reBindUi in reBindUis)
             {
                 reBindUi.Refresh();
             }
-        
+
             MusicManager.Instance.ChangeMusic(MusicManager.MusicType.MainMenu);
         }
 
@@ -115,7 +115,7 @@ namespace Menu
         [SerializeField] public Button tryToCreateCancel;
 
         [SerializeField] private List<GameObject> adminPanel = new List<GameObject>();
-        
+
         public void ShootingRange()
         {
             shootingRangeBtn.interactable = false;
@@ -123,7 +123,7 @@ namespace Menu
             NetworkServerManager.SetServerEnableWorkshop(false);
             CreateServerMenu.Instance.CreateLobby(true);
         }
-        
+
         public void Endless()
         {
             endLessBtn.interactable = false;
@@ -135,7 +135,7 @@ namespace Menu
 
         void Back()
         {
-            if (btn!=null && Input.GetKeyDown(KeyCode.Escape))
+            if (btn != null && Input.GetKeyDown(KeyCode.Escape))
             {
                 btn.onClick.Invoke();
             }
@@ -143,44 +143,44 @@ namespace Menu
 
         Button btn;
 
-        
+
         public void SetButton(Button button)
         {
             btn = button;
         }
 
-        [SerializeField] private Vector3 weaponPos = new Vector3(4.25f,2.5f,26.75f);
-        [SerializeField] private Vector3 multiplayerPos = new Vector3(4.25f,2.5f,26.75f);
+        [SerializeField] private Vector3 weaponPos = new Vector3(4.25f, 2.5f, 26.75f);
+        [SerializeField] private Vector3 multiplayerPos = new Vector3(4.25f, 2.5f, 26.75f);
 
         public void SetPos2Weapon()
         {
             desiredPos = weaponPos;
         }
 
-        
+
         public void SetPos2Multiplayer()
         {
             desiredPos = multiplayerPos;
         }
-    
-        
+
+
         public void SetPos2Default()
         {
             desiredPos = defaultPos;
         }
         private void Update()
         {
-            cam.localPosition = Vector3.Lerp(cam.localPosition,desiredPos,Time.deltaTime*5f);
+            cam.localPosition = Vector3.Lerp(cam.localPosition, desiredPos, Time.deltaTime * 5f);
             Back();
         }
 
-        
+
         public void Quit()
         {
             Application.Quit();
         }
 
-        
+
         public void ButtonSound()
         {
             AudioManager.Instance.PlayButton();
@@ -189,11 +189,11 @@ namespace Menu
         // [SerializeField] public GameObject border;/
 
 
-    
+
         [Serializable]
         public class WeaponUI
         {
-            public TextMeshProUGUI text; 
+            public TextMeshProUGUI text;
             public RawImage weaponImage;
         }
 
@@ -204,10 +204,10 @@ namespace Menu
         }
 
         public List<GameObject> withoutLoading = new List<GameObject>();
-        [SerializeField]private GameObject loadingMenu;
+        [SerializeField] private GameObject loadingMenu;
 
-        [SerializeField] GameObject browseServer,mainMenu;
-        
+        [SerializeField] GameObject browseServer, mainMenu;
+
         public void Disconnect()
         {
             LobbyManager.Instance.LeaveLobby();
@@ -225,7 +225,7 @@ namespace Menu
                 browseServer.SetActive(true);
             }
         }
-    
+
         [SerializeField] private TextMeshProUGUI version;
         public Button disConnectBtn;
 
@@ -238,7 +238,7 @@ namespace Menu
         {
             chineseVersionAbout.SetActive(IsItChinese());
         }
-        
+
         public void OpenDiscordUrl()
         {
             Application.OpenURL("https://discord.gg/DtfVqyP6WX");
@@ -261,12 +261,12 @@ namespace Menu
 
         public ReBindUI[] reBindUis;
 
-        
+
         public void SetDontShowMe(bool flag)
         {
             GameManager.hostGameDontShowMeThisAgain = flag;
-        
-            PlayerPrefs.SetInt("hostGameDontShowMeThisAgain",flag ? 1 : 0);
+
+            PlayerPrefs.SetInt("hostGameDontShowMeThisAgain", flag ? 1 : 0);
         }
 
         public GameObject enableWorkshopPanel;

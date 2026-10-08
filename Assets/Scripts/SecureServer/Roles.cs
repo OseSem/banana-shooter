@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Newtonsoft.Json;
 
 namespace SecureServer
@@ -9,9 +9,9 @@ namespace SecureServer
         public List<ulong> Helpers = new List<ulong>();
         public List<ulong> BananaMen = new List<ulong>();
         public List<ulong> DiscordMen = new List<ulong>();
-    
+
         [JsonConstructor]
-        public Roles(List<ulong> admins, List<ulong> helpers,List<ulong> bananaMen, List<ulong> discordMen)
+        public Roles(List<ulong> admins, List<ulong> helpers, List<ulong> bananaMen, List<ulong> discordMen)
         {
             Admins = admins ?? new List<ulong>();
             Helpers = helpers ?? new List<ulong>();
@@ -21,7 +21,7 @@ namespace SecureServer
 
         public Roles()
         {
-        
+
         }
     }
 }

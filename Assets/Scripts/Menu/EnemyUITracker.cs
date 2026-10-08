@@ -12,12 +12,12 @@ namespace Menu
         private bool init = false;
         private Transform cameraTransform;
         public Transform target;
-    
-    
+
+
         private RectTransform canvasRect;
 
         private CanvasGroup _canvasGroup;
-        [SerializeField]private CanvasGroup nameCanvas;
+        [SerializeField] private CanvasGroup nameCanvas;
         private float desiredAlpha = 0.5f;
         private float nameAlpha = 0.5f;
         float multiplier = 0.85f;
@@ -27,7 +27,7 @@ namespace Menu
         public Vector3 offset = Vector3.zero;
 
         public TextMeshProUGUI text;
-        
+
         public enum TrackerType
         {
             None,
@@ -45,7 +45,7 @@ namespace Menu
         private void LateUpdate()
         {
             if (!target) return;
-            Vector3 desiredPos = target.position+offset;
+            Vector3 desiredPos = target.position + offset;
             Vector3 targetPos = VectorExtension.CalculateWorldPosition(desiredPos, cameraTransform);
             Vector2 screenPoint = camera.WorldToScreenPoint(targetPos);
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, null, out localPoint);
@@ -54,9 +54,9 @@ namespace Menu
 
             Vector2 max = new Vector2(sizeDelta.x / 2f, sizeDelta.y / 2f) * multiplier;
             Vector2 min = new Vector2(-sizeDelta.x / 2f, -sizeDelta.y / 2f) * multiplier;
-        
-        
-        
+
+
+
             if (localPoint.x > max.x)
             {
                 localPoint.x = max.x;
@@ -90,6 +90,6 @@ namespace Menu
             _canvasGroup.alpha = Mathf.Lerp(_canvasGroup.alpha, desiredAlpha, Time.deltaTime * 10f);
             transform.localPosition = localPoint;
         }
-    
+
     }
 }

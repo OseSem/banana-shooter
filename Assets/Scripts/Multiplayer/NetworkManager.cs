@@ -33,7 +33,7 @@ namespace Multiplayer
 {
     public enum ServerToClientId : ushort
     {
-        Init=1,
+        Init = 1,
         AddClientData,
         ServerProperties,
         CustomMessage,
@@ -157,7 +157,7 @@ namespace Multiplayer
         SpecterMode,
         RequestSpawnObj,
         // SetCosmetics,
-        SendPerks,    
+        SendPerks,
         DoSelectTeam,
         PickPickable,
         BuyWeapon,
@@ -166,8 +166,8 @@ namespace Multiplayer
     [Serializable]
     public enum GameMode : ushort
     {
-        None=0,
-        SpecialGameMode=1,
+        None = 0,
+        SpecialGameMode = 1,
         SpecialNormalGameMode,
         Brawl,
         TeamDeathMatch,
@@ -181,7 +181,7 @@ namespace Multiplayer
         RocketMode,
         PVE,
     }
-    
+
     public enum RequestDataType
     {
         PlayerSpawn,
@@ -206,20 +206,20 @@ namespace Multiplayer
 
     public enum ServerType
     {
-        None=0,
+        None = 0,
         Normal,
         OneVsOne,
         Endless,
         ShootingRange,
         KnockoutRound,
     }
-    
+
 
     [DefaultExecutionOrder(-99)]
     public class NetworkManager : MonoBehaviour
     {
         public const uint MaxSplitPacketSize = 256;
-        
+
         public const byte PlayerHostedDemoMessageHandlerGroupId = 255;
 
         private static NetworkManager _instance;
@@ -241,10 +241,10 @@ namespace Multiplayer
         }
 
         public string ConnectionString { get; private set; } = String.Empty;
-        
+
         [SerializeField] public GameObject playerPrefab;
         [SerializeField] public GameObject localPlayerPrefab;
-        
+
         public GameObject PlayerPrefab => playerPrefab;
         public GameObject LocalPlayerPrefab => localPlayerPrefab;
 
@@ -259,14 +259,14 @@ namespace Multiplayer
         public static GameMode ClientGameMode { get; set; } = GameMode.Brawl;
         //Cheats
         public static bool ClientCheatsEnabled { get; private set; } = false;
-        public short[] Weapons { set;get; } = new short[3] {0,1,2};
+        public short[] Weapons { set; get; } = new short[3] { 0, 1, 2 };
 
         public static int ClientDataCount = 0;
         //Store the client datas
         public static Dictionary<ushort, ClientData> ClientData = new Dictionary<ushort, ClientData>();
 
         public static ClientData LocalClientData;
-        
+
         public List<WeaponStat> weaponInfo = new List<WeaponStat>();
         //The weapons that server allows to use
         public static Dictionary<string, bool> AllowedWeapon = new Dictionary<string, bool>();
@@ -284,7 +284,7 @@ namespace Multiplayer
         public int ByteUp { get; private set; }
         private int ReadByte { get; set; }
         public int ByteDown { get; private set; }
-        
+
         public bool IsWorkshopMap { private set; get; }
 
         public static bool ClientDisableSpecialWeapon { get; private set; } = false;
@@ -303,7 +303,7 @@ namespace Multiplayer
                     AllowedWeapon.Add(weapon.name, true);
                 }
             }
-            
+
             // SteamNetworkingUtils.SetDebugOutputFunction(ESteamNetworkingSocketsDebugOutputType.k_ESteamNetworkingSocketsDebugOutputType_Everything,
             //     (type, msg) =>
             //     {
@@ -325,7 +325,7 @@ namespace Multiplayer
 #else
             RiptideLogger.Initialize(Debug.Log, false);
 #endif
-            
+
             AchievementManager.Instance.SetAchievement(AchievementManager.EAchievements.BANANA_GO_BRRRRRR);
 
             AchievementManager.Instance.SetStatsPlusOne(AchievementManager.EStats.START_GAME_1000);
@@ -341,7 +341,7 @@ namespace Multiplayer
             GetPlayerAvatar();
 
             displayTag = PlayerPrefs.GetInt("display_tag", 1) == 1;
-            InvokeRepeating(nameof(ClearByte),1f,1f);
+            InvokeRepeating(nameof(ClearByte), 1f, 1f);
 
         }
         void ClearByte()
@@ -376,12 +376,12 @@ namespace Multiplayer
         public static bool avatarLoaded = false;
         public Action<Texture2D> OnAvatarLoad;
 
-        public static Action<CSteamID,Texture2D> OnAvatarImageLoaded;
+        public static Action<CSteamID, Texture2D> OnAvatarImageLoaded;
 
         private void OnImageLoaded(AvatarImageLoaded_t param)
         {
-            OnAvatarImageLoaded?.Invoke(param.m_steamID,SteamTextureUtils.GetSteamImageAsTexture(param.m_iImage));
-            
+            OnAvatarImageLoaded?.Invoke(param.m_steamID, SteamTextureUtils.GetSteamImageAsTexture(param.m_iImage));
+
             if (param.m_steamID == steamId)
             {
                 avatarLoaded = true;
@@ -407,9 +407,9 @@ namespace Multiplayer
         private void FixedUpdate()
         {
             if (!SteamManager.Initialized) return;
-            
+
             if (ServerTick % uint.MaxValue == 0) ServerTick = 0;
-            
+
             ServerTick++;
         }
 
@@ -417,11 +417,11 @@ namespace Multiplayer
         public string MapId { get; set; }
 
         #region NETWORK
-        
+
         void InitGame()
         {
             Client = new Riptide.Client(new SteamClient(NetworkServerManager.Instance.CashedSteamServer));
-            
+
             Client.Connected += DidConnect;
             Client.ConnectionFailed += FailedToConnect;
             Client.Disconnected += DidDisconnect;
@@ -456,7 +456,7 @@ namespace Multiplayer
             private set
             {
                 _serverTick = value;
-                InterpolationTick = (uint) (value - TicksBetweenPositionUpdates);
+                InterpolationTick = (uint)(value - TicksBetweenPositionUpdates);
             }
         }
 
@@ -469,11 +469,11 @@ namespace Multiplayer
             private set
             {
                 _ticksBetweenPositionUpdates = value;
-                InterpolationTick = (uint) (ServerTick - value);
+                InterpolationTick = (uint)(ServerTick - value);
             }
         }
 
-        [Space(10)] [SerializeField] private uint tickDivergenceTolerance = 1;
+        [Space(10)][SerializeField] private uint tickDivergenceTolerance = 1;
 
         public void StopServer()
         {
@@ -496,7 +496,7 @@ namespace Multiplayer
         void ClearClientData()
         {
             ClientData.Clear();
-            
+
             VoiceChatUIManager.Instance.Clear();
         }
 
@@ -525,8 +525,8 @@ namespace Multiplayer
                 VoiceChatUIManager.Instance.RemovePlayer(e.Id);
                 ClientData.Remove(e.Id);
             }
-            
-            if (GameUIManager.Instance&&GameUIManager.Instance.PlayerList.ContainsKey(e.Id) && GameUIManager.Instance.PlayerList[e.Id] != null)
+
+            if (GameUIManager.Instance && GameUIManager.Instance.PlayerList.ContainsKey(e.Id) && GameUIManager.Instance.PlayerList[e.Id] != null)
             {
                 Destroy(GameUIManager.Instance.PlayerList[e.Id].gameObject);
                 GameUIManager.Instance.PlayerList.Remove(e.Id);
@@ -559,7 +559,7 @@ namespace Multiplayer
             SetCurrentServer(String.Empty);
             SteamUser.CancelAuthTicket(_currentTicket);
             LobbyManager.Instance.LeaveLobby();
-            
+
             string additionalMessage = String.Empty;
             if (e.Message != null)
             {
@@ -578,7 +578,7 @@ namespace Multiplayer
 
                 ClientPlayer.list.Clear();
 
-                if(additionalMessage!=String.Empty)
+                if (additionalMessage != String.Empty)
                     LoadingManager.Instance.additionalMessage = additionalMessage;
                 if (LoadingManager.Instance.menuType == LoadingManager.MenuType.None)
                 {
@@ -591,7 +591,7 @@ namespace Multiplayer
                     // if (e.Reason == DisconnectReason.Disconnected)
                     //     LoadingManager.Instance.menuType = LoadingManager.MenuType.ConnectionFailed;
                 }
-            
+
                 LoadingManager.Instance.Menu();
             }
             else
@@ -604,7 +604,7 @@ namespace Multiplayer
 
         }
 
-        
+
 
         #endregion
 
@@ -628,7 +628,7 @@ namespace Multiplayer
         }
 
         public Queue<BoxListItem> boxes = new Queue<BoxListItem>();
-        
+
         public void SetRichPreference(string gamemodeName, string mapName)
         {
             SteamFriends.SetRichPresence("gamemode", gamemodeName);
@@ -637,15 +637,15 @@ namespace Multiplayer
         }
 
         [SerializeField] public Locale[] language;
-        [MessageHandler((ushort) ServerToClientId.StartRound,PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.StartRound, PlayerHostedDemoMessageHandlerGroupId)]
         private static void StartRound(Message message)
         {
             uint endTick = message.GetUInt();
-            
+
             switch (ClientServerType)
             {
                 case ServerType.Endless:
-                    if(Endless.Instance) Endless.Instance.StartGameClient();
+                    if (Endless.Instance) Endless.Instance.StartGameClient();
                     break;
                 default:
                     if (Instance.game != null)
@@ -659,12 +659,12 @@ namespace Multiplayer
                     }
                     break;
             }
-            
+
         }
-        [MessageHandler((ushort) ServerToClientId.StopRound,PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.StopRound, PlayerHostedDemoMessageHandlerGroupId)]
         private static void StopRound(Message message)
         {
-            ServerType serverType = (ServerType) message.GetUShort();
+            ServerType serverType = (ServerType)message.GetUShort();
             switch (serverType)
             {
                 case ServerType.Endless:
@@ -674,8 +674,8 @@ namespace Multiplayer
                     }
                     break;
                 default:
-                    GameMode gameMode = (GameMode) message.GetUShort();
-                    
+                    GameMode gameMode = (GameMode)message.GetUShort();
+
                     if (serverType == ServerType.KnockoutRound)
                     {
                         bool end = message.GetBool();
@@ -710,7 +710,7 @@ namespace Multiplayer
                         }
 
                         GameManager.finalRound = end;
-                        
+
                         Debug.Log($"Round: {end}");
                     }
 
@@ -720,7 +720,7 @@ namespace Multiplayer
 
                     for (int i = 0; i < count; i++)
                     {
-                        list.Add(new Tuple<ushort, string, string>(message.GetUShort(),message.GetString(),message.GetString()));
+                        list.Add(new Tuple<ushort, string, string>(message.GetUShort(), message.GetString(), message.GetString()));
                     }
 
                     var boxReceivedIds = message.GetUShorts();
@@ -740,7 +740,7 @@ namespace Multiplayer
                         GameManager.lastKill = 0;
                         GameManager.lastKill = 0;
                     }
-                
+
                     GameManager.win = winnerId == Instance.Client.Id;
 
                     int j = 0;
@@ -751,16 +751,16 @@ namespace Multiplayer
                             switch (j)
                             {
                                 case 0:
-                                    WinnerPlayerDisplay.Instance.Enable(new []{WinnerPlayerDisplay.Instance.firstPlayer, GameUIManager.Instance.firstWinner});
+                                    WinnerPlayerDisplay.Instance.Enable(new[] { WinnerPlayerDisplay.Instance.firstPlayer, GameUIManager.Instance.firstWinner });
                                     WinnerPlayerDisplay.Instance.SetPlayerCosmetics(WinnerPlayerDisplay.Instance.firstCosmetics, p.playerState.CosmeticIndex);
                                     break;
                                 case 1:
-                                    WinnerPlayerDisplay.Instance.Enable(new []{WinnerPlayerDisplay.Instance.secondPlayer, GameUIManager.Instance.secondWinner});
+                                    WinnerPlayerDisplay.Instance.Enable(new[] { WinnerPlayerDisplay.Instance.secondPlayer, GameUIManager.Instance.secondWinner });
                                     WinnerPlayerDisplay.Instance.SetPlayerCosmetics(WinnerPlayerDisplay.Instance.secondCosmetics, p.playerState.CosmeticIndex);
                                     GameUIManager.Instance.winSecondText.SetText(item.Item2 + "\n<size=12>" + item.Item3 + "</size>");
                                     break;
                                 case 2:
-                                    WinnerPlayerDisplay.Instance.Enable(new []{WinnerPlayerDisplay.Instance.thirdPlayer, GameUIManager.Instance.thirdWinner});
+                                    WinnerPlayerDisplay.Instance.Enable(new[] { WinnerPlayerDisplay.Instance.thirdPlayer, GameUIManager.Instance.thirdWinner });
                                     WinnerPlayerDisplay.Instance.SetPlayerCosmetics(WinnerPlayerDisplay.Instance.thirdCosmetics, p.playerState.CosmeticIndex);
                                     GameUIManager.Instance.winThirdText.SetText(item.Item2 + "\n<size=12>" + item.Item3 + "</size>");
                                     break;
@@ -770,7 +770,7 @@ namespace Multiplayer
                         ++j;
                     }
 
-                    if (ClientPlayer.list.TryGetValue(winnerId,out var player))
+                    if (ClientPlayer.list.TryGetValue(winnerId, out var player))
                     {
                         ClientPlayer myPlayer = ClientPlayer.list[Instance.Client.Id];
                         string team;
@@ -799,13 +799,13 @@ namespace Multiplayer
                                     myPlayer.playerState.Team == Team.Rebel ? "AllianceWon_rebelside" : "AllianceWon_allianceside";
 
                                 GameManager.win = player.playerState.Team == myPlayer.playerState.Team;
-                                
+
                                 if (GameUIManager.Instance)
                                 {
                                     GameUIManager.Instance.gameScene.SetActive(false);
                                     GameUIManager.Instance.mainMenu.SetActive(false);
                                     // GameUIManager.Instance.winnerNameText.SetText($"{name} : {description}");
-                    
+
                                     GameUIManager.Instance.winFirstText.SetText(name + "\n<size=24>" + description + "</size>");
                                     // GameUIManager.Instance.winner.GetComponent<LocalizeStringEvent>().SetEntry(team);
                                     // GameUIManager.Instance.endScreen.SetActive(true);
@@ -817,7 +817,7 @@ namespace Multiplayer
                                     GameUIManager.Instance.gameScene.SetActive(false);
                                     GameUIManager.Instance.mainMenu.SetActive(false);
                                     // GameUIManager.Instance.winnerNameText.SetText($"{name} : {description}");
-                    
+
                                     GameUIManager.Instance.winFirstText.SetText(name + "\n<size=24>" + description + "</size>");
 
                                     // GameUIManager.Instance.winner.SetText("The best monke");
@@ -825,13 +825,13 @@ namespace Multiplayer
                                 }
                                 break;
                             case GameMode.CatchTheBanana:
-                                
+
                                 if (GameUIManager.Instance)
                                 {
                                     GameUIManager.Instance.gameScene.SetActive(false);
                                     GameUIManager.Instance.mainMenu.SetActive(false);
                                     // GameUIManager.Instance.winnerNameText.SetText($"{name} : {description}");
-                    
+
                                     GameUIManager.Instance.winFirstText.SetText(name + "\n<size=24>" + description + "</size>");
                                     // GameUIManager.Instance.winner.SetText("The best player in this match");
                                     // GameUIManager.Instance.endScreen.SetActive(true);
@@ -843,17 +843,17 @@ namespace Multiplayer
                                 {
                                     GameUIManager.Instance.gameScene.SetActive(false);
                                     GameUIManager.Instance.mainMenu.SetActive(false);
-                    
+
                                     GameUIManager.Instance.winFirstText.SetText(name + "\n<size=24>" + description + "</size>");
                                     // GameUIManager.Instance.winner.SetText("The best player in this match");
                                     // GameUIManager.Instance.endScreen.SetActive(true);
                                 }
                                 break;
                         }
-                        
+
                         EndScreenUI.Instance.SetEndScreenValue(name, description);
                     }
-                    
+
                     if (GameManager.win || GameManager.survive)
                     {
                         QuestManager.Instance.GetProgress(QuestType.Win);
@@ -864,14 +864,14 @@ namespace Multiplayer
                         {
                             AchievementManager.Instance.SetAchievement(AchievementManager.EAchievements.I_AM_A_ROCK);
                         }
-                    
+
                         if (ClientPlayer.list.ContainsKey(winnerId) && !ClientPlayer.list[winnerId].moved)
                         {
                             AchievementManager.Instance.SetAchievement(AchievementManager.EAchievements.RED_LIGHT_GREEN_LIGHT);
                         }
-                    
-                    
-                        int wins= AchievementManager.Instance.SetStatsPlusOne(AchievementManager.EStats.WINS);
+
+
+                        int wins = AchievementManager.Instance.SetStatsPlusOne(AchievementManager.EStats.WINS);
                         LeaderboardManager.Instance.UploadWin(wins);
 
                         switch (gameMode)
@@ -899,7 +899,7 @@ namespace Multiplayer
                     }
                     else
                     {
-                        if(Random.Range(0,10) < 5)
+                        if (Random.Range(0, 10) < 5)
                             //don’t worry,you will banana next time
                             VoiceLine.Instance.PlayVoice(VoiceKey.bw_B);
                     }
@@ -914,11 +914,11 @@ namespace Multiplayer
                             break;
                     }
 
-                    if(Instance.game!=null)
+                    if (Instance.game != null)
                         Instance.game.StopGameClient(boxReceivedIds);
                     break;
             }
-            
+
         }
 
 
@@ -926,13 +926,13 @@ namespace Multiplayer
         {
             IsWorkshopMap = flag;
         }
-        
-    
+
+
         #endregion
-    
+
         #region SENDMESSAGE
 
-        private string _personalName="";
+        private string _personalName = "";
 
         public string PersonalName
         {
@@ -954,16 +954,16 @@ namespace Multiplayer
             }
             Debug.Log("trying to initialize");
             Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.Init);
-            
+
             message.Add(PersonalName);
             message.Add(currentGroup.m_SteamID);
             var desc = GameManager.Instance.setting.description.Length > 100 ? GameManager.Instance.setting.description.Substring(0, 100) : GameManager.Instance.setting.description;
             message.Add(desc);
             message.Add(LevelManager.Instance.levelSystem.GetExp());
             message.Add(displayTag);
-        
+
             message.Add(Weapons);
-            ushort[] perks = 
+            ushort[] perks =
             {
                 (ushort) PerkManager.Instance.perks[0], (ushort) PerkManager.Instance.perks[1],
                 (ushort) PerkManager.Instance.perks[2]
@@ -971,9 +971,9 @@ namespace Multiplayer
             message.Add(perks);
 
             int len = InventoryManager.SerializeInventory.Length;
-            
+
             message.Add(len);
-            
+
             if (len <= MaxSplitPacketSize)
             {
                 message.Add(InventoryManager.SerializeInventory);
@@ -981,15 +981,15 @@ namespace Multiplayer
             else
             {
                 byte[] bytes = new byte[MaxSplitPacketSize];
-                
-                Array.Copy(InventoryManager.SerializeInventory, 0, bytes, 0 , MaxSplitPacketSize);
+
+                Array.Copy(InventoryManager.SerializeInventory, 0, bytes, 0, MaxSplitPacketSize);
                 message.Add(bytes);
             }
 
             SendByte += message.WrittenLength;
             Client.Send(message);
-            
-            if(len > MaxSplitPacketSize) 
+
+            if (len > MaxSplitPacketSize)
                 Invoke(nameof(SendFragmentSerializeInventory), 0.3f);
         }
 
@@ -999,24 +999,24 @@ namespace Multiplayer
             int offset = len % MaxSplitPacketSize == 0 ? 0 : 1;
 
             int loop = (int)(len / MaxSplitPacketSize + offset - 1);
-            
+
             for (int i = 0; i < loop; i++)
             {
                 int d = (int)((i + 1) * MaxSplitPacketSize);
                 int index = i + 1 >= loop ? len - d : (int)MaxSplitPacketSize;
                 byte[] bytes = new byte[index];
 
-                Array.Copy(InventoryManager.SerializeInventory, d, bytes, 0 , index);
+                Array.Copy(InventoryManager.SerializeInventory, d, bytes, 0, index);
 
-                Message message  = Message.Create(MessageSendMode.Reliable,(ushort)ClientToServerId.FragmentSerializeInventory);
+                Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.FragmentSerializeInventory);
 
                 message.Add(bytes);
-                
+
                 SendByte += message.WrittenLength;
                 Client.Send(message);
             }
         }
-        public void HitEnemy(ushort id,Vector3 normal)
+        public void HitEnemy(ushort id, Vector3 normal)
         {
             if (!ClientEnemy.list.ContainsKey(id)) return;
             Quaternion rot = Quaternion.LookRotation(normal);
@@ -1024,7 +1024,7 @@ namespace Multiplayer
             if (GameManager.Instance.setting.spawnParticle)
             {
                 // Instantiate(PrefabManager.Instance.GetPrefab("robotHit"), pos, rot);
-                ObjectPooler.Instance.SpawnFromPool("BulletHit",pos,rot);
+                ObjectPooler.Instance.SpawnFromPool("BulletHit", pos, rot);
                 // ObjectPooler.Instance.SpawnFromPool("Blood",pos,rot);
                 Instantiate(PrefabManager.Instance.GetPrefab("robotHIt2"), pos, rot);
             }
@@ -1032,13 +1032,13 @@ namespace Multiplayer
             //Debug.Log($"Client Pos: {pos}");
             HitMarker.Instance.StartHitMarkerRobot(Color.white);
         }
-        
+
         //0 -- player
         //1 -- achievement
         //2 -- crate open
-        public void SendMsg(string msg,int type)
+        public void SendMsg(string msg, int type)
         {
-            Message message = Message.Create(MessageSendMode.Unreliable,(ushort)ClientToServerId.SendMessage);
+            Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ClientToServerId.SendMessage);
             message.Add(msg);
             message.Add(type);
             SendByte += message.WrittenLength;
@@ -1046,7 +1046,7 @@ namespace Multiplayer
         }
 
         #endregion
-    
+
         #region HANDLEMESSAGE
 
         void SetTick(uint serverTick)
@@ -1059,27 +1059,27 @@ namespace Multiplayer
             }
         }
 
-        [MessageHandler((ushort) ServerToClientId.Init, PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.Init, PlayerHostedDemoMessageHandlerGroupId)]
         private static void Init(Message message)
         {
-            ServerType serverType = (ServerType) message.GetUShort();
+            ServerType serverType = (ServerType)message.GetUShort();
             ClientServerType = serverType;
-            
+
             bool randomMap = message.GetBool();
             bool randomGameMode = message.GetBool();
             bool disableSpecialWeapon = message.GetBool();
             bool enableWorkshop = message.GetBool();
             bool cheatsEnable = message.GetBool();
             int clientDataCount = message.GetInt();
-            
+
             ClientRandomMap = randomMap;
             ClientRandomGameMode = randomGameMode;
             ClientDisableSpecialWeapon = disableSpecialWeapon;
             ClientEnableWorkshop = enableWorkshop;
             ClientCheatsEnabled = cheatsEnable;
             ClientDataCount = clientDataCount;
-            
-            for (int i = 0; i < Instance.weaponInfo.Count;i++)
+
+            for (int i = 0; i < Instance.weaponInfo.Count; i++)
             {
                 AllowedWeapon[Instance.weaponInfo[i].weaponName] = message.GetBool();
             }
@@ -1122,11 +1122,11 @@ namespace Multiplayer
             ushort[] perks = message.GetUShorts();
             InventoryManager.CosmeticIndex cosmeticIndex = message.GetCosmeticIndex();
 
-            ClientData data = new ClientData(id, name, steamId,ownedDlc ,groupId, desc, exp, displayTag,eliminated, weapons, perks)
+            ClientData data = new ClientData(id, name, steamId, ownedDlc, groupId, desc, exp, displayTag, eliminated, weapons, perks)
             {
                 CosmeticIndex = cosmeticIndex
             };
-            
+
             SteamFriends.SetPlayedWith((CSteamID)steamId);
 
             ClientData[id] = data;
@@ -1135,14 +1135,14 @@ namespace Multiplayer
             {
                 LocalClientData = data;
             }
-            
+
             VoiceChatUIManager.Instance.NewPlayer(data);
-            
+
             // Debug.Log($"{id } {name}");
         }
         public void TryToAuthorize()
         {
-            if(_authorizeCoroutine != null)
+            if (_authorizeCoroutine != null)
                 StopCoroutine(_authorizeCoroutine);
             _authorizeCoroutine = StartCoroutine(TryToAuthorizeCoroutine());
         }
@@ -1155,24 +1155,24 @@ namespace Multiplayer
             {
                 UIManager.Instance.SetConnectingState("Syncing");
             }
-            
+
             while (ClientData.Count < ClientDataCount)
             {
                 yield return null;
             }
-            
+
             if (UIManager.Instance)
             {
                 UIManager.Instance.SetConnectingState("Authorizing");
             }
-            
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort) ClientToServerId.Authorize);
+
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.Authorize);
 
             byte[] mTicket = new byte[1024];
 
             SteamNetworkingIdentity identity = new SteamNetworkingIdentity();
             // identity.SetSteamID(((SteamConnection)Client.Connection).SteamId);
-            _currentTicket=SteamUser.GetAuthSessionTicket(mTicket, 1024, out var pcbTicket, ref identity);
+            _currentTicket = SteamUser.GetAuthSessionTicket(mTicket, 1024, out var pcbTicket, ref identity);
 
             byte[] realTicket = new byte[pcbTicket];
 
@@ -1184,7 +1184,7 @@ namespace Multiplayer
             message.Add(realTicket);
             message.Add(SteamUser.GetSteamID().m_SteamID);
             message.Add(SteamFriends.GetPersonaName());
-            
+
             Client.Send(message);
         }
 
@@ -1193,7 +1193,7 @@ namespace Multiplayer
         {
             NetworkServerManager.ServerPropertiesType type =
                 (NetworkServerManager.ServerPropertiesType)message.GetUShort();
-            
+
             string value = String.Empty;
             string valueType = String.Empty;
 
@@ -1209,31 +1209,31 @@ namespace Multiplayer
                     {
                         PlayerMovement.Instance.ChangeNoClip();
                     }
-                    
+
                     break;
             }
-            
+
             Chat.Instance.AddMessage($"Server: {valueType} is now set to {value}", Color.white);
         }
-        
-        [MessageHandler((ushort) ServerToClientId.Authorized, PlayerHostedDemoMessageHandlerGroupId)]
+
+        [MessageHandler((ushort)ServerToClientId.Authorized, PlayerHostedDemoMessageHandlerGroupId)]
         private static void Authorized(Message message)
         {
             Instance.Init();
         }
-        
-        [MessageHandler((ushort) ServerToClientId.Sync, PlayerHostedDemoMessageHandlerGroupId)]
+
+        [MessageHandler((ushort)ServerToClientId.Sync, PlayerHostedDemoMessageHandlerGroupId)]
         private static void Sync(Message message)
         {
             Instance.SetTick(message.GetUInt());
         }
 
-        [MessageHandler((ushort) ServerToClientId.SetGameState, PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.SetGameState, PlayerHostedDemoMessageHandlerGroupId)]
         private static void SetGameState(Message message)
         {
-            GameState = (GameState) message.GetUShort();
+            GameState = (GameState)message.GetUShort();
         }
-        [MessageHandler((ushort) ServerToClientId.ServerSetting, PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.ServerSetting, PlayerHostedDemoMessageHandlerGroupId)]
         private static void ServerSetting(Message message)
         {
             ClientRandomMap = message.GetBool();
@@ -1247,8 +1247,8 @@ namespace Multiplayer
                 ServerSettingUI.Instance.SetServerSetting(serverName);
             }
         }
-        
-        [MessageHandler((ushort) ServerToClientId.SomeoneGetBox, PlayerHostedDemoMessageHandlerGroupId)]
+
+        [MessageHandler((ushort)ServerToClientId.SomeoneGetBox, PlayerHostedDemoMessageHandlerGroupId)]
         private static void SomeoneGetBox(Message message)
         {
             ushort playerId = message.GetUShort();
@@ -1256,10 +1256,10 @@ namespace Multiplayer
             BoxListItem item = new BoxListItem(playerId, itemdefid);
             Instance.boxes.Enqueue(item);
         }
-        [MessageHandler((ushort) ServerToClientId.Message, PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.Message, PlayerHostedDemoMessageHandlerGroupId)]
         private static void GetMessage(Message message)
         {
-            MessageType type = (MessageType) message.GetUShort();
+            MessageType type = (MessageType)message.GetUShort();
             ushort se;
             float clearTimer = 1.5f;
             float waitTimer = 0;
@@ -1270,7 +1270,7 @@ namespace Multiplayer
                     if (GameUIManager.Instance)
                     {
                         GameUIManager.Instance.message.SetEntry("Infected_Message");
-                        GameUIManager.Instance.message.StringReference.Arguments = new List<object>() {se.ToString()};
+                        GameUIManager.Instance.message.StringReference.Arguments = new List<object>() { se.ToString() };
                     }
                     break;
                 case MessageType.KingOfTheHill:
@@ -1282,7 +1282,7 @@ namespace Multiplayer
                     if (GameUIManager.Instance)
                     {
                         GameUIManager.Instance.message.SetEntry("KingOfTheHill_Message");
-                        GameUIManager.Instance.message.StringReference.Arguments = new List<object>() {se.ToString()};
+                        GameUIManager.Instance.message.StringReference.Arguments = new List<object>() { se.ToString() };
                     }
                     break;
                 case MessageType.OneVsOne0:
@@ -1302,7 +1302,7 @@ namespace Multiplayer
                     }
                     break;
                 case MessageType.Wave:
-                    
+
                     se = message.GetUShort();
                     if (se <= 3)
                     {
@@ -1311,13 +1311,13 @@ namespace Multiplayer
                     if (GameUIManager.Instance)
                     {
                         GameUIManager.Instance.message.SetEntry("wave_fresh");
-                        GameUIManager.Instance.message.StringReference.Arguments = new List<object>() {se.ToString()};
+                        GameUIManager.Instance.message.StringReference.Arguments = new List<object>() { se.ToString() };
                     }
 
                     break;
             }
 
-            Instance.DisplayMessage(waitTimer,clearTimer);
+            Instance.DisplayMessage(waitTimer, clearTimer);
         }
 
         [MessageHandler((ushort)ServerToClientId.ClientEliminated, PlayerHostedDemoMessageHandlerGroupId)]
@@ -1335,53 +1335,53 @@ namespace Multiplayer
         {
             StartCoroutine(ShowMessage(waitTimer, clearTimer));
         }
-        IEnumerator ShowMessage( float waitTimer,float clearTimer)
+        IEnumerator ShowMessage(float waitTimer, float clearTimer)
         {
             yield return new WaitForSeconds(waitTimer);
-        
+
             if (GameUIManager.Instance)
             {
                 GameUIManager.Instance.message.RefreshString();
                 GameUIManager.Instance.ShowMessage(clearTimer);
             }
-        }   
-        
+        }
+
         #endregion
-    
+
         #region REFERENCE
         public bool IsTeamMode(PlayerState player)
         {
             return (ClientGameMode == GameMode.TeamDeathMatch && ClientPlayer.list.ContainsKey(Client.Id) &&
-                    player.Team == ClientPlayer.list[Client.Id].playerState.Team) || 
+                    player.Team == ClientPlayer.list[Client.Id].playerState.Team) ||
                    (ClientServerType == ServerType.Endless);
         }
-        
-    
+
+
         public bool CantPlay(bool cursor = true)
         {
             cursor &= Cursor.lockState != CursorLockMode.Locked;
-            return (GameUIManager.Instance&&GameUIManager.Instance.pause)||
-                   (TeamSelector.Instance&&TeamSelector.Instance.IsSelecting) ||
-                   cursor || Chat.Instance.IsChat() 
+            return (GameUIManager.Instance && GameUIManager.Instance.pause) ||
+                   (TeamSelector.Instance && TeamSelector.Instance.IsSelecting) ||
+                   cursor || Chat.Instance.IsChat()
                    || DeveloperConsoleUI.Instance.uiCanvas.activeSelf ||
-                   (BuyWeaponMenu.Instance&&BuyWeaponMenu.Instance.Buying);
+                   (BuyWeaponMenu.Instance && BuyWeaponMenu.Instance.Buying);
         }
-    
+
         public bool CheckMultiplayerGameModeStarted()
         {
             switch (ClientServerType)
             {
                 case ServerType.Endless:
-                    break;  
+                    break;
                 default:
                     if (Instance.game)
                     {
-                        if(!Instance.game.started || Instance.game.stopped)
+                        if (!Instance.game.started || Instance.game.stopped)
                             return true;
                     }
                     break;
             }
-            
+
 
             return false;
         }

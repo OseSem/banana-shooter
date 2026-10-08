@@ -9,9 +9,9 @@ namespace Audio
     {
         [SerializeField] private float beatIntensity = 0;
         [SerializeField] private float restIntensity = 0;
-        
+
         [SerializeField] private Light lighting;
-        
+
         protected override void OnUpdate()
         {
             base.OnUpdate();
@@ -25,7 +25,7 @@ namespace Audio
         public override void OnBeat()
         {
             base.OnBeat();
-            
+
             StopCoroutine(nameof(MoveToScale));
             StartCoroutine(nameof(MoveToScale), beatIntensity);
         }

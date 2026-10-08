@@ -23,7 +23,7 @@ namespace Mode
                 return;
             }
             string sceneName = SceneManager.GetActiveScene().name;
-            if (sceneName == "CustomMap" && MapSaver.CurrentMap!=null) sceneName = MapSaver.CurrentMap.name;
+            if (sceneName == "CustomMap" && MapSaver.CurrentMap != null) sceneName = MapSaver.CurrentMap.name;
             NetworkManager.Instance.SetRichPreference(GameMode.CatchTheBanana.ToString(), sceneName);
             LobbyManager.Instance.SetLobbyGameMode();
         }
@@ -58,7 +58,7 @@ namespace Mode
             }
 
             List<ushort> ids = new List<ushort>();
-            int f = (int) (ratio * playerAmount);
+            int f = (int)(ratio * playerAmount);
             int l = Mathf.Clamp(f, 1, f);
             for (int i = 0; i < l; i++)
             {
@@ -68,7 +68,7 @@ namespace Mode
                 if (!ids.Contains(id))
                 {
                     ids.Add(id);
-                    
+
                     player.SetHasBanana(true);
                 }
             }

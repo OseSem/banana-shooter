@@ -6,9 +6,9 @@ using UnityEngine.EventSystems;
 
 namespace CodingDaniel.MapEditor.UI
 {
-    public class HoverCheck : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler
+    public class HoverCheck : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
-        public bool enableAlpha=false;
+        public bool enableAlpha = false;
         private CanvasGroup _canvas;
 
         private float desiredAlpha = .9f;
@@ -20,7 +20,7 @@ namespace CodingDaniel.MapEditor.UI
 
                 desiredAlpha = .9f;
             }
-            
+
         }
 
         [SerializeField] private List<HoverCheck> connectedCheck;
@@ -29,7 +29,7 @@ namespace CodingDaniel.MapEditor.UI
         {
             if (enableAlpha)
             {
-                _canvas.alpha = Mathf.Lerp(_canvas.alpha, GetConnectCheckHover()? 1f :desiredAlpha, Time.deltaTime * 20f);
+                _canvas.alpha = Mathf.Lerp(_canvas.alpha, GetConnectCheckHover() ? 1f : desiredAlpha, Time.deltaTime * 20f);
             }
         }
 

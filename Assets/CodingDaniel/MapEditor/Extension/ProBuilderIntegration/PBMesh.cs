@@ -88,7 +88,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             SmoothingGroup = face.smoothingGroup;
             IsManualUV = face.manualUV;
             if (recordUnwrapSettings)
-            {   
+            {
                 UnwrapSettings = face.uv;
             }
             else
@@ -99,7 +99,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public PBFace()
         {
-            
+
         }
 
         public Face ToFace()
@@ -108,7 +108,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             face.SetIndexes(Indexes);
             face.submeshIndex = SubmeshIndex;
             face.smoothingGroup = SmoothingGroup;
-            if(UnwrapSettings != null)
+            if (UnwrapSettings != null)
             {
                 face.textureGroup = TextureGroup;
                 face.uv = UnwrapSettings;
@@ -131,11 +131,11 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
     {
         public static event PBMeshEvent<PBMesh> Initialized;
         public static event PBMeshEvent<PBMesh> Destroyed;
-        
+
         public event PBMeshEvent<bool> Selected;
         public event PBMeshEvent Unselected;
         public event PBMeshEvent<bool, bool> Changed;
-        
+
         private ProBuilderMesh _pbMesh;
         private MeshFilter _meshFilter;
 
@@ -158,10 +158,10 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 _faces = _pbMesh.faces.Select(f => new PBFace(f, true)).ToArray();
                 return _faces;
             }
-            set 
+            set
             {
-                _faces = value; 
-                if(_pbMesh != null)
+                _faces = value;
+                if (_pbMesh != null)
                 {
                     _pbMesh.faces = _faces != null ? _faces.Select(f => f.ToFace()).ToArray() : null;
                 }
@@ -175,10 +175,10 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 Init(this, Vector2.one);
                 List<PBEdge> edges = new List<PBEdge>();
                 IList<Face> faces = _pbMesh.faces;
-                for(int i = 0; i < faces.Count; ++i)
+                for (int i = 0; i < faces.Count; ++i)
                 {
                     ReadOnlyCollection<Edge> faceEdges = faces[i].edges;
-                    for(int j = 0; j < faceEdges.Count; ++j)
+                    for (int j = 0; j < faceEdges.Count; ++j)
                     {
                         edges.Add(new PBEdge(faceEdges[j], i));
                     }
@@ -196,10 +196,10 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 _positions = _pbMesh.positions.ToArray();
                 return _positions;
             }
-            set 
+            set
             {
-                _positions = value; 
-                if(_pbMesh != null)
+                _positions = value;
+                if (_pbMesh != null)
                 {
                     _pbMesh.positions = _positions;
                 }
@@ -218,7 +218,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             set
             {
                 _textures = value;
-                if(_pbMesh != null)
+                if (_pbMesh != null)
                 {
                     _pbMesh.textures = _textures;
                 }
@@ -243,7 +243,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public static void Init(PBMesh mesh, Vector2 scale)
         {
-            if(mesh._pbMesh != null)
+            if (mesh._pbMesh != null)
             {
                 return;
             }
@@ -268,15 +268,15 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                     mesh._pbMesh.Refresh();
                     mesh._pbMesh.ToMesh();
-                    
-                    
+
+
                 }
                 else
                 {
                     ImportMesh(sourceMesh, mesh._meshFilter, mesh._pbMesh, scale);
                 }
 
-                if(Initialized != null)
+                if (Initialized != null)
                 {
                     Initialized(mesh);
                 }
@@ -305,11 +305,11 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         private void OnDestroy()
         {
-            if(_pbMesh != null)
+            if (_pbMesh != null)
             {
                 Destroy(_pbMesh);
-                _pbMesh = null;  
-            }   
+                _pbMesh = null;
+            }
         }
 
         public void OnMarkAsDestroyed()
@@ -334,7 +334,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         }
 
         public bool CreateShapeFromPolygon(IList<Vector3> points, float extrude, bool flipNormals)
-        {    
+        {
             ActionResult result = _pbMesh.CreateShapeFromPolygon(points, extrude, flipNormals);
             RaiseChanged(false, true);
             return result.ToBool();
@@ -345,7 +345,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             _pbMesh.Connect(_pbMesh.faces);
             _pbMesh.Refresh();
             _pbMesh.ToMesh();
-            
+
             RaiseChanged(false, true);
         }
 
@@ -371,7 +371,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public void Refresh(bool createMesh = true)
         {
             MeshFilter filter = GetComponent<MeshFilter>();
-            if(filter != null)
+            if (filter != null)
             {
 #if PROBUILDER_4_4_0_OR_NEWER
                 //Do not allow probuilder 4.4.0 to re-use same mesh instance.
@@ -386,7 +386,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     meshProperty.SetValue(_pbMesh, null);
                 }
 #endif
-                if(createMesh)
+                if (createMesh)
                 {
                     filter.sharedMesh = new Mesh();
                 }
@@ -408,7 +408,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public void RaiseSelected(bool clear)
         {
-            if(Selected != null)
+            if (Selected != null)
             {
                 Selected(clear);
             }
@@ -416,7 +416,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public void RaiseChanged(bool positionsOnly, bool forceUpdate)
         {
-            if(Changed != null)
+            if (Changed != null)
             {
                 Changed(positionsOnly, forceUpdate);
             }
@@ -424,9 +424,9 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public void RaiseUnselected()
         {
-            if(Unselected != null)
+            if (Unselected != null)
             {
-                Unselected(); 
+                Unselected();
             }
         }
 
@@ -467,16 +467,16 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                     int positionIndex = edgeIndex * 2;
 
-                    if(vertices.Length > positionIndex)
+                    if (vertices.Length > positionIndex)
                     {
                         vertices[positionIndex + 0] = positions[edge.a];
                     }
-                    
-                    if(vertices.Length > positionIndex + 1)
+
+                    if (vertices.Length > positionIndex + 1)
                     {
                         vertices[positionIndex + 1] = positions[edge.b];
                     }
-                    
+
                     if (!positionsOnly)
                     {
                         tris[positionIndex + 0] = positionIndex + 0;
@@ -490,7 +490,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             if (!positionsOnly)
             {
                 target.Clear();
-                if(vertices.Length > ushort.MaxValue)
+                if (vertices.Length > ushort.MaxValue)
                 {
                     target.indexFormat = IndexFormat.UInt32;
                 }
@@ -514,31 +514,31 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public static PBMesh ProBuilderize(GameObject gameObject, bool hierarchy, bool localScaleToUvScale = false)
         {
             Vector3 scale = Vector3.one;
-            if(localScaleToUvScale)
+            if (localScaleToUvScale)
             {
                 scale = gameObject.transform.localScale;
                 float minScale = Mathf.Min(scale.x, scale.y, scale.z);
                 scale = new Vector3(minScale, minScale);
             }
-                
+
             return ProBuilderize(gameObject, hierarchy, scale);
         }
 
         public static PBMesh ProBuilderize(GameObject gameObject, bool hierarchy, Vector2 uvScale)
         {
             bool wasActive = false;
-            if(uvScale != Vector2.one)
+            if (uvScale != Vector2.one)
             {
                 wasActive = gameObject.activeSelf;
                 gameObject.SetActive(false);
             }
-            
-            if(hierarchy)
+
+            if (hierarchy)
             {
                 MeshFilter[] meshFilters = gameObject.GetComponentsInChildren<MeshFilter>(true);
-                for(int i = 0; i < meshFilters.Length; ++i)
+                for (int i = 0; i < meshFilters.Length; ++i)
                 {
-                    if(meshFilters[i].GetComponent<PBMesh>() == null)
+                    if (meshFilters[i].GetComponent<PBMesh>() == null)
                     {
                         PBMesh pbMesh = meshFilters[i].gameObject.AddComponent<PBMesh>();
                         Init(pbMesh, uvScale);
@@ -610,15 +610,15 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 Debug.LogWarning("Failed ProBuilderizing: " + go.name + "\n" + e.ToString());
             }
             int submeshCount = sourceMesh.subMeshCount;
-            
+
             Dictionary<int, List<Face>> submeshIndexToFace = new Dictionary<int, List<Face>>();
-            for(int i = 0; i < submeshCount; ++i)
+            for (int i = 0; i < submeshCount; ++i)
             {
                 submeshIndexToFace.Add(i, new List<Face>());
             }
 
             IList<Face> faces = mesh.faces;
-            if(uvScale != Vector2.one)
+            if (uvScale != Vector2.one)
             {
                 AutoUnwrapSettings uv = AutoUnwrapSettings.defaultAutoUnwrapSettings;
                 uv.scale = uvScale;
@@ -649,7 +649,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             {
                 List<Face> submeshFaces = submeshIndexToFace[i];
                 Material material = materials[i];
-                
+
                 if (material != null)
                 {
                     mesh.SetMaterial(submeshFaces, material);
@@ -711,7 +711,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             Vector2 v1 = p1 - p3;
             Vector2 v2 = p2 - p3;
-            return (v1.x* v2.y - v1.y* v2.x)/2;
+            return (v1.x * v2.y - v1.y * v2.x) / 2;
         }
 
         //GK add AutoUnwrapSettings
@@ -744,12 +744,12 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 int i = 0;
                 bool flag = false;
                 var id = material.GetInstanceID();
-                
+
                 foreach (var m in MapSaver.Instance.materials)
                 {
-                    if (m.GetInstanceID() ==id )
+                    if (m.GetInstanceID() == id)
                     {
-                        materialIndexes.Add(new MapData.MeshObjectData.MaterialIndex(false,i));
+                        materialIndexes.Add(new MapData.MeshObjectData.MaterialIndex(false, i));
                         flag = true;
                         break;
                     }
@@ -762,9 +762,9 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     i = 0;
                     foreach (var m in MapSaver.Instance.externalMaterials)
                     {
-                        if (m.Item4.GetInstanceID() ==id )
+                        if (m.Item4.GetInstanceID() == id)
                         {
-                            materialIndexes.Add(new MapData.MeshObjectData.MaterialIndex(true,i));
+                            materialIndexes.Add(new MapData.MeshObjectData.MaterialIndex(true, i));
                             flag = true;
                             break;
                         }

@@ -18,7 +18,7 @@ public class ShootingTarget : MonoBehaviour
     private void Start()
     {
         defaultRot = transform.localRotation.eulerAngles;
-        desiredRot=defaultRot;
+        desiredRot = defaultRot;
     }
 
     public void Hit()
@@ -26,16 +26,16 @@ public class ShootingTarget : MonoBehaviour
         if (hitted) return;
         hitted = true;
         desiredRot = targetRot;
-        if(type==TargetType.Normal)
-            Invoke("Clear",4f);
-        else if(type==TargetType.Parkour)
+        if (type == TargetType.Normal)
+            Invoke("Clear", 4f);
+        else if (type == TargetType.Parkour)
         {
             if (ShootingRange.Instance)
             {
                 ShootingRange.Instance.PlusScore();
             }
         }
-        JuicyScore.Instance.UpdateScore(25,JuicyScore.ScoreType.None);
+        JuicyScore.Instance.UpdateScore(25, JuicyScore.ScoreType.None);
     }
 
     public void Clear()

@@ -16,13 +16,13 @@ namespace Editor
 
         private string _srcDirectory;
         private string _dstDirectory;
-        
+
         private void OnGUI()
         {
             GUILayout.Label("Export Asset Directory (stripped out all .meta)", EditorStyles.boldLabel);
-            
+
             EditorGUILayout.Space();
-            
+
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Source Directory (Inside Assets)");
             _srcDirectory = EditorGUILayout.TextField(_srcDirectory);
@@ -43,8 +43,8 @@ namespace Editor
                 }
             }
             EditorGUILayout.EndHorizontal();
-            
-            
+
+
             EditorGUILayout.BeginHorizontal();
             EditorGUILayout.PrefixLabel("Destination Directory");
             _dstDirectory = EditorGUILayout.TextField(_dstDirectory);
@@ -73,7 +73,7 @@ namespace Editor
                     Export(srcAbs, _dstDirectory);
                 }
             }
-            
+
             EditorGUILayout.HelpBox("Export all contents from src directory to dst directory, but all .meta files are stripped away", MessageType.Info);
 
             ExportRegisteredAssets("Free Sky", "Skybox");
@@ -86,7 +86,7 @@ namespace Editor
         void ExportRegisteredAssets(String assetName, String directoryName)
         {
             var directoryPath = Path.Combine(Application.dataPath, directoryName);
-            
+
             if (Directory.Exists(directoryPath))
             {
                 EditorGUILayout.BeginHorizontal();
@@ -105,13 +105,13 @@ namespace Editor
             {
                 Directory.CreateDirectory(dst);
             }
-            
+
             var allFiles = new List<string>();
             GetAllFiles(src, allFiles);
-            
+
             int copiedCount = 0;
             int skippedCount = 0;
-            
+
             try
             {
                 foreach (string filePath in allFiles)
@@ -122,7 +122,7 @@ namespace Editor
                         continue;
                     }
 
-                    string relPath = filePath.Substring(src.Length + 1); 
+                    string relPath = filePath.Substring(src.Length + 1);
                     string destFilePath = Path.Combine(dst, relPath);
 
                     string destDir = Path.GetDirectoryName(destFilePath);

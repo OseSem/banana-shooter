@@ -26,7 +26,7 @@ namespace Mode
         public static Endless Instance { get; private set; }
         public List<Transform> spawnPos = new List<Transform>();
 
-    
+
 
         public ServerEnemy[] enemyPrefabs;
 
@@ -44,27 +44,27 @@ namespace Mode
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.green;
-        
-            Gizmos.DrawWireCube(startPos,new Vector3(20,5,35));
+
+            Gizmos.DrawWireCube(startPos, new Vector3(20, 5, 35));
         }
 
         private void Awake()
         {
             Instance = this;
-        
+
             text.SetEntry("Endless_tutorial_0");
-            text.StringReference.Arguments = new List<object>() {ClientPlayer.list.Count};
+            text.StringReference.Arguments = new List<object>() { ClientPlayer.list.Count };
             border.material = redGlow;
             text.RefreshString();
             RlKillCount = new SafeInt(0);
-            
-            Invoke(nameof(VoiceLine),1.5f);
+
+            Invoke(nameof(VoiceLine), 1.5f);
         }
 
         private void Start()
         {
             NetworkManager.Instance.SetRichPreference("Endless", SceneManager.GetActiveScene().name);
-            TutorialInGameUI.Instance.ChangeState(TutorialInGameUI.TutorialState.EndlessStart,startPos);
+            TutorialInGameUI.Instance.ChangeState(TutorialInGameUI.TutorialState.EndlessStart, startPos);
         }
 
         void VoiceLine()
@@ -88,21 +88,21 @@ namespace Mode
                     Menu.VoiceLine.Instance.PlayVoice(VoiceKey.gm_endless_start_D);
                     break;
                 default:
-                    if(Random.Range(0,10) < 3)
+                    if (Random.Range(0, 10) < 3)
                         Menu.VoiceLine.Instance.PlayVoice(VoiceKey.gm_endless_start_E);
                     break;
             }
         }
 
-        private int lastCnt=0;
+        private int lastCnt = 0;
 
         [SerializeField] private Renderer border;
         [SerializeField] private Material redGlow, greenGlow;
 
-        [SerializeField] private AnimationCurve difficultyCurve,spawnCurve;
+        [SerializeField] private AnimationCurve difficultyCurve, spawnCurve;
 
         [SerializeField] private Transform[] enemySpawnPos;
-        [SerializeField] private float minSpawnOffset=-20, maxSpawnOffset=20;
+        [SerializeField] private float minSpawnOffset = -20, maxSpawnOffset = 20;
 
         private int maxEntityAmount = 35;
         private ushort _round = 0;
@@ -130,34 +130,34 @@ namespace Mode
                 {
                     if (_spawnCount > 0)
                     {
-                        if (_spawnTime <= 0 && ServerEnemy.list.Count+10<maxEntityAmount)
+                        if (_spawnTime <= 0 && ServerEnemy.list.Count + 10 < maxEntityAmount)
                         {
                             _spawnCount--;
-                            float temp = Mathf.Clamp(spawnCurve.Evaluate(difficulty),1,5);
-                            int spawnAmount = (int)Random.Range(_minSpawnCount*temp, _maxSpawnCount*temp);
+                            float temp = Mathf.Clamp(spawnCurve.Evaluate(difficulty), 1, 5);
+                            int spawnAmount = (int)Random.Range(_minSpawnCount * temp, _maxSpawnCount * temp);
                             spawnAmount = Mathf.Clamp(spawnAmount, 1, 10);
 
                             for (int i = 0; i < spawnAmount; i++)
                             {
-                                Vector3 tempPos= ServerPlayer.list.ElementAt(Random.Range(0, ServerPlayer.list.Count)).Value.PlayerTransform.position;
+                                Vector3 tempPos = ServerPlayer.list.ElementAt(Random.Range(0, ServerPlayer.list.Count)).Value.PlayerTransform.position;
                                 // bool pl = Random.Range(0, 10) < 7 * difficulty || spawnAmount < 4;
                                 // if (pl)
                                 // {
                                 //     tempPos = ;
                                 // }
-                                Vector3 spawnPosition = new Vector3(tempPos.x +Random.Range(minSpawnOffset,maxSpawnOffset), tempPos.y, tempPos.z+Random.Range(minSpawnOffset,maxSpawnOffset));
+                                Vector3 spawnPosition = new Vector3(tempPos.x + Random.Range(minSpawnOffset, maxSpawnOffset), tempPos.y, tempPos.z + Random.Range(minSpawnOffset, maxSpawnOffset));
 
                                 RaycastHit hit;
-                                while (!Physics.Raycast(spawnPosition,Vector3.down,out hit,1000f,GameManager.Instance.whatIsGround) 
+                                while (!Physics.Raycast(spawnPosition, Vector3.down, out hit, 1000f, GameManager.Instance.whatIsGround)
                                        || (Physics.Raycast(tempPos, (spawnPosition - tempPos).normalized,
                                            (spawnPosition - tempPos).magnitude, GameManager.Instance.whatIsGround)))
                                 {
                                     tempPos = ServerPlayer.list.ElementAt(Random.Range(0, ServerPlayer.list.Count))
                                         .Value.PlayerTransform.position;
-                                    spawnPosition = new Vector3(tempPos.x +Random.Range(minSpawnOffset,maxSpawnOffset), tempPos.y, tempPos.z+Random.Range(minSpawnOffset,maxSpawnOffset));
+                                    spawnPosition = new Vector3(tempPos.x + Random.Range(minSpawnOffset, maxSpawnOffset), tempPos.y, tempPos.z + Random.Range(minSpawnOffset, maxSpawnOffset));
                                 }
 
-                                spawnPosition = hit.point+Vector3.up;
+                                spawnPosition = hit.point + Vector3.up;
 
                                 int prefab = Random.Range(0, enemyPrefabs.Length);
                                 ServerEnemy enemy = Instantiate(enemyPrefabs[prefab], spawnPosition, Quaternion.identity);
@@ -165,31 +165,31 @@ namespace Mode
                             }
 
                             temp = (1 - difficulty) + 0.6f;
-                            _spawnTime = Random.Range(3.5f*temp, maxSpawnTime*temp);
+                            _spawnTime = Random.Range(3.5f * temp, maxSpawnTime * temp);
                             _round++;
-                            Message message = Message.Create(MessageSendMode.Unreliable,(ushort) ServerToClientId.EndlessRefresh);
+                            Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ServerToClientId.EndlessRefresh);
                             message.Add(spawnAmount);
                             message.Add(_round);
                             NetworkServerManager.Instance.Server.SendToAll(message);
-                            
-                            
-                            
+
+
+
                         }
 
-                        
+
                     }
                     float tp = (1 - difficulty) + 0.6f;
                     //TODO: REFRESH
-                    if (_spawnCount <= 0 && ServerEnemy.list.Count<=0)
+                    if (_spawnCount <= 0 && ServerEnemy.list.Count <= 0)
                     {
-                        _waveTime = Random.Range(13*tp, 30*tp);
+                        _waveTime = Random.Range(13 * tp, 30 * tp);
                         _waveFresh = 1f;
-                        _spawnCount = (ushort) Random.Range(3*tp, 6*tp);
-                        Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.EndlessWeaponStation);
+                        _spawnCount = (ushort)Random.Range(3 * tp, 6 * tp);
+                        Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.EndlessWeaponStation);
 
                         message.Add((ushort)Random.Range(0, weaponStation.Length));
                         message.Add((ushort)_waveTime);
-                        
+
                         NetworkServerManager.Instance.Server.SendToAll(message);
                     }
                 }
@@ -199,7 +199,7 @@ namespace Mode
                     if (_waveFresh < 0)
                     {
                         _waveFresh = 1;
-                        Message message = Message.Create(MessageSendMode.Unreliable,(ushort) ServerToClientId.Message);
+                        Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ServerToClientId.Message);
                         message.Add((ushort)MessageType.Wave);
                         message.Add((ushort)_waveTime);
                         NetworkServerManager.Instance.Server.SendToAll(message);
@@ -229,12 +229,12 @@ namespace Mode
             int cnt = Physics.OverlapBoxNonAlloc(startPos, new Vector3(10, 2.5f, 17.5f), _colliders, Quaternion.identity,
                 whatIsPlayer);
 
-        
+
             if (lastCnt != cnt)
             {
                 if (cnt > lastCnt)
                 {
-                    AudioManager.Instance.SoundEffect3D("tip",startPos);
+                    AudioManager.Instance.SoundEffect3D("tip", startPos);
                 }
                 lastCnt = cnt;
                 SetText();
@@ -252,7 +252,7 @@ namespace Mode
                     {
                         serverStartTime = 0;
                         StartGameServer();
-                        
+
                     }
                 }
             }
@@ -269,15 +269,15 @@ namespace Mode
                 {
                     clientStartTime = 0;
                 }
-                text.StringReference.Arguments = new List<object>() {clientStartTime.ToString("F0")};
+                text.StringReference.Arguments = new List<object>() { clientStartTime.ToString("F0") };
                 text.RefreshString();
             }
 
             #endregion
-        
-        
+
+
         }
-        [MessageHandler((ushort) ServerToClientId.EndlessWeaponStation, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.EndlessWeaponStation, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void EndlessWeaponStation(Message message)
         {
             ushort id = message.GetUShort();
@@ -288,9 +288,9 @@ namespace Mode
             {
                 bool flag = i == id;
                 Instance.weaponStation[i].SetActive(flag);
-                
-                if(flag)
-                    TutorialInGameUI.Instance.ChangeState(TutorialInGameUI.TutorialState.BuyStation,Instance.weaponStation[i].transform.position);
+
+                if (flag)
+                    TutorialInGameUI.Instance.ChangeState(TutorialInGameUI.TutorialState.BuyStation, Instance.weaponStation[i].transform.position);
             }
 
             Instance.StartCoroutine(Instance.PredictWaveStart(time));
@@ -300,10 +300,10 @@ namespace Mode
         {
             yield return new WaitForSeconds(time);
 
-            TutorialInGameUI.Instance.ChangeState(TutorialInGameUI.TutorialState.None,Vector3.zero);
+            TutorialInGameUI.Instance.ChangeState(TutorialInGameUI.TutorialState.None, Vector3.zero);
         }
         private static bool[] fl = new bool[10];
-        [MessageHandler((ushort) ServerToClientId.EndlessRefresh, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.EndlessRefresh, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void EndlessRefresh(Message message)
         {
             int spawnAmount = message.GetInt();
@@ -316,37 +316,37 @@ namespace Mode
                     Menu.VoiceLine.Instance.PlayVoice(VoiceKey.gm_endless_spawn_A);
                 }
             }
-            else if (spawnAmount == 4&& Random.Range(0, 10) < 2&& !fl[1])
+            else if (spawnAmount == 4 && Random.Range(0, 10) < 2 && !fl[1])
             {
                 fl[1] = true;
                 Menu.VoiceLine.Instance.PlayVoice(VoiceKey.gm_endless_spawn_D);
             }
-            else if (spawnAmount < 3 && r > 1 && r < 4 && Random.Range(0, 10) < 7&& !fl[2])
+            else if (spawnAmount < 3 && r > 1 && r < 4 && Random.Range(0, 10) < 7 && !fl[2])
             {
                 fl[2] = true;
                 Menu.VoiceLine.Instance.PlayVoice(VoiceKey.gm_endless_spawn_B);
             }
-            else if (r > 12 && r < 16 && Random.Range(0, 10) < 4&& !fl[3])
+            else if (r > 12 && r < 16 && Random.Range(0, 10) < 4 && !fl[3])
             {
                 fl[3] = true;
                 Menu.VoiceLine.Instance.PlayVoice(VoiceKey.gm_endless_spawn_C_01);
                 Menu.VoiceLine.Instance.PlayVoice(VoiceKey.gm_endless_spawn_C_02);
             }
-            else if (r == 20&& !fl[4])
+            else if (r == 20 && !fl[4])
             {
                 fl[4] = true;
                 Menu.VoiceLine.Instance.PlayVoice(VoiceKey.gm_endless_spawn_E);
             }
-            else if (r == 30&& !fl[5])
+            else if (r == 30 && !fl[5])
             {
                 fl[5] = true;
                 Menu.VoiceLine.Instance.PlayVoice(VoiceKey.gm_endless_spawn_F);
             }
         }
-    
-        private ushort _minSpawnCount=1, _maxSpawnCount = 3;
-        [Range(5,12)][SerializeField] private float maxSpawnTime = 12;
-        public float difficulty { get; private set; }= 0;
+
+        private ushort _minSpawnCount = 1, _maxSpawnCount = 3;
+        [Range(5, 12)][SerializeField] private float maxSpawnTime = 12;
+        public float difficulty { get; private set; } = 0;
         private float _spawnTime = 0;
 
         private float t = 0;
@@ -366,19 +366,19 @@ namespace Mode
             else
             {
                 text.SetEntry("Endless_tutorial_0");
-                text.StringReference.Arguments = new List<object>() {playerAmount-lastCnt};
+                text.StringReference.Arguments = new List<object>() { playerAmount - lastCnt };
                 border.material = redGlow;
             }
             text.RefreshString();
         }
 
-        [HideInInspector] public float serverTime=0;
-        [HideInInspector] public float clientTime=0;
-    
-        [HideInInspector] public string clientTimeString="0.0";
+        [HideInInspector] public float serverTime = 0;
+        [HideInInspector] public float clientTime = 0;
+
+        [HideInInspector] public string clientTimeString = "0.0";
 
         [HideInInspector] public string killCount = "0";
-        [HideInInspector] public SafeInt RlKillCount ;
+        [HideInInspector] public SafeInt RlKillCount;
         public void StartGameClient()
         {
             if (clientStarted) return;
@@ -388,18 +388,18 @@ namespace Mode
             RlKillCount = new SafeInt(0);
             clientTimeString = "0.0";
             text.SetEntry("Endless_info");
-            Vector3 tempPos= enemySpawnPos[Random.Range(0, enemySpawnPos.Length)].position;
-            Vector3 spawnPosition = new Vector3(tempPos.x +Random.Range(minSpawnOffset,maxSpawnOffset), tempPos.y, tempPos.z+Random.Range(minSpawnOffset,maxSpawnOffset));
+            Vector3 tempPos = enemySpawnPos[Random.Range(0, enemySpawnPos.Length)].position;
+            Vector3 spawnPosition = new Vector3(tempPos.x + Random.Range(minSpawnOffset, maxSpawnOffset), tempPos.y, tempPos.z + Random.Range(minSpawnOffset, maxSpawnOffset));
 
-            while (!Physics.Raycast(spawnPosition,Vector3.down,1000f,GameManager.Instance.whatIsGround))
+            while (!Physics.Raycast(spawnPosition, Vector3.down, 1000f, GameManager.Instance.whatIsGround))
             {
                 tempPos = enemySpawnPos[Random.Range(0, enemySpawnPos.Length)].position;
-                spawnPosition = new Vector3(tempPos.x +Random.Range(minSpawnOffset,maxSpawnOffset), tempPos.y, tempPos.z+Random.Range(minSpawnOffset,maxSpawnOffset));
+                spawnPosition = new Vector3(tempPos.x + Random.Range(minSpawnOffset, maxSpawnOffset), tempPos.y, tempPos.z + Random.Range(minSpawnOffset, maxSpawnOffset));
             }
 
             PlayerMovement.Instance.transform.position = spawnPosition;
 
-            TutorialInGameUI.Instance.ChangeState(TutorialInGameUI.TutorialState.None,Vector3.zero);
+            TutorialInGameUI.Instance.ChangeState(TutorialInGameUI.TutorialState.None, Vector3.zero);
             StartCoroutine(StartImpact());
         }
 
@@ -410,8 +410,8 @@ namespace Mode
             difficulty = 0;
             _round = 0;
             _waveTime = 0;
-            _spawnCount = (ushort) Random.Range(2, 5);
-        
+            _spawnCount = (ushort)Random.Range(2, 5);
+
             _spawnTime = Random.Range(5f, maxSpawnTime);
             NetworkServerManager.Instance.StartRound();
 
@@ -445,7 +445,7 @@ namespace Mode
 
         private void OnEnable()
         {
-            if(NetworkServerManager.Instance.Server.IsRunning)
+            if (NetworkServerManager.Instance.Server.IsRunning)
                 GameManager.Instance.ServerPlayerDead += ServerPlayerDead;
         }
 
@@ -466,7 +466,7 @@ namespace Mode
                         return;
                     }
                 }
-            
+
                 serverStarted = false;
                 foreach (var entity in GameManager.Entities)
                 {
@@ -476,10 +476,10 @@ namespace Mode
 
                 StartCoroutine(Restart());
                 //TODO: Stop
-                Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.StopRound);
+                Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.StopRound);
 
                 message.Add((ushort)NetworkServerManager.ServerType);
-            
+
                 NetworkServerManager.Instance.Server.SendToAll(message);
             }
         }
@@ -487,7 +487,7 @@ namespace Mode
         IEnumerator Restart()
         {
             yield return new WaitForSeconds(2f);
-            
+
             foreach (var serverPlayer in ServerPlayer.list.Values)
             {
                 serverPlayer.Spect(false);
@@ -498,13 +498,13 @@ namespace Mode
             clientStarted = false;
             if (GameUIManager.Instance)
             {
-                GameUIManager.Instance.message.StringReference.Arguments = new List<object>() {this};
+                GameUIManager.Instance.message.StringReference.Arguments = new List<object>() { this };
                 clientTimeString = clientTime.ToString("F1");
                 text.RefreshString();
                 GameUIManager.Instance.message.SetEntry("endless_stop");
             }
-            NetworkManager.Instance.DisplayMessage(1.5f,5f);
-            TutorialInGameUI.Instance.ChangeState(TutorialInGameUI.TutorialState.EndlessStart,startPos);
+            NetworkManager.Instance.DisplayMessage(1.5f, 5f);
+            TutorialInGameUI.Instance.ChangeState(TutorialInGameUI.TutorialState.EndlessStart, startPos);
         }
     }
 }

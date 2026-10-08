@@ -11,20 +11,20 @@ namespace Menu
     public class FaqMenu : MonoBehaviour
     {
         public static FaqMenu Instance { get; private set; }
-        
-        
+
+
         public enum FaqType
         {
             Replay,
         }
-        
-        
+
+
         public enum FaqItemType
         {
             Text,
             Image,
         }
-        
+
         [Serializable]
         public class FaqItem
         {
@@ -57,9 +57,9 @@ namespace Menu
 
             foreach (var item in items)
             {
-                list.Add(item.faqType,item);
+                list.Add(item.faqType, item);
             }
-            
+
         }
 
         [SerializeField] private RawImage imagePrefab;
@@ -87,9 +87,9 @@ namespace Menu
                             RawImage image = Instantiate(imagePrefab, content);
                             image.texture = faq.texture2D;
                             RectTransform rect = image.GetComponent<RectTransform>();
-                            Vector2 size = new Vector2(faq.texture2D.width,faq.texture2D.height) * faq.multiplier;
+                            Vector2 size = new Vector2(faq.texture2D.width, faq.texture2D.height) * faq.multiplier;
                             rect.sizeDelta = size;
-                            
+
                             break;
                     }
                 }
@@ -101,14 +101,14 @@ namespace Menu
         IEnumerator Refresh()
         {
             int i = 10;
-            while (i-->0)
+            while (i-- > 0)
             {
                 yield return null;
-                
+
             }
-            
+
             obj.SetActive(true);
         }
-        
+
     }
 }

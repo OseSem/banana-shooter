@@ -9,14 +9,14 @@ using UnityEngine.UI;
 
 namespace Quest
 {
-    public class QuestItemUI : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler
+    public class QuestItemUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] LocalizeStringEvent title, desc;
         [SerializeField] Button claimBtn;
         [SerializeField] Slider progressBar;
         [SerializeField] TextMeshProUGUI progressText;
         [SerializeField] private GameObject complete;
-        
+
         private Quest _quest;
 
         private void Start()
@@ -35,8 +35,8 @@ namespace Quest
             claimBtn.interactable = !quest.IsClaim && quest.IsReached();
             claimBtn.onClick.RemoveAllListeners();
             claimBtn.onClick.AddListener(Claim);
-            progressText.SetText($"{Mathf.Clamp(quest.Progress,0,quest.QuestObj.requiredAmount)} / {quest.QuestObj.requiredAmount}");
-            
+            progressText.SetText($"{Mathf.Clamp(quest.Progress, 0, quest.QuestObj.requiredAmount)} / {quest.QuestObj.requiredAmount}");
+
             complete.SetActive(quest.IsClaim);
         }
         void Claim()
@@ -49,13 +49,13 @@ namespace Quest
         {
             _menu.desc.SetActive(true);
             _menu.descText.SetEntry(_quest.QuestObj.prizeKey);
-            _menu.descText.StringReference.Arguments = new List<object>() {_quest.QuestObj.expReward};
+            _menu.descText.StringReference.Arguments = new List<object>() { _quest.QuestObj.expReward };
             _menu.descText.RefreshString();
         }
         public void OnPointerExit(PointerEventData eventData)
         {
             _menu.desc.SetActive(false);
-            
+
         }
     }
 }

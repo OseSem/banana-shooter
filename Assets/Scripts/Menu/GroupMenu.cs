@@ -15,12 +15,12 @@ namespace Menu
         [SerializeField] private Button btn;
         List<TMP_Dropdown.OptionData> list = new List<TMP_Dropdown.OptionData>();
         private List<CSteamID> groups = new List<CSteamID>();
-        
+
         private NetworkManager network;
         private void Start()
         {
             network = NetworkManager.Instance;
-        
+
             list.Add(new TMP_Dropdown.OptionData("No Group"));
 
             int cnt = SteamFriends.GetClanCount();
@@ -37,24 +37,24 @@ namespace Menu
                 {
                     groups.Add(groupId);
                     if (groupId == NetworkManager.Instance.currentGroup) index = groups.Count;
-                    int ImageId = SteamFriends.GetSmallFriendAvatar( groupId);
+                    int ImageId = SteamFriends.GetSmallFriendAvatar(groupId);
                     if (ImageId == -1) return;
                     Texture2D texture = SteamTextureUtils.GetSteamImageAsTexture(ImageId);
-                    Sprite sprite = Sprite.Create(texture,new Rect(0,0,texture.width,texture.height),new Vector2(0.5f, 0.5f));
-                    list.Add(new TMP_Dropdown.OptionData(groupName,sprite));
+                    Sprite sprite = Sprite.Create(texture, new Rect(0, 0, texture.width, texture.height), new Vector2(0.5f, 0.5f));
+                    list.Add(new TMP_Dropdown.OptionData(groupName, sprite));
                 }
             }
             dropDown.AddOptions(list);
             dropDown.value = index;
-        
-        
+
+
             dropDown.onValueChanged.AddListener(JoinGroup);
             btn.onClick.AddListener(OpenChat);
         }
-    
+
         void JoinGroup(int index)
         {
-            if(network.currentGroup.m_SteamID!= 0)
+            if (network.currentGroup.m_SteamID != 0)
                 SteamFriends.LeaveClanChatRoom(network.currentGroup);
             GameManager.groupChanged = true;
             if (index == 0)
@@ -65,12 +65,12 @@ namespace Menu
 
             network.currentGroup = groups[index - 1];
             SteamFriends.JoinClanChatRoom(network.currentGroup);
-        
+
         }
 
         void OpenChat()
         {
-            SteamFriends.ActivateGameOverlayToUser("chat",network.currentGroup);
+            SteamFriends.ActivateGameOverlayToUser("chat", network.currentGroup);
         }
     }
 }

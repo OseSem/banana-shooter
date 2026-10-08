@@ -11,7 +11,7 @@ namespace Menu
         public ulong playerSteamId;
         [SerializeField] public TextMeshProUGUI playerNameText;
         [SerializeField] private RawImage avatar;
-        public void SetPlayerValues(string _playerName,ushort _connectionId,ulong steamId, Texture2D texture2D)
+        public void SetPlayerValues(string _playerName, ushort _connectionId, ulong steamId, Texture2D texture2D)
         {
             playerName = _playerName;
             connectionId = _connectionId;

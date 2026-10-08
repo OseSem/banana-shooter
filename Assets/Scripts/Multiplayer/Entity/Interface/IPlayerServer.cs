@@ -19,9 +19,9 @@ namespace Multiplayer.Entity.Interface
         void SetCrazy(string str);
         void AddCash(int c);
         void SetWeapon();
-        void Kick(string reason="");
+        void Kick(string reason = "");
         void Ban();
-        void Kill(ushort attacker = 3000, bool headShot=false, bool wallbang=false,bool isAiming=false,ushort weapon = 1000,ServerPlayer.DamageType damageType = ServerPlayer.DamageType.Void);
-        
+        void Kill(ushort attacker = 3000, bool headShot = false, bool wallbang = false, bool isAiming = false, ushort weapon = 1000, ServerPlayer.DamageType damageType = ServerPlayer.DamageType.Void);
+
     }
 }

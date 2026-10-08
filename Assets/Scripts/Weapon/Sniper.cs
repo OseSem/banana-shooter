@@ -17,19 +17,19 @@ namespace Weapon
                 GameUIManager.Instance.crossHair.SetActive(false);
             }
         }
-        
-        
+
+
 
         protected override void Shoot()
         {
-            Invoke(nameof(ResetState),1 / fireRate /2f);
+            Invoke(nameof(ResetState), 1 / fireRate / 2f);
         }
 
         protected override void Reload()
         {
             reloadTime = normalReloadTime;
-            if(reload)
-                AudioManager.Instance.PlayGunReload(reload,Mathf.Abs(reloadMultiplier - 1f) > 0.1f ? 1.6f : 1f);
+            if (reload)
+                AudioManager.Instance.PlayGunReload(reload, Mathf.Abs(reloadMultiplier - 1f) > 0.1f ? 1.6f : 1f);
         }
 
         protected override void Aim()
@@ -37,15 +37,15 @@ namespace Weapon
             WeaponManager.Instance.cams[1].cullingMask = WeaponManager.Instance.weaponCamAimingLayer;
             GameUIManager.Instance.gameScene.SetActive(false);
             GameUIManager.Instance.scope.SetActive(true);
-        
-            if(trail)
+
+            if (trail)
                 Destroy(trail.gameObject);
         }
 
         void ResetState()
         {
             animator.SetTrigger(Reset);
-            if(reset!=null && !semiAuto)
+            if (reset != null && !semiAuto)
                 AudioManager.Instance.PlayGunReset(reset);
         }
     }

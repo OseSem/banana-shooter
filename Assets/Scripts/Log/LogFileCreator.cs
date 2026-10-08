@@ -23,12 +23,12 @@ namespace Log
         private void OnDestroy()
         {
             Application.logMessageReceived -= OnLog;
-            
+
             _log.Destroy();
             // _steamNetworkingLog.Destroy();
         }
 
-        void OnLog(string message,string stackTrace,LogType logType)
+        void OnLog(string message, string stackTrace, LogType logType)
         {
             if (_log == null) return;
             string logEntry = $"{message}\n{stackTrace}";
@@ -42,7 +42,7 @@ namespace Log
                     logEntry = $"[Warning] {message}\n{stackTrace}";
                     break;
             }
-            
+
             _log.Log(logEntry);
         }
 

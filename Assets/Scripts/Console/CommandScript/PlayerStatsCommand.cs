@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Console.CommandScript
 {
-    [CreateAssetMenu(fileName = "PlayerStats Command",menuName = "Utilities/DeveloperConsole/Commands/PlayerStats Command")]
+    [CreateAssetMenu(fileName = "PlayerStats Command", menuName = "Utilities/DeveloperConsole/Commands/PlayerStats Command")]
     public class PlayerStatsCommand : ConsoleCommand
     {
         public ManageType type = ManageType.Kick;
@@ -28,11 +28,11 @@ namespace Console.CommandScript
 
             if (id != 0)
             {
-                Message message = Message.Create(MessageSendMode.Reliable, (ushort) ClientToServerId.ManageServer);
+                Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.ManageServer);
 
-                message.Add((ushort) type);
+                message.Add((ushort)type);
                 message.Add(id);
-                if(type==ManageType.Ban)
+                if (type == ManageType.Ban)
                     message.Add(steamId);
 
                 NetworkManager.Instance.SendByte += message.WrittenLength;

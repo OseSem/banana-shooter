@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Console.CommandScript
 {
-    [CreateAssetMenu(fileName = "Entity Command",menuName = "Utilities/DeveloperConsole/Commands/Entity Command")]
+    [CreateAssetMenu(fileName = "Entity Command", menuName = "Utilities/DeveloperConsole/Commands/Entity Command")]
     public class EntityCommand : ConsoleCommand
     {
         private DeveloperConsoleUI console;
@@ -16,8 +16,8 @@ namespace Console.CommandScript
                 if (console == null) return console = DeveloperConsoleUI.Instance;
                 return console;
             }
-        } 
-    
+        }
+
         public override bool Process(string[] args)
         {
             if (!NetworkServerManager.Instance.Server.IsRunning)

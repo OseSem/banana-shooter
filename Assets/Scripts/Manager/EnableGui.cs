@@ -6,7 +6,7 @@ namespace Manager
 {
     public class EnableGui : IGui
     {
-        public void DrawText(string text, Color color, Rect rect, int fontSize, FontStyle fontStyle, Action onClick= null)
+        public void DrawText(string text, Color color, Rect rect, int fontSize, FontStyle fontStyle, Action onClick = null)
         {
             GUIStyle style = new GUIStyle(GUI.skin.label)
             {

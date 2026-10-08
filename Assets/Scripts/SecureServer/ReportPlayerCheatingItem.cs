@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Newtonsoft.Json;
 
 namespace SecureServer
@@ -6,7 +6,7 @@ namespace SecureServer
     public class ReportPlayerCheatingItem
     {
         public ulong SteamId;
-    
+
         public ulong SteamIdReporter;
 
         public ulong AppData;
@@ -20,7 +20,7 @@ namespace SecureServer
         public string Match = String.Empty;
 
         public ReportPlayerCheatingItem(ulong steamId, ulong steamIdReporter, ulong appData, bool heuristic, bool detection,
-            bool playerReport,string match)
+            bool playerReport, string match)
         {
             SteamId = steamId;
             SteamIdReporter = steamIdReporter;
@@ -33,7 +33,7 @@ namespace SecureServer
 
         public ReportPlayerCheatingItem()
         {
-        
+
         }
     }
 }

@@ -7,13 +7,13 @@ namespace Menu
 {
     public class BuyWeaponItemUI : MonoBehaviour
     {
-        [SerializeField] private TextMeshProUGUI nameText,priceText;
+        [SerializeField] private TextMeshProUGUI nameText, priceText;
         [SerializeField] private Button btn;
         [SerializeField] private RawImage img;
 
         private WeaponStat _stat;
 
-        public void SetValue(WeaponStat stat,int id)
+        public void SetValue(WeaponStat stat, int id)
         {
             _stat = stat;
             nameText.SetText(stat.weaponName);

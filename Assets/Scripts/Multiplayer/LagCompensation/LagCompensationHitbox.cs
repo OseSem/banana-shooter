@@ -22,13 +22,13 @@ namespace Multiplayer.LagCompensation
 
         public HitboxType type = HitboxType.Player;
 
-        public void Initialize(ushort id,uint tick)
+        public void Initialize(ushort id, uint tick)
         {
             Id = id;
             Tick = tick;
         }
 
-        public void TakeDamage(ushort fromClient,uint tick, bool wall,bool isAiming,HitboxType t,Vector3 hitPoint,bool headShot=false, short desiredWeaponIndex=-1)
+        public void TakeDamage(ushort fromClient, uint tick, bool wall, bool isAiming, HitboxType t, Vector3 hitPoint, bool headShot = false, short desiredWeaponIndex = -1)
         {
             if (tick != Tick || (Id == fromClient && t == type)) return;
 
@@ -44,9 +44,9 @@ namespace Multiplayer.LagCompensation
                 case 1002:
                     damage = 120;
                     break;
-                
+
             }
-            
+
             if (ServerPlayer.list.TryGetValue(fromClient, out var fromPlayer))
             {
                 var weapon = fromPlayer.GetCurrentWeapon();
@@ -65,12 +65,12 @@ namespace Multiplayer.LagCompensation
                         {
                             damage = (int)(weapon.Stat.damage * factor);
                         }
-                        
+
                     }
 
-                    damage += (int) (factor * Random.Range(-weapon.Stat.damageOffset,
+                    damage += (int)(factor * Random.Range(-weapon.Stat.damageOffset,
                         weapon.Stat.damageOffset));
-                                
+
                     if (headShot)
                         damage *= 2;
                     if (wall)
@@ -81,12 +81,12 @@ namespace Multiplayer.LagCompensation
                         case HitboxType.Player:
                             if (ServerPlayer.list.TryGetValue(Id, out var player))
                             {
-                                player.TakeDamage(damage,fromClient,tick,headShot,wall, desiredWeaponIndex==-1 ? (ushort)fromPlayer.Weapons[fromPlayer.CurrentWeaponIndex] : (ushort)desiredWeaponIndex, isAiming);
+                                player.TakeDamage(damage, fromClient, tick, headShot, wall, desiredWeaponIndex == -1 ? (ushort)fromPlayer.Weapons[fromPlayer.CurrentWeaponIndex] : (ushort)desiredWeaponIndex, isAiming);
                             }
                             break;
                         default:
                             if (ServerEnemy.list.TryGetValue(Id, out var enemy))
-                                enemy.TakeDamage(damage, fromClient,tick,headShot,wall,desiredWeaponIndex==-1 ? (ushort)fromPlayer.Weapons[fromPlayer.CurrentWeaponIndex] : (ushort)desiredWeaponIndex);
+                                enemy.TakeDamage(damage, fromClient, tick, headShot, wall, desiredWeaponIndex == -1 ? (ushort)fromPlayer.Weapons[fromPlayer.CurrentWeaponIndex] : (ushort)desiredWeaponIndex);
                             break;
                     }
                 }

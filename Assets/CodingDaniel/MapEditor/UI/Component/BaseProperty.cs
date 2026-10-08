@@ -10,7 +10,7 @@ namespace CodingDaniel.MapEditor.UI.Component
         void SetValue(object o);
         void UpdateValue(object o);
     }
-    public class BaseProperty : MonoBehaviour,IBaseProperty
+    public class BaseProperty : MonoBehaviour, IBaseProperty
     {
         public Action<object> onValueSet;
         //Use Localization 
@@ -24,7 +24,7 @@ namespace CodingDaniel.MapEditor.UI.Component
 
         public virtual void UpdateValue(object o)
         {
-            
+
         }
 
         private void OnDestroy()
@@ -32,13 +32,13 @@ namespace CodingDaniel.MapEditor.UI.Component
             onValueSet = null;
         }
 
-        public virtual void Init(string n, object o,bool canEdit)
+        public virtual void Init(string n, object o, bool canEdit)
         {
             text.SetEntry(n);
             UpdateValue(o);
             this.canEdit = canEdit;
-            
-            
+
+
         }
     }
 }

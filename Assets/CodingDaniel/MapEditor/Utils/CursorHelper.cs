@@ -16,14 +16,14 @@ namespace CodingDaniel.MapEditor.Utils
         private Vector2 _defaultCursorHotspot;
         public Texture2D DefaultCursorTexture
         {
-            get 
+            get
             {
                 return _defaultCursorTexture;
             }
         }
         public Vector2 DefaultCursorHotspot
         {
-            get 
+            get
             {
                 return _defaultCursorHotspot;
             }

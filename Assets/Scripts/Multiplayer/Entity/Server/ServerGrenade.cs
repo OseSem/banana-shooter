@@ -14,7 +14,7 @@ using Random = UnityEngine.Random;
 
 namespace Multiplayer.Entity.Server
 {
-    public class ServerGrenade : MonoBehaviour,IEntity
+    public class ServerGrenade : MonoBehaviour, IEntity
     {
         public static Dictionary<ushort, ServerGrenade> list = new Dictionary<ushort, ServerGrenade>();
 
@@ -30,7 +30,7 @@ namespace Multiplayer.Entity.Server
             25f,
             150f,
         };
-    
+
         public static int[] gra = new int[]
         {
             1,
@@ -54,28 +54,28 @@ namespace Multiplayer.Entity.Server
         private Transform _target;
 
         private int _offset;
-        public void Initialize(Vector3 dir,ushort _playerId,ThrowObjectMenu.ThrowObjectType type,ServerPlayer.DamageType damageType,Transform target,uint tick)
+        public void Initialize(Vector3 dir, ushort _playerId, ThrowObjectMenu.ThrowObjectType type, ServerPlayer.DamageType damageType, Transform target, uint tick)
         {
             _transform = transform;
             _offset = (int)(NetworkServerManager.Instance.CurrentTick - tick);
             Id = nextId++;
-            
+
             playerId = _playerId;
             this.type = type;
             _damageType = damageType;
             _target = target;
-            
+
             if (damageType == ServerPlayer.DamageType.Player)
             {
-                Physics.IgnoreCollision(GetComponent<Collider>(),ServerPlayer.list[_playerId].PlayerRb.GetComponent<Collider>());
+                Physics.IgnoreCollision(GetComponent<Collider>(), ServerPlayer.list[_playerId].PlayerRb.GetComponent<Collider>());
             }
 
             exploded = false;
-        
-            list.Add(Id,this);
+
+            list.Add(Id, this);
 
             rigidbody = GetComponent<Rigidbody>();
-            _speed = forces[(int) type];
+            _speed = forces[(int)type];
             // if (type == ThrowObjectMenu.ThrowObjectType.Missile && target!=null)
             // {
             //     _transform.rotation = Quaternion.LookRotation(Vector3.up);
@@ -84,15 +84,15 @@ namespace Multiplayer.Entity.Server
             // }
             rigidbody.velocity = dir * _speed + Vector3.up * _speed / 2f * gra[(int)type];
             // rigidbody.AddForce(dir*35f+Vector3.up*10f,ForceMode.Impulse);
-            rigidbody.AddTorque(Vector3.right*1000f,ForceMode.Impulse);
-        
-            Message msg = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.ThrowObj);
+            rigidbody.AddTorque(Vector3.right * 1000f, ForceMode.Impulse);
+
+            Message msg = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.ThrowObj);
             msg.Add(Id);
             msg.Add((int)type);
             msg.Add(playerId);
             msg.Add(transform.position);
             msg.Add(dir);
-            NetworkServerManager.Instance.Server.SendToAll(msg,playerId);
+            NetworkServerManager.Instance.Server.SendToAll(msg, playerId);
             Init();
         }
         public void Destroy()
@@ -179,9 +179,9 @@ namespace Multiplayer.Entity.Server
             }
         }
 
-        private Collider[] col= new Collider[15];
-        private Collider[] _col= new Collider[15];
-    
+        private Collider[] col = new Collider[15];
+        private Collider[] _col = new Collider[15];
+
         List<ServerPlayer> _clients = new();
         List<ServerEnemy> _enemies = new();
         IEnumerator Explode(float time, Vector3 position)
@@ -190,23 +190,23 @@ namespace Multiplayer.Entity.Server
 
             if (position == Vector3.zero)
                 position = _transform.position;
-            
+
             if (!ServerPlayer.list.TryGetValue(playerId, out var fromPlayer))
             {
                 Destroy();
                 yield break;
             }
             exploded = true;
-            
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort)ServerToClientId.ThrowObjExplode);
+
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.ThrowObjExplode);
 
             message.Add(Id);
             message.AddVector3(position);
-        
-            NetworkServerManager.Instance.Server.SendToAll(message,playerId);
+
+            NetworkServerManager.Instance.Server.SendToAll(message, playerId);
 
             uint t = (uint)(NetworkServerManager.Instance.CurrentTick - _offset);
-            
+
             List<LagCompensationHitbox> hitboxes = new List<LagCompensationHitbox>();
 
             //Player hitbox
@@ -214,21 +214,21 @@ namespace Multiplayer.Entity.Server
             {
                 TransformUpdate transformUpdate = serverPlayer.TransformBuffer[t % ServerPlayer.MaxTickStore];
 
-                if (transformUpdate != null && (NetworkServerManager.Instance.ShouldSpawnHitbox(serverPlayer,fromPlayer) || type == ThrowObjectMenu.ThrowObjectType.FlashBang))
+                if (transformUpdate != null && (NetworkServerManager.Instance.ShouldSpawnHitbox(serverPlayer, fromPlayer) || type == ThrowObjectMenu.ThrowObjectType.FlashBang))
                 {
                     LagCompensationHitbox hitbox = ObjectPooler.Instance.SpawnFromPool("PlayerHitbox", transformUpdate.Position, Quaternion.identity).GetComponent<LagCompensationHitbox>();
-                        
+
                     hitbox.Initialize(serverPlayer.Id, t);
-                        
+
                     hitboxes.Add(hitbox);
-                }  
+                }
             }
 
             //Enemy Hitbox
             foreach (var serverEnemy in ServerEnemy.list.Values)
             {
                 TransformUpdate transformUpdate = serverEnemy.TransformBuffer[t % ServerPlayer.MaxTickStore];
-                
+
                 if (transformUpdate != null)
                 {
                     Vector3 predictPos = transformUpdate.Position;
@@ -255,13 +255,13 @@ namespace Multiplayer.Entity.Server
                     }
 
                     LagCompensationHitbox hitbox = ObjectPooler.Instance.SpawnFromPool(enemy, predictPos, Quaternion.identity).GetComponent<LagCompensationHitbox>();
-                        
-                    hitbox.Initialize(serverEnemy.Id,t);
-                        
+
+                    hitbox.Initialize(serverEnemy.Id, t);
+
                     hitboxes.Add(hitbox);
-                }  
+                }
             }
-                    
+
             Physics.SyncTransforms();
 
             RaycastHit hit;
@@ -269,9 +269,9 @@ namespace Multiplayer.Entity.Server
             switch (type)
             {
                 case ThrowObjectMenu.ThrowObjectType.FlashBang:
-                    cnt = Physics.OverlapSphereNonAlloc(position, 40f,col,GameManager.Instance.lagCompensationHitboxLayer);
-                    
-                    for(int i=0;i<cnt;i++)
+                    cnt = Physics.OverlapSphereNonAlloc(position, 40f, col, GameManager.Instance.lagCompensationHitboxLayer);
+
+                    for (int i = 0; i < cnt; i++)
                     {
                         Collider c = col[i];
                         LagCompensationHitbox hitbox = c.transform.root.GetComponent<LagCompensationHitbox>();
@@ -288,11 +288,11 @@ namespace Multiplayer.Entity.Server
                                 float angle = Vector3.Angle(player.PlayerTransform.forward,
                                     pos - (transform1.position));
 
-                                if (Physics.Raycast(pos, (hitbox.transform.position-pos).normalized,out hit,2000,GameManager.Instance.lagCompensationHitboxLayer))
+                                if (Physics.Raycast(pos, (hitbox.transform.position - pos).normalized, out hit, 2000, GameManager.Instance.lagCompensationHitboxLayer))
                                 {
                                     if (hitbox == hit.transform.root.GetComponent<LagCompensationHitbox>())
                                     {
-                                        message = Message.Create(MessageSendMode.Reliable, (ushort) ServerToClientId.FlashBang);
+                                        message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.FlashBang);
 
                                         message.Add(player.Id);
                                         message.Add(playerId);
@@ -302,99 +302,99 @@ namespace Multiplayer.Entity.Server
                                 }
                             }
                         }
-                        
-                        
+
+
                     }
                     break;
                 case ThrowObjectMenu.ThrowObjectType.MolotovCocktail:
                     Vector3 originalPos = position + Vector3.up * 2f;
 
-                    int[] xx = {1, -1, 0, 0, 1,-1,-1,1  , 2 , -2 , 0 , 0 , 2 , 2 , -2, -2 , 1 , -1 , 1 ,-1}, yy = {0, 0, 1, -1, -1,1,-1,1 , 0 , 0 , 2 , -2 , 1 , -1 , 1, -1 , 2 , 2 , -2 , -2};
+                    int[] xx = { 1, -1, 0, 0, 1, -1, -1, 1, 2, -2, 0, 0, 2, 2, -2, -2, 1, -1, 1, -1 }, yy = { 0, 0, 1, -1, -1, 1, -1, 1, 0, 0, 2, -2, 1, -1, 1, -1, 2, 2, -2, -2 };
                     Ray ray = new Ray(originalPos, Vector3.down);
-                    if (Physics.Raycast(ray, out hit,100f, GameManager.Instance.whatIsGround))
+                    if (Physics.Raycast(ray, out hit, 100f, GameManager.Instance.whatIsGround))
                     {
                         ServerFire fire =
                             Instantiate(PrefabManager.Instance.GetPrefab("ServerFire"), hit.point, Quaternion.identity)
                                 .GetComponent<ServerFire>();
-                    
+
                         fire.Initialize(playerId);
                     }
                     for (int i = 0; i < xx.Length; i++)
                     {
-                        ray = new Ray(originalPos+new Vector3(xx[i],0,yy[i])*2f, Vector3.down);
-                        if (Physics.Raycast(ray, out hit,100f, GameManager.Instance.whatIsGround))
+                        ray = new Ray(originalPos + new Vector3(xx[i], 0, yy[i]) * 2f, Vector3.down);
+                        if (Physics.Raycast(ray, out hit, 100f, GameManager.Instance.whatIsGround))
                         {
                             ServerFire fire =
                                 Instantiate(PrefabManager.Instance.GetPrefab("ServerFire"), hit.point, Quaternion.identity)
                                     .GetComponent<ServerFire>();
-                    
+
                             fire.Initialize(playerId);
                         }
                     }
 
-                    xx = new int[] {CalculateDis(Random.Range(-1, 1)),CalculateDis(Random.Range(-1, 1)),CalculateDis(Random.Range(-1, 1)),CalculateDis(Random.Range(-1, 1))};
-                    yy = new int[] {CalculateDis(Random.Range(-1, 1)),CalculateDis(Random.Range(-1, 1)),CalculateDis(Random.Range(-1, 1)),CalculateDis(Random.Range(-1, 1))};
-                
+                    xx = new int[] { CalculateDis(Random.Range(-1, 1)), CalculateDis(Random.Range(-1, 1)), CalculateDis(Random.Range(-1, 1)), CalculateDis(Random.Range(-1, 1)) };
+                    yy = new int[] { CalculateDis(Random.Range(-1, 1)), CalculateDis(Random.Range(-1, 1)), CalculateDis(Random.Range(-1, 1)), CalculateDis(Random.Range(-1, 1)) };
+
                     for (int i = 0; i < xx.Length; i++)
                     {
-                        ray = new Ray(originalPos+new Vector3(xx[i],0,yy[i])*2f, Vector3.down);
-                        if (Physics.Raycast(ray, out hit,100f, GameManager.Instance.whatIsGround))
+                        ray = new Ray(originalPos + new Vector3(xx[i], 0, yy[i]) * 2f, Vector3.down);
+                        if (Physics.Raycast(ray, out hit, 100f, GameManager.Instance.whatIsGround))
                         {
                             ServerFire fire =
                                 Instantiate(PrefabManager.Instance.GetPrefab("ServerFire"), hit.point, Quaternion.identity)
                                     .GetComponent<ServerFire>();
-                    
+
                             fire.Initialize(playerId);
                         }
                     }
                     break;
                 case ThrowObjectMenu.ThrowObjectType.Grenade:
-                    cnt = Physics.OverlapSphereNonAlloc(position, 15f,_col,propLayer);
+                    cnt = Physics.OverlapSphereNonAlloc(position, 15f, _col, propLayer);
 
                     for (int i = 0; i < cnt; i++)
                     {
                         Rigidbody rb = _col[i].GetComponent<Rigidbody>();
-                    
-                        rb.AddExplosionForce(.000005f,position,25f,1f,ForceMode.Impulse);
+
+                        rb.AddExplosionForce(.000005f, position, 25f, 1f, ForceMode.Impulse);
                     }
                     _clients.Clear();
                     _enemies.Clear();
-                    cnt  = Physics.OverlapSphereNonAlloc(position, 12f,_col, GameManager.Instance.lagCompensationHitboxLayer,
+                    cnt = Physics.OverlapSphereNonAlloc(position, 12f, _col, GameManager.Instance.lagCompensationHitboxLayer,
                         QueryTriggerInteraction.Ignore);
-                    for(int i=0;i<cnt;i++)
+                    for (int i = 0; i < cnt; i++)
                     {
                         if (_col[i].transform.root.TryGetComponent(out LagCompensationHitbox hitbox))
                         {
                             if (_damageType == ServerPlayer.DamageType.Player)
                             {
-                                hitbox.TakeDamage(playerId, t, false,false, LagCompensationHitbox.HitboxType.Player,_col[i].bounds.ClosestPoint(_transform.position), false,1002);
+                                hitbox.TakeDamage(playerId, t, false, false, LagCompensationHitbox.HitboxType.Player, _col[i].bounds.ClosestPoint(_transform.position), false, 1002);
                             }
                         }
                     }
                     break;
                 case ThrowObjectMenu.ThrowObjectType.Knife:
-                    cnt = Physics.OverlapSphereNonAlloc(position, 4f,_col,propLayer);
+                    cnt = Physics.OverlapSphereNonAlloc(position, 4f, _col, propLayer);
 
                     for (int i = 0; i < cnt; i++)
                     {
                         Rigidbody rb = _col[i].GetComponent<Rigidbody>();
-                    
-                        rb.AddExplosionForce(.000005f,position,4f,1f,ForceMode.Impulse);
+
+                        rb.AddExplosionForce(.000005f, position, 4f, 1f, ForceMode.Impulse);
                     }
-                    cnt  = Physics.OverlapSphereNonAlloc(position, 4f,_col, GameManager.Instance.lagCompensationHitboxLayer,
+                    cnt = Physics.OverlapSphereNonAlloc(position, 4f, _col, GameManager.Instance.lagCompensationHitboxLayer,
                         QueryTriggerInteraction.Ignore);
-                    for(int i=0;i<cnt;i++)
+                    for (int i = 0; i < cnt; i++)
                     {
                         Collider c = _col[i];
                         Transform root = c.transform.root;
 
                         LagCompensationHitbox hitbox = root.GetComponent<LagCompensationHitbox>();
-                        
+
                         if (hitbox != null)
                         {
                             if (_damageType == ServerPlayer.DamageType.Player)
                             {
-                                hitbox.TakeDamage(playerId, t, false, false,LagCompensationHitbox.HitboxType.Player,c.bounds.ClosestPoint(_transform.position), false,1000);
+                                hitbox.TakeDamage(playerId, t, false, false, LagCompensationHitbox.HitboxType.Player, c.bounds.ClosestPoint(_transform.position), false, 1000);
                             }
                         }
                     }
@@ -403,9 +403,9 @@ namespace Multiplayer.Entity.Server
                     var jumpPadPrefab = PrefabManager.Instance.GetPrefab("ServerJumpPad").GetComponent<ServerJumpPad>();
 
                     var instance = Object.Instantiate(jumpPadPrefab, position, Quaternion.identity);
-                    
+
                     instance.Initialize();
-                    
+
                     break;
             }
 
@@ -413,11 +413,11 @@ namespace Multiplayer.Entity.Server
             {
                 hitbox.gameObject.SetActive(false);
             }
-            
+
             Destroy(gameObject);
         }
 
-        [SerializeField] private LayerMask propLayer,whatIsHittable;
+        [SerializeField] private LayerMask propLayer, whatIsHittable;
 
         int CalculateDis(float a)
         {

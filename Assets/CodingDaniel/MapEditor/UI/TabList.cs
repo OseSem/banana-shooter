@@ -5,8 +5,8 @@ using UnityEngine.EventSystems;
 
 namespace CodingDaniel.MapEditor.UI
 {
-    
-    public class TabList : MonoBehaviour,IPointerDownHandler
+
+    public class TabList : MonoBehaviour, IPointerDownHandler
     {
         public static TabList Instance { private set; get; }
 
@@ -19,10 +19,10 @@ namespace CodingDaniel.MapEditor.UI
         [SerializeField] public DropList dropListPrefab;
 
         public bool isSelected = false;
-        public void SpawnList(RectTransform listItem,List<DropListItem> items,bool offsetYEnable=true,bool offsetXEnable=false)
+        public void SpawnList(RectTransform listItem, List<DropListItem> items, bool offsetYEnable = true, bool offsetXEnable = false)
         {
             DropList dropList = Instantiate(dropListPrefab, tab);
-            
+
             dropLists.Add(dropList);
 
             dropList.SetTabList(listItem, items);

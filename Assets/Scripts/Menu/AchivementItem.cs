@@ -48,18 +48,18 @@ namespace Menu
 
         private void OnAchievementProgressSet(GlobalAchievementPercentagesReady_t param, bool biofailure)
         {
-            if (param.m_eResult == EResult.k_EResultOK && !biofailure && slider!=null && progressText!=null)
+            if (param.m_eResult == EResult.k_EResultOK && !biofailure && slider != null && progressText != null)
             {
                 if (SteamUserStats.GetAchievementAchievedPercent(achievementName, out float percent))
                 {
                     slider.value = percent;
-                    progressText.StringReference.Arguments = new List<object>() {percent.ToString("F0")};
+                    progressText.StringReference.Arguments = new List<object>() { percent.ToString("F0") };
                     progressText.gameObject.SetActive(true);
                     slider.gameObject.SetActive(true);
                 }
             }
         }
-        
+
         void GetPlayerAvatar()
         {
             int ImageId = SteamUserStats.GetAchievementIcon(achievementName);
@@ -69,11 +69,11 @@ namespace Menu
         }
 
         private CallResult<GlobalAchievementPercentagesReady_t> AchievementProgress = new CallResult<GlobalAchievementPercentagesReady_t>();
-    
-        public void SetAchievement(string name,string des,string localizeName)
+
+        public void SetAchievement(string name, string des, string localizeName)
         {
             achievementName = name;
-            title.text =localizeName;
+            title.text = localizeName;
             desc.text = des;
 
             progressText.gameObject.SetActive(false);
@@ -83,17 +83,17 @@ namespace Menu
             {
                 if (!achieved)
                 {
-                    title.color=Color.grey;
-                    desc.color=Color.grey;
+                    title.color = Color.grey;
+                    desc.color = Color.grey;
                     progressText.GetComponent<TextMeshProUGUI>().color = Color.grey;
-                    img.color=Color.grey;
+                    img.color = Color.grey;
                 }
             }
             if (SteamUserStats.RequestCurrentStats())
             {
-                AchievementProgress.Set(SteamUserStats.RequestGlobalAchievementPercentages(),OnAchievementProgressSet);
+                AchievementProgress.Set(SteamUserStats.RequestGlobalAchievementPercentages(), OnAchievementProgressSet);
             }
-            if(!avatarReceived)GetPlayerAvatar();
+            if (!avatarReceived) GetPlayerAvatar();
         }
     }
 }

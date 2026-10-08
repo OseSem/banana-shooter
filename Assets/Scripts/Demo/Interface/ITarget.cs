@@ -4,6 +4,6 @@ namespace Demo.Interface
 {
     public interface ITarget
     {
-        public Transform[] Bones { get;protected set; }
+        public Transform[] Bones { get; protected set; }
     }
 }

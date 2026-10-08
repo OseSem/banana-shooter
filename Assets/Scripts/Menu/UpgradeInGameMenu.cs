@@ -25,7 +25,7 @@ namespace Menu
         private void Awake()
         {
             Instance = this;
-            
+
         }
 
         private void Start()
@@ -55,22 +55,22 @@ namespace Menu
             GameManager.InputManager.Player.Upgrade1.performed -= upgradeItems[1].Upgrade;
             GameManager.InputManager.Player.Upgrade2.performed -= upgradeItems[2].Upgrade;
         }
-        
+
         [HideInInspector]
         public int moveSpeedIndex = 0;
         public bool UpMovementSpeed(UpgradeItem item)
         {
-            if (Player!=null)
+            if (Player != null)
             {
-                if (Mathf.Abs(Player.coins - Player.lastCoin) > 1) 
+                if (Mathf.Abs(Player.coins - Player.lastCoin) > 1)
                     return false;
-                if (Player.coins - 1 < 0 || moveSpeedIndex>=5)
+                if (Player.coins - 1 < 0 || moveSpeedIndex >= 5)
                 {
                     return false;
                 }
 
                 --Player.coins;
-                Player.lastCoin= Player.coins;
+                Player.lastCoin = Player.coins;
                 SetCoinText(Player.coins);
             }
             if (PlayerMovement.Instance)
@@ -89,12 +89,12 @@ namespace Menu
         {
             if (PlayerMovement.Instance)
             {
-                moveSpeedIndex=0;
+                moveSpeedIndex = 0;
                 moveSpeedIndex = Mathf.Clamp(moveSpeedIndex, 0, 5);
                 PlayerMovement.Instance.DownMovementSpeed();
                 for (int i = 0; i < upgradeItems.Length; i++)
                 {
-                    if(GameManager.Instance.upgrades[i]=="moveSpeed")
+                    if (GameManager.Instance.upgrades[i] == "moveSpeed")
                         upgradeItems[i].UpdateGraphics(0);
                 }
             }
@@ -103,22 +103,22 @@ namespace Menu
         public int healthIndex = 0;
         public bool UpHealth(UpgradeItem item)
         {
-            if (Player!=null)
+            if (Player != null)
             {
                 if (Mathf.Abs(Player.coins - Player.lastCoin) > 1) return false;
-                if (Player.coins - 1 < 0 || healthIndex>=5)
+                if (Player.coins - 1 < 0 || healthIndex >= 5)
                 {
                     return false;
                 }
-                
+
                 --Player.coins;
-                Player.lastCoin= Player.coins;
+                Player.lastCoin = Player.coins;
                 SetCoinText(Player.coins);
             }
-            
+
             healthIndex++;
             healthIndex = Mathf.Clamp(healthIndex, 0, 5);
-            
+
             CrazeUpgrade(item);
             item.UpdateGraphics(healthIndex);
             SetUpgradeItemColor();
@@ -127,12 +127,12 @@ namespace Menu
 
         public void DownHealth()
         {
-            healthIndex=0;
+            healthIndex = 0;
             healthIndex = Mathf.Clamp(healthIndex, 0, 5);
 
             for (int i = 0; i < upgradeItems.Length; i++)
             {
-                if(GameManager.Instance.upgrades[i]=="health")
+                if (GameManager.Instance.upgrades[i] == "health")
                     upgradeItems[i].UpdateGraphics(0);
             }
         }
@@ -148,7 +148,7 @@ namespace Menu
             if (InfectedHand.Instance.isInfected || !GameManager.Instance.setting.autoUpgrade) return;
             foreach (var upgrade in upgradeItems)
             {
-                while (upgrade.currentIndex < upgrade.maxIndex && upgrade.cost<=Player.coins)
+                while (upgrade.currentIndex < upgrade.maxIndex && upgrade.cost <= Player.coins)
                 {
                     upgrade.Upgrade(new InputAction.CallbackContext());
                 }
@@ -162,7 +162,7 @@ namespace Menu
             dashSlider.gameObject.SetActive(false);
             for (int i = 0; i < upgradeItems.Length; i++)
             {
-                if(GameManager.Instance.upgrades[i]=="dash")
+                if (GameManager.Instance.upgrades[i] == "dash")
                     upgradeItems[i].UpdateGraphics(0);
             }
         }
@@ -170,7 +170,7 @@ namespace Menu
         public Slider dashSlider;
         [HideInInspector]
         public float dashTimer = 0;
-        
+
         [HideInInspector]
         public int doubleJumpIndex = 0;
 
@@ -197,22 +197,22 @@ namespace Menu
         public int dashIndex = 0;
         public bool DoubleJump(UpgradeItem item)
         {
-            if (Player!=null)
+            if (Player != null)
             {
                 if (Mathf.Abs(Player.coins - Player.lastCoin) > 1) return false;
-                if (Player.coins - 1 < 0 || doubleJumpIndex>=5)
+                if (Player.coins - 1 < 0 || doubleJumpIndex >= 5)
                 {
                     return false;
                 }
-                
-                Player.coins-=1;
-                Player.lastCoin= Player.coins;
+
+                Player.coins -= 1;
+                Player.lastCoin = Player.coins;
                 SetCoinText(Player.coins);
             }
-            
+
             doubleJumpIndex++;
             doubleJumpIndex = Mathf.Clamp(doubleJumpIndex, 0, 5);
-            PlayerMovement.Instance.maxJumpCount= doubleJumpIndex+1;
+            PlayerMovement.Instance.maxJumpCount = doubleJumpIndex + 1;
             PlayerMovement.Instance.jumpLeft = PlayerMovement.Instance.maxJumpCount;
             CrazeUpgrade(item);
             item.UpdateGraphics(doubleJumpIndex);
@@ -221,30 +221,30 @@ namespace Menu
         }
         public void ClearDoubleJump()
         {
-            doubleJumpIndex=0;
+            doubleJumpIndex = 0;
             PlayerMovement.Instance.maxJumpCount = 1;
             doubleJumpIndex = Mathf.Clamp(doubleJumpIndex, 0, 5);
             for (int i = 0; i < upgradeItems.Length; i++)
             {
-                if(GameManager.Instance.upgrades[i]=="doubleJump")
+                if (GameManager.Instance.upgrades[i] == "doubleJump")
                     upgradeItems[i].UpdateGraphics(0);
             }
         }
         public bool Dash(UpgradeItem item)
         {
-            if (Player!=null)
+            if (Player != null)
             {
                 if (Mathf.Abs(Player.coins - Player.lastCoin) > 1) return false;
-                if (Player.coins - 1 < 0 || dashIndex>=1)
+                if (Player.coins - 1 < 0 || dashIndex >= 1)
                 {
                     return false;
                 }
-                
-                Player.coins-=1;
-                Player.lastCoin= Player.coins;
+
+                Player.coins -= 1;
+                Player.lastCoin = Player.coins;
                 SetCoinText(Player.coins);
             }
-            
+
             dashIndex++;
             dashIndex = Mathf.Clamp(dashIndex, 0, 1);
             CrazeUpgrade(item);
@@ -256,23 +256,23 @@ namespace Menu
         void CrazeUpgrade(UpgradeItem upgrade)
         {
             buyUpgradeRecently = true;
-            if (NetworkManager.ClientGameMode != GameMode.SpecialGameMode &&CheckUpgrade(0) && CheckUpgrade(1)&&CheckUpgrade(2))
+            if (NetworkManager.ClientGameMode != GameMode.SpecialGameMode && CheckUpgrade(0) && CheckUpgrade(1) && CheckUpgrade(2))
             {
                 AchievementManager.Instance.SetAchievement(AchievementManager.EAchievements.CRAZY_UPGRADE);
             }
-            Invoke(nameof(ClearUpgradeRecently),1f);
+            Invoke(nameof(ClearUpgradeRecently), 1f);
 
             if (!GameManager.Instance.setting.enableUpgradeAnimation) return;
             string k = GameManager.Instance.upgrades[upgrade.index];
 
             icon.texture = GameManager.Instance.GetUpgradeDetailedTexture2D(k);
-            text.SetEntry("up_"+k);
+            text.SetEntry("up_" + k);
             amountText.SetText(upgrade.currentIndex.ToString());
 
             _desiredAlpha = 1f;
             CancelInvoke(nameof(Clear));
             StopAllCoroutines();
-            Invoke(nameof(Clear),5.5f);
+            Invoke(nameof(Clear), 5.5f);
             StartCoroutine(SetAmountText(upgrade));
         }
 
@@ -284,7 +284,7 @@ namespace Menu
             // amountText.materialForRendering.SetFloat("_FaceSoftness",1f);
             yield return new WaitForSeconds(1.5f);
             amountText.SetText(item.currentIndex.ToString());
-            AudioManager.Instance.PlayPitched("upgrade",.5f);
+            AudioManager.Instance.PlayPitched("upgrade", .5f);
             yield return new WaitForSeconds(.5f);
             _shaking = false;
         }
@@ -307,7 +307,7 @@ namespace Menu
         {
             switch (GameManager.Instance.upgrades[upgrade])
             {
-                case "health" :
+                case "health":
                     return healthIndex >= 5;
                 case "moveSpeed":
                     return moveSpeedIndex >= 5;
@@ -321,7 +321,7 @@ namespace Menu
         }
 
         #endregion
-        
+
         [SerializeField] private CanvasGroup canvasGroup;
 
         [SerializeField] private RawImage icon;
@@ -330,8 +330,8 @@ namespace Menu
 
         private RectTransform _amountTransform;
         private bool _shaking = false;
-        float _magnitude=5f;
-        Vector2 originalPos,desiredPos;
+        float _magnitude = 5f;
+        Vector2 originalPos, desiredPos;
         private void Update()
         {
             if (dashIndex > 0)
@@ -352,7 +352,7 @@ namespace Menu
                 Vector2 offset = new Vector2(x, y);
 
                 desiredPos = originalPos + offset;
-                _amountTransform.anchoredPosition = Vector2.Lerp(_amountTransform.anchoredPosition,desiredPos,Time.deltaTime*20f);
+                _amountTransform.anchoredPosition = Vector2.Lerp(_amountTransform.anchoredPosition, desiredPos, Time.deltaTime * 20f);
             }
             canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, _desiredAlpha, Time.deltaTime * 5f);
         }

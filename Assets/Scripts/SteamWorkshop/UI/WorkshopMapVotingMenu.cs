@@ -10,17 +10,17 @@ namespace SteamWorkshop.UI
     public class WorkshopMapVotingMenu : MonoBehaviour
     {
         [SerializeField] private GameObject mapVotingPanel, voteUpSelected, voteDownSelected;
-        [SerializeField] private Button voteUpBtn,voteDownBtn;
-        
+        [SerializeField] private Button voteUpBtn, voteDownBtn;
+
         private PublishedFileId_t _currentMapId;
-        
+
         protected CallResult<GetUserItemVoteResult_t> GetUserItemVoteResult;
         protected CallResult<SetUserItemVoteResult_t> SetUserItemVoteResult;
 
         private void Start()
         {
             _currentMapId = NetworkManager.Instance.GetCurrentWorkshopMap();
-            if(_currentMapId!=PublishedFileId_t.Invalid)
+            if (_currentMapId != PublishedFileId_t.Invalid)
                 GetUserItemVoteResult.Set(SteamUGC.GetUserItemVote(_currentMapId));
         }
 
@@ -28,7 +28,7 @@ namespace SteamWorkshop.UI
         {
             GetUserItemVoteResult = CallResult<GetUserItemVoteResult_t>.Create(OnGetUserItemVoteResult);
             SetUserItemVoteResult = CallResult<SetUserItemVoteResult_t>.Create(OnSetUserItemVoteResult);
-            
+
             voteUpBtn.onClick.AddListener(delegate { Vote(true); });
             voteDownBtn.onClick.AddListener(delegate { Vote(false); });
         }
@@ -38,7 +38,7 @@ namespace SteamWorkshop.UI
             GetUserItemVoteResult.Dispose();
             SetUserItemVoteResult.Dispose();
         }
-        
+
         private void OnGetUserItemVoteResult(GetUserItemVoteResult_t param, bool fail)
         {
             if (fail || param.m_eResult != EResult.k_EResultOK)
@@ -52,11 +52,11 @@ namespace SteamWorkshop.UI
             {
                 voteUpSelected.SetActive(param.m_bVotedUp);
                 voteDownSelected.SetActive(param.m_bVotedDown);
-                
+
                 mapVotingPanel.SetActive(true);
             }
         }
-        
+
         private void OnSetUserItemVoteResult(SetUserItemVoteResult_t param, bool biofailure)
         {
             if (biofailure || param.m_eResult != EResult.k_EResultOK)
@@ -69,8 +69,8 @@ namespace SteamWorkshop.UI
             {
                 Debug.Log($"Set {param.m_bVoteUp} to {param.m_nPublishedFileId}");
                 mapVotingPanel.SetActive(false);
-                
-                NotificationMenu.Instance.NewItem("nc_message","nc_vote_set");
+
+                NotificationMenu.Instance.NewItem("nc_message", "nc_vote_set");
             }
         }
 

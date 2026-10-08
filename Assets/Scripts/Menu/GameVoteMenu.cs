@@ -36,13 +36,13 @@ namespace Menu
         readonly Dictionary<ushort, ushort> _voteGameAmount = new();
 
         readonly Dictionary<ushort, GameModeVoteItem> _voteGameMode = new();
-        
-        [SerializeField] private Transform mapContent,gameModeContent;
+
+        [SerializeField] private Transform mapContent, gameModeContent;
 
         [SerializeField] private MapPrefabItemUI mapPrefab;
         [SerializeField] private GameModeVoteItem gameModePrefab;
 
-        [SerializeField] private ToggleGroup mapGroup,gameModeGroup;
+        [SerializeField] private ToggleGroup mapGroup, gameModeGroup;
 
         [SerializeField] private PlayerLeaderboardItem playerPrefab;
 
@@ -50,9 +50,9 @@ namespace Menu
 
         [SerializeField] private GameObject forceStartObj;
 
-        private Dictionary<ushort,LobbyDataManager.LobbyData> _list = new();
+        private Dictionary<ushort, LobbyDataManager.LobbyData> _list = new();
 
-        private Dictionary<ushort,PlayerLeaderboardItem> _objects = new();
+        private Dictionary<ushort, PlayerLeaderboardItem> _objects = new();
 
         [SerializeField] private GameObject lobby, server;
         private void Awake()
@@ -60,7 +60,7 @@ namespace Menu
             Instance = this;
 
             SteamFriends.SetRichPresence("steam_display", "#Status_WaitingForMatch");
-            
+
             map.SetActive(!NetworkManager.ClientRandomMap);
             gameModeObj.SetActive(!NetworkManager.ClientRandomGameMode);
 
@@ -68,23 +68,23 @@ namespace Menu
             {
                 foreach (var id in NetworkManager.WorkshopMaps)
                 {
-                    _voteMapAmount.Add(id.ToString(),0);
+                    _voteMapAmount.Add(id.ToString(), 0);
                 }
             }
             else
             {
                 foreach (var m in MapManager.Instance.maps)
                 {
-                    _voteMapAmount.Add(m.name,0);
+                    _voteMapAmount.Add(m.name, 0);
                 }
             }
 
             RefreshMaps();
-            
+
             RefreshGameMode();
-            
-            if(MusicManager.Instance.music == MusicManager.MusicType.WinningMusic)
-                Invoke(nameof(StopMusic),10f);
+
+            if (MusicManager.Instance.music == MusicManager.MusicType.WinningMusic)
+                Invoke(nameof(StopMusic), 10f);
             else
                 StopMusic();
 
@@ -93,7 +93,7 @@ namespace Menu
             server.SetActive(!flag);
         }
 
-        
+
         public void ForceStart()
         {
             NetworkServerManager.Instance.ForceStart();
@@ -103,7 +103,7 @@ namespace Menu
         {
             forceStartObj.SetActive(true);
         }
-        
+
         void StopMusic()
         {
             MusicManager.Instance.ChangeMusic(MusicManager.MusicType.None);
@@ -121,16 +121,16 @@ namespace Menu
                 foreach (var id in NetworkManager.WorkshopMaps)
                 {
                     MapPrefabItemUI itemUI = Instantiate(mapPrefab, mapContent);
-                    
-                    itemUI.Initialize(id,mapGroup);
-                    
+
+                    itemUI.Initialize(id, mapGroup);
+
                     itemUI.toggle.SetIsOnWithoutNotify(false);
-                
-                    itemUI.toggle.onValueChanged.AddListener(delegate(bool arg) { VoteMap(arg,id.ToString(),true); });
+
+                    itemUI.toggle.onValueChanged.AddListener(delegate (bool arg) { VoteMap(arg, id.ToString(), true); });
 
                     itemUI.toggle.interactable = !NetworkManager.LocalClientData.Eliminated;
-                    
-                    _voteMap.Add(id.ToString(),itemUI);
+
+                    _voteMap.Add(id.ToString(), itemUI);
                 }
             }
             else
@@ -138,16 +138,16 @@ namespace Menu
                 foreach (var m in NetworkServerManager.Instance.Maps[SelectedGameMode])
                 {
                     MapPrefabItemUI itemUI = Instantiate(mapPrefab, mapContent);
-                
-                    itemUI.Initialize(m,mapGroup);
-                
+
+                    itemUI.Initialize(m, mapGroup);
+
                     itemUI.toggle.SetIsOnWithoutNotify(false);
-                
-                    itemUI.toggle.onValueChanged.AddListener(delegate(bool arg) { VoteMap(arg,m.name,false); });
-                
+
+                    itemUI.toggle.onValueChanged.AddListener(delegate (bool arg) { VoteMap(arg, m.name, false); });
+
                     itemUI.toggle.interactable = !NetworkManager.LocalClientData.Eliminated;
-                    
-                    _voteMap.Add(m.name,itemUI);
+
+                    _voteMap.Add(m.name, itemUI);
                 }
             }
         }
@@ -161,54 +161,54 @@ namespace Menu
 
             foreach (var gameMode in NetworkServerManager.Instance.Maps.Keys)
             {
-                if(gameMode == GameMode.None || gameMode == GameMode.SpecialGameMode || gameMode == GameMode.SpecialNormalGameMode)continue;
+                if (gameMode == GameMode.None || gameMode == GameMode.SpecialGameMode || gameMode == GameMode.SpecialNormalGameMode) continue;
                 GameModeVoteItem itemUI = Instantiate(gameModePrefab, gameModeContent);
-                
-                itemUI.Initialize(gameMode,gameModeGroup);
-                
+
+                itemUI.Initialize(gameMode, gameModeGroup);
+
                 itemUI.toggle.SetIsOnWithoutNotify(false);
-                
-                itemUI.toggle.onValueChanged.AddListener(delegate(bool arg) { VoteGameMode(arg,(ushort)gameMode); });
-                
+
+                itemUI.toggle.onValueChanged.AddListener(delegate (bool arg) { VoteGameMode(arg, (ushort)gameMode); });
+
                 itemUI.toggle.interactable = !NetworkManager.LocalClientData.Eliminated;
-                
-                _voteGameMode.Add((ushort)gameMode,itemUI);
-                
-                _voteGameAmount.Add((ushort)gameMode,0);
+
+                _voteGameMode.Add((ushort)gameMode, itemUI);
+
+                _voteGameAmount.Add((ushort)gameMode, 0);
             }
         }
 
-        void VoteMap(bool ar,string map,bool isWorkshopMap)
+        void VoteMap(bool ar, string map, bool isWorkshopMap)
         {
             if (!IsVoting) return;
             if (ar)
             {
-                Message message = Message.Create(MessageSendMode.Reliable,(ushort)ClientToServerId.VoteMap);
+                Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.VoteMap);
                 message.Add(isWorkshopMap);
                 message.Add(map);
                 NetworkManager.Instance.SendByte += message.WrittenLength;
                 NetworkManager.Instance.Client.Send(message);
             }
-            
+
         }
-        void VoteGameMode(bool arg,ushort gameMode)
+        void VoteGameMode(bool arg, ushort gameMode)
         {
             if (!IsVoting || !arg) return;
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort)ClientToServerId.VoteGameMode);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.VoteGameMode);
             message.Add(gameMode);
             NetworkManager.Instance.SendByte += message.WrittenLength;
             NetworkManager.Instance.Client.Send(message);
         }
-        public void SetVotePage(float time,List<Tuple<ushort,LobbyDataManager.LobbyData>> datas,int minimalPlayerCount)
+        public void SetVotePage(float time, List<Tuple<ushort, LobbyDataManager.LobbyData>> datas, int minimalPlayerCount)
         {
             IsVoting = true;
             _minimalPlayerCount = minimalPlayerCount;
-            
+
             if (NetworkServerManager.Instance.Server.IsRunning)
             {
                 Invoke(nameof(DisplayForceStartButton), 2f);
             }
-            
+
             _timer = time;
 
             timerTextLocalize.enabled = datas.Count <= 1;
@@ -230,7 +230,7 @@ namespace Menu
             {
                 AddObject(tuple.Item1, tuple.Item2);
             }
-            
+
             Refresh();
         }
 
@@ -240,9 +240,9 @@ namespace Menu
             {
                 Destroy(obj.gameObject);
             }
-            
+
             _objects.Clear();
-            
+
             // _list.Add(2, new LobbyDataManager.LobbyData(123129837, "askjdklasd", 214, 1,124124));
             // _list.Add(3, new LobbyDataManager.LobbyData(124125125, "asgsg", 255, 1,124124));
 
@@ -277,7 +277,7 @@ namespace Menu
 
         void AddObject(ushort id, LobbyDataManager.LobbyData data)
         {
-            _list.Add(id,data);
+            _list.Add(id, data);
         }
 
         IEnumerator Ticking(float time)
@@ -286,19 +286,19 @@ namespace Menu
             {
                 yield return null;
             }
-            
+
             yield return new WaitForSeconds(time - 4);
             Tick();
-            
+
             yield return new WaitForSeconds(1);
             Tick();
-            
+
             yield return new WaitForSeconds(1);
             Tick();
 
             IsVoting = false;
 
-            timerTextLocalize.enabled=true;
+            timerTextLocalize.enabled = true;
             timerTextLocalize.SetEntry("game_starting");
         }
 
@@ -318,7 +318,7 @@ namespace Menu
             }
         }
 
-        [MessageHandler((ushort) ServerToClientId.VoteMap, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.VoteMap, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         static void PlayerVoteMap(Message message)
         {
             if (Instance)
@@ -329,27 +329,27 @@ namespace Menu
                 if (Instance._voteMapAmount.TryGetValue(lastMap, out _))
                 {
                     Instance._voteMapAmount[lastMap] = lastMapVoteCount;
-                    
-                    if (Instance._voteMap.TryGetValue(lastMap,out var m))
+
+                    if (Instance._voteMap.TryGetValue(lastMap, out var m))
                     {
                         m.SetCount(lastMapVoteCount);
-                        
+
                     }
                 }
                 if (Instance._voteMapAmount.TryGetValue(currentMap, out _))
                 {
                     Instance._voteMapAmount[currentMap] = currentMapVoteCount;
-                    
-                    if (Instance._voteMap.TryGetValue(currentMap,out var m))
+
+                    if (Instance._voteMap.TryGetValue(currentMap, out var m))
                     {
                         m.SetCount(currentMapVoteCount);
                         m.Animate();
                     }
                 }
             }
-            
+
         }
-        [MessageHandler((ushort) ServerToClientId.VoteGameMode, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.VoteGameMode, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         static void PlayerVoteGameMode(Message message)
         {
             if (Instance)
@@ -361,8 +361,8 @@ namespace Menu
                 if (Instance._voteGameAmount.TryGetValue((ushort)lastGameMode, out _))
                 {
                     Instance._voteGameAmount[(ushort)lastGameMode] = lastVoteCount;
-                    
-                    if (Instance._voteGameMode.TryGetValue((ushort)lastGameMode,out var m))
+
+                    if (Instance._voteGameMode.TryGetValue((ushort)lastGameMode, out var m))
                     {
                         m.SetCount(lastVoteCount);
                     }
@@ -370,8 +370,8 @@ namespace Menu
                 if (Instance._voteGameAmount.TryGetValue(currentGameMode, out _))
                 {
                     Instance._voteGameAmount[currentGameMode] = currentVoteCount;
-                    
-                    if (Instance._voteGameMode.TryGetValue(currentGameMode,out var m))
+
+                    if (Instance._voteGameMode.TryGetValue(currentGameMode, out var m))
                     {
                         m.SetCount(currentVoteCount);
                         m.Animate();
@@ -379,21 +379,21 @@ namespace Menu
                 }
             }
         }
-        
+
         [MessageHandler((ushort)ServerToClientId.AddVotingPlayer, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void AddVotingPlayer(Message message)
         {
             if (NetworkManager.GameState != GameState.Voting) return;
 
             if (Instance == null) return;
-            
+
             ushort id = message.GetUShort();
 
             uint kills = message.GetUInt();
 
             if (NetworkManager.ClientData.TryGetValue(id, out var clientData))
             {
-                string n = Chat.Instance.GetPlayerNameNetwork(clientData.Name,clientData.SteamId,clientData.DisplayTag, clientData.OwnedDlc);
+                string n = Chat.Instance.GetPlayerNameNetwork(clientData.Name, clientData.SteamId, clientData.DisplayTag, clientData.OwnedDlc);
 
                 LobbyDataManager.LobbyData data = new LobbyDataManager.LobbyData(clientData.SteamId, n, kills, 0, (uint)clientData.Exp);
 
@@ -405,13 +405,13 @@ namespace Menu
             }
         }
 
-        
+
         public void Disconnect()
         {
             LoadingManager.Instance.menuType = LoadingManager.MenuType.Normal;
             if (NetworkManager.Instance.Client.IsConnected)
             {
-            
+
                 LobbyManager.Instance.LeaveLobby();
             }
             else
@@ -419,15 +419,15 @@ namespace Menu
                 LoadingManager.Instance.Menu();
             }
         }
-        
-        
+
+
         public void CopyLobbyId()
         {
             GUIUtility.systemCopyBuffer = LobbyManager.Instance.lobbyId.m_SteamID.ToString();
-            NotificationMenu.Instance.NewItem("nc_message","nc_copy_complete");
+            NotificationMenu.Instance.NewItem("nc_message", "nc_copy_complete");
         }
 
-        
+
         public void Invite()
         {
             if (LobbyManager.Instance.lobbyId.IsLobby())

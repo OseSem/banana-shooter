@@ -24,7 +24,7 @@ namespace Utils
         }
         public MyVector3()
         {
-            
+
         }
 
         public Vector3 ToVector3()

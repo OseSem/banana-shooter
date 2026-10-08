@@ -11,7 +11,7 @@ namespace Utils
         public float z;
         public float w;
 
-        public MyQuaternion(float x, float y, float z,float w)
+        public MyQuaternion(float x, float y, float z, float w)
         {
             this.x = x;
             this.y = y;

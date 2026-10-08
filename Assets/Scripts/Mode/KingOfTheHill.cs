@@ -32,10 +32,10 @@ namespace Mode
                 return;
             }
             hills = MapBound.Instance.hills;
-    
+
             Instance = this;
             string sceneName = SceneManager.GetActiveScene().name;
-            if (sceneName == "CustomMap" && MapSaver.CurrentMap!=null) sceneName = MapSaver.CurrentMap.name;
+            if (sceneName == "CustomMap" && MapSaver.CurrentMap != null) sceneName = MapSaver.CurrentMap.name;
             NetworkManager.Instance.SetRichPreference(GameMode.KingOfTheHill.ToString(), sceneName);
             LobbyManager.Instance.SetLobbyGameMode();
 
@@ -52,7 +52,7 @@ namespace Mode
         {
             ++serverIndex;
             if (serverIndex >= hills.Count) serverIndex = 0;
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.SetHill);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.SetHill);
             message.Add(serverIndex);
             NetworkServerManager.Instance.Server.SendToAll(message);
             StartCoroutine(MessageBox());
@@ -63,13 +63,13 @@ namespace Mode
             yield return new WaitForSeconds(20f);
 
             ushort time = 10;
-            while (time>0)
+            while (time > 0)
             {
-                Message message = Message.Create(MessageSendMode.Unreliable,(ushort)ServerToClientId.Message);
+                Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ServerToClientId.Message);
 
                 message.Add((ushort)MessageType.KingOfTheHill);
                 message.Add(time);
-            
+
                 NetworkServerManager.Instance.Server.SendToAll(message);
                 yield return new WaitForSeconds(1f);
                 time--;
@@ -78,11 +78,11 @@ namespace Mode
             SetNewHillServer();
         }
 
-        [MessageHandler((ushort) ServerToClientId.SetHill, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.SetHill, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void SetHillClient(Message message)
         {
             int index = message.GetInt();
-            
+
             Instance.SetNewHillClient(index);
         }
 
@@ -90,18 +90,18 @@ namespace Mode
         {
             if (index != -1)
             {
-                
+
                 AudioManager.Instance.Play("hillchange");
                 hills[index].gameObject.SetActive(false);
             }
-            
+
             hills[idx].gameObject.SetActive(true);
             index = idx;
 
             GameStart.Instance.desiredPos = Instance.hills[idx].position;
-            
+
             // AudioManager.Instance.SoundEffect3D("forcefield",Instance.hills[idx].position);
-            
+
         }
         private LayerMask serverPlayer;
 
@@ -112,7 +112,7 @@ namespace Mode
             if (!NetworkServerManager.Instance.Server.IsRunning) return;
             if (started)
             {
-                if (serverIndex>-1)
+                if (serverIndex > -1)
                 {
                     Vector3 pos = hills[serverIndex].position;
                     int count = Physics.OverlapSphereNonAlloc(pos, 12, col, serverPlayer);
@@ -122,7 +122,7 @@ namespace Mode
                         player.AddTime();
                     }
                 }
-                
+
             }
         }
     }

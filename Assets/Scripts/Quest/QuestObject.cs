@@ -10,7 +10,7 @@ namespace Quest
         public string descKey;
         public string prizeKey;
         public int requiredAmount = 1;
-        public int expReward=0;
+        public int expReward = 0;
         public bool bonus = false;
 
         public QuestRewardType[] rewards = new QuestRewardType[1];

@@ -18,7 +18,7 @@ namespace Manager
             {
                 if (obj != null)
                 {
-                    link.Add(obj.name,obj);
+                    link.Add(obj.name, obj);
                 }
             }
         }
@@ -50,12 +50,12 @@ namespace Manager
         public Texture2D errorTexture;
 
         public GameObject[] throwables = Array.Empty<GameObject>();
-        
+
         public GameObject GetPrefab(string name)
         {
-            if (link.TryGetValue(name,out var value))
+            if (link.TryGetValue(name, out var value))
                 return value;
-            
+
             // foreach (var objet in objets)
             // {
             //     if (objet.name == name)
@@ -66,7 +66,7 @@ namespace Manager
 
             return null;
         }
-    
+
         public Texture2D GetTexture2D(string name)
         {
             foreach (var objet in texture)

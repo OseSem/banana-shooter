@@ -13,7 +13,7 @@ using Random = UnityEngine.Random;
 
 namespace Console.CommandScript
 {
-    [CreateAssetMenu(fileName = "UnBind Command",menuName = "Utilities/DeveloperConsole/Commands/UnBind Command")]
+    [CreateAssetMenu(fileName = "UnBind Command", menuName = "Utilities/DeveloperConsole/Commands/UnBind Command")]
     public class UnBindCommand : ConsoleCommand
     {
         public override bool Process(string[] args)
@@ -23,13 +23,13 @@ namespace Console.CommandScript
                 DeveloperConsoleUI.Instance.AddMessageToConsole("<color=yellow>Console : arguments should be 1</color>");
                 return false;
             }
-            
+
             //unbind <name>
 
             string bindingName = args[0];
-            
+
             GameManager.Instance.RemoveCustomBinding(bindingName);
-            
+
             return true;
         }
     }

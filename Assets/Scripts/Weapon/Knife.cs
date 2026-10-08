@@ -25,7 +25,7 @@ public class Knife : Firearms
 
     void ClearTrail()
     {
-        if(trailRenderer!=null)
+        if (trailRenderer != null)
             trailRenderer.Clear();
     }
 }

@@ -17,7 +17,7 @@ public class HitMarker : MonoBehaviour
 
     private float speed = 2f;
     [SerializeField] private RawImage image;
-    
+
     private void Awake()
     {
         Instance = this;
@@ -32,7 +32,7 @@ public class HitMarker : MonoBehaviour
 
     public void StartHitMarker(Color color)
     {
-        if(GameManager.Instance.setting.cameraShake)
+        if (GameManager.Instance.setting.cameraShake)
             CameraShaker.Instance.ShakeOnce(2.5f, 2.5f, 0.2f, 0.6f);
 
         switch (GameManager.Instance.setting.hitMarkerSoundType)
@@ -62,7 +62,7 @@ public class HitMarker : MonoBehaviour
     }
     public void StartHitMarkerRobot(Color color)
     {
-        if(GameManager.Instance.setting.cameraShake)
+        if (GameManager.Instance.setting.cameraShake)
             CameraShaker.Instance.ShakeOnce(2.5f, 2.5f, 0.2f, 0.6f);
         switch (GameManager.Instance.setting.hitMarkerSoundType)
         {
@@ -83,7 +83,7 @@ public class HitMarker : MonoBehaviour
         Invoke(nameof(UpSpeed), 0.05f);
         desiredScale = maxSize;
         Invoke(nameof(DelayRemove), 0.04f);
-        
+
     }
 
     private void DelayRemove()

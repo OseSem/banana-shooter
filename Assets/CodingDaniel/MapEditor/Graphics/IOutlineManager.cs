@@ -18,7 +18,7 @@ namespace CodingDaniel.MapEditor.Graphics
         {
             get;
         }
-        
+
         bool ContainsRenderer(Renderer renderer);
         void AddRenderers(Renderer[] renderers);
         void RemoveRenderers(Renderer[] renderers);

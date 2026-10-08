@@ -11,7 +11,7 @@ namespace Manager
     {
         [SerializeField] private Font font;
         public IGui Gui { get; } = new EnableGui();
-        
+
         private string _betaName = String.Empty;
         private bool _isBeta = false;
 
@@ -31,7 +31,7 @@ namespace Manager
             float scaleX = Screen.width / baseWidth;
             float scaleY = Screen.height / baseHeight;
             float scaleFont = Mathf.Min(scaleX, scaleY);
-            
+
             // Begin a group to scale and position the GUI elements
             GUI.BeginGroup(new Rect(0, 0, Screen.width, Screen.height));
 
@@ -46,7 +46,7 @@ namespace Manager
             // long gcCollectionCount = GC.CollectionCount(0);
             //
             // Gui.DrawText(gcCollectionCount.ToString(), Color.white, new Rect(0, Screen.height - (35f * scaleY), 500f * scaleX, 50f * scaleY), Mathf.RoundToInt(baseFontSize * scaleFont), FontStyle.Normal);
-            
+
             GUI.EndGroup();
         }
     }

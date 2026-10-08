@@ -13,7 +13,7 @@ namespace Menu
         public static GameStart Instance;
         public LocalizeStringEvent text;
         public RawImage icon;
-    
+
         public List<Texture2D> texture = new List<Texture2D>();
         public List<Texture2D> serverTypeTexture = new List<Texture2D>();
 
@@ -22,7 +22,7 @@ namespace Menu
         private float speed = 30f;
 
         private float desiredAlpha = 0f;
-        private Vector3 desiredSize = Vector3.one* 1000f;
+        private Vector3 desiredSize = Vector3.one * 1000f;
         private void Awake()
         {
             Instance = this;
@@ -30,7 +30,7 @@ namespace Menu
 
             item.localScale = Vector3.one * 1000f;
         }
-    
+
         private void OnEnable()
         {
             GameManager.Instance.PlayerSpawn += SetCamera;
@@ -57,35 +57,35 @@ namespace Menu
 
             item.localScale = Vector3.one * 1000f;
             desiredAlpha = 1f;
-            desiredSize=Vector3.one;
+            desiredSize = Vector3.one;
 
-        
-            Invoke(nameof(Clear),3f);
+
+            Invoke(nameof(Clear), 3f);
         }
 
         public void SetSpecialMode()
         {
-            icon.texture = serverTypeTexture[(int) (NetworkManager.ClientServerType - 3)];
+            icon.texture = serverTypeTexture[(int)(NetworkManager.ClientServerType - 3)];
             text.SetEntry(NetworkManager.ClientServerType.ToString());
-        
+
             item.localScale = Vector3.one * 1000f;
             desiredAlpha = 1f;
-            desiredSize=Vector3.one;
+            desiredSize = Vector3.one;
 
-        
-            Invoke(nameof(Clear),3f);
+
+            Invoke(nameof(Clear), 3f);
         }
 
-        bool target=false;
+        bool target = false;
         void Clear()
         {
             if (NetworkManager.ClientGameMode == GameMode.KingOfTheHill)
             {
                 target = true;
-                desiredSize=Vector3.one*0.35f;
+                desiredSize = Vector3.one * 0.35f;
 
                 StartCoroutine(MoveToTarget());
-            
+
                 return;
             }
             desiredAlpha = 0f;
@@ -103,9 +103,9 @@ namespace Menu
 
             Vector2 max = new Vector2(sizeDelta.x / 2f, sizeDelta.y / 2f) * multiplier;
             Vector2 min = new Vector2(-sizeDelta.x / 2f, -sizeDelta.y / 2f) * multiplier;
-        
-        
-        
+
+
+
             if (localPoint.x > max.x)
             {
                 localPoint.x = max.x;
@@ -128,7 +128,7 @@ namespace Menu
                 localPoint.y = min.y;
             }
 
-            while (Vector2.Distance(localPoint,item.localPosition) > 7f && frame < 500)
+            while (Vector2.Distance(localPoint, item.localPosition) > 7f && frame < 500)
             {
                 targetPos = VectorExtension.CalculateWorldPosition(desiredPos, cameraTransform);
                 screenPoint = camera.WorldToScreenPoint(targetPos);
@@ -138,9 +138,9 @@ namespace Menu
 
                 max = new Vector2(sizeDelta.x / 2f, sizeDelta.y / 2f) * multiplier;
                 min = new Vector2(-sizeDelta.x / 2f, -sizeDelta.y / 2f) * multiplier;
-        
-        
-        
+
+
+
                 if (localPoint.x > max.x)
                 {
                     localPoint.x = max.x;
@@ -162,7 +162,7 @@ namespace Menu
                     localPoint = -localPoint;
                     localPoint.y = min.y;
                 }
-                item.localPosition = Vector3.Lerp(item.localPosition,localPoint,Time.deltaTime*3f);
+                item.localPosition = Vector3.Lerp(item.localPosition, localPoint, Time.deltaTime * 3f);
                 frame++;
                 yield return null;
             }
@@ -176,9 +176,9 @@ namespace Menu
         private void Update()
         {
             canvas.alpha = Mathf.Lerp(canvas.alpha, desiredAlpha, Time.deltaTime * 5f);
-            item.localScale = Vector3.Lerp(item.localScale,desiredSize,Time.deltaTime*speed);
-        
-       
+            item.localScale = Vector3.Lerp(item.localScale, desiredSize, Time.deltaTime * speed);
+
+
         }
         public Vector3 desiredPos;
 
@@ -195,9 +195,9 @@ namespace Menu
 
             Vector2 max = new Vector2(sizeDelta.x / 2f, sizeDelta.y / 2f) * multiplier;
             Vector2 min = new Vector2(-sizeDelta.x / 2f, -sizeDelta.y / 2f) * multiplier;
-        
-        
-        
+
+
+
             if (localPoint.x > max.x)
             {
                 localPoint.x = max.x;

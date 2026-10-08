@@ -18,11 +18,11 @@ namespace UI
     public class VoiceChatUIManager : MonoBehaviour
     {
         public static VoiceChatUIManager Instance { get; private set; }
-        
+
         public bool IsSpeaking { get; private set; }
 
         private CSteamID _mySteamId;
-        
+
         private Dictionary<ushort, VoiceChatPlayerUI> _list = new Dictionary<ushort, VoiceChatPlayerUI>();
 
         [SerializeField] private VoiceChatPlayerUI prefab;
@@ -63,7 +63,7 @@ namespace UI
 
         public void NewPlayer(ClientData data)
         {
-            if (_list.TryGetValue(data.Id,out var playerUi))
+            if (_list.TryGetValue(data.Id, out var playerUi))
             {
                 Destroy(playerUi);
                 _list.Remove(data.Id);
@@ -72,13 +72,13 @@ namespace UI
             VoiceChatPlayerUI playerUI = Instantiate(prefab, content);
 
             playerUI.Initialize(data);
-            
-            _list.Add(data.Id,playerUI);
+
+            _list.Add(data.Id, playerUI);
         }
 
         public void RemovePlayer(ushort id)
         {
-            if (_list.TryGetValue(id,out var playerUi))
+            if (_list.TryGetValue(id, out var playerUi))
             {
                 Destroy(playerUi);
                 _list.Remove(id);
@@ -91,7 +91,7 @@ namespace UI
             {
                 Destroy(playerUi);
             }
-            
+
             _list.Clear();
         }
 
@@ -104,7 +104,7 @@ namespace UI
                 uint compressed;
                 EVoiceResult result = SteamUser.GetAvailableVoice(out compressed);
 
-                if (result == EVoiceResult.k_EVoiceResultOK )
+                if (result == EVoiceResult.k_EVoiceResultOK)
                 {
                     if (compressed > 1024)
                     {
@@ -135,8 +135,8 @@ namespace UI
                 }
             }
         }
-        
-        [MessageHandler((ushort) ServerToClientId.VoiceChat, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+
+        [MessageHandler((ushort)ServerToClientId.VoiceChat, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void VoiceChat(Message message)
         {
             if (GameManager.Instance.setting.disableVoice) return;
@@ -147,13 +147,13 @@ namespace UI
             byte[] destBuffer = new byte[sampleRate * 2];
             uint bytesWritten;
             EVoiceResult ret = SteamUser.DecompressVoice(message.GetBytes(), message.GetUInt(), destBuffer,
-                (uint) destBuffer.Length, out bytesWritten, sampleRate);
-            
-            if(ret == EVoiceResult.k_EVoiceResultOK && bytesWritten > 0)
+                (uint)destBuffer.Length, out bytesWritten, sampleRate);
+
+            if (ret == EVoiceResult.k_EVoiceResultOK && bytesWritten > 0)
             {
-                VoiceChatPacket packet = new VoiceChatPacket(bytesWritten,destBuffer);
-                
-                if (ClientPlayer.list.TryGetValue(id,out var player))
+                VoiceChatPacket packet = new VoiceChatPacket(bytesWritten, destBuffer);
+
+                if (ClientPlayer.list.TryGetValue(id, out var player))
                 {
                     player.Peer.OnNewSample(packet);
                 }
@@ -170,19 +170,19 @@ namespace UI
             if (!NetworkManager.Instance.Client.IsConnected) return;
             // if (gameUi.pause || NetworkManager.Instance.CheckMultiplayerGameModeStarted() || NetworkManager.Instance.CantPlay()) return;
             IsSpeaking = true;
-            if(GameUIManager.Instance)
+            if (GameUIManager.Instance)
                 GameUIManager.Instance.micIcon.SetActive(true);
             SteamUser.StartVoiceRecording();
-            SteamFriends.SetInGameVoiceSpeaking(_mySteamId,true);
+            SteamFriends.SetInGameVoiceSpeaking(_mySteamId, true);
         }
 
         void StopVoiceChat(InputAction.CallbackContext ctx)
         {
             IsSpeaking = false;
-            if(GameUIManager.Instance)
+            if (GameUIManager.Instance)
                 GameUIManager.Instance.micIcon.SetActive(false);
             SteamUser.StopVoiceRecording();
-            SteamFriends.SetInGameVoiceSpeaking(_mySteamId,false);
+            SteamFriends.SetInGameVoiceSpeaking(_mySteamId, false);
         }
     }
 }

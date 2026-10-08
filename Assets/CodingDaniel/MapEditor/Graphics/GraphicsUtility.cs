@@ -9,7 +9,7 @@ namespace CodingDaniel.MapEditor.Graphics
         public static float GetScreenScale(Vector3 position, Camera camera)
         {
             float h = camera.pixelHeight;
-      
+
             if (camera.orthographic)
             {
 
@@ -134,7 +134,7 @@ namespace CodingDaniel.MapEditor.Graphics
             Vector3 vertice_1 = new Vector3(width * .5f, -height * .5f, 0);
             Vector3 vertice_2 = new Vector3(width * .5f, height * .5f, 0);
             Vector3 vertice_3 = new Vector3(-width * .5f, height * .5f, 0);
-            
+
             Vector3[] vertices = new[]
             {
                 vertice_0, vertice_1, vertice_2, vertice_3
@@ -143,7 +143,7 @@ namespace CodingDaniel.MapEditor.Graphics
             Mesh quadMesh = new Mesh();
             quadMesh.vertices = vertices;
             quadMesh.SetIndices(new[] { 0, 1, 1, 2, 2, 3, 3, 0 }, MeshTopology.Lines, 0);
-            
+
             return quadMesh;
         }
 
@@ -171,11 +171,11 @@ namespace CodingDaniel.MapEditor.Graphics
         }
 
         public static Mesh CreateWireArc(Vector3 offset, float radius = 1, int pointsCount = 64, float fromAngle = 0, float toAngle = Mathf.PI * 2)
-        {   
+        {
             Vector3[] vertices = new Vector3[pointsCount + 1];
 
             List<int> indices = new List<int>();
-            for(int i = 0; i < pointsCount; ++i)
+            for (int i = 0; i < pointsCount; ++i)
             {
                 indices.Add(i);
                 indices.Add(i + 1);
@@ -252,7 +252,7 @@ namespace CodingDaniel.MapEditor.Graphics
         {
             commandBuffer.DrawMesh(mesh, transform, material, 0, 0, propertyBlock);
         }
-      
+
         public static Mesh CreateCone(Color color, float scale)
         {
             int segmentsCount = 12;
@@ -342,7 +342,7 @@ namespace CodingDaniel.MapEditor.Graphics
                 _vector2List.Add(Billboard2);
                 _vector2List.Add(Billboard3);
 
-                if(colors != null)
+                if (colors != null)
                 {
                     _colorList.Add(colors[index]);
                     _colorList.Add(colors[index]);
@@ -360,11 +360,11 @@ namespace CodingDaniel.MapEditor.Graphics
             target.indexFormat = vertexCount > ushort.MaxValue ? IndexFormat.UInt32 : IndexFormat.UInt16;
             target.SetVertices(_vector3List);
             target.SetUVs(0, _vector2List);
-            if(colors != null)
+            if (colors != null)
             {
                 target.SetColors(_colorList);
             }
-       
+
             target.subMeshCount = 1;
 #if UNITY_2019_3_OR_NEWER
             target.SetIndices(_indexList, MeshTopology.Quads, 0);
@@ -377,13 +377,13 @@ namespace CodingDaniel.MapEditor.Graphics
         {
             _vector3List.Clear();
             _vector3List.Capacity = positions.Count * 4;
-         
+
             for (int i = 0; i < positions.Count; i++)
             {
                 _vector3List.Add(positions[i]);
                 _vector3List.Add(positions[i]);
                 _vector3List.Add(positions[i]);
-                _vector3List.Add(positions[i]);         
+                _vector3List.Add(positions[i]);
             }
 
             target.SetVertices(_vector3List);

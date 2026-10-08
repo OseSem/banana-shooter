@@ -19,12 +19,12 @@ namespace Multiplayer.LagCompensation
 
         private void Start()
         {
-            if(DemoManager.Replaying) Destroy(this);
+            if (DemoManager.Replaying) Destroy(this);
             squareMovementThreshold = movementThreshold * movementThreshold;
             var position = transform.position;
-            to = new TransformUpdate(NetworkManager.Instance.ServerTick, false,position);
-            from = new TransformUpdate(NetworkManager.Instance.InterpolationTick,false, position);
-            previous = new TransformUpdate(NetworkManager.Instance.InterpolationTick,false, position);
+            to = new TransformUpdate(NetworkManager.Instance.ServerTick, false, position);
+            from = new TransformUpdate(NetworkManager.Instance.InterpolationTick, false, position);
+            previous = new TransformUpdate(NetworkManager.Instance.InterpolationTick, false, position);
         }
 
         private void Update()

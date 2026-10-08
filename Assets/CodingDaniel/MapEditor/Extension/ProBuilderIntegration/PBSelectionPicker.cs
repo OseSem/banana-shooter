@@ -4,7 +4,7 @@ using UnityEngine.ProBuilder;
 
 namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 {
-    public static class PBSelectionPicker 
+    public static class PBSelectionPicker
     {
         private static IPBSelectionPickerRenderer _renderer = new PBSelectionPickerRenderer();
         public static IPBSelectionPickerRenderer Renderer

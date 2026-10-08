@@ -8,14 +8,14 @@ namespace Multiplayer.Entity.Client.Enemy.Animation
 
         public ZombieAnimation(Animator animator) : base(animator)
         {
-            
+
         }
 
         public override void Update()
         {
             base.Update();
-            
-            Animator.SetBool(Running,InputInterpolate.sqrMagnitude > 0.1f);
+
+            Animator.SetBool(Running, InputInterpolate.sqrMagnitude > 0.1f);
         }
     }
 }

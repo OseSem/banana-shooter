@@ -26,7 +26,7 @@ public class ShootingTarget2 : MonoBehaviour
         leaderBoard.SetText(LeaderboardManager.Instance.target2LeaderBoard);
     }
 
-    
+
 
     private void OnDrawGizmos()
     {
@@ -34,13 +34,13 @@ public class ShootingTarget2 : MonoBehaviour
 
         Gizmos.DrawLine(new Vector3(transform.position.x - width / 2, transform.position.y + height / 2, transform.position.z),
             new Vector3(transform.position.x + width / 2, transform.position.y + height / 2, transform.position.z));
-        
+
         Gizmos.DrawLine(new Vector3(transform.position.x - width / 2, transform.position.y - height / 2, transform.position.z),
             new Vector3(transform.position.x + width / 2, transform.position.y - height / 2, transform.position.z));
-        
+
         Gizmos.DrawLine(new Vector3(transform.position.x - width / 2, transform.position.y + height / 2, transform.position.z),
             new Vector3(transform.position.x - width / 2, transform.position.y - height / 2, transform.position.z));
-        
+
         Gizmos.DrawLine(new Vector3(transform.position.x + width / 2, transform.position.y + height / 2, transform.position.z),
             new Vector3(transform.position.x + width / 2, transform.position.y - height / 2, transform.position.z));
     }
@@ -66,14 +66,14 @@ public class ShootingTarget2 : MonoBehaviour
             lastScore = score;
             score++;
         }
-        
+
         if (score > LeaderboardManager.Instance.targetHighScore)
         {
             LeaderboardManager.Instance.targetHighScore = score;
             highScoreText.SetText($"Highest Score: {LeaderboardManager.Instance.targetHighScore}\nRank: {LeaderboardManager.Instance.targetRank}");
         }
 
-        if (WeaponManager.Instance.CurrentWeapon != null && WeaponManager.Instance.CurrentWeapon.currentAmmo.GetValue()<WeaponManager.Instance.CurrentWeapon.maxAmmo)
+        if (WeaponManager.Instance.CurrentWeapon != null && WeaponManager.Instance.CurrentWeapon.currentAmmo.GetValue() < WeaponManager.Instance.CurrentWeapon.maxAmmo)
         {
             WeaponManager.Instance.CurrentWeapon.currentAmmo++;
         }
@@ -81,7 +81,7 @@ public class ShootingTarget2 : MonoBehaviour
 
     public MeshRenderer renderer;
 
-    public TextMeshProUGUI text,highScoreText,leaderBoard;
+    public TextMeshProUGUI text, highScoreText, leaderBoard;
 
     public bool started = false;
 
@@ -99,8 +99,8 @@ public class ShootingTarget2 : MonoBehaviour
                 started = false;
                 renderer.material.color = Color.blue;
                 time = 0;
-                if ( LeaderboardManager.Instance.targetHighScore > 200) return;
-                if (Mathf.Abs(lastScore -  LeaderboardManager.Instance.targetHighScore) > 2)
+                if (LeaderboardManager.Instance.targetHighScore > 200) return;
+                if (Mathf.Abs(lastScore - LeaderboardManager.Instance.targetHighScore) > 2)
                 {
                     LeaderboardManager.Instance.targetHighScore = lastScore;
                 }
@@ -116,6 +116,6 @@ public class ShootingTarget2 : MonoBehaviour
             }
             text.SetText($"{time.ToString("F2")} Score {score}");
         }
-        
+
     }
 }

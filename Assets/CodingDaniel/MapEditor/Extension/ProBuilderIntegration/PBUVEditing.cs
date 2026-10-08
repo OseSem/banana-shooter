@@ -30,12 +30,12 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         /// the shared edge on f1.  
         /// </summary>
         public static void AutoStitch(PBMesh mesh, int f1, int f2, int channel)
-        {          
-            if(_methodInfo == null)
+        {
+            if (_methodInfo == null)
             {
                 return;
             }
-           
+
             ProBuilderMesh pbMesh = mesh.ProBuilderMesh;
             IList<Face> faces = new List<Face>(2);
             pbMesh.GetFaces(new List<int> { f1, f2 }, faces);

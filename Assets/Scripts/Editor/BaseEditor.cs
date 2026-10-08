@@ -11,7 +11,7 @@ namespace Editor
 
         private void OnEnable()
         {
-            Target = (T) target;
+            Target = (T)target;
 
             OnEnableOverride();
         }
@@ -25,10 +25,10 @@ namespace Editor
             EditorGUI.BeginChangeCheck();
 
             OnInspectorGUIOverride();
-            
+
             if (EditorGUI.EndChangeCheck())
             {
-                Undo.RecordObject(target,$"Changed {target.name}");
+                Undo.RecordObject(target, $"Changed {target.name}");
                 EditorUtility.SetDirty(target);
                 serializedObject.ApplyModifiedProperties();
             }
@@ -36,12 +36,12 @@ namespace Editor
 
         protected virtual void OnInspectorGUIOverride()
         {
-            
+
         }
 
         protected virtual void OnEnableOverride()
         {
-            
+
         }
     }
 }

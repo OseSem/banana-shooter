@@ -16,16 +16,16 @@ namespace Menu
 
             if (!NetworkManager.Instance.Client.IsConnected) return;
 
-            
-            
+
+
         }
 
         public void SetTipText()
         {
-            if (NetworkManager.ClientGameMode != GameMode.SpecialGameMode&&
+            if (NetworkManager.ClientGameMode != GameMode.SpecialGameMode &&
                 NetworkManager.ClientGameMode != GameMode.SpecialNormalGameMode)
             {
-                
+
                 StartCoroutine(SetTip($"gm_{NetworkManager.ClientGameMode.ToString().ToLower()}_desc"));
             }
             else
@@ -49,7 +49,7 @@ namespace Menu
         IEnumerator SetTip(string entry)
         {
             yield return new WaitForSeconds(1f);
-            
+
             text.SetEntry(entry);
 
             _desiredAlpha = 1f;
@@ -69,7 +69,7 @@ namespace Menu
         {
             if (disable) return;
             canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, _desiredAlpha, Time.deltaTime * 5f);
-            obj.sizeDelta = new Vector2(Mathf.Lerp(obj.sizeDelta.x,_desiredSize,Time.deltaTime*5f),obj.sizeDelta.y);
+            obj.sizeDelta = new Vector2(Mathf.Lerp(obj.sizeDelta.x, _desiredSize, Time.deltaTime * 5f), obj.sizeDelta.y);
         }
     }
 }

@@ -11,13 +11,13 @@ namespace Manager
 {
     public class NewsManager : MonoBehaviour
     {
-        public static NewsManager Instance { private set; get;}
+        public static NewsManager Instance { private set; get; }
 
         private AppNewsResult _appNewsResult = null;
 
         public AppNewsResult AppNewsResult => _appNewsResult;
 
-        public Action<int,Texture2D> NewsImageLoaded;
+        public Action<int, Texture2D> NewsImageLoaded;
         public Action NewsLoaded;
 
         public Dictionary<string, Texture2D> NewsImages = new();
@@ -43,8 +43,8 @@ namespace Manager
                 Debug.Log("Failed to load news");
             }
         }
-        
-        IEnumerator LoadTextureToItem(string url,int index)
+
+        IEnumerator LoadTextureToItem(string url, int index)
         {
             UnityWebRequest www = UnityWebRequestTexture.GetTexture(url);
             yield return www.SendWebRequest();
@@ -56,21 +56,21 @@ namespace Manager
             else
             {
                 Texture2D texture = DownloadHandlerTexture.GetContent(www);
-                
-                NewsImageLoaded?.Invoke(index,texture);
+
+                NewsImageLoaded?.Invoke(index, texture);
 
                 if (NewsImages.ContainsKey(url)) NewsImages.Remove(url);
-                
-                NewsImages.Add(url,texture);
+
+                NewsImages.Add(url, texture);
             }
         }
 
         public bool IsNewsLoaded()
         {
-            return _appNewsResult!=null && _appNewsResult.AppNews.NewsItems.Count>0;
+            return _appNewsResult != null && _appNewsResult.AppNews.NewsItems.Count > 0;
         }
 
-        
+
     }
 
     public static class SteamNews
@@ -85,25 +85,25 @@ namespace Manager
     [Serializable]
     public class NewsItem
     {
-        public string Gid=String.Empty;
+        public string Gid = String.Empty;
 
-        public string Title=String.Empty;
+        public string Title = String.Empty;
 
-        public string ImageUrl=String.Empty;
+        public string ImageUrl = String.Empty;
 
-        public string Url=String.Empty;
+        public string Url = String.Empty;
 
-        public string Author=String.Empty;
+        public string Author = String.Empty;
 
-        public string Contents=String.Empty;
+        public string Contents = String.Empty;
 
-        public string FeedLabel=String.Empty;
+        public string FeedLabel = String.Empty;
 
-        public uint Date=0;
+        public uint Date = 0;
 
         NewsItem()
         {
-            
+
         }
     }
 
@@ -115,10 +115,10 @@ namespace Manager
         public List<NewsItem> NewsItems;
 
         public int Count = 0;
-        
+
         AppNews()
         {
-            Appid=String.Empty;
+            Appid = String.Empty;
             NewsItems = new List<NewsItem>();
             Count = 0;
         }
@@ -128,7 +128,7 @@ namespace Manager
     public class AppNewsResult
     {
         public AppNews AppNews;
-        
+
         AppNewsResult()
         {
         }

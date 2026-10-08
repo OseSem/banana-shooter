@@ -13,11 +13,11 @@ public class ReadyUpScene : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        
+
 
         LobbyManager.Instance.SetLobbyGameMode();
-        
-        Invoke(nameof(Voice),1.5f);
+
+        Invoke(nameof(Voice), 1.5f);
     }
 
     public TextMeshProUGUI killLeaderBoard;
@@ -34,7 +34,7 @@ public class ReadyUpScene : MonoBehaviour
             VoiceLine.Instance.PlayVoice(VoiceKey.ready_D_01);
             VoiceLine.Instance.PlayVoice(VoiceKey.ready_D_02);
         }
-        else if( win || (lastKill >= 40 && lastDie <= 15))
+        else if (win || (lastKill >= 40 && lastDie <= 15))
         {
             //ready_B
             VoiceLine.Instance.PlayVoice(VoiceKey.ready_B);
@@ -45,7 +45,7 @@ public class ReadyUpScene : MonoBehaviour
             VoiceLine.Instance.PlayVoice(VoiceKey.ready_C_01);
             VoiceLine.Instance.PlayVoice(VoiceKey.ready_C_02);
         }
-        
+
         else
         {
             //ready_A

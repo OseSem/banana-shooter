@@ -16,12 +16,12 @@ namespace Console
         public void ProcessCommand(string inputValue)
         {
             if (string.IsNullOrEmpty(inputValue)) return;
-        
+
             string[] inputSplit = inputValue.Split(' ');
 
             string commandInput = inputSplit[0];
             string[] args = inputSplit.Skip(1).ToArray();
-        
+
             list.Clear();
             foreach (var arg in args)
             {
@@ -30,13 +30,13 @@ namespace Console
                     list.Add(arg);
                 }
             }
-            if(args.Length < 1 || string.IsNullOrEmpty(args[^1]))
+            if (args.Length < 1 || string.IsNullOrEmpty(args[^1]))
                 list.Add("");
 
             args = list.ToArray();
 
-        
-            ProcessCommand(commandInput,args);
+
+            ProcessCommand(commandInput, args);
         }
 
         public void ProcessCommand(string commandInput, string[] args)
@@ -51,7 +51,7 @@ namespace Console
 
                 if (command.Process(args))
                 {
-                    DeveloperConsoleUI.Instance.AddMessageToConsole("<b>></b> "+commandInput + " " + string.Join(' ', args));
+                    DeveloperConsoleUI.Instance.AddMessageToConsole("<b>></b> " + commandInput + " " + string.Join(' ', args));
                     return;
                 }
                 else
@@ -59,7 +59,7 @@ namespace Console
                     processed = true;
                 }
             }
-            if(!processed)
+            if (!processed)
                 DeveloperConsoleUI.Instance.AddMessageToConsole("<color=yellow>Console : Command not found</color>");
         }
     }

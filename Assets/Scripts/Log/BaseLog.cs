@@ -9,7 +9,7 @@ namespace Log
         public BaseLog(string fileName, string logsPath)
         {
             // Create a log file with a unique name based on the current date and time
-            
+
             // Create a new StreamWriter to write to the log file
             _writer = new StreamWriter(Path.Combine(logsPath, fileName), false);
         }

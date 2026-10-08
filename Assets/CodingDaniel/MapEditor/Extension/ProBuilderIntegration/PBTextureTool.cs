@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -35,7 +35,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public virtual void BeginDrag(MeshSelection selection, Vector3 initialPosition, Quaternion initialRotation)
         {
             Selection = selection.ToFaces(false, false);
-            
+
             InitialPosition = initialPosition;
             InitialRotation = initialRotation;
             Matrix = Matrix4x4.TRS(InitialPosition, InitialRotation, Vector3.one);
@@ -61,7 +61,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 mesh.GetFaces(kvp.Value, faces);
 
                 IList<Vector2> textures = mesh.textures;
-               // IList<Vector4> tangents = mesh.tangents;
+                // IList<Vector4> tangents = mesh.tangents;
 
                 for (int f = 0; f < faces.Count; ++f)
                 {
@@ -77,9 +77,9 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                             faceCenters.Add(GetCenterOfMass(textures, face));
 
                             PBAutoUVConversion.UVTransform transform = PBAutoUVConversion.GetUVTransform(mesh, face);
-                            if(!face.manualUV)
+                            if (!face.manualUV)
                             {
-                                Vector2 scale =  transform.scale;
+                                Vector2 scale = transform.scale;
                                 scale.x = -scale.x;
                                 transform.scale = scale;
                             }
@@ -145,7 +145,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 faces.Clear();
             }
 
-            if(refreshMeshes)
+            if (refreshMeshes)
             {
                 for (int m = 0; m < Meshes.Length; ++m)
                 {

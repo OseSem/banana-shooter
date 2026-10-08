@@ -18,21 +18,21 @@ public class DualSMG : Firearms
         muzzleParticle = left ? rPart : lPart;
 
         left = !left;
-        
+
         if (currentAmmo.GetValue() <= 0)
         {
-            Invoke(nameof(Disable),0.4f);
+            Invoke(nameof(Disable), 0.4f);
         }
     }
-    
+
     void Disable()
     {
         WeaponManager.Instance.CurrentWeaponIndex = 0;
 
         WeaponManager.Instance.DisableSpecialWeapon();
-        
-        Message message = Message.Create(MessageSendMode.Reliable,(ushort) ClientToServerId.SpecialWeaponDisable);
-        
+
+        Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.SpecialWeaponDisable);
+
         NetworkManager.Instance.SendByte += message.WrittenLength;
         NetworkManager.Instance.Client.Send(message);
     }

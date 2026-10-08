@@ -11,9 +11,9 @@ namespace CodingDaniel.MapEditor.Handle
     [DefaultExecutionOrder(1)]
     public class PositionHandle : BaseHandle
     {
-        
-        public float GridSize =1f;
-        
+
+        public float GridSize = 1f;
+
         private Vector3 _cursorPosition;
         private Vector3 _currentPosition;
 
@@ -26,7 +26,7 @@ namespace CodingDaniel.MapEditor.Handle
         private Transform[] _snapTargets;
         private Bounds[] _snapTargetsBounds;
         private ExposeToEditor[] _allExposedToEditor;
-    
+
         public override float SizeOfGrid
         {
             get { return GridSize; }
@@ -46,7 +46,7 @@ namespace CodingDaniel.MapEditor.Handle
             {
                 _isInVertexSnappingMode = value;
 
-                if(_isInVertexSnappingMode)
+                if (_isInVertexSnappingMode)
                 {
                     if (SharedLockObject == null || !SharedLockObject.IsPositionLocked)
                     {
@@ -93,7 +93,7 @@ namespace CodingDaniel.MapEditor.Handle
         protected override void OnEnable()
         {
             base.OnEnable();
-        
+
             _isInVertexSnappingMode = false;
             Editor.Tools.IsSnapping = false;
             _handleOffset = Vector3.zero;
@@ -110,12 +110,12 @@ namespace CodingDaniel.MapEditor.Handle
         {
             base.OnDisable();
 
-            if(Editor != null)
+            if (Editor != null)
             {
                 Editor.Tools.IsSnapping = false;
                 Editor.Tools.IsSnappingChanged -= OnSnappingChanged;
             }
-            
+
             _targetLayers = null;
             _snapTargets = null;
             _snapTargetsBounds = null;
@@ -139,7 +139,7 @@ namespace CodingDaniel.MapEditor.Handle
             if (IsInVertexSnappingMode || Editor.Tools.IsSnapping)
             {
                 Vector2 mousePosition;
-                if(editor.Pointer.XY(Position, out mousePosition))
+                if (editor.Pointer.XY(Position, out mousePosition))
                 {
                     if (editor.Tools.SnappingMode == SnappingMode.BoundingBox)
                     {
@@ -259,7 +259,7 @@ namespace CodingDaniel.MapEditor.Handle
                                         for (int j = 0; j < _boundingBoxCorners.Length; ++j)
                                         {
                                             Vector2 screenPoint;
-                                            if(Editor.Pointer.WorldToScreenPoint(Position, exposedToEditor.boundsObject.transform.TransformPoint(_boundingBoxCorners[j]), out screenPoint))
+                                            if (Editor.Pointer.WorldToScreenPoint(Position, exposedToEditor.boundsObject.transform.TransformPoint(_boundingBoxCorners[j]), out screenPoint))
                                             {
                                                 float distance = (screenPoint - mousePosition).magnitude;
                                                 if (distance < minDistance)
@@ -267,7 +267,7 @@ namespace CodingDaniel.MapEditor.Handle
                                                     closestObject = exposedToEditor.gameObject;
                                                     minDistance = distance;
                                                 }
-                                            }   
+                                            }
                                         }
                                     }
                                 }
@@ -319,7 +319,7 @@ namespace CodingDaniel.MapEditor.Handle
                         }
                     }
                 }
-            }     
+            }
         }
 
         private void GetMinPoint(Transform meshTransform, ref float minDistance, ref Vector3 minPoint, ref bool minPointFound, Mesh mesh)
@@ -334,7 +334,7 @@ namespace CodingDaniel.MapEditor.Handle
                     vert = meshTransform.TransformPoint(vert);
 
                     Vector2 screenPoint;
-                    if(editor.Pointer.WorldToScreenPoint(Position, vert, out screenPoint))
+                    if (editor.Pointer.WorldToScreenPoint(Position, vert, out screenPoint))
                     {
                         Vector2 mousePoint;
                         if (editor.Pointer.XY(Position, out mousePoint))
@@ -409,7 +409,7 @@ namespace CodingDaniel.MapEditor.Handle
 
         private void BeginSnap()
         {
-            if(Editor.Camera == null)
+            if (Editor.Camera == null)
             {
                 return;
             }
@@ -418,7 +418,7 @@ namespace CodingDaniel.MapEditor.Handle
             HashSet<Transform> snapTargetsHS = new HashSet<Transform>();
             List<Transform> snapTargets = new List<Transform>();
             List<Bounds> snapTargetBounds = new List<Bounds>();
-            
+
             if (Target != null)
             {
                 for (int i = 0; i < RealTargets.Length; ++i)
@@ -439,14 +439,14 @@ namespace CodingDaniel.MapEditor.Handle
                             snapTargetsHS.Add(target);
 
                             MeshFilter filter = target.GetComponent<MeshFilter>();
-                            if(filter != null && filter.sharedMesh != null)
+                            if (filter != null && filter.sharedMesh != null)
                             {
                                 snapTargetBounds.Add(filter.sharedMesh.bounds);
                             }
                             else
                             {
                                 SkinnedMeshRenderer smr = target.GetComponent<SkinnedMeshRenderer>();
-                                if(smr != null && smr.sharedMesh != null)
+                                if (smr != null && smr.sharedMesh != null)
                                 {
                                     snapTargetBounds.Add(smr.sharedMesh.bounds);
                                 }
@@ -491,7 +491,7 @@ namespace CodingDaniel.MapEditor.Handle
                 Vector3 worldPoint = tr.TransformPoint(_boundingBoxCorners[j]);
                 Vector2 screenPoint;
 
-                if(Editor.Pointer.WorldToScreenPoint(Position, worldPoint, out screenPoint))
+                if (Editor.Pointer.WorldToScreenPoint(Position, worldPoint, out screenPoint))
                 {
                     Vector2 mousePoint;
                     if (Editor.Pointer.XY(Position, out mousePoint))
@@ -512,7 +512,7 @@ namespace CodingDaniel.MapEditor.Handle
         {
             Vector2 sp;
 
-            if(Editor.Pointer.WorldToScreenPoint(Position, Position, out sp))
+            if (Editor.Pointer.WorldToScreenPoint(Position, Position, out sp))
             {
                 Vector2 mp;
                 if (Editor.Pointer.XY(Position, out mp))
@@ -523,17 +523,17 @@ namespace CodingDaniel.MapEditor.Handle
                            sp.y - pixelSize <= mp.y && mp.y <= sp.y + pixelSize;
                 }
             }
-            
+
             return false;
         }
 
         protected override bool OnBeginDrag()
         {
-            if(!base.OnBeginDrag())
+            if (!base.OnBeginDrag())
             {
                 return false;
             }
-           
+
             _currentPosition = Position;
             _cursorPosition = Position;
 
@@ -579,7 +579,7 @@ namespace CodingDaniel.MapEditor.Handle
 
                 DragPlane = GetDragPlane(axis);
                 bool result = GetPointOnDragPlane(Editor.Pointer, out _prevPoint);
-                if(!result)
+                if (!result)
                 {
                     SelectedAxis = HandleAxis.None;
                 }
@@ -605,13 +605,13 @@ namespace CodingDaniel.MapEditor.Handle
                 HandleAxis axis = SelectedAxis;
 
                 float x = _currentPosition.x, y = _currentPosition.y, z = _currentPosition.z;
-                
+
                 x = GetClosedValue(x);
                 y = GetClosedValue(y);
                 z = GetClosedValue(z);
                 // Debug.Log(transform.forward);
                 var trans = transform;
-                switch(axis)
+                switch (axis)
                 {
                     case HandleAxis.X:
                         switch (trans.right)
@@ -626,7 +626,7 @@ namespace CodingDaniel.MapEditor.Handle
                                 x = GetClosedValue(x);
                                 break;
                         }
-                        
+
                         offset.y = offset.z = 0.0f;
                         break;
                     case HandleAxis.Y:
@@ -642,7 +642,7 @@ namespace CodingDaniel.MapEditor.Handle
                                 x = GetClosedValue(x);
                                 break;
                         }
-                        
+
                         offset.x = offset.z = 0.0f;
                         break;
                     case HandleAxis.Z:
@@ -664,19 +664,19 @@ namespace CodingDaniel.MapEditor.Handle
                     case HandleAxis.XY:
                         switch (trans.right + trans.up)
                         {
-                            case var value when value == new Vector3(1,1, 0):
+                            case var value when value == new Vector3(1, 1, 0):
                                 x = GetClosedValue(x);
                                 y = GetClosedValue(y);
                                 break;
-                            case var value when value == new Vector3(1,-1,0):
+                            case var value when value == new Vector3(1, -1, 0):
                                 x = GetClosedValue(x);
                                 y = GetClosedValue(y);
                                 break;
-                            case var value when value == new Vector3(-1,-1,0):
+                            case var value when value == new Vector3(-1, -1, 0):
                                 x = GetClosedValue(x);
                                 y = GetClosedValue(y);
                                 break;
-                            case var value when value == new Vector3(-1,1,0):
+                            case var value when value == new Vector3(-1, 1, 0):
                                 x = GetClosedValue(x);
                                 y = GetClosedValue(y);
                                 break;
@@ -686,19 +686,19 @@ namespace CodingDaniel.MapEditor.Handle
                     case HandleAxis.XZ:
                         switch (trans.right + trans.forward)
                         {
-                            case var value when value == new Vector3(1,0, 1):
+                            case var value when value == new Vector3(1, 0, 1):
                                 x = GetClosedValue(x);
                                 z = GetClosedValue(z);
                                 break;
-                            case var value when value == new Vector3(1,0,-1):
+                            case var value when value == new Vector3(1, 0, -1):
                                 x = GetClosedValue(x);
                                 z = GetClosedValue(z);
                                 break;
-                            case var value when value == new Vector3(-1,0,-1):
+                            case var value when value == new Vector3(-1, 0, -1):
                                 x = GetClosedValue(x);
                                 z = GetClosedValue(z);
                                 break;
-                            case var value when value == new Vector3(-1,0,1):
+                            case var value when value == new Vector3(-1, 0, 1):
                                 x = GetClosedValue(x);
                                 z = GetClosedValue(z);
                                 break;
@@ -708,19 +708,19 @@ namespace CodingDaniel.MapEditor.Handle
                     case HandleAxis.YZ:
                         switch (trans.forward + trans.up)
                         {
-                            case var value when value == new Vector3(0,1, 1):
+                            case var value when value == new Vector3(0, 1, 1):
                                 y = GetClosedValue(y);
                                 z = GetClosedValue(z);
                                 break;
-                            case var value when value == new Vector3(0,-1,1):
+                            case var value when value == new Vector3(0, -1, 1):
                                 y = GetClosedValue(y);
                                 z = GetClosedValue(z);
                                 break;
-                            case var value when value == new Vector3(0,-1,-1):
+                            case var value when value == new Vector3(0, -1, -1):
                                 y = GetClosedValue(y);
                                 z = GetClosedValue(z);
                                 break;
-                            case var value when value == new Vector3(0,1,-1):
+                            case var value when value == new Vector3(0, 1, -1):
                                 y = GetClosedValue(y);
                                 z = GetClosedValue(z);
                                 break;
@@ -728,7 +728,7 @@ namespace CodingDaniel.MapEditor.Handle
                         offset.x = 0;
                         break;
                 }
-        
+
                 if (SharedLockObject != null)
                 {
                     if (SharedLockObject.PositionX)
@@ -750,7 +750,7 @@ namespace CodingDaniel.MapEditor.Handle
                 if (EffectiveGridUnitSize == 0.0)
                 {
                     offset = _matrix.MultiplyVector(offset).normalized * mag;
-                    
+
                     transform.position += offset;
                     _currentPosition = Position;
                     _cursorPosition = Position;
@@ -766,7 +766,7 @@ namespace CodingDaniel.MapEditor.Handle
                     Vector3 gridOffset = Vector3.zero;
                     if (Mathf.Abs(toCurrentPosition.x * 1.5f) >= EffectiveGridUnitSize)
                     {
-                        gridOffset.x = EffectiveGridUnitSize * Mathf.Sign(toCurrentPosition.x); 
+                        gridOffset.x = EffectiveGridUnitSize * Mathf.Sign(toCurrentPosition.x);
                     }
 
                     if (Mathf.Abs(toCurrentPosition.y * 1.5f) >= EffectiveGridUnitSize)
@@ -778,7 +778,7 @@ namespace CodingDaniel.MapEditor.Handle
                     {
                         gridOffset.z = EffectiveGridUnitSize * Mathf.Sign(toCurrentPosition.z);
                     }
-                  
+
                     _currentPosition += gridOffset;
                     Position = _currentPosition;
 
@@ -796,7 +796,7 @@ namespace CodingDaniel.MapEditor.Handle
 
                 float allowedRadius = Editor.Camera.farClipPlane * 0.95f;
                 Vector3 toHandle = Position - Editor.Camera.transform.position;
-                if(toHandle.magnitude > allowedRadius)
+                if (toHandle.magnitude > allowedRadius)
                 {
                     Position = prevPosition;
                     _currentPosition = prevCurrentPosition;
@@ -810,21 +810,21 @@ namespace CodingDaniel.MapEditor.Handle
         float GetClosedValue(float a)
         {
             float d = Mathf.Abs(a);
-            int b = (int) d;
+            int b = (int)d;
             float c = d - b;
-            if (Mathf.Abs(c-0.25f) < 0.1f)
+            if (Mathf.Abs(c - 0.25f) < 0.1f)
             {
                 c = 0.25f;
             }
-            else if (Mathf.Abs(c-0.5f) < 0.1f)
+            else if (Mathf.Abs(c - 0.5f) < 0.1f)
             {
                 c = 0.5f;
             }
-            else if (Mathf.Abs(c-0.75f) < 0.1f)
+            else if (Mathf.Abs(c - 0.75f) < 0.1f)
             {
                 c = 0.75f;
             }
-            else if(c < 0.5f)
+            else if (c < 0.5f)
             {
                 c = 0;
             }

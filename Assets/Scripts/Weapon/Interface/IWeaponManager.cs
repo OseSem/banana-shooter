@@ -23,6 +23,6 @@ namespace Weapon.Interface
 
         bool TryToSwitchWeapon();
 
-        int NextWeapon(InputAction.CallbackContext ctx,int currentWeaponIndex);
+        int NextWeapon(InputAction.CallbackContext ctx, int currentWeaponIndex);
     }
 }

@@ -23,169 +23,169 @@ namespace Menu
     {
         public static SettingMenu Instance;
 
-        [Header("FOV")] 
+        [Header("FOV")]
         [SerializeField] private Slider fovSlider;
         [SerializeField] private TextMeshProUGUI fovText;
-    
-        [Header("Sensitivity")] 
+
+        [Header("Sensitivity")]
         [SerializeField] private Slider sensitivitySlider;
         [SerializeField] private TextMeshProUGUI sensitivityText;
-        
-        [Header("Sensitivity")] 
+
+        [Header("Sensitivity")]
         [SerializeField] private Slider aimSensitivityMultiplierSlider;
         [SerializeField] private TextMeshProUGUI aimSensitivityMultiplierText;
-    
-        [Header("Camera Shake")] 
+
+        [Header("Camera Shake")]
         [SerializeField] private Toggle cameraShakeToggle;
 
         [Header("Shadow Quality")]
-        [SerializeField] private Button shadowQualityNext,shadowQualityPreview;
+        [SerializeField] private Button shadowQualityNext, shadowQualityPreview;
         [SerializeField] private TextMeshProUGUI shadowQualityText;
         private int shadowQualityIndex = 0;
-    
+
         [Header("Shadow Resolution")]
-        [SerializeField] private Button shadowResolutionNext,shadowResolutionPreview;
+        [SerializeField] private Button shadowResolutionNext, shadowResolutionPreview;
         [SerializeField] private TextMeshProUGUI shadowResolutionText;
         private int shadowResolutionIndex = 0;
-    
+
         [Header("Quality")]
-        [SerializeField] private Button qualityNext,qualityPreview;
+        [SerializeField] private Button qualityNext, qualityPreview;
         [SerializeField] private TextMeshProUGUI qualityText;
         private int qualityIndex = 0;
-    
+
         [Header("Shadow Distance")]
-        [SerializeField] private Button shadowDistanceNext,shadowDistancePreview;
+        [SerializeField] private Button shadowDistanceNext, shadowDistancePreview;
         [SerializeField] private TextMeshProUGUI shadowDistanceText;
         private int shadowDistanceIndex = 0;
-    
+
         [Header("Shadow Cascades")]
-        [SerializeField] private Button shadowCascadesNext,shadowCascadesPreview;
+        [SerializeField] private Button shadowCascadesNext, shadowCascadesPreview;
         [SerializeField] private TextMeshProUGUI shadowCascadesText;
         private int shadowCascadesIndex = 0;
-    
+
         [Header("Anti Aliasing")]
-        [SerializeField] private Button antiAliasingNext,antiAliasingPreview;
+        [SerializeField] private Button antiAliasingNext, antiAliasingPreview;
         [SerializeField] private TextMeshProUGUI antiAliasingText;
         private int antiAliasingIndex = 0;
-    
+
         [Header("Soft Particle")]
         [SerializeField] private Toggle softParticle;
-    
-        [Header("Language")] public Button languageNext,languagePreview;
+
+        [Header("Language")] public Button languageNext, languagePreview;
         [SerializeField] private TextMeshProUGUI languageText;
         private int languageIndex = 0;
-    
+
         [Header("Resolution")]
         [SerializeField] private TMP_Dropdown resolution;
         private Resolution[] resolutions;
-    
+
         [Header("Full Screen")]
         [SerializeField] private Toggle fullScreen;
-    
+
         [Header("Full Screen Mode")]
-        [SerializeField] private Button fullScreenModeNext,fullScreenModePreview;
+        [SerializeField] private Button fullScreenModeNext, fullScreenModePreview;
         [SerializeField] private TextMeshProUGUI fullScreenModeText;
         private int fullScreenModeIndex = 0;
-    
+
         [Header("Vsync")]
-        [SerializeField] private Button vsyncNext,vsyncPreview;
+        [SerializeField] private Button vsyncNext, vsyncPreview;
         [SerializeField] private TextMeshProUGUI vsyncText;
         private int vsyncIndex = 0;
-    
-        [Header("Max Fps")] 
+
+        [Header("Max Fps")]
         [SerializeField] private Slider maxFpsSlider;
         [SerializeField] private TextMeshProUGUI maxFpsText;
-    
-        [Header("Master Volume")] 
+
+        [Header("Master Volume")]
         [SerializeField] private Slider masterVolumeSlider;
         [SerializeField] private TextMeshProUGUI masterVolumeText;
 
-        [Header("Description")] 
+        [Header("Description")]
         [SerializeField]
         private TMP_InputField description;
-    
-        [Header("Spawn Particle")] 
+
+        [Header("Spawn Particle")]
         [SerializeField] private Toggle spawnParticleToggle;
-    
+
         [Header("HitMarkerType")]
-        [SerializeField] private Button hitMarkerNext,hitMarkerPreview;
+        [SerializeField] private Button hitMarkerNext, hitMarkerPreview;
         [SerializeField] private TextMeshProUGUI hitMarkerText;
         private int hitMarkerIndex = 0;
-    
-        [Header("UseArm")] 
+
+        [Header("UseArm")]
         [SerializeField] private Toggle useArmToggle;
-    
-        [Header("Disable Voice")] 
+
+        [Header("Disable Voice")]
         [SerializeField] private Toggle disableVoiceToggle;
-    
-        [Header("UI Volume")] 
+
+        [Header("UI Volume")]
         [SerializeField] private Slider uiVolumeSlider;
         [SerializeField] private TextMeshProUGUI uiVolumeText;
-    
-        [Header("Ambience Volume")] 
+
+        [Header("Ambience Volume")]
         [SerializeField] private Slider ambienceVolumeSlider;
         [SerializeField] private TextMeshProUGUI ambienceVolumeText;
-    
-        [Header("Sound Effect Volume")] 
+
+        [Header("Sound Effect Volume")]
         [SerializeField] private Slider soundEffectVolumeSlider;
         [SerializeField] private TextMeshProUGUI soundEffectVolumeText;
-    
-        [Header("Music Volume")] 
+
+        [Header("Music Volume")]
         [SerializeField] private Slider musicVolumeSlider;
         [SerializeField] private TextMeshProUGUI musicVolumeText;
-    
-        [Header("Show Direction")] 
+
+        [Header("Show Direction")]
         [SerializeField] private Toggle showDirToggle;
-    
-        [Header("CrossHair")] 
+
+        [Header("CrossHair")]
         [SerializeField] private Slider widthSlider;
         [SerializeField] private TextMeshProUGUI widthText;
         [SerializeField] private Slider heightSlider;
         [SerializeField] private TextMeshProUGUI heightText;
         [SerializeField] private Slider distanceSlider;
         [SerializeField] private TextMeshProUGUI distanceText;
-        public RectTransform left, up, right, bottom,dotTransform;
+        public RectTransform left, up, right, bottom, dotTransform;
         public RawImage[] rawImages;
         [SerializeField] private Toggle dotToggle;
-    
-        [SerializeField] private Slider rSlider,gSlider,bSlider;
-        [SerializeField] private TextMeshProUGUI rText,gText,bText;
+
+        [SerializeField] private Slider rSlider, gSlider, bSlider;
+        [SerializeField] private TextMeshProUGUI rText, gText, bText;
         public GameObject dot;
-    
+
         [Header("Texture Resolution")]
-        [SerializeField] private Button textureNext,texturePreview;
+        [SerializeField] private Button textureNext, texturePreview;
         [SerializeField] private TextMeshProUGUI textureText;
         private int textureIndex = 0;
-    
-        [Header("Banana Voice")] 
+
+        [Header("Banana Voice")]
         [SerializeField] private Toggle bananaVoiceToggle;
-    
-        [Header("Keep Ragdoll")] 
+
+        [Header("Keep Ragdoll")]
         [SerializeField] private Toggle keepRagdollToggle;
-    
-        [Header("Bloom")] 
+
+        [Header("Bloom")]
         [SerializeField] private Toggle bloomToggle;
-    
-        [Header("AutoUpgrade")] 
+
+        [Header("AutoUpgrade")]
         [SerializeField] private Toggle autoUpgradeToggle;
-    
-        [Header("UseNightVission")] 
+
+        [Header("UseNightVission")]
         [SerializeField] private Toggle useNightVissionToggle;
-    
-        [Header("Sway Multiplier")] 
+
+        [Header("Sway Multiplier")]
         [SerializeField] private Slider swaySlider;
         [SerializeField] private TextMeshProUGUI swayText;
-    
-        [Header("GrappleHint")] 
+
+        [Header("GrappleHint")]
         [SerializeField] private Toggle grappleHintToggle;
 
-        [Header("Enable Gore")] 
+        [Header("Enable Gore")]
         [SerializeField] private Toggle goreToggle;
-    
-        [Header("Enable Tutorial")] 
+
+        [Header("Enable Tutorial")]
         [SerializeField] private Toggle tutorialToggle;
-    
-        [Header("Enable Upgrade Animation")] 
+
+        [Header("Enable Upgrade Animation")]
         [SerializeField] private Toggle upgradeAnimationToggle;
         private void Awake()
         {
@@ -203,73 +203,73 @@ namespace Menu
             fovSlider.onValueChanged.AddListener(SetFOV);
             maxFpsSlider.onValueChanged.AddListener(SetMaxFps);
             swaySlider.onValueChanged.AddListener(SetSwayMultiplier);
-        
+
             masterVolumeSlider.onValueChanged.AddListener(SetMasterVolume);
             uiVolumeSlider.onValueChanged.AddListener(SetUIVolume);
             ambienceVolumeSlider.onValueChanged.AddListener(SetAmbienceVolume);
             soundEffectVolumeSlider.onValueChanged.AddListener(SetSoundEffectVolume);
             musicVolumeSlider.onValueChanged.AddListener(SetMusicVolume);
-        
+
             widthSlider.onValueChanged.AddListener(SetWidth);
             heightSlider.onValueChanged.AddListener(SetHeight);
             distanceSlider.onValueChanged.AddListener(SetDistance);
-        
+
             dotToggle.onValueChanged.AddListener(SetCrossHairDot);
             widthSlider.maxValue = 100;
             heightSlider.maxValue = 100;
             distanceSlider.maxValue = 300;
-        
+
             rSlider.onValueChanged.AddListener(SetR);
             bSlider.onValueChanged.AddListener(SetB);
             gSlider.onValueChanged.AddListener(SetG);
-        
+
             sensitivitySlider.onValueChanged.AddListener(SetSensitivity);
             aimSensitivityMultiplierSlider.onValueChanged.AddListener(SetAimSensitivityMultiplierSlider);
-            
+
             cameraShakeToggle.onValueChanged.AddListener(SetCameraShake);
             useArmToggle.onValueChanged.AddListener(SetUseArm);
-            disableVoiceToggle.onValueChanged.AddListener(delegate(bool arg0) { SetDisableVoice(arg0, true);});
-            showDirToggle.onValueChanged.AddListener(delegate(bool arg0) { SetShowDir(arg0, true);});
-            autoUpgradeToggle.onValueChanged.AddListener(delegate(bool arg0) { SetAutoUpgrade(arg0, true);});
-        
-            grappleHintToggle.onValueChanged.AddListener(delegate(bool arg0) { SetGrappleHint(arg0, true);});
-        
-            goreToggle.onValueChanged.AddListener(delegate(bool arg0) { SetGore(arg0, true);});
-            tutorialToggle.onValueChanged.AddListener(delegate(bool arg0) { SetTutorial(arg0, true);});
-            upgradeAnimationToggle.onValueChanged.AddListener(delegate(bool arg0) { SetUpgradeAniamtion(arg0, true);});
+            disableVoiceToggle.onValueChanged.AddListener(delegate (bool arg0) { SetDisableVoice(arg0, true); });
+            showDirToggle.onValueChanged.AddListener(delegate (bool arg0) { SetShowDir(arg0, true); });
+            autoUpgradeToggle.onValueChanged.AddListener(delegate (bool arg0) { SetAutoUpgrade(arg0, true); });
 
-            keepRagdollToggle.onValueChanged.AddListener(delegate(bool arg0) { SetKeepRagdoll(arg0, true);});
-            bloomToggle.onValueChanged.AddListener(delegate(bool arg0) { SetBloom(arg0, true);});
-            useNightVissionToggle.onValueChanged.AddListener(delegate(bool arg0) { SetNightVission(arg0, true);});
-        
-            bananaVoiceToggle.onValueChanged.AddListener(delegate(bool arg0) { SetBananaVoice(arg0, true);});
+            grappleHintToggle.onValueChanged.AddListener(delegate (bool arg0) { SetGrappleHint(arg0, true); });
+
+            goreToggle.onValueChanged.AddListener(delegate (bool arg0) { SetGore(arg0, true); });
+            tutorialToggle.onValueChanged.AddListener(delegate (bool arg0) { SetTutorial(arg0, true); });
+            upgradeAnimationToggle.onValueChanged.AddListener(delegate (bool arg0) { SetUpgradeAniamtion(arg0, true); });
+
+            keepRagdollToggle.onValueChanged.AddListener(delegate (bool arg0) { SetKeepRagdoll(arg0, true); });
+            bloomToggle.onValueChanged.AddListener(delegate (bool arg0) { SetBloom(arg0, true); });
+            useNightVissionToggle.onValueChanged.AddListener(delegate (bool arg0) { SetNightVission(arg0, true); });
+
+            bananaVoiceToggle.onValueChanged.AddListener(delegate (bool arg0) { SetBananaVoice(arg0, true); });
             description.onValueChanged.AddListener(SetDescription);
-        
+
             hitMarkerNext.onClick.AddListener(delegate { NextHitMarkerType(1); });
             hitMarkerPreview.onClick.AddListener(delegate { NextHitMarkerType(-1); });
-        
+
             shadowQualityNext.onClick.AddListener(delegate { NextShadowQuality(1); });
             shadowQualityPreview.onClick.AddListener(delegate { NextShadowQuality(-1); });
-        
-        
+
+
             shadowResolutionNext.onClick.AddListener(delegate { NextShadowResolution(1); });
             shadowResolutionPreview.onClick.AddListener(delegate { NextShadowResolution(-1); });
-        
+
             qualityNext.onClick.AddListener(delegate { NextQuality(1); });
             qualityPreview.onClick.AddListener(delegate { NextQuality(-1); });
-        
+
             shadowDistanceNext.onClick.AddListener(delegate { NextShadowDistance(1); });
             shadowDistancePreview.onClick.AddListener(delegate { NextShadowDistance(-1); });
-        
+
             shadowCascadesNext.onClick.AddListener(delegate { NextShadowCascade(1); });
             shadowCascadesPreview.onClick.AddListener(delegate { NextShadowCascade(-1); });
-        
+
             antiAliasingNext.onClick.AddListener(delegate { NextAntiAliasing(1); });
             antiAliasingPreview.onClick.AddListener(delegate { NextAntiAliasing(-1); });
-        
-            softParticle.onValueChanged.AddListener(delegate(bool arg0) { SetSoftParticle(arg0, true);});
+
+            softParticle.onValueChanged.AddListener(delegate (bool arg0) { SetSoftParticle(arg0, true); });
             spawnParticleToggle.onValueChanged.AddListener(SetSpawnParticle);
-        
+
             languageNext.onClick.AddListener(delegate { NextLanguage(1); });
             languagePreview.onClick.AddListener(delegate { NextLanguage(-1); });
 
@@ -279,19 +279,19 @@ namespace Menu
 
             vsyncNext.onClick.AddListener(delegate { NextVsync(1); });
             vsyncPreview.onClick.AddListener(delegate { NextVsync(-1); });
-        
-            fullScreen.onValueChanged.AddListener(delegate(bool arg0) { SetFullScreen(arg0, true); });
-        
+
+            fullScreen.onValueChanged.AddListener(delegate (bool arg0) { SetFullScreen(arg0, true); });
+
             fullScreenModeNext.onClick.AddListener(delegate { NextFullScreenMode(1); });
             fullScreenModePreview.onClick.AddListener(delegate { NextFullScreenMode(-1); });
-        
+
             texturePreview.onClick.AddListener(delegate { NextTextureResolution(-1); });
             textureNext.onClick.AddListener(delegate { NextTextureResolution(1); });
-        
+
             searchBar.onValueChanged.AddListener(Search);
 
             Setting setting = GameManager.Instance.setting;
-        
+
             SetSensitivityVisual(setting.sensitivity);
             SetAimSensitivityMultiplierVisual(setting.aimSensitivityMultiplier);
             SetCameraShakeVisual(setting.cameraShake);
@@ -313,7 +313,7 @@ namespace Menu
             SetAmbienceVolumeVisual(setting.ambienceVolume);
             SetSoundEffectVolumeVisual(setting.soundEffectVolume);
             SetMusicVolumeVisual(setting.musicVolume);
-            SetLanguage(setting.language,false);
+            SetLanguage(setting.language, false);
             SetDescriptionVisual(setting.description);
             SetSpawnParticleVisual(setting.spawnParticle);
             SetHitMarkerTypeVisual((int)setting.hitMarkerType);
@@ -333,10 +333,10 @@ namespace Menu
             SetRVisual(setting.csR);
             SetGVisual(setting.csG);
             SetBVisual(setting.csB);
-        
+
             SetTextureResolutionVisual(setting.textureIndex);
             SetQualityVisual(setting.quality);
-        
+
             SetGoreVisual(setting.enableGore);
             SetTutorialVisual(setting.enableTutorial);
             SetUpgradeAnimationVisual(setting.enableUpgradeAnimation);
@@ -349,7 +349,7 @@ namespace Menu
         void SetUpgradeAniamtion(bool arg0, bool b)
         {
             GameManager.Instance.setting.enableUpgradeAnimation = arg0;
-            if(b)
+            if (b)
                 AudioManager.Instance.PlayButton();
             GameManager.settingChanged = true;
             SetUpgradeAnimationVisual(arg0);
@@ -362,7 +362,7 @@ namespace Menu
         void SetTutorial(bool arg0, bool b)
         {
             GameManager.Instance.setting.enableTutorial = arg0;
-            if(b)
+            if (b)
                 AudioManager.Instance.PlayButton();
             GameManager.settingChanged = true;
             SetTutorialVisual(arg0);
@@ -375,7 +375,7 @@ namespace Menu
         void SetGore(bool arg0, bool b)
         {
             GameManager.Instance.setting.enableGore = arg0;
-            if(b)
+            if (b)
                 AudioManager.Instance.PlayButton();
             GameManager.settingChanged = true;
             SetGoreVisual(arg0);
@@ -398,10 +398,10 @@ namespace Menu
         {
             bananaVoiceToggle.SetIsOnWithoutNotify(arg0);
         }
-        void SetBananaVoice(bool arg0,bool playButton)
+        void SetBananaVoice(bool arg0, bool playButton)
         {
             GameManager.Instance.setting.disableBananaVoice = arg0;
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
 
             SetBananaVoiceVisual(arg0);
@@ -412,10 +412,10 @@ namespace Menu
         {
             bloomToggle.SetIsOnWithoutNotify(arg0);
         }
-        void SetBloom(bool arg0,bool playButton)
+        void SetBloom(bool arg0, bool playButton)
         {
             GameManager.Instance.setting.bloom = arg0;
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
 
             GameManager.Instance.GetBloom().active = arg0;
@@ -427,10 +427,10 @@ namespace Menu
         {
             useNightVissionToggle.SetIsOnWithoutNotify(arg0);
         }
-        void SetNightVission(bool arg0,bool playButton)
+        void SetNightVission(bool arg0, bool playButton)
         {
             GameManager.Instance.setting.useNightVission = arg0;
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
             if (WeaponManager.Instance)
             {
@@ -444,10 +444,10 @@ namespace Menu
         {
             keepRagdollToggle.SetIsOnWithoutNotify(arg0);
         }
-        void SetKeepRagdoll(bool arg0,bool playButton)
+        void SetKeepRagdoll(bool arg0, bool playButton)
         {
             GameManager.Instance.setting.keepRagdoll = arg0;
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
 
             if (!arg0)
@@ -466,10 +466,10 @@ namespace Menu
         {
             autoUpgradeToggle.SetIsOnWithoutNotify(arg0);
         }
-        void SetAutoUpgrade(bool arg0,bool playButton)
+        void SetAutoUpgrade(bool arg0, bool playButton)
         {
             GameManager.Instance.setting.autoUpgrade = arg0;
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
             if (UpgradeInGameMenu.Instance)
             {
@@ -484,10 +484,10 @@ namespace Menu
         {
             grappleHintToggle.SetIsOnWithoutNotify(arg0);
         }
-        void SetGrappleHint(bool arg0,bool playButton)
+        void SetGrappleHint(bool arg0, bool playButton)
         {
             GameManager.Instance.setting.grappleHint = arg0;
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
 
             // if (GrappleHint.Instance)
@@ -503,10 +503,10 @@ namespace Menu
         {
             showDirToggle.SetIsOnWithoutNotify(arg0);
         }
-        void SetShowDir(bool arg0,bool playButton)
+        void SetShowDir(bool arg0, bool playButton)
         {
             GameManager.Instance.setting.showDir = arg0;
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
             if (GameUIManager.Instance)
             {
@@ -520,10 +520,10 @@ namespace Menu
         {
             disableVoiceToggle.SetIsOnWithoutNotify(arg0);
         }
-        void SetDisableVoice(bool arg0,bool playButton)
+        void SetDisableVoice(bool arg0, bool playButton)
         {
             GameManager.Instance.setting.disableVoice = arg0;
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
             GameManager.settingChanged = true;
         }
@@ -531,15 +531,15 @@ namespace Menu
         void SetHitMarkerTypeVisual(int arg0)
         {
             if (hitMarkerIndex != arg0) hitMarkerIndex = arg0;
-        
-            hitMarkerText.SetText(((HitMarkerType) arg0).ToString());
+
+            hitMarkerText.SetText(((HitMarkerType)arg0).ToString());
         }
-        void SetHitMarkerType(int arg0,bool playButton)
+        void SetHitMarkerType(int arg0, bool playButton)
         {
             GameManager.Instance.setting.hitMarkerType = (HitMarkerType)arg0;
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
-        
+
             GameManager.settingChanged = true;
             SetHitMarkerTypeVisual(arg0);
         }
@@ -548,16 +548,16 @@ namespace Menu
         {
             hitMarkerIndex += index;
             if (hitMarkerIndex > 1) hitMarkerIndex = 0;
-            if (hitMarkerIndex<0) hitMarkerIndex = 1;
-        
-            SetHitMarkerType(hitMarkerIndex,true);
+            if (hitMarkerIndex < 0) hitMarkerIndex = 1;
+
+            SetHitMarkerType(hitMarkerIndex, true);
         }
 
         void SetMasterVolumeVisual(float arg0)
         {
-            if(Math.Abs(masterVolumeSlider.value - arg0) > 0.1f)
+            if (Math.Abs(masterVolumeSlider.value - arg0) > 0.1f)
                 masterVolumeSlider.SetValueWithoutNotify(arg0);
-        
+
             masterVolumeText.SetText(arg0.ToString("F2"));
         }
         void SetMasterVolume(float arg0)
@@ -571,9 +571,9 @@ namespace Menu
 
         void SetUIVolumeVisual(float arg0)
         {
-            if(Math.Abs(uiVolumeSlider.value - arg0) > 0.1f)
+            if (Math.Abs(uiVolumeSlider.value - arg0) > 0.1f)
                 uiVolumeSlider.SetValueWithoutNotify(arg0);
-        
+
             uiVolumeText.SetText(arg0.ToString("F2"));
         }
         void SetUIVolume(float arg0)
@@ -587,9 +587,9 @@ namespace Menu
 
         void SetAmbienceVolumeVisual(float arg0)
         {
-            if(Math.Abs(ambienceVolumeSlider.value - arg0) > 0.1f)
+            if (Math.Abs(ambienceVolumeSlider.value - arg0) > 0.1f)
                 ambienceVolumeSlider.SetValueWithoutNotify(arg0);
-        
+
             ambienceVolumeText.SetText(arg0.ToString("F2"));
         }
         void SetAmbienceVolume(float arg0)
@@ -602,9 +602,9 @@ namespace Menu
 
         void SetSoundEffectVolumeVisual(float arg0)
         {
-            if(Math.Abs(soundEffectVolumeSlider.value - arg0) > 0.1f)
+            if (Math.Abs(soundEffectVolumeSlider.value - arg0) > 0.1f)
                 soundEffectVolumeSlider.SetValueWithoutNotify(arg0);
-        
+
             soundEffectVolumeText.SetText(arg0.ToString("F2"));
         }
         void SetSoundEffectVolume(float arg0)
@@ -617,23 +617,23 @@ namespace Menu
 
         void SetMusicVolumeVisual(float arg0)
         {
-            if(Math.Abs(musicVolumeSlider.value - arg0) > 0.1f)
+            if (Math.Abs(musicVolumeSlider.value - arg0) > 0.1f)
                 musicVolumeSlider.value = arg0;
-        
+
             musicVolumeText.SetText(arg0.ToString("F2"));
         }
         void SetMusicVolume(float arg0)
         {
             MusicManager.Instance.volumeMultiplier = arg0;
             GameManager.Instance.setting.musicVolume = arg0;
-        
+
             GameManager.settingChanged = true;
             SetMusicVolumeVisual(arg0);
         }
 
         void SetMaxFpsVisual(float fps)
         {
-            if(Math.Abs(maxFpsSlider.value - fps) > 0.1f)
+            if (Math.Abs(maxFpsSlider.value - fps) > 0.1f)
                 maxFpsSlider.SetValueWithoutNotify(fps);
             maxFpsText.SetText(fps.ToString("F0"));
         }
@@ -647,7 +647,7 @@ namespace Menu
 
         void SetSwayMultiplierVisual(float fps)
         {
-            if(Math.Abs(swaySlider.value - fps) > 0.1f)
+            if (Math.Abs(swaySlider.value - fps) > 0.1f)
                 swaySlider.SetValueWithoutNotify(fps);
             swayText.SetText(fps.ToString("F1"));
         }
@@ -660,7 +660,7 @@ namespace Menu
 
         void SetWidthVisual(float arg)
         {
-            if(Math.Abs(widthSlider.value - arg) > 0.1f)
+            if (Math.Abs(widthSlider.value - arg) > 0.1f)
                 widthSlider.SetValueWithoutNotify(arg);
             widthText.SetText(arg.ToString("F1"));
         }
@@ -680,10 +680,10 @@ namespace Menu
 
         void SetHeightVisual(float arg)
         {
-            if(Math.Abs(heightSlider.value - arg) > 0.1f)
+            if (Math.Abs(heightSlider.value - arg) > 0.1f)
                 heightSlider.SetValueWithoutNotify(arg);
             heightText.SetText(arg.ToString("F1"));
-        
+
         }
         void SetHeight(float arg)
         {
@@ -701,10 +701,10 @@ namespace Menu
 
         void SetDistanceVisual(float arg)
         {
-            if(Math.Abs(distanceSlider.value - arg) > 0.1f)
+            if (Math.Abs(distanceSlider.value - arg) > 0.1f)
                 distanceSlider.SetValueWithoutNotify(arg);
             distanceText.SetText(arg.ToString("F1"));
-        
+
         }
         void SetDistance(float arg)
         {
@@ -721,17 +721,17 @@ namespace Menu
 
         void SetRVisual(float arg)
         {
-            if(Math.Abs(rSlider.value - arg) > 0.1f)
+            if (Math.Abs(rSlider.value - arg) > 0.1f)
                 rSlider.SetValueWithoutNotify(arg);
             rText.SetText(arg.ToString("F0"));
-        
+
         }
         void SetR(float arg)
         {
             GameManager.Instance.setting.csR = arg;
             if (CrossHair.Instance)
             {
-                CrossHair.Instance.SetColor(new Color(arg/255f,GameManager.Instance.setting.csG/255f,GameManager.Instance.setting.csB/255f));
+                CrossHair.Instance.SetColor(new Color(arg / 255f, GameManager.Instance.setting.csG / 255f, GameManager.Instance.setting.csB / 255f));
             }
             SetCrossHairValue();
             GameManager.settingChanged = true;
@@ -740,17 +740,17 @@ namespace Menu
 
         void SetBVisual(float arg)
         {
-            if(Math.Abs(bSlider.value - arg) > 0.1f)
+            if (Math.Abs(bSlider.value - arg) > 0.1f)
                 bSlider.SetValueWithoutNotify(arg);
             bText.SetText(arg.ToString("F0"));
-        
+
         }
         void SetB(float arg)
         {
             GameManager.Instance.setting.csB = arg;
             if (CrossHair.Instance)
             {
-                CrossHair.Instance.SetColor(new Color(GameManager.Instance.setting.csR/255f,GameManager.Instance.setting.csG/255f,arg/255f));
+                CrossHair.Instance.SetColor(new Color(GameManager.Instance.setting.csR / 255f, GameManager.Instance.setting.csG / 255f, arg / 255f));
             }
             SetCrossHairValue();
             GameManager.settingChanged = true;
@@ -759,17 +759,17 @@ namespace Menu
 
         void SetGVisual(float arg)
         {
-            if(Math.Abs(gSlider.value - arg) > 0.1f)
+            if (Math.Abs(gSlider.value - arg) > 0.1f)
                 gSlider.SetValueWithoutNotify(arg);
             gText.SetText(arg.ToString("F0"));
-        
+
         }
         void SetG(float arg)
         {
             GameManager.Instance.setting.csG = arg;
             if (CrossHair.Instance)
             {
-                CrossHair.Instance.SetColor(new Color(GameManager.Instance.setting.csR/255f,arg/255f,GameManager.Instance.setting.csB/255f));
+                CrossHair.Instance.SetColor(new Color(GameManager.Instance.setting.csR / 255f, arg / 255f, GameManager.Instance.setting.csB / 255f));
             }
             SetCrossHairValue();
             GameManager.settingChanged = true;
@@ -791,10 +791,10 @@ namespace Menu
             up.sizeDelta = new Vector2(height, width);
             bottom.sizeDelta = new Vector2(height, width);
 
-            if(dotTransform!=null)
+            if (dotTransform != null)
                 dotTransform.sizeDelta = new Vector2(height, height);
 
-            Color color = new Color(GameManager.Instance.setting.csR/255f,  GameManager.Instance.setting.csG/255f, GameManager.Instance.setting.csB/255f);
+            Color color = new Color(GameManager.Instance.setting.csR / 255f, GameManager.Instance.setting.csG / 255f, GameManager.Instance.setting.csB / 255f);
             foreach (var i in rawImages)
             {
                 i.color = color;
@@ -811,24 +811,24 @@ namespace Menu
         {
             vsyncIndex += index;
             if (vsyncIndex > 2) vsyncIndex = 0;
-            if (vsyncIndex<0) vsyncIndex = 2;
-        
-            SetVsync(vsyncIndex,true);
+            if (vsyncIndex < 0) vsyncIndex = 2;
+
+            SetVsync(vsyncIndex, true);
         }
 
         void SetVsyncVisual(int i)
         {
             if (vsyncIndex != i) vsyncIndex = i;
-            vsyncText.SetText(((Vsync) i).ToString());
-        
-        
+            vsyncText.SetText(((Vsync)i).ToString());
+
+
         }
-        void SetVsync(int i,bool playButton)
+        void SetVsync(int i, bool playButton)
         {
 
             QualitySettings.vSyncCount = i;
             GameManager.Instance.setting.vSync = i;
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
             GameManager.settingChanged = true;
 
@@ -838,53 +838,53 @@ namespace Menu
         {
             fullScreenModeIndex += index;
             if (fullScreenModeIndex > 3) fullScreenModeIndex = 0;
-            if (fullScreenModeIndex<0) fullScreenModeIndex = 3;
-        
-            SetFullScreenMode(fullScreenModeIndex,true);
+            if (fullScreenModeIndex < 0) fullScreenModeIndex = 3;
+
+            SetFullScreenMode(fullScreenModeIndex, true);
         }
         void NextTextureResolution(int index)
         {
             textureIndex += index;
             if (textureIndex > 3) textureIndex = 0;
-            if (textureIndex<0) textureIndex = 3;
-        
-            SetTextureResolution(textureIndex,true);
+            if (textureIndex < 0) textureIndex = 3;
+
+            SetTextureResolution(textureIndex, true);
         }
 
         void SetTextureResolutionVisual(int i)
         {
             if (textureIndex != i) textureIndex = i;
-        
-            textureText.SetText(((Quality) i).ToString());
+
+            textureText.SetText(((Quality)i).ToString());
         }
-        void SetTextureResolution(int i,bool playButton)
+        void SetTextureResolution(int i, bool playButton)
         {
-            QualitySettings.masterTextureLimit = 3-i;
+            QualitySettings.masterTextureLimit = 3 - i;
             GameManager.Instance.setting.textureIndex = i;
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
             GameManager.settingChanged = true;
-        
+
             SetTextureResolutionVisual(i);
         }
 
         void SetFullScreenModeVisual(int i)
         {
             if (fullScreenModeIndex != i) fullScreenModeIndex = i;
-        
-            fullScreenModeText.SetText(((FullScreenMode) i).ToString());
+
+            fullScreenModeText.SetText(((FullScreenMode)i).ToString());
         }
-    
-        void SetFullScreenMode(int i,bool playButton)
+
+        void SetFullScreenMode(int i, bool playButton)
         {
             // A windowed mode and the fullscreen toggle describe the same window state, so keep the
             // two in sync: picking Windowed turns the toggle off, picking any other mode turns it
             // on. Otherwise the stored mode can contradict the toggle, which is how the game ended
             // up launching as a bordered window while the toggle claimed fullscreen.
-            GameManager.Instance.setting.fullScreen = (FullScreenMode) i != FullScreenMode.Windowed;
+            GameManager.Instance.setting.fullScreen = (FullScreenMode)i != FullScreenMode.Windowed;
             GameManager.Instance.setting.fullScreenMode = i;
             GameManager.Instance.setting.ApplyDisplay();
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
             GameManager.settingChanged = true;
 
@@ -898,13 +898,13 @@ namespace Menu
             fullScreen.SetIsOnWithoutNotify(arg0);
         }
 
-        void SetFullScreen(bool f,bool playButton)
+        void SetFullScreen(bool f, bool playButton)
         {
             GameManager.Instance.setting.fullScreen = f;
             // ApplyDisplay owns the window state now: assigning Screen.fullScreen here resets the
             // mode to FullScreenWindow, which discarded the mode the player had selected.
             GameManager.Instance.setting.ApplyDisplay();
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
             GameManager.settingChanged = true;
 
@@ -915,7 +915,7 @@ namespace Menu
         void InitResolution(int resolutionIndex)
         {
             resolutions = Screen.resolutions.Reverse().ToArray();
-        
+
             resolution.ClearOptions();
 
             if (resolutions.Length == 0)
@@ -931,25 +931,25 @@ namespace Menu
             int currentResolutionIndex = 0;
             for (int i = 0; i < resolutions.Length; i++)
             {
-                string option = resolutions[i].width + " x " + resolutions[i].height + " @" + resolutions[i].refreshRate  + "Hz";
+                string option = resolutions[i].width + " x " + resolutions[i].height + " @" + resolutions[i].refreshRate + "Hz";
                 options.Add(option);
 
                 if (resolutions[i].width == Screen.currentResolution.width &&
-                    resolutions[i].height == Screen.currentResolution.height && 
+                    resolutions[i].height == Screen.currentResolution.height &&
                     resolutions[i].refreshRate == Screen.currentResolution.refreshRate)
                 {
                     currentResolutionIndex = i;
                 }
             }
             resolution.AddOptions(options);
-        
+
             resolution.value = resolutionIndex == -1 ? currentResolutionIndex : resolutionIndex;
             resolution.RefreshShownValue();
 
-            resolution.onValueChanged.AddListener(delegate(int arg0) { SetResolution(arg0,true); });
+            resolution.onValueChanged.AddListener(delegate (int arg0) { SetResolution(arg0, true); });
         }
 
-        void SetResolution(int i,bool playButton)
+        void SetResolution(int i, bool playButton)
         {
             // The dropdown can outlive a display change, so never index past the mode list.
             if (i < 0 || i >= resolutions.Length) return;
@@ -957,7 +957,7 @@ namespace Menu
             GameManager.Instance.setting.resolutionIndex = i;
             GameManager.Instance.setting.ApplyDisplay();
             GameManager.settingChanged = true;
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
         }
 
@@ -965,9 +965,9 @@ namespace Menu
         {
             languageIndex += index;
             if (languageIndex > 3) languageIndex = 0;
-            if (languageIndex<0) languageIndex = 3;
-        
-            SetLanguage(languageIndex,true);
+            if (languageIndex < 0) languageIndex = 3;
+
+            SetLanguage(languageIndex, true);
         }
 
         // void SetLanguageVisual(int arg0)
@@ -1006,15 +1006,15 @@ namespace Menu
         //             break;
         //     }
         // }
-        void SetLanguage(int arg0,bool playButton)
+        void SetLanguage(int arg0, bool playButton)
         {
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
             GameManager.settingChanged = true;
             if (GameManager.Instance.setting.useSteamLanguage) return;
             switch (arg0)
             {
-                case  0:
+                case 0:
                     languageText.SetText("简体中文");
                     LocalizationSettings.Instance.SetSelectedLocale(NetworkManager.Instance.language[arg0]);
                     break;
@@ -1058,17 +1058,17 @@ namespace Menu
 
         void SetSoftParticleVisual(bool arg0)
         {
-            softParticle.SetIsOnWithoutNotify(arg0) ;
+            softParticle.SetIsOnWithoutNotify(arg0);
         }
-        void SetSoftParticle(bool arg0,bool playButton)
+        void SetSoftParticle(bool arg0, bool playButton)
         {
             GameManager.Instance.setting.softParticle = arg0;
             QualitySettings.softParticles = arg0;
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
             GameManager.settingChanged = true;
 
-        
+
             SetSoftParticleVisual(arg0);
         }
 
@@ -1083,14 +1083,14 @@ namespace Menu
         void SetAntiAliasingVisual(int arg0)
         {
             if (antiAliasingIndex != arg0) antiAliasingIndex = arg0;
-            antiAliasingText.SetText(((AntiAliasing) arg0).ToString()); 
+            antiAliasingText.SetText(((AntiAliasing)arg0).ToString());
         }
-        void SetAntiAliasing(int arg0,bool playButton)
+        void SetAntiAliasing(int arg0, bool playButton)
         {
             GameManager.Instance.setting.antiAliasing = arg0;
             QualitySettings.antiAliasing = arg0 * 2;
             GameManager.settingChanged = true;
-            if(playButton)
+            if (playButton)
                 AudioManager.Instance.PlayButton();
 
             SetAntiAliasingVisual(arg0);
@@ -1099,14 +1099,14 @@ namespace Menu
         {
             antiAliasingIndex += index;
             if (antiAliasingIndex > 3) antiAliasingIndex = 0;
-            if (antiAliasingIndex<0) antiAliasingIndex = 3;
-        
-            SetAntiAliasing(antiAliasingIndex,true);
+            if (antiAliasingIndex < 0) antiAliasingIndex = 3;
+
+            SetAntiAliasing(antiAliasingIndex, true);
         }
         enum ShadowCascade
         {
-            One=1,
-            Two=2,
+            One = 1,
+            Two = 2,
             Three,
             Four
         }
@@ -1114,8 +1114,8 @@ namespace Menu
         void SetShadowCascadeVisual(int index)
         {
             if (shadowCascadesIndex != index) shadowCascadesIndex = index;
-            shadowCascadesText.SetText(((ShadowCascade) index).ToString()); 
-        
+            shadowCascadesText.SetText(((ShadowCascade)index).ToString());
+
         }
         void SetShadowCascade(int arg0)
         {
@@ -1123,8 +1123,8 @@ namespace Menu
 
             SetShadowCascadeVisual(arg0);
             AudioManager.Instance.PlayButton();
-        
-        
+
+
             UniversalRenderPipelineAsset urp = (UniversalRenderPipelineAsset)GraphicsSettings.currentRenderPipeline;
             urp.shadowCascadeCount = arg0;
         }
@@ -1132,41 +1132,41 @@ namespace Menu
         {
             shadowCascadesIndex += index;
             if (shadowCascadesIndex > 4) shadowCascadesIndex = 1;
-            if (shadowCascadesIndex<1) shadowCascadesIndex = 4;
-        
+            if (shadowCascadesIndex < 1) shadowCascadesIndex = 4;
+
             SetShadowCascade(shadowCascadesIndex);
         }
         void NextShadowDistance(int index)
         {
             shadowDistanceIndex += index;
             if (shadowDistanceIndex > 2) shadowDistanceIndex = 0;
-            if (shadowDistanceIndex<0) shadowDistanceIndex = 2;
-        
+            if (shadowDistanceIndex < 0) shadowDistanceIndex = 2;
+
             SetShadowDistance(shadowDistanceIndex);
         }
 
         void SetShadowDistanceVisual(int index)
         {
             if (shadowDistanceIndex != index) shadowDistanceIndex = index;
-        
-            shadowDistanceText.SetText(((Quality) index).ToString()); 
+
+            shadowDistanceText.SetText(((Quality)index).ToString());
         }
         void SetShadowDistance(int arg0)
         {
             GameManager.Instance.setting.shadowDistance = arg0;
-        
+
             GameManager.settingChanged = true;
 
             SetShadowDistanceVisual(arg0);
             AudioManager.Instance.PlayButton();
-        
+
             UniversalRenderPipelineAsset urp = (UniversalRenderPipelineAsset)GraphicsSettings.currentRenderPipeline;
             urp.shadowDistance = arg0 * 40;
         }
 
         void SetFOVVisual(float f)
         {
-            if(Math.Abs(fovSlider.value - f) > 0.1f)
+            if (Math.Abs(fovSlider.value - f) > 0.1f)
                 fovSlider.SetValueWithoutNotify(f);
             fovText.SetText(f.ToString("F0"));
         }
@@ -1178,25 +1178,25 @@ namespace Menu
             if (WeaponManager.Instance)
             {
                 WeaponManager.Instance.defaultFOV = fov;
-                WeaponManager.Instance.speedUpFOV = fov+6;
+                WeaponManager.Instance.speedUpFOV = fov + 6;
             }
             GameManager.settingChanged = true;
         }
 
         void SetSensitivityVisual(float f)
         {
-            if(Math.Abs(sensitivitySlider.value - f) > 0.1f)
+            if (Math.Abs(sensitivitySlider.value - f) > 0.1f)
                 sensitivitySlider.SetValueWithoutNotify(f);
             sensitivityText.SetText(f.ToString("F0"));
         }
-        
+
         void SetAimSensitivityMultiplierVisual(float f)
         {
-            if(Math.Abs(aimSensitivityMultiplierSlider.value - f) > 0.1f)
+            if (Math.Abs(aimSensitivityMultiplierSlider.value - f) > 0.1f)
                 aimSensitivityMultiplierSlider.SetValueWithoutNotify(f);
             aimSensitivityMultiplierText.SetText(f.ToString("F1"));
         }
-    
+
         void SetSensitivity(float sensitivity)
         {
             GameManager.Instance.setting.sensitivity = sensitivity;
@@ -1207,7 +1207,7 @@ namespace Menu
                 SpectateMovement.Instance.sensitivity = sensitivity;
             }
             GameManager.settingChanged = true;
-        
+
             sensitivityText.SetText(sensitivity.ToString("F0"));
         }
         void SetAimSensitivityMultiplierSlider(float sensitivity)
@@ -1215,13 +1215,13 @@ namespace Menu
             GameManager.Instance.setting.aimSensitivityMultiplier = sensitivity;
 
             GameManager.settingChanged = true;
-        
+
             aimSensitivityMultiplierText.SetText(sensitivity.ToString("F1"));
         }
         void SetSpawnParticleVisual(bool flag)
         {
             spawnParticleToggle.SetIsOnWithoutNotify(flag);
-        } 
+        }
         void SetSpawnParticle(bool flag)
         {
             GameManager.Instance.setting.spawnParticle = flag;
@@ -1259,32 +1259,32 @@ namespace Menu
 
             GameManager.settingChanged = true;
             AudioManager.Instance.PlayButton();
-        
+
             SetCameraShakeVisual(shake);
         }
         void NextShadowQuality(int index)
         {
             shadowQualityIndex += index;
             if (shadowQualityIndex > 2) shadowQualityIndex = 0;
-            if (shadowQualityIndex<0) shadowQualityIndex = 2;
-        
-            SetShadowQuality(shadowQualityIndex,true);
+            if (shadowQualityIndex < 0) shadowQualityIndex = 2;
+
+            SetShadowQuality(shadowQualityIndex, true);
         }
 
         void SetShadowQualityVisual(int index)
         {
             if (shadowQualityIndex != index) shadowQualityIndex = index;
             shadowQualityText.SetText(((ShadowQuality)index).ToString());
-        
+
         }
-        void SetShadowQuality(int i,bool flag)
+        void SetShadowQuality(int i, bool flag)
         {
             GameManager.Instance.setting.shadowQuality = i;
-        
-            QualitySettings.shadows = (ShadowQuality) i;
-        
+
+            QualitySettings.shadows = (ShadowQuality)i;
+
             GameManager.settingChanged = true;
-            if(flag)
+            if (flag)
                 AudioManager.Instance.PlayButton();
             SetShadowQualityVisual(i);
         }
@@ -1292,8 +1292,8 @@ namespace Menu
         {
             shadowResolutionIndex += index;
             if (shadowResolutionIndex > 3) shadowResolutionIndex = 0;
-            if (shadowResolutionIndex<0) shadowResolutionIndex = 3;
-        
+            if (shadowResolutionIndex < 0) shadowResolutionIndex = 3;
+
             SetShadowResolution(shadowResolutionIndex);
         }
 
@@ -1301,14 +1301,14 @@ namespace Menu
         {
             if (shadowResolutionIndex != index) shadowResolutionIndex = index;
             shadowResolutionText.SetText(((ShadowResolution)index).ToString());
-            
+
         }
         void SetShadowResolution(int i)
         {
             GameManager.Instance.setting.shadowResolution = i;
-            QualitySettings.shadowResolution = (ShadowResolution) i;
+            QualitySettings.shadowResolution = (ShadowResolution)i;
 
-        
+
             GameManager.settingChanged = true;
             AudioManager.Instance.PlayButton();
             SetShadowResolutionVisual(i);
@@ -1317,8 +1317,8 @@ namespace Menu
         {
             qualityIndex += index;
             if (qualityIndex > 2) qualityIndex = 0;
-            if (qualityIndex<0) qualityIndex = 2;
-        
+            if (qualityIndex < 0) qualityIndex = 2;
+
             SetQuality(qualityIndex);
         }
 
@@ -1334,31 +1334,31 @@ namespace Menu
         {
             if (index > 2) index = 0;
             if (!qualityIndex.Equals(index)) qualityIndex = index;
-        
+
             qualityText.SetText(((Quality)index).ToString());
         }
         void SetQuality(int i)
         {
-            GameManager.Instance.setting.quality =  i;
-        
+            GameManager.Instance.setting.quality = i;
+
             GameManager.settingChanged = true;
             AudioManager.Instance.PlayButton();
             SetQualityVisual(i);
-        
-            QualitySettings.SetQualityLevel(i,true);
+
+            QualitySettings.SetQualityLevel(i, true);
             SetShadowQualityVisual((int)QualitySettings.shadows);
             SetSoftParticleVisual(QualitySettings.softParticles);
             SetShadowCascadeVisual(QualitySettings.shadowCascades);
-            SetAntiAliasingVisual(QualitySettings.antiAliasing/2);
-            SetShadowDistanceVisual((int)QualitySettings.shadowDistance/40);
-            SetTextureResolutionVisual(3-QualitySettings.masterTextureLimit);
+            SetAntiAliasingVisual(QualitySettings.antiAliasing / 2);
+            SetShadowDistanceVisual((int)QualitySettings.shadowDistance / 40);
+            SetTextureResolutionVisual(3 - QualitySettings.masterTextureLimit);
 
             GameManager.Instance.setting.shadowQuality = (int)QualitySettings.shadows;
             GameManager.Instance.setting.softParticle = QualitySettings.softParticles;
             GameManager.Instance.setting.shadowCascades = QualitySettings.shadowCascades;
-            GameManager.Instance.setting.antiAliasing = QualitySettings.antiAliasing/2;
-            GameManager.Instance.setting.shadowDistance = (int)QualitySettings.shadowDistance/40;
-            GameManager.Instance.setting.textureIndex = 3-QualitySettings.masterTextureLimit;
+            GameManager.Instance.setting.antiAliasing = QualitySettings.antiAliasing / 2;
+            GameManager.Instance.setting.shadowDistance = (int)QualitySettings.shadowDistance / 40;
+            GameManager.Instance.setting.textureIndex = 3 - QualitySettings.masterTextureLimit;
         }
 
         void SetDescriptionVisual(string des)
@@ -1374,7 +1374,7 @@ namespace Menu
                 description.SetTextWithoutNotify("Banana");
                 GameManager.Instance.setting.description = "Banana";
             }
-        
+
             GameManager.settingChanged = true;
         }
         [SerializeField] private List<GameObject> gamePlays = new List<GameObject>();
@@ -1384,7 +1384,7 @@ namespace Menu
         [SerializeField] private List<GameObject> audio = new List<GameObject>();
 
         string _currentSetting = "GamePlay";
-        
+
         public void SetContent(string option)
         {
             _currentSetting = option;
@@ -1515,8 +1515,8 @@ namespace Menu
             {
                 // Stamp the current version so the fresh file is not mistaken for a legacy save and
                 // upgraded again on the next launch.
-                Setting defaults = new Setting {settingsVersion = Setting.CurrentSettingsVersion};
-                SaveSystem.SaveToJSON(defaults,"setting.json");
+                Setting defaults = new Setting { settingsVersion = Setting.CurrentSettingsVersion };
+                SaveSystem.SaveToJSON(defaults, "setting.json");
                 PlayerPrefs.DeleteAll();
             }
             catch (Exception e)
@@ -1527,7 +1527,7 @@ namespace Menu
             GameManager.Instance.LoadSetting();
         }
 
-        [SerializeField]private TMP_InputField searchBar;
+        [SerializeField] private TMP_InputField searchBar;
         [SerializeField] private SettingItemUI[] items;
         void Search(string str)
         {
@@ -1561,16 +1561,16 @@ namespace Menu
     [Serializable]
     public class Setting
     {
-        public float fov=80,sensitivity=50,aimSensitivityMultiplier=0.5f,maxFps=144,volume=1,uiVolume=1f,ambienceVolume=1f,soundEffectVolume=1f,crossHairWidth=11,crossHairHeight=4f,crossHairDistance=23,musicVolume=1f,swayMultiplier=.5f;
-        public float csR=255, csG=255, csB=255;
-        public bool cameraShake=true,softParticle=true,fullScreen=true,spawnParticle=true,useArm=false,disableVoice=false,showDir=false,enableDot=true,disableBananaVoice=true,keepRagdoll=false,bloom=true,autoUpgrade=true,useNightVission=false,useSteamLanguage=true,grappleHint=true
-            ,useController=false,enableGore = true,enableTutorial = true,enableUpgradeAnimation=true;
+        public float fov = 80, sensitivity = 50, aimSensitivityMultiplier = 0.5f, maxFps = 144, volume = 1, uiVolume = 1f, ambienceVolume = 1f, soundEffectVolume = 1f, crossHairWidth = 11, crossHairHeight = 4f, crossHairDistance = 23, musicVolume = 1f, swayMultiplier = .5f;
+        public float csR = 255, csG = 255, csB = 255;
+        public bool cameraShake = true, softParticle = true, fullScreen = true, spawnParticle = true, useArm = false, disableVoice = false, showDir = false, enableDot = true, disableBananaVoice = true, keepRagdoll = false, bloom = true, autoUpgrade = true, useNightVission = false, useSteamLanguage = true, grappleHint = true
+            , useController = false, enableGore = true, enableTutorial = true, enableUpgradeAnimation = true;
         public int shadowQuality = 2;
         public HitMarkerType hitMarkerType;
         public HitMarkerSoundType hitMarkerSoundType = HitMarkerSoundType.New;
         public int shadowResolution = 3;
-        public int quality=2,shadowCascades=4,antiAliasing=2,shadowDistance=40,resolutionIndex=-1,fullScreenMode=1,vSync=0,language=-1,textureIndex=0;
-        public string description="";
+        public int quality = 2, shadowCascades = 4, antiAliasing = 2, shadowDistance = 40, resolutionIndex = -1, fullScreenMode = 1, vSync = 0, language = -1, textureIndex = 0;
+        public string description = "";
 
         /// <summary>
         /// Version of the saved settings file. Bumped whenever a default changes in a way that
@@ -1597,8 +1597,8 @@ namespace Menu
         {
             if (settingsVersion >= CurrentSettingsVersion) return false;
 
-            if (fullScreen && fullScreenMode == (int) FullScreenMode.Windowed)
-                fullScreenMode = (int) FullScreenMode.FullScreenWindow;
+            if (fullScreen && fullScreenMode == (int)FullScreenMode.Windowed)
+                fullScreenMode = (int)FullScreenMode.FullScreenWindow;
 
             settingsVersion = CurrentSettingsVersion;
             return true;
@@ -1614,7 +1614,7 @@ namespace Menu
         {
             if (!fullScreen) return FullScreenMode.Windowed;
 
-            FullScreenMode mode = (FullScreenMode) fullScreenMode;
+            FullScreenMode mode = (FullScreenMode)fullScreenMode;
             return mode == FullScreenMode.Windowed ? FullScreenMode.FullScreenWindow : mode;
         }
 
@@ -1631,7 +1631,7 @@ namespace Menu
 
             // Store the correction, so a mode that could not be applied is not read back from the
             // settings menu. A mode the player picked is left alone while fullscreen is off.
-            if (fullScreen) fullScreenMode = (int) mode;
+            if (fullScreen) fullScreenMode = (int)mode;
 
             var resolutions = Screen.resolutions.Reverse().ToArray();
             Resolution resolution = resolutionIndex >= 0 && resolutionIndex < resolutions.Length

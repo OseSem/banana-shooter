@@ -28,10 +28,10 @@ namespace CodingDaniel.MapEditor.MECommon
 
         private void Awake()
         {
-            _me=MEBase.Instance;
+            _me = MEBase.Instance;
             Instance = this;
         }
-        
+
         private void Update()
         {
             if (UndoAction())

@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace CodingDaniel.MapEditor.UI
 {
-    public class MaterialPaletteUIITem : MonoBehaviour,IPointerDownHandler
+    public class MaterialPaletteUIITem : MonoBehaviour, IPointerDownHandler
     {
         private MaterialPaletteUI _materialPaletteUI;
         [SerializeField] private TextMeshProUGUI nameText;
@@ -17,7 +17,7 @@ namespace CodingDaniel.MapEditor.UI
 
         private bool external = false;
 
-        public void Init(string name, Texture texture, Material material,ToggleGroup toggleGroup,MaterialPaletteUI materialPaletteUI,bool e=false)
+        public void Init(string name, Texture texture, Material material, ToggleGroup toggleGroup, MaterialPaletteUI materialPaletteUI, bool e = false)
         {
             nameText.SetText(name);
             image.texture = texture;
@@ -26,7 +26,7 @@ namespace CodingDaniel.MapEditor.UI
             _toggle.group = toggleGroup;
             _materialPaletteUI = materialPaletteUI;
             external = e;
-            
+
             _toggle.onValueChanged.AddListener(Click);
         }
 

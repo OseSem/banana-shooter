@@ -10,8 +10,8 @@ namespace Cosmetic
         public static Dictionary<string, ushort> ColorIndexes = new()
         {
             {"light blue",0},{"white",1},{"red",2},
-            {"yellow",3}, {"grey",4}, {"black",5},  {"blue",6}, {"green",7} , 
-            {"orange",8}, {"brown",9}, {"golden",10}, 
+            {"yellow",3}, {"grey",4}, {"black",5},  {"blue",6}, {"green",7} ,
+            {"orange",8}, {"brown",9}, {"golden",10},
             {"mediumslateblue",11}, {"pink", 12}, {"purple",13},
             {"ruby", 14}, {"emerald",15}, {"sapphire", 16}
         };

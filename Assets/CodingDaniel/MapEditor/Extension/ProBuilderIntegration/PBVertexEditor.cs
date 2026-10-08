@@ -14,12 +14,12 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         [FormerlySerializedAs("m_vertexSelection")]
         public PBVertexSelection _vertexSelection;
         private SceneSelection _selection = new SceneSelection();
-        
+
         private int[][] _initialIndexes;
         private Vector3[][] _initialPositions;
         private Vector3 _initialPostion;
         private Quaternion _initialRotation;
-        
+
         public override bool HasSelection
         {
             get { return _vertexSelection.VerticesCount > 0; }
@@ -126,9 +126,9 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             MeshSelection selection = new MeshSelection();
 
-            foreach(ProBuilderMesh mesh in _vertexSelection.Meshes)
+            foreach (ProBuilderMesh mesh in _vertexSelection.Meshes)
             {
-                if(mesh != null && mesh.gameObject != null)
+                if (mesh != null && mesh.gameObject != null)
                 {
                     selection.UnselectedIndices.Add(mesh.gameObject, _vertexSelection.GetVertices(mesh).ToArray());
                 }
@@ -137,7 +137,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             _vertexSelection.Clear();
             _selection.Clear();
 
-            if(selection.UnselectedIndices.Count > 0)
+            if (selection.UnselectedIndices.Count > 0)
             {
                 return selection;
             }
@@ -146,7 +146,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public override void Hover(Camera camera, Vector3 pointer)
         {
-          
+
         }
 
         public override MeshSelection Select(Camera camera, Vector3 pointer, bool shift, bool ctrl, bool depthTest)
@@ -155,7 +155,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             GameObject pickedObject = PBUtility.PickObject(camera, pointer);
             float result = PBUtility.PickVertex(camera, pointer, 20, pickedObject, _vertexSelection.Meshes, depthTest, ref _selection);
 
-            if(result != Mathf.Infinity)
+            if (result != Mathf.Infinity)
             {
 #if PROBUILDER_4_4_0_OR_NEWER
                 int selectedVertex = _selection.vertexes[0];
@@ -164,7 +164,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 #endif
                 if (_vertexSelection.IsSelected(_selection.mesh, selectedVertex))
                 {
-                    if(shift)
+                    if (shift)
                     {
                         List<int> indices = _selection.mesh.GetCoincidentVertices(new[] { selectedVertex });
                         _vertexSelection.Remove(_selection.mesh, indices);
@@ -184,7 +184,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 }
                 else
                 {
-                    if(shift)
+                    if (shift)
                     {
                         selection = new MeshSelection();
                     }
@@ -209,7 +209,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     {
                         selection = null;
                     }
-                    _vertexSelection.Clear(); 
+                    _vertexSelection.Clear();
                 }
             }
             return selection;
@@ -233,7 +233,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public override MeshSelection Select(Camera camera, Rect rect, Rect uiRootRect, GameObject[] gameObjects, bool depthTest, MeshEditorSelectionMode mode)
         {
             Dictionary<ProBuilderMesh, HashSet<int>> pickResult = PBUtility.PickVertices(camera, rect, uiRootRect, gameObjects, depthTest);
-            if(pickResult.Count == 0)
+            if (pickResult.Count == 0)
             {
                 return null;
             }
@@ -246,16 +246,16 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 IList<SharedVertex> sharedVertices = mesh.sharedVertices;
 
                 HashSet<int> indices = new HashSet<int>();
-                foreach(int sharedIndex in sharedIndexes)
+                foreach (int sharedIndex in sharedIndexes)
                 {
                     SharedVertex sharedVertex = sharedVertices[sharedIndex];
-                    for(int j = 0; j < sharedVertex.Count; ++j)
+                    for (int j = 0; j < sharedVertex.Count; ++j)
                     {
-                        if(!indices.Contains(sharedVertex[j]))
+                        if (!indices.Contains(sharedVertex[j]))
                         {
                             indices.Add(sharedVertex[j]);
                         }
-                    }    
+                    }
                 }
 
                 if (mode == MeshEditorSelectionMode.Substract || mode == MeshEditorSelectionMode.Difference)
@@ -280,7 +280,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             MeshSelection selection = IMeshEditorExt.Select(material);
             selection = selection.ToVertices(false);
-            
+
             foreach (KeyValuePair<GameObject, IList<int>> kvp in selection.SelectedIndices.ToArray())
             {
                 IList<int> indices = kvp.Value;
@@ -356,29 +356,29 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         }
 
         public override void SetState(MeshEditorState state)
-        {   
+        {
             ProBuilderMesh[] meshes = state.State.Keys.Select(k => k.GetComponent<ProBuilderMesh>()).ToArray();
             foreach (ProBuilderMesh mesh in meshes)
             {
                 IList<int> vertices = _vertexSelection.GetVertices(mesh);
-                if(vertices != null)
+                if (vertices != null)
                 {
                     vertices = vertices.ToArray();
                     _vertexSelection.Remove(mesh, vertices);
                 }
-                
+
                 MeshState meshState = state.State[mesh.gameObject];
                 mesh.Rebuild(meshState.Positions, meshState.Faces.Select(f => f.ToFace()).ToArray(), meshState.Textures);
 
-                if(vertices != null)
+                if (vertices != null)
                 {
                     _vertexSelection.Add(mesh, vertices);
                 }
-                
+
             }
         }
 
-        
+
 
         public override void BeginMove()
         {
@@ -481,7 +481,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 meshIndex++;
             }
 
-           
+
             _vertexSelection.Synchronize(
                 _vertexSelection.CenterOfMass,
                 center + rotation * _initialRotation * (_initialPostion - center),
@@ -568,7 +568,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             MeshSelection selection = GetSelection();
             selection = selection.ToFaces(false, true);
 
-            foreach(KeyValuePair<GameObject, IList<int>> kvp in selection.SelectedFaces)
+            foreach (KeyValuePair<GameObject, IList<int>> kvp in selection.SelectedFaces)
             {
                 ProBuilderMesh mesh = kvp.Key.GetComponent<ProBuilderMesh>();
                 mesh.DeleteFaces(kvp.Value);
@@ -576,18 +576,18 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 mesh.Refresh();
             }
         }
-        
+
         public override void Merge()
         {
             ProBuilderMesh[] meshes = _vertexSelection.Meshes.OrderBy(m => m == _vertexSelection.LastMesh).ToArray();
 
             foreach (var mesh in meshes)
             {
-                int index= mesh.MergeVertices(_vertexSelection.GetVertices(mesh).ToArray(), false);
+                int index = mesh.MergeVertices(_vertexSelection.GetVertices(mesh).ToArray(), false);
 
                 _vertexSelection.Clear();
-                
-                _vertexSelection.Add(mesh,new List<int> {index});
+
+                _vertexSelection.Add(mesh, new List<int> { index });
             }
         }
     }

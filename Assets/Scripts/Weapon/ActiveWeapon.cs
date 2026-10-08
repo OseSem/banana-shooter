@@ -16,10 +16,10 @@ namespace Weapon
         private ServerPlayer _player;
 
         public ushort Index;
-        
+
         public uint CurrentAmmo = 0;
 
-        public bool IsReloading=false;
+        public bool IsReloading = false;
 
         private uint _lastFiredTick;
 
@@ -57,7 +57,7 @@ namespace Weapon
             StopReloadCoroutine();
 
             CurrentAmmo = stat.maxAmmo;
-            
+
             ResetTick();
         }
 
@@ -146,7 +146,7 @@ namespace Weapon
             return EShootingResult.EResultOk;
         }
 
-        public void DoReload(uint tick,ushort defaultAmmo = 0)
+        public void DoReload(uint tick, ushort defaultAmmo = 0)
         {
             if (Stat.cantReload && NetworkServerManager.ServerGameMode != GameMode.GunGame) return;
 
@@ -169,7 +169,7 @@ namespace Weapon
             IsReloading = true;
             _reloadRefreshTick = 0;
 
-            _reloadCoroutine=_player.StartCoroutine(SetReload(requestTick,offset));
+            _reloadCoroutine = _player.StartCoroutine(SetReload(requestTick, offset));
         }
 
         /// <summary>
@@ -181,7 +181,7 @@ namespace Weapon
             return _player.HasPerk(Perk.QuickHand) ? 0.6f : 1f;
         }
 
-        IEnumerator SetReload(uint requestTick,uint offset)
+        IEnumerator SetReload(uint requestTick, uint offset)
         {
             // The reload interval has to be identical to the one the client runs
             // locally (Firearms.Reload times reloadMultiplier times the shell/spin
@@ -211,13 +211,13 @@ namespace Weapon
             _reloadRefreshTick = 0;
             IsReloading = false;
             CurrentAmmo = Stat.maxAmmo;
-            
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.WeaponReloaded);
+
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.WeaponReloaded);
 
             message.Add(_player.Id);
             message.Add(requestTick);
             message.Add(Index);
-            
+
             NetworkServerManager.Instance.Server.SendToAll(message);
         }
         bool IsAllowAttacking()

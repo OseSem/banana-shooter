@@ -17,7 +17,7 @@ namespace CodingDaniel.MapEditor.UI.AddObject
     public class ObjectItem : ScriptableObject
     {
         public string ObjectName => name;
-        public ObjectType type=ObjectType.None;
+        public ObjectType type = ObjectType.None;
         public GameObject prefab;
         public Texture2D icon;
     }

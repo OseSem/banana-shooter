@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Newtonsoft.Json;
 
 namespace SecureServer
@@ -8,7 +8,7 @@ namespace SecureServer
         public string Key = String.Empty;
         public ulong SteamId;
 
-    
+
         [JsonConstructor]
         public RemovePlayerGameBan(string key, ulong steamId)
         {
@@ -18,7 +18,7 @@ namespace SecureServer
 
         public RemovePlayerGameBan()
         {
-        
+
         }
     }
 }

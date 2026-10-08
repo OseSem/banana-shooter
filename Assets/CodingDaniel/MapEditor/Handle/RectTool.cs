@@ -313,7 +313,7 @@ namespace CodingDaniel.MapEditor.Handle
         {
             if (!IsDragging && !Editor.Tools.IsViewing)
             {
-                
+
                 SelectPointOrEdge();
             }
         }

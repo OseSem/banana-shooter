@@ -27,9 +27,9 @@ namespace Menu
         }
 
         [SerializeField] private PreloadTheme[] themes;
-        [SerializeField] [Range(0,10)] private int themeIndex = 0;
-        
-        [SerializeField] private RawImage backGround,slider;
+        [SerializeField][Range(0, 10)] private int themeIndex = 0;
+
+        [SerializeField] private RawImage backGround, slider;
         [SerializeField] private TextMeshProUGUI[] texts;
 
         private void OnValidate()
@@ -55,8 +55,9 @@ namespace Menu
                     text.color = textColor;
                 }
             }
-            
-            if(slider){
+
+            if (slider)
+            {
                 slider.color = sliderColor;
             }
         }
@@ -74,7 +75,7 @@ namespace Menu
             steamNotInitPanel.SetActive(!SteamManager.Initialized);
         }
 
-        
+
         public void Quit()
         {
             Application.Quit();
@@ -92,7 +93,7 @@ namespace Menu
                 text.text = error;
         }
 
-        public void SetProgress(int currentStep,float offset)
+        public void SetProgress(int currentStep, float offset)
         {
             progressBar.value = (float)currentStep / Preload.Step + offset;
         }

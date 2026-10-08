@@ -26,7 +26,7 @@ using Random = UnityEngine.Random;
 
 namespace CodingDaniel.MapEditor.MEEditor.MESave
 {
-    [Serializable] 
+    [Serializable]
     public class MapData
     {
         [Serializable]
@@ -47,7 +47,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             public ObjectData()
             {
-                
+
             }
         }
 
@@ -66,19 +66,19 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 public bool isExternal;
                 public int index;
 
-                public MaterialIndex(bool isExternal,int index)
+                public MaterialIndex(bool isExternal, int index)
                 {
                     this.isExternal = isExternal;
                     this.index = index;
                 }
-                
+
                 public MaterialIndex()
                 {
-                    
+
                 }
             }
 
-            public MeshObjectData(string n, Vector3 pos, Quaternion rot, Vector3 scale, IList<Vector3> positions, IList<PBFace> faces, IList<Vector2> textures,List<MaterialIndex> materialIndexes)
+            public MeshObjectData(string n, Vector3 pos, Quaternion rot, Vector3 scale, IList<Vector3> positions, IList<PBFace> faces, IList<Vector2> textures, List<MaterialIndex> materialIndexes)
             {
                 data = new ObjectData(n, pos, rot, scale);
                 this.positions = positions.ToList().ToMyVector3List();
@@ -89,7 +89,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             public MeshObjectData()
             {
-                
+
             }
         }
         [Serializable]
@@ -104,7 +104,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             public float innerSpotAngle;
             public MyColor color = new MyColor(Color.white);
 
-            public LightObjectData(string n, Vector3 pos, Quaternion rot, Vector3 scale, LightType type,float intensity,float range,bool enable,float spotAngle,float innerSpotAngle,Color color)
+            public LightObjectData(string n, Vector3 pos, Quaternion rot, Vector3 scale, LightType type, float intensity, float range, bool enable, float spotAngle, float innerSpotAngle, Color color)
             {
                 data = new ObjectData(n, pos, rot, scale);
                 this.type = type;
@@ -118,7 +118,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             public LightObjectData()
             {
-                
+
             }
         }
         [Serializable]
@@ -135,7 +135,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             public MyColor()
             {
-                
+
             }
 
             public Color ToColor()
@@ -143,7 +143,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 return new Color(r, g, b);
             }
         }
-        
+
         [Serializable]
         public class ExternalMaterial
         {
@@ -154,7 +154,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             public float bumpScale = 1f;
             public float parallax = 0.005f;
 
-            public ExternalMaterial(string name,float smoothness,float metallic,float bumpScale,float parallax)
+            public ExternalMaterial(string name, float smoothness, float metallic, float bumpScale, float parallax)
             {
                 this.name = name;
                 this.smoothness = smoothness;
@@ -165,10 +165,10 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             public ExternalMaterial()
             {
-                
+
             }
         }
-        
+
         [Serializable]
         public class DecalObjectData
         {
@@ -177,7 +177,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             public MyVector3 size;
             public bool external = false;
 
-            public DecalObjectData(string n, Vector3 pos, Quaternion rot, Vector3 scale,int materialIndex, Vector3 size,bool external)
+            public DecalObjectData(string n, Vector3 pos, Quaternion rot, Vector3 scale, int materialIndex, Vector3 size, bool external)
             {
                 data = new ObjectData(n, pos, rot, scale);
                 this.materialIndex = materialIndex;
@@ -187,10 +187,10 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             public DecalObjectData()
             {
-                
+
             }
         }
-        
+
         [Serializable]
         public class ExternalData
         {
@@ -201,18 +201,18 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 this.name = name;
             }
         }
-        
+
         [Serializable]
         public class ExternalModelConfig
         {
-            public string name=String.Empty;
-            
+            public string name = String.Empty;
+
             [JsonIgnore]
-            public Texture2D previewImage = new(512,512, TextureFormat.RGB24, false);
+            public Texture2D previewImage = new(512, 512, TextureFormat.RGB24, false);
 
             [JsonIgnore] public AssetBundleContainer AssetBundle;
         }
-        
+
         [Serializable]
         public class DecorationObjectData
         {
@@ -222,10 +222,10 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             /// 1 -- Water
             /// </summary>
             public int type = 0;
-            public bool enableCollision=true;
+            public bool enableCollision = true;
             public bool external = false;
 
-            public DecorationObjectData(string n, Vector3 pos, Quaternion rot, Vector3 scale, int type,bool enableCollider,bool external)
+            public DecorationObjectData(string n, Vector3 pos, Quaternion rot, Vector3 scale, int type, bool enableCollider, bool external)
             {
                 data = new ObjectData(n, pos, rot, scale);
                 this.enableCollision = enableCollider;
@@ -235,10 +235,10 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             public DecorationObjectData()
             {
-                
+
             }
         }
-        
+
         [Serializable]
         public class AudioObjectData
         {
@@ -252,8 +252,8 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             public float minDistance = 1;
             public float spatialBlend = 1;
             public float dopplerLevel = 1;
-            
-            public AudioObjectData(string n, Vector3 pos, Quaternion rot, Vector3 scale,int index,bool enabled,bool loop,float maxDistance,float minDistance,float spatialBlend,float dopplerLevel)
+
+            public AudioObjectData(string n, Vector3 pos, Quaternion rot, Vector3 scale, int index, bool enabled, bool loop, float maxDistance, float minDistance, float spatialBlend, float dopplerLevel)
             {
                 data = new ObjectData(n, pos, rot, scale);
                 this.index = index;
@@ -267,7 +267,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             public AudioObjectData()
             {
-                
+
             }
         }
 
@@ -286,8 +286,8 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
         public bool useDirectionalLight;
         public MyColor ambientColor;
 
-        public MyVector3 bound = new MyVector3(20,10,20);
-        public MyVector3 boundCenter = new MyVector3(0,0,0);
+        public MyVector3 bound = new MyVector3(20, 10, 20);
+        public MyVector3 boundCenter = new MyVector3(0, 0, 0);
 
         public List<MeshObjectData> meshDatas = new List<MeshObjectData>();
         public List<LightObjectData> lightDatas = new List<LightObjectData>();
@@ -296,15 +296,15 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
         public List<DecalObjectData> decalDatas = new List<DecalObjectData>();
         public List<ExternalData> externalDecalDatas = new List<ExternalData>();
         public List<DecorationObjectData> decorationDatas = new List<DecorationObjectData>();
-        
+
         public List<ExternalData> externalAudioDatas = new List<ExternalData>();
         public List<AudioObjectData> audioDatas = new List<AudioObjectData>();
-        
 
-        public MapData(string name,string description,string v,string saveKey,int skyboxIndex, bool useDirectionalLight,MyColor ambientColor,
-            List<MapSaveObject> objectsNeedToSave,List<Tuple<string,string,string,Material>> externalMat,List<Tuple<string,Material>> externalDecalMats, List<Tuple<string,AudioClip>> externalAudioClips,
-            bool saved,string defaultPath,Vector3 bound,Vector3 boundCenter,
-            bool isPublished=false, PublishedFileId_t fileId=new())
+
+        public MapData(string name, string description, string v, string saveKey, int skyboxIndex, bool useDirectionalLight, MyColor ambientColor,
+            List<MapSaveObject> objectsNeedToSave, List<Tuple<string, string, string, Material>> externalMat, List<Tuple<string, Material>> externalDecalMats, List<Tuple<string, AudioClip>> externalAudioClips,
+            bool saved, string defaultPath, Vector3 bound, Vector3 boundCenter,
+            bool isPublished = false, PublishedFileId_t fileId = new())
         {
             this.name = name;
             this.bound = new MyVector3(bound);
@@ -319,7 +319,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             this.isPublished = isPublished;
             this.fileId = fileId;
-            
+
             foreach (var saveObject in objectsNeedToSave)
             {
                 var transform = saveObject.transform;
@@ -330,9 +330,9 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                         case ObjectType.Mesh:
                             PBMesh pbMesh = saveObject.GetComponent<PBMesh>();
                             // Debug.Log(pbMesh.Positions.Length);
-                            MeshObjectData meshObjectData = new MeshObjectData(saveObject.objectItem.ObjectName,transform.position,
-                                transform.rotation, transform.localScale,pbMesh.Positions,pbMesh.Faces,pbMesh.Textures,pbMesh.GetMaterialIndex());
-                        
+                            MeshObjectData meshObjectData = new MeshObjectData(saveObject.objectItem.ObjectName, transform.position,
+                                transform.rotation, transform.localScale, pbMesh.Positions, pbMesh.Faces, pbMesh.Textures, pbMesh.GetMaterialIndex());
+
                             meshDatas.Add(meshObjectData);
                             break;
                         case ObjectType.Light:
@@ -340,8 +340,8 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                             LightObjectData lightObjectData = new LightObjectData(saveObject.objectItem.ObjectName,
                                 transform.position,
                                 transform.rotation, transform.localScale, light.type, light.intensity, light.range,
-                                light.enabled, light.spotAngle,light.innerSpotAngle,light.color);
-                        
+                                light.enabled, light.spotAngle, light.innerSpotAngle, light.color);
+
                             lightDatas.Add(lightObjectData);
                             break;
                         case ObjectType.PlayerSpawnPoint:
@@ -354,8 +354,8 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                                 new DecalObjectData(saveObject.objectItem.ObjectName, transform.position,
                                     transform.rotation, transform.localScale,
                                     MapSaver.Instance.GetDecalMaterialIndex(decalProjector.material, false),
-                                    decalProjector.size,false);
-                        
+                                    decalProjector.size, false);
+
                             decalDatas.Add(decalObjectData);
                             break;
                         case ObjectType.Decoration:
@@ -365,7 +365,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
                             DecorationObjectData decorationObjectData = new DecorationObjectData(
                                 saveObject.objectItem.ObjectName, transform.position,
-                                transform.rotation, transform.localScale,(int) collider.type, enableCollision,false);
+                                transform.rotation, transform.localScale, (int)collider.type, enableCollision, false);
 
                             decorationDatas.Add(decorationObjectData);
                             break;
@@ -382,11 +382,11 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                                 new DecalObjectData(saveObject.n, transform.position,
                                     transform.rotation, transform.localScale,
                                     MapSaver.Instance.GetDecalMaterialIndex(decalProjector.material, true),
-                                    decalProjector.size,true);
-                        
+                                    decalProjector.size, true);
+
                             decalDatas.Add(decalObjectData);
                             break;
-                        
+
                         case ObjectType.AudioSource:
                             AudioSource audioSource = saveObject.GetComponent<AudioSource>();
 
@@ -395,7 +395,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                                 MapSaver.Instance.GetAudioIndex(audioSource.clip), audioSource.enabled,
                                 audioSource.loop, audioSource.maxDistance, audioSource.minDistance,
                                 audioSource.spatialBlend, audioSource.dopplerLevel);
-                            
+
                             audioDatas.Add(audioObjectData);
                             break;
                         case ObjectType.Decoration:
@@ -405,7 +405,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
                             DecorationObjectData decorationObjectData = new DecorationObjectData(
                                 saveObject.n, transform.position,
-                                transform.rotation, transform.localScale, (int) collider.type, enableCollision,true);
+                                transform.rotation, transform.localScale, (int)collider.type, enableCollision, true);
 
                             decorationDatas.Add(decorationObjectData);
                             break;
@@ -421,30 +421,30 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             {
                 if (!Directory.Exists(p))
                 {
-                    if(externalMat.Count > 0)
+                    if (externalMat.Count > 0)
                         Directory.CreateDirectory(p);
                 }
                 else
                 {
-                    Directory.Delete(p,true);
-                    if(externalMat.Count > 0)
+                    Directory.Delete(p, true);
+                    if (externalMat.Count > 0)
                         Directory.CreateDirectory(p);
                 }
             }
-            
+
             foreach (var tuple in externalMat)
             {
                 var external = tuple.Item4;
-                ExternalMaterial externalMaterial = new ExternalMaterial(external.name,external.GetFloat(MapSaver.Smoothness),external.GetFloat(MapSaver.Metallic),
-                    external.GetFloat(MapSaver.BumpScale),external.GetFloat(MapSaver.Parallax));
-                
+                ExternalMaterial externalMaterial = new ExternalMaterial(external.name, external.GetFloat(MapSaver.Smoothness), external.GetFloat(MapSaver.Metallic),
+                    external.GetFloat(MapSaver.BumpScale), external.GetFloat(MapSaver.Parallax));
+
                 if (saved)
                 {
                     string basePath = p + "/" + external.name + "_base.png";
                     if (!File.Exists(basePath) || tuple.Item1 != basePath)
                     {
                         Texture2D baseTexture = (Texture2D)external.mainTexture;
-                        
+
                         if (baseTexture != null)
                         {
                             byte[] bytes = baseTexture.EncodeToPNG();
@@ -457,11 +457,11 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                     if (!File.Exists(heightPath) || tuple.Item2 != heightPath)
                     {
                         Texture2D heightTexture = (Texture2D)external.GetTexture(MapSaver.ParallaxMap);
-                        if (heightTexture!=null)
+                        if (heightTexture != null)
                         {
                             byte[] bytes = heightTexture.EncodeToPNG();
 
-                            SaveSystem.WriteToFileAsyncThread(heightPath, bytes,()=>{});
+                            SaveSystem.WriteToFileAsyncThread(heightPath, bytes, () => { });
                         }
                     }
 
@@ -470,17 +470,17 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                     if (!File.Exists(normalPath) || tuple.Item3 != normalPath)
                     {
                         Texture2D normalTexture = (Texture2D)external.GetTexture(MapSaver.BumpMap);
-                        
+
                         if (normalTexture != null)
                         {
                             byte[] bytes = normalTexture.EncodeToPNG();
 
-                            SaveSystem.WriteToFileAsyncThread(normalPath, bytes,()=>{});
+                            SaveSystem.WriteToFileAsyncThread(normalPath, bytes, () => { });
                         }
                     }
                 }
-                
-                
+
+
                 externalMaterials.Add(externalMaterial);
             }
 
@@ -494,17 +494,17 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             {
                 if (!Directory.Exists(p))
                 {
-                    if(externalDecalMats.Count > 0)
+                    if (externalDecalMats.Count > 0)
                         Directory.CreateDirectory(p);
                 }
                 else
                 {
-                    Directory.Delete(p,true);
-                    if(externalDecalMats.Count > 0)
+                    Directory.Delete(p, true);
+                    if (externalDecalMats.Count > 0)
                         Directory.CreateDirectory(p);
                 }
             }
-            
+
             foreach (var tuple in externalDecalMats)
             {
                 var externalDecalMat = tuple.Item2;
@@ -516,7 +516,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                     if (!File.Exists(basePath) || basePath != tuple.Item1)
                     {
                         Texture2D baseTexture = (Texture2D)externalDecalMat.GetTexture(MapSaver.BaseMap);
-                        
+
                         if (baseTexture != null)
                         {
                             byte[] bytes = baseTexture.EncodeToPNG();
@@ -525,10 +525,10 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                             {
                             });
                         }
-                        
+
                     }
                 }
-                
+
                 externalDecalDatas.Add(externalDecalData);
             }
 
@@ -542,17 +542,17 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             {
                 if (!Directory.Exists(p))
                 {
-                    if(externalAudioClips.Count > 0)
+                    if (externalAudioClips.Count > 0)
                         Directory.CreateDirectory(p);
                 }
                 else
                 {
-                    Directory.Delete(p,true);
-                    if(externalAudioClips.Count > 0)
+                    Directory.Delete(p, true);
+                    if (externalAudioClips.Count > 0)
                         Directory.CreateDirectory(p);
                 }
             }
-            
+
             foreach (var tuple in externalAudioClips)
             {
                 var audioClip = tuple.Item2;
@@ -563,8 +563,8 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                     Debug.Log(basePath);
                     if (!File.Exists(basePath) || basePath != tuple.Item1)
                     {
-                        if(File.Exists(tuple.Item1))
-                            File.Copy(tuple.Item1,basePath);
+                        if (File.Exists(tuple.Item1))
+                            File.Copy(tuple.Item1, basePath);
                     }
                 }
                 externalAudioDatas.Add(externalData);
@@ -596,7 +596,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
         {
             return path + GetNameString() + "_audio";
         }
-        
+
         public string GetModelPath()
         {
             return path + GetNameString() + "_model";
@@ -604,29 +604,29 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
         public string GetNameString()
         {
-            return name +  saveKey;
+            return name + saveKey;
         }
         public MapData()
         {
-            
+
         }
     }
 
-    
+
     public class MapMetadata
     {
         [JsonProperty("Name")]
         public string Name { get; set; }
-        
+
         [JsonProperty("SaveKey")]
         public string SaveKey { get; set; }
-        
+
         [JsonProperty("Description")]
         public string Description { get; set; }
-        
+
         [JsonProperty("IsPublished")]
         public bool IsPublished { get; set; }
-        
+
         [JsonProperty("FileId")]
         public PublishedFileId_t FileId { get; set; }
 
@@ -640,7 +640,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             return GetBasePath() + "_texture";
         }
 
-        public MapMetadata(string name,string saveKey,string description,bool isPublished,PublishedFileId_t fileId)
+        public MapMetadata(string name, string saveKey, string description, bool isPublished, PublishedFileId_t fileId)
         {
             Name = name;
             SaveKey = saveKey;
@@ -651,10 +651,10 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
         public MapMetadata()
         {
-            
+
         }
     }
-    
+
     [DefaultExecutionOrder(-99)]
     public class MapSaver : MonoBehaviour
     {
@@ -676,9 +676,9 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 }
             }
         }
-        
+
         public static bool Initialized { private set; get; } = false;
-        
+
         public static readonly int ParallaxMap = Shader.PropertyToID("_ParallaxMap");
         public static readonly int BumpMap = Shader.PropertyToID("_BumpMap");
         public static readonly int Smoothness = Shader.PropertyToID("_Smoothness");
@@ -689,15 +689,15 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
         public List<MapSaveObject> ObjectsNeedToSave { get; } = new List<MapSaveObject>();
 
         public List<Material> materials = new List<Material>();
-        public List<Tuple<string,string,string,Material>> externalMaterials = new ();
+        public List<Tuple<string, string, string, Material>> externalMaterials = new();
         public List<Material> skyboxes = new List<Material>();
-        
-        public List<Material> decalMaterials = new List<Material>();
-        public List<Tuple<string,Material>> externalDecalMaterials = new();
-        
-        public List<Tuple<string,AudioClip>> externalAudioClips = new ();
 
-        public Dictionary<string,MapData.ExternalModelConfig> ModelConfigs = new();
+        public List<Material> decalMaterials = new List<Material>();
+        public List<Tuple<string, Material>> externalDecalMaterials = new();
+
+        public List<Tuple<string, AudioClip>> externalAudioClips = new();
+
+        public Dictionary<string, MapData.ExternalModelConfig> ModelConfigs = new();
 
         public List<ObjectItem> objectItems = new List<ObjectItem>();
 
@@ -713,7 +713,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
         public List<FileInfo> EditingMaps = new();
         public static Dictionary<FileInfo, MapMetadata> EditingMapMetadatas = new Dictionary<FileInfo, MapMetadata>();
 
-        public static Dictionary<PublishedFileId_t,FileInfo> WorkshopMaps = new Dictionary<PublishedFileId_t,FileInfo>();
+        public static Dictionary<PublishedFileId_t, FileInfo> WorkshopMaps = new Dictionary<PublishedFileId_t, FileInfo>();
 
         public Material decalDummyMat;
         private void Awake()
@@ -726,8 +726,8 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
         {
             path = Application.dataPath + "/maps/";
             SteamTemp = Application.dataPath + "/SteamWorkshopTemp/";
-            
-            
+
+
             if (Directory.Exists(path))
             {
                 DirectoryInfo directoryInfo = new DirectoryInfo(path);
@@ -743,19 +743,19 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                     if (File.Exists(n))
                     {
                         CoroutineWithData cd = new CoroutineWithData(this, SaveSystem.ReadFileAsyncThread(n));
-                    
+
                         yield return cd.coroutine;
 
                         string content = cd.result.ToString();
-                        if (string.IsNullOrEmpty (content) || content == "{}" || (!content.Contains("{") || !content.Contains("}")))
+                        if (string.IsNullOrEmpty(content) || content == "{}" || (!content.Contains("{") || !content.Contains("}")))
                         {
                             continue;
                         }
                         MapMetadata data = JsonConvert.DeserializeObject<MapMetadata>(content);
-                    
+
                         if (data != null)
                         {
-                            EditingMapMetadatas.Add(f,data);
+                            EditingMapMetadatas.Add(f, data);
                         }
                     }
                 }
@@ -784,8 +784,8 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             Initialized = true;
         }
-        
-        public bool LoadWorkshopMap(string p,PublishedFileId_t fileId)
+
+        public bool LoadWorkshopMap(string p, PublishedFileId_t fileId)
         {
             if (WorkshopMaps.ContainsKey(fileId)) return true;
             p += "/";
@@ -804,7 +804,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             return false;
         }
 
-        public int GetDecalMaterialIndex(Material material,bool external)
+        public int GetDecalMaterialIndex(Material material, bool external)
         {
             if (external)
             {
@@ -826,7 +826,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                     }
                 }
             }
-            
+
             return -1;
         }
 
@@ -844,12 +844,12 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
         }
 
 
-        public bool Save(string mapName,string description,Texture2D texture2D,bool saveAs)
+        public bool Save(string mapName, string description, Texture2D texture2D, bool saveAs)
         {
             PublishMenu.Instance.nameInput.SetTextWithoutNotify(mapName);
             PublishMenu.Instance.descriptionInput.SetTextWithoutNotify(description);
             IsSaving = true;
-            
+
             if (string.IsNullOrEmpty(mapName))
             {
                 return false;
@@ -857,19 +857,19 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             EditorMenu.Instance.SavingMenu.SetActive(true);
 
-            SetMapData(mapName,description,saveAs,true);
+            SetMapData(mapName, description, saveAs, true);
 
             MEBase.Instance.HasChanged = false;
 
             MapMetadata md = new MapMetadata(mapName, CurrentMap.saveKey, description, CurrentMap.isPublished,
                 CurrentMap.fileId);
 
-            SaveToFile(texture2D,md);
+            SaveToFile(texture2D, md);
 
             return true;
         }
 
-        public void SetMapData(string mapName,string description,bool saveAs,bool save)
+        public void SetMapData(string mapName, string description, bool saveAs, bool save)
         {
             bool isPublished = false;
             PublishedFileId_t fileId = new PublishedFileId_t();
@@ -886,7 +886,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             {
                 saveAs = true;
             }
-            
+
             StringBuilder stringBuilder = saveAs ? new StringBuilder() : new StringBuilder(CurrentMap.saveKey);
 
             if (saveAs)
@@ -912,15 +912,15 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             Bounds bounds = MapBoundVisual.Instance.Bounds;
 
-            CurrentMap = new MapData(mapName, description,"0.1" , stringBuilder.ToString(), skyboxIndex,
+            CurrentMap = new MapData(mapName, description, "0.1", stringBuilder.ToString(), skyboxIndex,
                 MapSettingMenu.Instance.GetDirectionalLightEnable(), new MapData.MyColor(RenderSettings.ambientLight),
-                ObjectsNeedToSave, externalMaterials, externalDecalMaterials,externalAudioClips, save,path, bounds.extents*2f,bounds.center,isPublished,fileId);
+                ObjectsNeedToSave, externalMaterials, externalDecalMaterials, externalAudioClips, save, path, bounds.extents * 2f, bounds.center, isPublished, fileId);
         }
 
-        async void SaveToFile(Texture2D texture2D,MapMetadata metadata)
+        async void SaveToFile(Texture2D texture2D, MapMetadata metadata)
         {
             float time = Time.time;
-            
+
             string map = await Task.Run(() => JsonConvert.SerializeObject(CurrentMap, Formatting.None,
                 new JsonSerializerSettings()
                 {
@@ -928,8 +928,8 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 }));
 
             byte[] previewImg = texture2D.EncodeToJPG();
-            
-            await SaveSystem.WriteToFileAsyncThread(path + CurrentMap.GetNameString() + ".bsm",map);
+
+            await SaveSystem.WriteToFileAsyncThread(path + CurrentMap.GetNameString() + ".bsm", map);
 
             await SaveSystem.WriteToFileAsyncThread(path + CurrentMap.GetNameString() + ".jpg", previewImg);
 
@@ -938,19 +938,19 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 {
                     ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
                 }));
-            
-            await SaveSystem.WriteToFileAsyncThread(path + CurrentMap.GetNameString() + ".metadata",md);
+
+            await SaveSystem.WriteToFileAsyncThread(path + CurrentMap.GetNameString() + ".metadata", md);
 
             Debug.Log("save complete in: " + (Time.time - time));
             IsSaving = false;
-            
+
             CurrentMapFile ??= new FileInfo(path + CurrentMap.GetNameString() + ".bsm");
-            
+
             if (!EditingMaps.Contains(CurrentMapFile))
             {
                 EditingMaps.Add(CurrentMapFile);
             }
-            
+
             EditingMapMetadatas[CurrentMapFile] = metadata;
 
             EditorMenu.Instance.SavingMenu.SetActive(false);
@@ -965,20 +965,20 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             MapMetadata metadata = new MapMetadata(CurrentMap.name, CurrentMap.saveKey, CurrentMap.description,
                 CurrentMap.isPublished, CurrentMap.fileId);
-            
-            float time= await SaveSystem.WriteToFileAsyncThread(path + CurrentMap.GetNameString() + ".bsm",map);
-            
+
+            float time = await SaveSystem.WriteToFileAsyncThread(path + CurrentMap.GetNameString() + ".bsm", map);
+
             string md = JsonConvert.SerializeObject(metadata, Formatting.None, new JsonSerializerSettings()
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             });
-            
-            time += await SaveSystem.WriteToFileAsyncThread(path + CurrentMap.GetNameString() + ".metadata",md);
-            
+
+            time += await SaveSystem.WriteToFileAsyncThread(path + CurrentMap.GetNameString() + ".metadata", md);
+
             IsSaving = false;
 
             CurrentMapFile ??= new FileInfo(path + CurrentMap.GetNameString() + ".bsm");
-            
+
             Debug.Log("save complete in: " + time);
 
             if (!EditingMaps.Contains(CurrentMapFile))
@@ -990,7 +990,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
         }
 
         public Material dummyMat;
-        async Task InitializeLoad(bool loadExternal,bool workshopMap)
+        async Task InitializeLoad(bool loadExternal, bool workshopMap)
         {
             var data = CurrentMap;
             #region Envirnment
@@ -1006,17 +1006,17 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             {
                 MapSettingMenu.Instance.skyboxImg.texture = RenderSettings.skybox == null ? null : SourceUI.GetSkyboxTexture(
                     RenderSettings.skybox);
-            
+
                 MapSettingMenu.Instance.skyboxText.SetText(RenderSettings.skybox == null ? "None" : RenderSettings.skybox.name);
-            
+
                 MapSettingMenu.Instance.enableDirectionalLighting.SetIsOnWithoutNotify(data.useDirectionalLight);
                 MapSettingMenu.Instance.skyboxColorImg.color = data.ambientColor.ToColor();
 
                 MapSettingMenu.Instance.GetDirectionalLight().enabled = data.useDirectionalLight;
-                
-                MapSettingMenu.Instance.SetBound(data.bound.ToVector3(),data.boundCenter.ToVector3());
+
+                MapSettingMenu.Instance.SetBound(data.bound.ToVector3(), data.boundCenter.ToVector3());
             }
-            
+
 
             #endregion
 
@@ -1032,11 +1032,11 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 {
                     Material material = new Material(dummyMat);
 
-                    material.EnableKeyword ("_METALLICGLOSSMAP");
-                    material.EnableKeyword ("_PARALLAXMAP");
+                    material.EnableKeyword("_METALLICGLOSSMAP");
+                    material.EnableKeyword("_PARALLAXMAP");
 
-                    material.SetFloat(Smoothness,externalMaterial.smoothness);
-                    material.SetFloat(Metallic,externalMaterial.metallic);
+                    material.SetFloat(Smoothness, externalMaterial.smoothness);
+                    material.SetFloat(Metallic, externalMaterial.metallic);
 
                     string p = data.GetTexturePath();
                     string n = externalMaterial.name;
@@ -1062,7 +1062,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
                         material.SetTexture(ParallaxMap, texture2D);
 
-                        material.SetFloat(Parallax,externalMaterial.parallax);
+                        material.SetFloat(Parallax, externalMaterial.parallax);
                     }
                     else material.SetTexture(ParallaxMap, null);
 
@@ -1075,20 +1075,20 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
                         material.SetTexture(BumpMap, texture2D);
                         material.EnableKeyword("_NORMALMAP");
-                        
-                        
-                        material.SetFloat(BumpScale,externalMaterial.bumpScale);
+
+
+                        material.SetFloat(BumpScale, externalMaterial.bumpScale);
                     }
                     else material.SetTexture(BumpMap, null);
 
-                    Tuple<string, string, string, Material> tuple = new Tuple<string, string, string, Material>(baseMap,heightMap,normalMap,material);
+                    Tuple<string, string, string, Material> tuple = new Tuple<string, string, string, Material>(baseMap, heightMap, normalMap, material);
                     externalMaterials.Add(tuple);
                 }
 
                 foreach (var decalData in data.externalDecalDatas)
                 {
                     Material material = new Material(decalDummyMat);
-                    
+
                     string p = data.GetDecalTexturePath();
                     string n = decalData.name;
 
@@ -1101,10 +1101,10 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                         byte[] bytes = await SaveSystem.ReadByteFromFileAsync(baseMap);
                         texture2D.LoadImage(bytes);
 
-                        material.SetTexture(BaseMap,texture2D);
+                        material.SetTexture(BaseMap, texture2D);
                     }
-                    
-                    externalDecalMaterials.Add(new Tuple<string, Material>(baseMap,material));
+
+                    externalDecalMaterials.Add(new Tuple<string, Material>(baseMap, material));
                 }
 
                 foreach (var audioData in data.externalAudioDatas)
@@ -1113,25 +1113,25 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                     string n = audioData.name;
                     Debug.Log(n);
 
-                    string audioPath = Path.Combine(p,$"{n}.wav");
+                    string audioPath = Path.Combine(p, $"{n}.wav");
                     // Debug.Log(audioPath + "Path exist: " + File.Exists(audioPath));
                     if (File.Exists(audioPath))
-                    { 
+                    {
                         AudioClip clip = await LoadAudio(audioPath);
                         clip.name = n;
-                        
-                        externalAudioClips.Add(new Tuple<string, AudioClip>(audioPath,clip));
+
+                        externalAudioClips.Add(new Tuple<string, AudioClip>(audioPath, clip));
                         continue;
                     }
-                    
-                    audioPath = Path.Combine(p,$"{n}.mp3");
+
+                    audioPath = Path.Combine(p, $"{n}.mp3");
                     // Debug.Log(audioPath + "Path exist: " + File.Exists(audioPath));
                     if (File.Exists(audioPath))
-                    { 
+                    {
                         AudioClip clip = await LoadAudio(audioPath);
                         clip.name = n;
-                        
-                        externalAudioClips.Add(new Tuple<string, AudioClip>(audioPath,clip));
+
+                        externalAudioClips.Add(new Tuple<string, AudioClip>(audioPath, clip));
                     }
                 }
 
@@ -1159,14 +1159,14 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                             {
                                 await TryToDownloadAssetBundle(config, sourcePath);
                             }
-                            ModelConfigs.Add(config.name,config);
+                            ModelConfigs.Add(config.name, config);
                         }
                     }
                 }
             }
         }
 
-        async Task TryToDownloadAssetBundle(MapData.ExternalModelConfig bundle,string p)
+        async Task TryToDownloadAssetBundle(MapData.ExternalModelConfig bundle, string p)
         {
             AssetBundleContainer container = AssetBundleManager.Instance.GetAssetBundle(bundle.name);
 
@@ -1186,9 +1186,9 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                     Debug.Log($"Failed to load {bundle.name} AssetBundle!");
                     return;
                 }
-                
-                var assetRequest =loadedAssetBundle.LoadAssetAsync<GameObject>("model");
-                
+
+                var assetRequest = loadedAssetBundle.LoadAssetAsync<GameObject>("model");
+
                 while (!assetRequest.isDone)
                 {
                     await Task.Delay(10);
@@ -1205,7 +1205,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 bundle.AssetBundle = AssetBundleManager.Instance.AddBundle(bundle.name, bundleRequest.assetBundle, assetRequest.asset);
             }
         }
-        
+
         static readonly HashSet<Type> Allowed = new()
         {
             typeof(Transform), typeof(MeshFilter), typeof(MeshRenderer), typeof(SkinnedMeshRenderer),
@@ -1225,7 +1225,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 }
             }
         }
-        
+
         public void Cleanup()
         {
             foreach (var external in externalMaterials)
@@ -1237,7 +1237,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             {
                 Destroy(external.Item2);
             }
-            
+
             foreach (var external in externalDecalMaterials)
             {
                 Destroy(external.Item2);
@@ -1247,21 +1247,21 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             {
                 Destroy(obj);
             }
-            
+
             foreach (var obj in playModeLoadedObject)
             {
                 Destroy(obj);
             }
-            
+
             externalMaterials.Clear();
             externalAudioClips.Clear();
             externalDecalMaterials.Clear();
             loadedObject.Clear();
             playModeLoadedObject.Clear();
-            
+
             AssetBundleManager.Instance.UnloadAllBundles();
         }
-        
+
         async Task<AudioClip> LoadAudio(string p)
         {
             if (string.IsNullOrEmpty(p))
@@ -1275,7 +1275,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 DownloadHandlerAudioClip handler = new DownloadHandlerAudioClip(webRequest.url, audioType);
                 webRequest.downloadHandler = handler;
 
-                var q= webRequest.SendWebRequest();
+                var q = webRequest.SendWebRequest();
 
                 while (!q.isDone)
                 {
@@ -1305,11 +1305,11 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 yield break;
             }
             MEBase.Instance.HasChanged = false;
-            
+
             CoroutineWithData cd = new CoroutineWithData(this, SaveSystem.ReadFileAsyncThread(CurrentMapFile.FullName));
             yield return cd.coroutine;
             string content = cd.result.ToString();
-            if (string.IsNullOrEmpty (content) || content == "{}" || (!content.Contains("{") || !content.Contains("}")))
+            if (string.IsNullOrEmpty(content) || content == "{}" || (!content.Contains("{") || !content.Contains("}")))
             {
                 CurrentMapFile = null;
                 CurrentMap = null;
@@ -1317,7 +1317,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 externalMaterials.Clear();
                 externalDecalMaterials.Clear();
                 externalAudioClips.Clear();
-                
+
                 yield break;
             }
             MapData data = JsonConvert.DeserializeObject<MapData>(content);
@@ -1327,30 +1327,30 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 yield break;
             }
             data.path = path;
-            
-            CurrentMap= data;
+
+            CurrentMap = data;
 
             #region Setting
 
             TabHolder.Instance.mapNameInput.SetTextWithoutNotify(data.name);
             TabHolder.Instance.mapDescriptionInput.SetTextWithoutNotify(data.description);
-            
+
             PublishMenu.Instance.descriptionInput.SetTextWithoutNotify(data.description);
             PublishMenu.Instance.nameInput.SetTextWithoutNotify(data.name);
 
             #endregion
-            
-            var task=  InitializeLoad(true,false);
+
+            var task = InitializeLoad(true, false);
 
             while (!task.IsCompleted)
             {
                 yield return null;
             }
-            
+
             OnMapLoaded?.Invoke();
-            
+
             // MaterialPaletteUI.Instance.InitExternalMat();
-            
+
             #region Object
 
             foreach (var game in loadedObject)
@@ -1358,18 +1358,18 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 Destroy(game);
             }
             loadedObject.Clear();
-            
+
 
             foreach (var objectData in data.meshDatas)
             {
                 GameObject go = GenerateMesh(objectData);
-                
+
                 go.transform.SetParent(MEBase.Instance.EditedObject.transform);
 
                 go.AddComponent<ExposeToEditor>();
                 go.AddComponent<PBMesh>();
                 go.AddComponent<MapSaveObject>().Init(GetObjectItem(objectData.data.name));
-                
+
                 loadedObject.Add(go);
             }
 
@@ -1393,23 +1393,23 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 li.spotAngle = lightData.spotAngle;
                 li.innerSpotAngle = lightData.innerSpotAngle;
                 li.color = lightData.color.ToColor();
-                
+
                 loadedObject.Add(o);
             }
 
             foreach (var pos in data.spawnPos)
             {
                 ExposeToEditor p = AddObjectMenu.CreatePlayerSpawnPointExposeToEditor();
-                
+
                 p.gameObject.AddComponent<MapSaveObject>().Init(playerSpawn);
 
                 Transform transform1;
                 (transform1 = p.transform).SetParent(MEBase.Instance.EditedObject.transform);
                 transform1.position = pos.ToVector3();
-                
+
                 loadedObject.Add(p.gameObject);
             }
-            
+
             foreach (var decalData in data.decalDatas)
             {
                 ExposeToEditor go = AddObjectMenu.CreateDecalExposeToEditor(decalData.external ? externalDecalMaterials[decalData.materialIndex].Item2 : decalMaterials[decalData.materialIndex]);
@@ -1425,33 +1425,34 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
                 decalProjector.size = decalData.size.ToVector3();
 
-                if(decalData.external)
+                if (decalData.external)
                     go.gameObject.AddComponent<MapSaveObject>().Init(ObjectType.Decal, decalData.data.name);
                 else
                     go.gameObject.AddComponent<MapSaveObject>().Init(GetObjectItem(decalData.data.name));
-                
+
                 loadedObject.Add(go.gameObject);
             }
-            
+
             foreach (var decoration in data.decorationDatas)
             {
                 ObjectItem item = GetObjectItem(decoration.data.name);
-                var go = decoration.external ? AddObjectMenu.CreateDecorationExposeToEditor((GameObject)AssetBundleManager.Instance.GetAssetObject(decoration.data.name),MEBase.Instance.EditedObject.transform,decoration.data.position.ToVector3()
-                    ,decoration.data.rotation,decoration.data.scale.ToVector3(), decoration.type, decoration.enableCollision) : AddObjectMenu.CreateDecorationExposeToEditor(item.prefab,MEBase.Instance.EditedObject.transform,decoration.data.position.ToVector3(),
-                    decoration.data.rotation,decoration.data.scale.ToVector3(), decoration.type, decoration.enableCollision);
+                var go = decoration.external ? AddObjectMenu.CreateDecorationExposeToEditor((GameObject)AssetBundleManager.Instance.GetAssetObject(decoration.data.name), MEBase.Instance.EditedObject.transform, decoration.data.position.ToVector3()
+                    , decoration.data.rotation, decoration.data.scale.ToVector3(), decoration.type, decoration.enableCollision) : AddObjectMenu.CreateDecorationExposeToEditor(item.prefab, MEBase.Instance.EditedObject.transform, decoration.data.position.ToVector3(),
+                    decoration.data.rotation, decoration.data.scale.ToVector3(), decoration.type, decoration.enableCollision);
 
                 GameObject o = go.gameObject;
                 if (decoration.external)
                 {
                     o.AddComponent<MapSaveObject>().Init(ObjectType.Decoration, decoration.data.name);
-                }else
+                }
+                else
                 {
                     o.AddComponent<MapSaveObject>().Init(item);
                 }
 
                 loadedObject.Add(o);
             }
-            
+
             foreach (var audioData in data.audioDatas)
             {
                 if (externalAudioClips.Count > audioData.index)
@@ -1474,23 +1475,23 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                     source.dopplerLevel = audioData.dopplerLevel;
 
                     GameObject o;
-                    (o = go.gameObject).AddComponent<MapSaveObject>().Init(ObjectType.AudioSource,audioData.data.name);
-                
+                    (o = go.gameObject).AddComponent<MapSaveObject>().Init(ObjectType.AudioSource, audioData.data.name);
+
                     loadedObject.Add(o);
                 }
             }
             #endregion
-            
+
         }
 
         [SerializeField] public ObjectItem playerSpawn;
         public async void LoadPlayModeMap()
         {
-            if (CurrentMap==null ) return;
+            if (CurrentMap == null) return;
             MapData data = CurrentMap;
 
-            
-            await InitializeLoad(false,false);
+
+            await InitializeLoad(false, false);
             #region Object
 
             foreach (var game in playModeLoadedObject)
@@ -1498,16 +1499,16 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 Destroy(game);
             }
             playModeLoadedObject.Clear();
-            
+
 
             foreach (var objectData in data.meshDatas)
             {
                 GameObject go = GenerateMesh(objectData);
-                go.layer =LayerMask.NameToLayer("Ground");
+                go.layer = LayerMask.NameToLayer("Ground");
                 go.transform.SetParent(MEBase.Instance.PlayModeObject.transform);
 
                 go.AddComponent<PBMesh>();
-                
+
                 playModeLoadedObject.Add(go);
             }
 
@@ -1528,13 +1529,13 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 li.spotAngle = lightData.spotAngle;
                 li.innerSpotAngle = lightData.innerSpotAngle;
                 li.color = lightData.color.ToColor();
-                
+
                 playModeLoadedObject.Add(l);
             }
             foreach (var decalData in data.decalDatas)
             {
                 GameObject go = AddObjectMenu.CreateDecal(decalData.external ? externalDecalMaterials[decalData.materialIndex].Item2 : decalMaterials[decalData.materialIndex]);
-                
+
                 go.transform.SetParent(MEBase.Instance.PlayModeObject.transform);
                 go.transform.position = decalData.data.position.ToVector3();
                 go.transform.rotation = decalData.data.rotation;
@@ -1543,29 +1544,29 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 DecalProjector decalProjector = go.GetComponent<DecalProjector>();
 
                 decalProjector.size = decalData.size.ToVector3();
-                
+
                 playModeLoadedObject.Add(go.gameObject);
             }
-            
+
             foreach (var decoration in data.decorationDatas)
             {
                 GameObject go;
                 if (decoration.external)
                 {
                     go = AddObjectMenu.CreateDecoration(
-                        (GameObject)AssetBundleManager.Instance.GetAssetObject(decoration.data.name),MEBase.Instance.PlayModeObject.transform,decoration.data.position.ToVector3(),decoration.data.rotation
-                        ,decoration.data.scale.ToVector3(), decoration.type, decoration.enableCollision);
+                        (GameObject)AssetBundleManager.Instance.GetAssetObject(decoration.data.name), MEBase.Instance.PlayModeObject.transform, decoration.data.position.ToVector3(), decoration.data.rotation
+                        , decoration.data.scale.ToVector3(), decoration.type, decoration.enableCollision);
                 }
                 else
                 {
                     ObjectItem item = GetObjectItem(decoration.data.name);
-                    go = AddObjectMenu.CreateDecoration(item.prefab,MEBase.Instance.PlayModeObject.transform, decoration.data.position.ToVector3(),decoration.data.rotation, decoration.data.scale.ToVector3(),
-                        decoration.type, decoration.enableCollision); 
+                    go = AddObjectMenu.CreateDecoration(item.prefab, MEBase.Instance.PlayModeObject.transform, decoration.data.position.ToVector3(), decoration.data.rotation, decoration.data.scale.ToVector3(),
+                        decoration.type, decoration.enableCollision);
                 }
 
                 playModeLoadedObject.Add(go);
             }
-            
+
             foreach (var audioData in data.audioDatas)
             {
                 AudioSource source = AddExternalObjectMenu.CreateAudioSource(externalAudioClips[audioData.index].Item2);
@@ -1582,18 +1583,18 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 source.minDistance = audioData.minDistance;
                 source.spatialBlend = audioData.spatialBlend;
                 source.dopplerLevel = audioData.dopplerLevel;
-                
+
                 source.Play();
 
                 playModeLoadedObject.Add(source.gameObject);
             }
             #endregion
-            
+
         }
-        
-        public async Task<bool> LoadWorkshopMap(PublishedFileId_t fileIdT,MapData data)
+
+        public async Task<bool> LoadWorkshopMap(PublishedFileId_t fileIdT, MapData data)
         {
-            if(WorkshopMaps.TryGetValue(fileIdT,out CurrentMapFile))
+            if (WorkshopMaps.TryGetValue(fileIdT, out CurrentMapFile))
                 Debug.Log("Find map " + data.name);
             else
             {
@@ -1603,13 +1604,13 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             CurrentMap = data;
 
-            await InitializeLoad(true,true);
+            await InitializeLoad(true, true);
             #region Object
             foreach (var objectData in CurrentMap.meshDatas)
             {
                 GameObject go = GenerateMesh(objectData);
                 go.isStatic = true;
-                go.layer =LayerMask.NameToLayer("Ground");
+                go.layer = LayerMask.NameToLayer("Ground");
                 go.transform.SetParent(MEMap.Instance.GetGroundRoot());
 
                 go.AddComponent<PBMesh>();
@@ -1637,7 +1638,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
             foreach (var decalData in CurrentMap.decalDatas)
             {
                 GameObject go = AddObjectMenu.CreateDecal(decalData.external ? externalDecalMaterials[decalData.materialIndex].Item2 : decalMaterials[decalData.materialIndex]);
-                
+
                 go.transform.SetParent(MEMap.Instance.GetGroundRoot());
                 go.transform.position = decalData.data.position.ToVector3();
                 go.transform.rotation = decalData.data.rotation;
@@ -1648,20 +1649,20 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 decalProjector.size = decalData.size.ToVector3();
                 go.isStatic = true;
             }
-            
+
             foreach (var decoration in CurrentMap.decorationDatas)
             {
                 if (decoration.external)
                 {
                     AddObjectMenu.CreateDecoration(
-                        (GameObject)AssetBundleManager.Instance.GetAssetObject(decoration.data.name),MEMap.Instance.GetGroundRoot(), decoration.data.position.ToVector3(),decoration.data.rotation,decoration.data.scale.ToVector3(),
+                        (GameObject)AssetBundleManager.Instance.GetAssetObject(decoration.data.name), MEMap.Instance.GetGroundRoot(), decoration.data.position.ToVector3(), decoration.data.rotation, decoration.data.scale.ToVector3(),
                         decoration.type, decoration.enableCollision);
                 }
                 else
                 {
                     ObjectItem item = GetObjectItem(decoration.data.name);
-                    AddObjectMenu.CreateDecoration(item.prefab,MEMap.Instance.GetGroundRoot(),decoration.data.position.ToVector3(),decoration.data.rotation,decoration.data.scale.ToVector3(),
-                        decoration.type, decoration.enableCollision); 
+                    AddObjectMenu.CreateDecoration(item.prefab, MEMap.Instance.GetGroundRoot(), decoration.data.position.ToVector3(), decoration.data.rotation, decoration.data.scale.ToVector3(),
+                        decoration.type, decoration.enableCollision);
                 }
             }
             foreach (var audioData in CurrentMap.audioDatas)
@@ -1702,14 +1703,14 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
         public GameObject GenerateMesh(MapData.MeshObjectData meshObjectData)
         {
             GameObject go = new GameObject(meshObjectData.data.name);
-            go.transform.SetPositionAndRotation(meshObjectData.data.position.ToVector3(),meshObjectData.data.rotation);
+            go.transform.SetPositionAndRotation(meshObjectData.data.position.ToVector3(), meshObjectData.data.rotation);
             go.transform.localScale = meshObjectData.data.scale.ToVector3();
 
             MeshRenderer meshRenderer = go.AddComponent<MeshRenderer>();
 
             Material[] mat = new Material[meshObjectData.materialIndexes.Count];
 
-            for (int i =0;i< meshObjectData.materialIndexes.Count;i++ )
+            for (int i = 0; i < meshObjectData.materialIndexes.Count; i++)
             {
                 var tuple = meshObjectData.materialIndexes[i];
                 if (tuple.isExternal)
@@ -1720,12 +1721,12 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 {
                     mat[i] = materials[tuple.index];
                 }
-               
+
             }
 
             meshRenderer.materials = mat;
             ProBuilderMesh mesh = go.AddComponent<ProBuilderMesh>();
-            
+
             if (meshObjectData.positions != null)
             {
                 Face[] faces = meshObjectData.faces.Select(f => f.ToFace()).ToArray();
@@ -1736,21 +1737,21 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
                 {
                     actualFaces[i].submeshIndex = meshObjectData.faces[i].SubmeshIndex;
                 }
-                
+
 
                 mesh.ToMesh();
                 mesh.Refresh();
-                
+
                 // mesh.
             }
 
             MeshCollider meshCollider = go.AddComponent<MeshCollider>();
             meshCollider.sharedMesh = go.GetComponent<MeshFilter>().sharedMesh;
             meshCollider.sharedMaterial = groundMat;
-            
+
             return go;
         }
-        
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void Init()
         {
@@ -1769,6 +1770,6 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
 
             return -1;
         }
-        
+
     }
 }

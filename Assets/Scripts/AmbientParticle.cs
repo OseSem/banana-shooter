@@ -6,7 +6,7 @@ using UnityEngine.SceneManagement;
 
 public class AmbientParticle : MonoBehaviour
 {
-    [SerializeField] GameObject rainFallParticle,snowParticle;
+    [SerializeField] GameObject rainFallParticle, snowParticle;
 
     private void Start()
     {

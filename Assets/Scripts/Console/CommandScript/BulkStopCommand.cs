@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Console.CommandScript
 {
-    [CreateAssetMenu(fileName = "BulkStop Command",menuName = "Utilities/DeveloperConsole/Commands/BulkStop Command")]
+    [CreateAssetMenu(fileName = "BulkStop Command", menuName = "Utilities/DeveloperConsole/Commands/BulkStop Command")]
     public class BulkStopCommand : ConsoleCommand
     {
         public override bool Process(string[] args)

@@ -15,33 +15,33 @@ namespace Demo.UI
         public static bool UIEnabled = true;
 
         [SerializeField] public GameObject canvas, recordingUi, recordingImage;
-        
+
         [SerializeField] private Slider slider;
 
         [SerializeField] private TextMeshProUGUI lengthText;
 
-        [SerializeField] private Button playOrPauseBtn,skipPreviousBtn,skipNextBtn,skipBtn, changePerspectiveBtn;
+        [SerializeField] private Button playOrPauseBtn, skipPreviousBtn, skipNextBtn, skipBtn, changePerspectiveBtn;
 
         [SerializeField] private RawImage playOrPauseImage;
 
         [SerializeField] private Texture2D playTexture2D, pauseTexture2D;
 
         [SerializeField] public TextMeshProUGUI timerText, tickText, timeScaleText, demoNameText, dateText;
-        
+
         private float _timer = .5f;
         private bool _flag = false;
         private void Awake()
         {
             Instance = this;
-            
+
             slider.onValueChanged.AddListener(SetTick);
-            
+
             playOrPauseBtn.onClick.AddListener(SetPause);
             skipPreviousBtn.onClick.AddListener(SkipPrevious);
             skipNextBtn.onClick.AddListener(SkipNext);
             skipBtn.onClick.AddListener(Skip);
             changePerspectiveBtn.onClick.AddListener(ChangePerspective);
-            
+
             RefreshPauseImage();
         }
 
@@ -67,7 +67,7 @@ namespace Demo.UI
                     recordingImage.SetActive(_flag);
                 }
             }
-            
+
             if (DemoManager.Replaying)
             {
                 if (UIEnabled)
@@ -102,7 +102,7 @@ namespace Demo.UI
             slider.SetValueWithoutNotify(0);
             slider.maxValue = demoData.endTick;
             slider.minValue = 0;
-            
+
             timerText.SetText("00:00");
             tickText.SetText($"(0/{demoData.endTick})");
             timeScaleText.SetText(Time.timeScale.ToString("F1"));
@@ -126,11 +126,11 @@ namespace Demo.UI
 
             string m = min < 10 ? $"0{min}" : min.ToString("F0");
             string s = seconds < 10 ? $"0{seconds}" : seconds.ToString("F0");
-            
+
             lengthText.SetText($"{m}:{s}");
-            
+
             timerText.SetText($"{m}:{s}");
-            
+
             tickText.SetText($"({tick}/{slider.maxValue.ToString("F0")})");
         }
 
@@ -141,9 +141,9 @@ namespace Demo.UI
             int tick = (int)fTick;
 
             DemoManager.ReplayPaused = true;
-            
+
             DemoManager.Instance.SetReplayTick(tick);
-            
+
             RefreshPauseImage();
         }
 

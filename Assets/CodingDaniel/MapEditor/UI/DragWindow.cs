@@ -6,10 +6,10 @@ using UnityEngine.UI;
 
 namespace CodingDaniel.MapEditor.UI
 {
-    public class DragWindow : MonoBehaviour,IDragHandler, IPointerEnterHandler ,IPointerExitHandler,IPointerDownHandler
+    public class DragWindow : MonoBehaviour, IDragHandler, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
     {
         public static Action<DragWindow> WindowFocused;
-        public UnityEvent onPointerClick= new UnityEvent();
+        public UnityEvent onPointerClick = new UnityEvent();
         private RectTransform _canvasRect;
         [SerializeField]
         private RectTransform _transform;
@@ -25,11 +25,11 @@ namespace CodingDaniel.MapEditor.UI
         {
             return NormalSorting;
         }
-        
+
         private void Awake()
         {
             _canvasRect = canvas.GetComponent<RectTransform>();
-            
+
             _canvas = GetComponent<Canvas>();
 
             if (_canvas == null)
@@ -42,12 +42,12 @@ namespace CodingDaniel.MapEditor.UI
                 gameObject.AddComponent<GraphicRaycaster>();
             }
         }
-        
+
         private void OnEnable()
         {
             WindowFocused?.Invoke(this);
             WindowFocused += OnWindowFocused;
-            _canvas.sortingOrder = GetSorting()+1;
+            _canvas.sortingOrder = GetSorting() + 1;
         }
 
         private void OnDisable()
@@ -56,7 +56,7 @@ namespace CodingDaniel.MapEditor.UI
             WindowFocused -= OnWindowFocused;
             _canvas.sortingOrder = GetSorting();
         }
-        
+
         private void OnWindowFocused(DragWindow obj)
         {
             if (obj != this)
@@ -79,7 +79,7 @@ namespace CodingDaniel.MapEditor.UI
                 return anchoredPosition + new Vector2(-delta.x / 2f, delta.y / 2f);
             }
         }
-        
+
         public Vector2 BorderLeftDown
         {
             get
@@ -90,7 +90,7 @@ namespace CodingDaniel.MapEditor.UI
                 return anchoredPosition + new Vector2(-delta.x / 2f, -delta.y / 2f);
             }
         }
-        
+
         public Vector2 BorderRightUp
         {
             get
@@ -101,7 +101,7 @@ namespace CodingDaniel.MapEditor.UI
                 return anchoredPosition + new Vector2(delta.x / 2f, delta.y / 2f);
             }
         }
-        
+
         public Vector2 BorderRightDown
         {
             get
@@ -156,8 +156,8 @@ namespace CodingDaniel.MapEditor.UI
                 }
             }
 
-            float halfWidth = _transform.sizeDelta.x/2f;
-            float halfHeight = _transform.sizeDelta.y/2f;
+            float halfWidth = _transform.sizeDelta.x / 2f;
+            float halfHeight = _transform.sizeDelta.y / 2f;
             isChangingSize = false;
             anchoredPosition += eventData.delta / canvas.scaleFactor;
 
@@ -168,19 +168,19 @@ namespace CodingDaniel.MapEditor.UI
 
             if (anchoredPosition.x + halfWidth > max.x)
             {
-                anchoredPosition.x = max.x-halfWidth;
+                anchoredPosition.x = max.x - halfWidth;
             }
-            if (anchoredPosition.x -halfWidth < min.x)
+            if (anchoredPosition.x - halfWidth < min.x)
             {
-                anchoredPosition.x = min.x+halfWidth;
+                anchoredPosition.x = min.x + halfWidth;
             }
-            if (anchoredPosition.y+halfHeight > max.y)
+            if (anchoredPosition.y + halfHeight > max.y)
             {
-                anchoredPosition.y = max.y-halfHeight;
+                anchoredPosition.y = max.y - halfHeight;
             }
-            if (anchoredPosition.y-halfHeight < min.y)
+            if (anchoredPosition.y - halfHeight < min.y)
             {
-                anchoredPosition.y = min.y+halfHeight;
+                anchoredPosition.y = min.y + halfHeight;
             }
 
             _transform.anchoredPosition = anchoredPosition;
@@ -210,16 +210,16 @@ namespace CodingDaniel.MapEditor.UI
                 }
 
                 Vector2 size = endPos - startPos;
-                
+
                 _transform.sizeDelta = new Vector2(Mathf.Abs(size.x), Mathf.Abs(size.y));
-                _transform.anchoredPosition=(endPos + startPos) / 2f;
+                _transform.anchoredPosition = (endPos + startPos) / 2f;
             }
         }
 
         public void OnPointerEnter(PointerEventData eventData)
         {
             IsDragging = true;
-            
+
         }
 
         public void OnPointerExit(PointerEventData eventData)
@@ -230,7 +230,7 @@ namespace CodingDaniel.MapEditor.UI
         public void OnPointerDown(PointerEventData eventData)
         {
             WindowFocused?.Invoke(this);
-            _canvas.sortingOrder = GetSorting()+1;
+            _canvas.sortingOrder = GetSorting() + 1;
             onPointerClick?.Invoke();
         }
     }

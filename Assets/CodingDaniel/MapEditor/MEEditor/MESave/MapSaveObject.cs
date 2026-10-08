@@ -9,14 +9,14 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
     public class MapSaveObject : MonoBehaviour
     {
         public ObjectItem objectItem;
-        public ObjectType type=ObjectType.None;
+        public ObjectType type = ObjectType.None;
         public string n;
         public void Init(ObjectItem item)
         {
             objectItem = item;
             type = item.type;
         }
-        public void Init(ObjectType t,string na)
+        public void Init(ObjectType t, string na)
         {
             type = t;
             n = na;

@@ -12,9 +12,9 @@ namespace CodingDaniel.MapEditor.UI.Component
             inputField.SetTextWithoutNotify(o.ToString());
         }
 
-        public override void Init(string n, object o,bool c)
+        public override void Init(string n, object o, bool c)
         {
-            base.Init(n, o,c);
+            base.Init(n, o, c);
             inputField.onEndEdit.AddListener(SetValue);
 
             inputField.interactable = c;

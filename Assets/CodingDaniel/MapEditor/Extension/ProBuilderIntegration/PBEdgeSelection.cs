@@ -14,7 +14,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
     {
         public Vector3 a;
         public Vector3 b;
-        
+
         public Vector3Tuple(Vector3 a, Vector3 b)
         {
             this.a = a;
@@ -77,7 +77,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             get { return LastMesh != null ? LastMesh.transform.TransformPoint(_lastPosition) : Vector3.zero; }
         }
 
-     
+
         [FormerlySerializedAs("m_lastNormal")]
         public Vector3 _lastNormal = Vector3.forward;
         public Vector3 LastNormal
@@ -149,7 +149,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 Destroy(_material);
             }
 
-            for(int i = 0; i < _pbMeshes.Count; ++i)
+            for (int i = 0; i < _pbMeshes.Count; ++i)
             {
                 PBMesh pbMesh = _pbMeshes[i];
                 if (pbMesh != null)
@@ -176,7 +176,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             }
             return false;
         }
-        
+
 
         public int GetEdgesCount(ProBuilderMesh mesh)
         {
@@ -186,7 +186,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public IList<Edge> GetEdges(ProBuilderMesh mesh)
         {
             List<Edge> edges;
-            if(_meshToEdgesList.TryGetValue(mesh, out edges))
+            if (_meshToEdgesList.TryGetValue(mesh, out edges))
             {
                 return edges;
             }
@@ -196,13 +196,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public IList<Edge> GetCoincidentEdges(IEnumerable<Edge> edges)
         {
             HashSet<Edge> result = new HashSet<Edge>();
-            if(edges == null)
+            if (edges == null)
             {
                 return null;
             }
-            foreach(Edge edge in edges)
+            foreach (Edge edge in edges)
             {
-                if(_coincidentEdges.ContainsKey(edge))
+                if (_coincidentEdges.ContainsKey(edge))
                 {
                     HashSet<Edge> coincidentEdges = _coincidentEdges[edge];
                     foreach (Edge coincident in coincidentEdges)
@@ -216,7 +216,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 else
                 {
                     result.Add(edge);
-                }   
+                }
             }
             return result.ToArray();
         }
@@ -227,13 +227,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             {
                 ProBuilderMesh mesh = _meshes[i];
                 MeshFilter filter = _meshToSelection[mesh];
-                if(filter != null)
+                if (filter != null)
                 {
                     Destroy(filter.gameObject);
                 }
-                
+
                 PBMesh pbMesh = _pbMeshes[i];
-                if(pbMesh != null)
+                if (pbMesh != null)
                 {
                     pbMesh.RaiseUnselected();
                 }
@@ -348,7 +348,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     Destroy(edgesSelection.gameObject);
 
                     int meshIndex = _meshes.IndexOf(mesh);
-                    if(meshIndex != -1)
+                    if (meshIndex != -1)
                     {
                         _meshes.RemoveAt(meshIndex);
 
@@ -382,7 +382,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             }
         }
 
-        private void UpdateCenterOfMassOnRemove(ProBuilderMesh mesh,  IList<Edge> selectedEdges)
+        private void UpdateCenterOfMassOnRemove(ProBuilderMesh mesh, IList<Edge> selectedEdges)
         {
             for (int i = selectedEdges.Count - 1; i >= 0; --i)
             {
@@ -420,13 +420,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             Color[] colors = selection.sharedMesh.colors;
             foreach (Edge edge in edges)
             {
-                if(_coincidentEdges.ContainsKey(edge))
+                if (_coincidentEdges.ContainsKey(edge))
                 {
                     HashSet<Edge> coincidentEdges = _coincidentEdges[edge];
                     foreach (Edge coincidentEdge in coincidentEdges)
                     {
                         List<int> indices;
-                        if(_edgeToSelection.TryGetValue(coincidentEdge, out indices))
+                        if (_edgeToSelection.TryGetValue(coincidentEdge, out indices))
                         {
                             for (int i = 0; i < indices.Count; ++i)
                             {
@@ -437,7 +437,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 }
                 else
                 {
-                    if(_edgeToSelection.ContainsKey(edge))
+                    if (_edgeToSelection.ContainsKey(edge))
                     {
                         List<int> indices = _edgeToSelection[edge];
                         for (int i = 0; i < indices.Count; ++i)
@@ -533,7 +533,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
             int[] tris;
             Vector3[] vertices;
-            if(positionsOnly)
+            if (positionsOnly)
             {
                 vertices = target.vertices;
                 tris = null;
@@ -557,7 +557,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     vertices[positionIndex + 0] = positions[edge.a];
                     vertices[positionIndex + 1] = positions[edge.b];
 
-                    if(!positionsOnly)
+                    if (!positionsOnly)
                     {
                         tris[positionIndex + 0] = positionIndex + 0;
                         tris[positionIndex + 1] = positionIndex + 1;
@@ -571,12 +571,12 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                         list.Add(positionIndex + 0);
                         list.Add(positionIndex + 1);
                     }
-                 
+
                     edgeIndex++;
                 }
             }
 
-            if(!positionsOnly)
+            if (!positionsOnly)
             {
                 target.Clear();
                 target.name = "EdgeMesh" + target.GetInstanceID();
@@ -593,7 +593,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             else
             {
                 target.vertices = vertices.ToArray();
-            }  
+            }
         }
 
         private static void CopyTransform(Transform src, Transform dst)

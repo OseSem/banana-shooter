@@ -13,10 +13,10 @@ public class Accelerator : MonoBehaviour
 
     private float desiredOffset = -1;
 
-    public float speed = 2.5f,force=60f;
+    public float speed = 2.5f, force = 60f;
     private void Update()
     {
-        mat.mainTextureOffset = new Vector2(0, mat.mainTextureOffset.y - Time.deltaTime*speed);
+        mat.mainTextureOffset = new Vector2(0, mat.mainTextureOffset.y - Time.deltaTime * speed);
         if (Mathf.Abs(mat.mainTextureOffset.y - (int)mat.mainTextureOffset.y) < 0.01f)
         {
             mat.mainTextureOffset = Vector2.zero;
@@ -29,7 +29,7 @@ public class Accelerator : MonoBehaviour
 
         if (rb)
         {
-            rb.AddForce(transform.forward*force,ForceMode.Acceleration);
+            rb.AddForce(transform.forward * force, ForceMode.Acceleration);
         }
 
         if (other.gameObject.layer == LayerMask.NameToLayer("Player"))

@@ -7,12 +7,12 @@ namespace UIAnimation
     {
         public enum UIAnimationType
         {
-            Alpha=0,
-            Pos=1,
-            Rot=2,
-            AlphaWithPos =3,
+            Alpha = 0,
+            Pos = 1,
+            Rot = 2,
+            AlphaWithPos = 3,
             AlphaWithRot = 4,
-            All=5,
+            All = 5,
             AlphaSize,
             None,
         }
@@ -24,14 +24,14 @@ namespace UIAnimation
 
         [SerializeField] private Transform targetTransform;
 
-        private Vector3 desiredPos=new Vector3(-80, 0, 0);
+        private Vector3 desiredPos = new Vector3(-80, 0, 0);
         private Vector3 desiredRot = new Vector3(0, -50, 0);
 
         private Vector3 defaultPos, defaultRot;
 
-        private Vector3 desiredSize,defaultSize;
+        private Vector3 desiredSize, defaultSize;
 
-        [SerializeField] private float speed = 10f,alphaSpeed=10f;
+        [SerializeField] private float speed = 10f, alphaSpeed = 10f;
 
         private void Awake()
         {
@@ -65,19 +65,19 @@ namespace UIAnimation
                     DisableSize();
                     break;
             }
-            
+
         }
 
         void CreateCanvasGroup()
         {
             _canvasGroup = gameObject.GetComponent<CanvasGroup>();
-            if(_canvasGroup==null)
+            if (_canvasGroup == null)
                 _canvasGroup = gameObject.AddComponent<CanvasGroup>();
 
             _canvasGroup.alpha = 0f;
         }
 
-        
+
         private void OnEnable()
         {
             switch (type)
@@ -120,12 +120,12 @@ namespace UIAnimation
         void EnableAlpha()
         {
             desiredAlpha = 1f;
-            
+
         }
 
         void EnablePos()
         {
-            desiredPos=defaultPos;
+            desiredPos = defaultPos;
         }
 
         void EnableRot()
@@ -180,12 +180,12 @@ namespace UIAnimation
         void DisableRot()
         {
             desiredRot = new Vector3(0, -50, 0) + defaultRot;
-            targetTransform.localRotation=Quaternion.Euler(desiredRot);
+            targetTransform.localRotation = Quaternion.Euler(desiredRot);
         }
-        
+
         void DisableSize()
         {
-            desiredSize = defaultSize*2f;
+            desiredSize = defaultSize * 2f;
             targetTransform.localScale = desiredSize;
         }
         private void Update()
@@ -201,7 +201,7 @@ namespace UIAnimation
                 case UIAnimationType.Rot:
                     UpdateRot();
                     break;
-                
+
                 case UIAnimationType.AlphaWithPos:
                     UpdatePos();
                     UpdateAlpha();
@@ -234,7 +234,7 @@ namespace UIAnimation
 
         void UpdatePos()
         {
-            targetTransform.localPosition = Vector3.Lerp(targetTransform.localPosition,desiredPos,Time.deltaTime*speed);
+            targetTransform.localPosition = Vector3.Lerp(targetTransform.localPosition, desiredPos, Time.deltaTime * speed);
         }
 
         void UpdateRot()

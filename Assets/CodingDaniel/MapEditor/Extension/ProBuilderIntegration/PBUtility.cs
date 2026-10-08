@@ -46,7 +46,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             var ray = camera.ScreenPointToRay(mousePosition);
             RaycastHit result = Physics.RaycastAll(ray).OrderBy(hit => hit.distance).Where(hit => hit.collider.GetComponent<ProBuilderMesh>() != null).FirstOrDefault();
-            if(result.collider == null)
+            if (result.collider == null)
             {
                 return null;
             }
@@ -63,7 +63,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             {
                 return res;
             }
-                
+
             res.face = SelectionPicker.PickFace(camera, mousePosition, res.mesh);
             return res;
         }
@@ -99,8 +99,8 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
             float bestDistance = maxDistance;
             float unselectedBestDistance = maxDistance;
-            
-            if(hoveredMesh != null)
+
+            if (hoveredMesh != null)
             {
                 EdgeAndDistance tup = GetNearestEdgeOnMesh(camera, hoveredMesh, mousePosition);
 
@@ -127,13 +127,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             HashSet<ProBuilderMesh> hs = new HashSet<ProBuilderMesh>();
             foreach (ProBuilderMesh mesh in meshes)
             {
-                if(!hs.Contains(mesh))
+                if (!hs.Contains(mesh))
                 {
                     hs.Add(mesh);
                 }
             }
 
-            if(pickedMesh != null && !hs.Contains(pickedMesh))
+            if (pickedMesh != null && !hs.Contains(pickedMesh))
             {
                 hs.Add(pickedMesh);
             }
@@ -160,21 +160,21 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                                 p0,
                                 p1, out projectedPoint);
 
-                        if(depthTest)
+                        if (depthTest)
                         {
                             Ray ray = camera.ScreenPointToRay(projectedPoint);
                             Vector3 cpl0;
                             Vector3 cpl1;
 
-                            if(MathHelper.ClosestPointsOnTwoLines(out cpl0, out cpl1, ray.origin, ray.direction, p0, p1 - p0))
+                            if (MathHelper.ClosestPointsOnTwoLines(out cpl0, out cpl1, ray.origin, ray.direction, p0, p1 - p0))
                             {
-                                if(PointIsOccluded(camera, mesh, cpl1))
+                                if (PointIsOccluded(camera, mesh, cpl1))
                                 {
                                     continue;
                                 }
                             }
                         }
-                       
+
                         d *= distMultiplier;
 
                         if (d == bestDistance)
@@ -395,15 +395,15 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public static float PickVertex(Camera camera, Vector3 mousePosition, float maxDistance, GameObject pickedObject, IEnumerable<ProBuilderMesh> meshes, bool depthTest, ref SceneSelection selection)
         {
-          //  selection.Clear();
+            //  selection.Clear();
             _nearestVertices.Clear();
 
             maxDistance = maxDistance * maxDistance;
 
-            if(pickedObject != null)
+            if (pickedObject != null)
             {
                 ProBuilderMesh mesh = pickedObject.GetComponent<ProBuilderMesh>();
-                if(mesh != null)
+                if (mesh != null)
                 {
                     GetNearestVertices(camera, mesh, mousePosition, _nearestVertices, maxDistance, 1.0f);
                 }
@@ -415,7 +415,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 {
                     continue;
                 }
-                    
+
                 GetNearestVertices(camera, mesh, mousePosition, _nearestVertices, maxDistance, 1.0f);
             }
 
@@ -440,7 +440,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     startIndex %= _nearestVertices.Count;
                 }
             }
-            
+
             for (int i = startIndex; i < _nearestVertices.Count; i++)
             {
                 if (!depthTest || !PointIsOccluded(camera, _nearestVertices[i].mesh, _nearestVertices[i].worldPosition))
@@ -499,7 +499,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             maxDistance = maxDistance * maxDistance;
 
             GetNearestVertices(camera, transform, positions, mousePosition, _nearestVertices, maxDistance, 1.0f);
-           
+
             _nearestVertices.Sort((x, y) => x.screenDistance.CompareTo(y.screenDistance));
 
             for (int i = 0; i < _nearestVertices.Count;)
@@ -577,7 +577,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 {
                     continue;
                 }
-                    
+
                 ReadOnlyCollection<int> indexes = mesh.faces[i].indexes;
 
                 for (int j = 0, ic = indexes.Count; j < ic; j += 3)
@@ -620,7 +620,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                         {
                             continue;
                         }
-                            
+
                         outNrm = nrm;
                         outHitFace = i;
                         outHitPoint = dist;
@@ -628,7 +628,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 }
             }
 
-            hit = new FaceRaycastHit( outHitPoint,
+            hit = new FaceRaycastHit(outHitPoint,
                 worldRay.GetPoint(outHitPoint),
                 outNrm,
                 outHitFace);
@@ -688,14 +688,14 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 uv2[t + 2] = up - right;
                 uv2[t + 3] = up + right;
 
-                if(!update)
+                if (!update)
                 {
                     colors[t + 0] = color;
                     colors[t + 1] = color;
                     colors[t + 2] = color;
                     colors[t + 3] = color;
                 }
-              
+
 
                 tris[n + 0] = t + 0;
                 tris[n + 1] = t + 1;
@@ -708,7 +708,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 n += 6;
             }
 
-            if(!update)
+            if (!update)
             {
                 target.Clear();
             }

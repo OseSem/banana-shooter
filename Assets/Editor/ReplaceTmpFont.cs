@@ -2,7 +2,7 @@ using TMPro;
 using UnityEditor;
 using UnityEngine;
 
-public static class ReplaceTmpFont 
+public static class ReplaceTmpFont
 {
     [MenuItem("Tools/Replace TMP Font To Default")]
     public static void ReplaceTmpFontToDefault()

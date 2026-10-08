@@ -15,7 +15,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         [FormerlySerializedAs("m_edgeSelection")]
         public PBEdgeSelection _edgeSelection;
         private SceneSelection _selection = new SceneSelection();
-    
+
         public override bool HasSelection
         {
             get { return _edgeSelection.EdgesCount > 0; }
@@ -100,7 +100,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 foreach (KeyValuePair<GameObject, IList<Edge>> kvp in selection.SelectedEdges)
                 {
                     PBMesh pbMesh = kvp.Key.GetComponent<PBMesh>();
-                    if(pbMesh.IsMarkedAsDestroyed)
+                    if (pbMesh.IsMarkedAsDestroyed)
                     {
                         continue;
                     }
@@ -131,7 +131,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
             foreach (ProBuilderMesh mesh in _edgeSelection.Meshes)
             {
-                if(mesh == null || mesh.gameObject == null)
+                if (mesh == null || mesh.gameObject == null)
                 {
                     continue;
                 }
@@ -173,11 +173,11 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             return selection;
         }
 
-        
+
         IEnumerable<Edge> GetEdgeRing(ProBuilderMesh pb, IEnumerable<Edge> edges)
         {
             List<WingedEdge> wings = WingedEdge.GetWingedEdges(pb);
-            
+
             //Get the edge look up
             Dictionary<int, int> sharedVertexLookup = new Dictionary<int, int>();
             SharedVertex.GetSharedVertexLookup(pb.sharedVertices, sharedVertexLookup);
@@ -351,7 +351,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             GameObject pickedObject = PBUtility.PickObject(camera, pointer);
             float result = PBUtility.PickEdge(camera, pointer, 20, pickedObject, _edgeSelection.Meshes, depthTest, ref _selection);
 
-            
+
             if (!float.IsPositiveInfinity(result))
             {
 #if PROBUILDER_4_4_0_OR_NEWER
@@ -397,7 +397,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                     _edgeSelection.FindCoincidentEdges(_selection.mesh);
 
-                    
+
                     IList<Edge> edges = _edgeSelection.GetCoincidentEdges(new[] { selectedEdge });
 
                     _edgeSelection.Add(_selection.mesh, edges);
@@ -589,7 +589,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         private Vector3[][] _initialPositions;
         private Vector3 _initialPostion;
         private Quaternion _initialRotation;
-    
+
         public override void BeginRotate(Quaternion initialRotation)
         {
             _initialPostion = _edgeSelection.LastPosition;
@@ -747,7 +747,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 //     edges = edges.ToArray();
                 //     _edgeSelection.Remove(mesh, edges);
                 // }
-            
+
                 MeshState meshState = state.State[mesh.gameObject];
                 mesh.Rebuild(meshState.Positions, meshState.Faces.Select(f => f.ToFace()).ToArray(), meshState.Textures);
 
@@ -771,7 +771,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     var face = mesh.Bridge(e[0], e[1], false);
 
                     appendedFaces.Add(face);
-                    
+
                     mesh.SetSelectedFaces(appendedFaces);
 
                     List<WingedEdge> wings = WingedEdge.GetWingedEdges(mesh);
@@ -814,8 +814,8 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     return;
                 }
             }
-            
-            
+
+
         }
 
         public override void InsertEdgeLoop()
@@ -828,11 +828,11 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                 if (edges != null)
                 {
-                    
+
                     // mesh.SetSelectedEdges(edges);
                     mesh.ToMesh();
                     mesh.Refresh();
-                    
+
                     MeshSelection selection = ReadSelection();
                     _edgeSelection.Clear();
                     _edgeSelection.FindCoincidentEdges(mesh);
@@ -840,10 +840,10 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                     _edgeSelection.Add(mesh, es);
                     selection.SelectedEdges.Add(mesh.gameObject, es);
-                    
+
                     ProBuilderTool.Instance.SetSelection(this);
                 }
-            } 
+            }
         }
         public override void Subdivide()
         {
@@ -864,28 +864,28 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             foreach (ProBuilderMesh mesh in meshes)
             {
                 IList<Edge> edges = _edgeSelection.GetEdges(mesh).ToList();
-                for(int i = edges.Count - 1; i >= 0; i--)
+                for (int i = edges.Count - 1; i >= 0; i--)
                 {
                     Edge currentEdge = edges[i];
 
                     bool hasCoEdges = false;
-                    IList<Edge> coEdges =  _edgeSelection.GetCoincidentEdges(new[] { currentEdge });
-                    for(int j = 0; j < coEdges.Count; ++j)
+                    IList<Edge> coEdges = _edgeSelection.GetCoincidentEdges(new[] { currentEdge });
+                    for (int j = 0; j < coEdges.Count; ++j)
                     {
                         Edge coEdge = coEdges[j];
-                        if(coEdge == currentEdge)
+                        if (coEdge == currentEdge)
                         {
                             continue;
                         }
 
-                        if(edges.Contains(coEdge))
+                        if (edges.Contains(coEdge))
                         {
                             hasCoEdges = true;
                             break;
                         }
                     }
 
-                    if(hasCoEdges)
+                    if (hasCoEdges)
                     {
                         edges.RemoveAt(i);
                     }
@@ -932,7 +932,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 mesh.Refresh();
             }
         }
-        
-        
+
+
     }
 }

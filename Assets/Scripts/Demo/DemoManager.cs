@@ -30,7 +30,7 @@ namespace Demo
 {
     public class DemoManager : MonoBehaviour
     {
-        public static DemoManager Instance { get;private set; }
+        public static DemoManager Instance { get; private set; }
 
         public static FileInfo[] DemoFiles = Array.Empty<FileInfo>();
         private static DemoData RecordDemo { get; set; }
@@ -67,7 +67,7 @@ namespace Demo
             {
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore
             };
-            
+
             _jsonSerializerSettings.Converters.Add(new DemoEntityDataConverter());
 
             if (!Directory.Exists(SavePath))
@@ -95,7 +95,7 @@ namespace Demo
         private void FixedUpdate()
         {
             DoRecording();
-            
+
             DoReplaying();
         }
 
@@ -104,29 +104,29 @@ namespace Demo
             if (Recording)
             {
                 AddMovementData();
-                
+
                 RecordTick++;
             }
         }
 
-        void DoReplaying(bool forcePlay=false)
+        void DoReplaying(bool forcePlay = false)
         {
             if (Replaying && ReplayDemo.endTick > ReplayTick && (forcePlay || !ReplayPaused))
             {
                 CheckEntityData();
-                
+
                 DemoCanvas.Instance.SetSliderValue(ReplayTick);
-                
+
                 ReplayTick++;
             }
-            else if(Replaying)
+            else if (Replaying)
             {
                 foreach (var entity in Entities.Values)
                 {
                     if (entity.IsThrowable())
                     {
                         DemoThrowable demoThrowable = (DemoThrowable)entity;
-                        
+
                         demoThrowable.TryToSetLastVelocity();
                     }
                 }
@@ -144,7 +144,7 @@ namespace Demo
                     if (entity.IsPlayer())
                     {
                         var player = (DemoPlayer)entity;
-                    
+
                         DemoPlayerData playerData = (DemoPlayerData)entityData;
                         playerData.Positions[RecordTick] = player.GetPosition().ToMyVector3();
                         playerData.Rotations[RecordTick] = player.GetEulerAngleY();
@@ -171,46 +171,46 @@ namespace Demo
             if (!Recording) return;
 
             int id = GetNewId();
-            
+
             Vector3 pos = player.demoPlayer.GetPosition();
 
             int state = player.Dead ? 0 : player.playerState.IsInfected ? 2 : 1;
-            
-            DemoPlayerData playerData = new DemoPlayerData(id, RecordTick,player.playerState.Username,player.playerState.SteamId,pos, player.playerState.WeaponManager.CurrentWeaponIndex, player.playerState.WeaponManager.WeaponIndexes,  player.playerState.CosmeticIndex, player.playerState.IsInfected)
+
+            DemoPlayerData playerData = new DemoPlayerData(id, RecordTick, player.playerState.Username, player.playerState.SteamId, pos, player.playerState.WeaponManager.CurrentWeaponIndex, player.playerState.WeaponManager.WeaponIndexes, player.playerState.CosmeticIndex, player.playerState.IsInfected)
             {
                 Positions =
                 {
                     [RecordTick] = pos.ToMyVector3()
                 },
-                    
-                Velocities = 
+
+                Velocities =
                 {
                     [RecordTick] = player.playerState.GetVelocity().ToMyVector3()
                 },
-                    
+
                 Rotations =
                 {
                     [RecordTick] = player.demoPlayer.GetEulerAngleY()
                 },
-                    
+
                 HeadRotations =
                 {
                     [RecordTick] = player.demoPlayer.GetHeadRotation()
                 },
-                
+
                 State =
                 {
                     [RecordTick] = new DemoPlayerData.StateData(state,-1,0)
                 },
-                
+
                 Aiming =
                 {
                     [RecordTick] = player.playerState.Aiming
                 }
             };
 
-            RecordDemo.EntityList.Add(id,playerData);
-                
+            RecordDemo.EntityList.Add(id, playerData);
+
             player.demoPlayer.Spawn(id, player.playerState.Username, player.playerState.SteamId, player.playerState.WeaponManager.CurrentWeaponIndex, player.playerState.WeaponManager.WeaponIndexes, player.playerState.CosmeticIndex, player.playerState.IsInfected);
 
             Entities[id] = player.demoPlayer;
@@ -218,7 +218,7 @@ namespace Demo
         public void AddPlayerCrouch(int id, bool crouch)
         {
             if (!Recording) return;
-            
+
             if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
             {
                 DemoPlayerData playerData = (DemoPlayerData)entityData;
@@ -228,7 +228,7 @@ namespace Demo
         public void AddPlayerAiming(int id, bool aiming)
         {
             if (!Recording) return;
-            
+
             if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
             {
                 DemoPlayerData playerData = (DemoPlayerData)entityData;
@@ -238,7 +238,7 @@ namespace Demo
         public void AddPlayerWeaponUpdated(int id, int currentWeaponIndex, short[] weapons, ushort[] weaponSkinIndexes)
         {
             if (!Recording) return;
-            
+
             if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
             {
                 DemoPlayerData playerData = (DemoPlayerData)entityData;
@@ -248,7 +248,7 @@ namespace Demo
         public void AddPlayerWeaponSwitched(int id, int currentWeaponIndex)
         {
             if (!Recording) return;
-            
+
             if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
             {
                 DemoPlayerData playerData = (DemoPlayerData)entityData;
@@ -258,28 +258,28 @@ namespace Demo
         public void AddPlayerWeaponShoot(int id, int currentWeaponIndex, Vector3 dir, int bulletCount)
         {
             if (!Recording) return;
-            
+
             if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
             {
                 DemoPlayerData playerData = (DemoPlayerData)entityData;
                 playerData.WeaponShooting[RecordTick] = new DemoPlayerData.WeaponShootData(currentWeaponIndex, dir, bulletCount);
             }
         }
-        public void AddPlayerWeaponReload(int id, int currentWeaponIndex,int bulletCount)
+        public void AddPlayerWeaponReload(int id, int currentWeaponIndex, int bulletCount)
         {
             if (!Recording) return;
-            
+
             if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
             {
                 DemoPlayerData playerData = (DemoPlayerData)entityData;
                 playerData.WeaponReload[RecordTick] = new DemoPlayerData.WeaponReloadData(currentWeaponIndex, bulletCount);
             }
         }
-        
+
         public void AddPlayerGrapple(int id, bool enable, Vector3 grapplePoint)
         {
             if (!Recording) return;
-            
+
             if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
             {
                 DemoPlayerData playerData = (DemoPlayerData)entityData;
@@ -287,37 +287,37 @@ namespace Demo
             }
         }
 
-        public void AddPlayerTakeDamage(int id,int attackerId, int damage, int health, bool headShot, Vector3 pos, Vector3 normal)
+        public void AddPlayerTakeDamage(int id, int attackerId, int damage, int health, bool headShot, Vector3 pos, Vector3 normal)
         {
             if (!Recording) return;
-            
+
             if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
             {
                 DemoPlayerData playerData = (DemoPlayerData)entityData;
-                playerData.DamageTaken[RecordTick] = new DemoPlayerData.DamageTakenData(attackerId,damage,health, headShot, pos, normal);
+                playerData.DamageTaken[RecordTick] = new DemoPlayerData.DamageTakenData(attackerId, damage, health, headShot, pos, normal);
             }
         }
-        
-        public void AddPlayerTakeHealth(int id,int health,int maxHealth)
+
+        public void AddPlayerTakeHealth(int id, int health, int maxHealth)
         {
             if (!Recording) return;
-            
+
             if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
             {
                 DemoPlayerData playerData = (DemoPlayerData)entityData;
                 playerData.HealthTaken[RecordTick] = new DemoPlayerData.HealthTakenData(health, maxHealth);
             }
         }
-        
+
         public void AddPlayerState(int id, bool dead, bool infected, int attackerId, ushort weaponIndex)
         {
             if (!Recording) return;
-            
+
             if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
             {
                 DemoPlayerData playerData = (DemoPlayerData)entityData;
                 int state = dead ? 0 : infected ? 2 : 1;
-                playerData.State[RecordTick] = new DemoPlayerData.StateData(state,attackerId,weaponIndex);
+                playerData.State[RecordTick] = new DemoPlayerData.StateData(state, attackerId, weaponIndex);
             }
         }
 
@@ -330,12 +330,12 @@ namespace Demo
             if (!Recording) return;
 
             int id = GetNewId();
-            
+
             Vector3 pos = throwable.DemoThrowable.GetPosition();
 
             if (ClientPlayer.list.TryGetValue(throwable.PlayerId, out var clientPlayer))
             {
-                DemoThrowableData data = new DemoThrowableData(id, RecordTick, pos,clientPlayer.demoPlayer.Id ,(int)throwable.type,
+                DemoThrowableData data = new DemoThrowableData(id, RecordTick, pos, clientPlayer.demoPlayer.Id, (int)throwable.type,
                     throwable.ThrowDirection)
                 {
                     Positions =
@@ -361,7 +361,7 @@ namespace Demo
             if (!Recording) return;
 
             int id = GetNewId();
-            
+
             Vector3 pos = enemy.demoEnemy.GetPosition();
 
             DemoEnemyData data;
@@ -369,7 +369,7 @@ namespace Demo
             switch (enemy.enemyState.enemyType)
             {
                 case ServerEnemy.EnemyType.Jack:
-                    data = new DemoJackData(id, RecordTick, pos,(int)enemy.enemyState.enemyType ,enemy.index)
+                    data = new DemoJackData(id, RecordTick, pos, (int)enemy.enemyState.enemyType, enemy.index)
                     {
                         States =
                         {
@@ -378,7 +378,7 @@ namespace Demo
                     };
                     break;
                 case ServerEnemy.EnemyType.Zombie:
-                    data = new DemoZombieData(id, RecordTick, pos,(int)enemy.enemyState.enemyType ,enemy.index)
+                    data = new DemoZombieData(id, RecordTick, pos, (int)enemy.enemyState.enemyType, enemy.index)
                     {
                         States =
                         {
@@ -387,7 +387,7 @@ namespace Demo
                     };
                     break;
                 case ServerEnemy.EnemyType.Kat:
-                    data = new DemoKatData(id, RecordTick, pos,(int)enemy.enemyState.enemyType ,enemy.index)
+                    data = new DemoKatData(id, RecordTick, pos, (int)enemy.enemyState.enemyType, enemy.index)
                     {
                         States =
                         {
@@ -396,7 +396,7 @@ namespace Demo
                     };
                     break;
                 case ServerEnemy.EnemyType.Turret:
-                    data = new DemoTurretData(id, RecordTick, pos,(int)enemy.enemyState.enemyType ,enemy.index)
+                    data = new DemoTurretData(id, RecordTick, pos, (int)enemy.enemyState.enemyType, enemy.index)
                     {
                         States =
                         {
@@ -417,22 +417,22 @@ namespace Demo
 
             Entities[id] = enemy.demoEnemy;
         }
-        
+
         public void AddEnemyTakeDamage(int id, int health, int attackerId)
         {
             if (!Recording) return;
-            
+
             if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
             {
                 DemoEnemyData enemyData = (DemoEnemyData)entityData;
-                enemyData.DamageTaken[RecordTick] = new DemoEnemyData.DamageTakenData(health,attackerId);
+                enemyData.DamageTaken[RecordTick] = new DemoEnemyData.DamageTakenData(health, attackerId);
             }
         }
-        
+
         public void AddEnemyState(int id, int state)
         {
             if (!Recording) return;
-            
+
             if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
             {
                 DemoEnemyData enemyData = (DemoEnemyData)entityData;
@@ -450,11 +450,11 @@ namespace Demo
                 }
             }
         }
-        
+
         public void AddEnemyStateTarget(int id, int state, int targetId)
         {
             if (!Recording) return;
-            
+
             if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
             {
                 DemoEnemyData enemyData = (DemoEnemyData)entityData;
@@ -463,11 +463,11 @@ namespace Demo
                 {
                     case 3: //Turret
                         DemoTurretData turretData = (DemoTurretData)enemyData;
-                        turretData.States[RecordTick] = new(state,targetId);
+                        turretData.States[RecordTick] = new(state, targetId);
                         break;
                     case 4: //Kat
                         DemoKatData katData = (DemoKatData)enemyData;
-                        katData.States[RecordTick] = new DemoKatData.DemoKatStateData(state,targetId);
+                        katData.States[RecordTick] = new DemoKatData.DemoKatStateData(state, targetId);
                         break;
                 }
             }
@@ -506,7 +506,7 @@ namespace Demo
         {
             if (entity.IsEnemy())
             {
-                entity.Destroy(visual,((DemoEnemy)entity).attackerId);
+                entity.Destroy(visual, ((DemoEnemy)entity).attackerId);
             }
             else
             {
@@ -522,7 +522,7 @@ namespace Demo
                 {
                     if (entityData.destroyTick <= ReplayTick)
                     {
-                        DestroyEntity(entity,true);
+                        DestroyEntity(entity, true);
                     }
                     else
                     {
@@ -535,12 +535,12 @@ namespace Demo
                                 DemoThrowable throwable = (DemoThrowable)entity;
 
                                 throwable.GetTransform().position = throwableData.position.ToVector3();
-                                
+
                                 throwable.Active();
 
                                 if (TryToGetEntityCollider(throwableData.playerId, out var col))
                                 {
-                                    throwable.Spawn(throwableData.id,(ThrowObjectMenu.ThrowObjectType)throwableData.throwableType,throwableData.throwDirection, col);
+                                    throwable.Spawn(throwableData.id, (ThrowObjectMenu.ThrowObjectType)throwableData.throwableType, throwableData.throwDirection, col);
                                 }
                             }
                             else if (entityData.IsPlayer())
@@ -550,35 +550,35 @@ namespace Demo
                                 DemoPlayer player = (DemoPlayer)entity;
 
                                 player.GetTransform().position = playerData.position.ToVector3();
-                                
+
                                 player.Active();
 
                                 player.Spawn(entityData.id, playerData.username, playerData.steamId, playerData.defaultWeaponData.currentWeaponIndex, playerData.defaultWeaponData.weapons, playerData.cosmeticIndex.ToCosmeticIndex(), playerData.isInfected);
                             }
-                            else if(entityData.IsEnemy())
+                            else if (entityData.IsEnemy())
                             {
                                 DemoEnemyData enemyData = (DemoEnemyData)entityData;
 
                                 DemoEnemy enemy = (DemoEnemy)entity;
 
                                 enemy.GetTransform().position = enemyData.position.ToVector3();
-                                
+
                                 enemy.Active();
-                                
+
                                 enemy.Spawn(enemyData.id, enemyData.enemyType);
                             }
                         }
                         else if (!entity.IsDestroyed && ReplayTick < entityData.spawnTick)
                         {
-                            DestroyEntity(entity,false);
+                            DestroyEntity(entity, false);
                         }
-                        else if(!entity.IsDestroyed)
+                        else if (!entity.IsDestroyed)
                         {
                             if (entity.IsPlayer())
                             {
                                 DemoPlayerData playerData = (DemoPlayerData)entityData;
                                 DemoPlayer player = (DemoPlayer)entity;
-                                PlayerReplay(playerData,player);
+                                PlayerReplay(playerData, player);
                             }
                             else if (entity.IsThrowable())
                             {
@@ -589,7 +589,7 @@ namespace Demo
                             {
                                 DemoEnemyData enemyData = (DemoEnemyData)entityData;
                                 DemoEnemy enemy = (DemoEnemy)entity;
-                                EnemyReplay(enemy,enemyData);
+                                EnemyReplay(enemy, enemyData);
                             }
                         }
                     }
@@ -601,7 +601,7 @@ namespace Demo
                         if (entityData.IsPlayer())
                         {
                             DemoPlayerData playerData = (DemoPlayerData)entityData;
-                            
+
                             var player = Instantiate(NetworkManager.Instance.PlayerPrefab, entityData.position.ToVector3(),
                                     Quaternion.identity)
                                 .GetComponent<DemoPlayer>();
@@ -636,9 +636,9 @@ namespace Demo
 
                             var obj = EnemyState.InstantiateEnemy((ServerEnemy.EnemyType)enemyData.enemyType,
                                 enemyData.position.ToVector3(), enemyData.index).GetComponent<DemoEnemy>();
-                            
+
                             obj.Spawn(enemyData.id, enemyData.enemyType);
-                            
+
                             Entities.Add(entityData.id, obj);
                         }
                     }
@@ -650,14 +650,14 @@ namespace Demo
 
         void PlayerReplay(DemoPlayerData playerData, DemoPlayer player)
         {
-            PlayerGrappleReplay(playerData,player);
-            
+            PlayerGrappleReplay(playerData, player);
+
             if (playerData.State.TryGetValue(ReplayTick, out var state))
             {
                 switch (state.state)
                 {
                     case 0:
-                        player.SetDead(playerData,state);
+                        player.SetDead(playerData, state);
                         break;
                     case 1:
                         player.playerState.IsInfected = false;
@@ -669,12 +669,12 @@ namespace Demo
                         break;
                 }
             }
-            else if(PreciseDemo)
+            else if (PreciseDemo)
             {
                 foreach (var pair in playerData.State.OrderBy(item => Math.Abs(ReplayTick - item.Key)))
                 {
-                    if(ReplayTick < pair.Key) continue;
-                    
+                    if (ReplayTick < pair.Key) continue;
+
                     if (player.Dead)
                     {
                         switch (pair.Value.state)
@@ -696,7 +696,7 @@ namespace Demo
                             switch (pair.Value.state)
                             {
                                 case 0:
-                                    player.SetDead(playerData,pair.Value);
+                                    player.SetDead(playerData, pair.Value);
                                     break;
                                 case 1:
                                     player.playerState.IsInfected = false;
@@ -709,7 +709,7 @@ namespace Demo
                             switch (pair.Value.state)
                             {
                                 case 0:
-                                    player.SetDead(playerData,pair.Value);
+                                    player.SetDead(playerData, pair.Value);
                                     break;
                                 case 2:
                                     player.playerState.IsInfected = true;
@@ -717,7 +717,7 @@ namespace Demo
                                     break;
                             }
                         }
-                        
+
                     }
                     break;
                 }
@@ -727,7 +727,7 @@ namespace Demo
             {
                 player.SetCrouch(crouch);
             }
-            
+
             if (playerData.Aiming.TryGetValue(ReplayTick, out var aiming))
             {
                 player.playerState.SetAiming(aiming);
@@ -736,7 +736,7 @@ namespace Demo
             {
                 foreach (var pair in playerData.Aiming.OrderBy(item => Math.Abs(ReplayTick - item.Key)))
                 {
-                    if(ReplayTick < pair.Key) continue;
+                    if (ReplayTick < pair.Key) continue;
 
                     if (player.playerState.Aiming)
                     {
@@ -782,12 +782,12 @@ namespace Demo
 
             if (playerData.DamageTaken.TryGetValue(ReplayTick, out var damageTakenData))
             {
-                player.playerState.SetHealth(damageTakenData.health,damageTakenData.damage,damageTakenData.headShot,damageTakenData.position,damageTakenData.normal,true,damageTakenData.attackerId != playerData.id && ((DemoPlayer)Entities[damageTakenData.attackerId]).playerState.IsLocal);
+                player.playerState.SetHealth(damageTakenData.health, damageTakenData.damage, damageTakenData.headShot, damageTakenData.position, damageTakenData.normal, true, damageTakenData.attackerId != playerData.id && ((DemoPlayer)Entities[damageTakenData.attackerId]).playerState.IsLocal);
             }
-            
+
             if (playerData.HealthTaken.TryGetValue(ReplayTick, out var healthTakenData))
             {
-                player.playerState.TakeHealth(healthTakenData.health,healthTakenData.maxHealth);
+                player.playerState.TakeHealth(healthTakenData.health, healthTakenData.maxHealth);
             }
 
             Vector3 position = playerData.Positions[ReplayTick].ToVector3();
@@ -819,12 +819,12 @@ namespace Demo
                     player.playerState.grappling.StopGrapple();
                 }
             }
-            else if(PreciseDemo)
+            else if (PreciseDemo)
             {
                 foreach (var pair in playerData.GrappleDatas.OrderBy(item => Math.Abs(ReplayTick - item.Key)))
                 {
-                    if(ReplayTick < pair.Key) continue;
-                    
+                    if (ReplayTick < pair.Key) continue;
+
                     if (player.playerState.grappling.IsGrappling())
                     {
                         if (!pair.Value.enable)
@@ -852,7 +852,7 @@ namespace Demo
         {
             if (enemyData.DamageTaken.TryGetValue(ReplayTick, out var damageTakenData))
             {
-                enemy.enemyState.SetHealth(damageTakenData.health, damageTakenData.attackerId,true);
+                enemy.enemyState.SetHealth(damageTakenData.health, damageTakenData.attackerId, true);
             }
 
             switch (enemyData.enemyType)
@@ -864,14 +864,14 @@ namespace Demo
                     {
                         jackState.SetState((ServerJack.EJackState)state, (JackAnimation)enemy.Animation);
                     }
-                    else if(PreciseDemo)
+                    else if (PreciseDemo)
                     {
                         foreach (var pair in jackData.States.OrderBy(item => Math.Abs(ReplayTick - item.Key)))
                         {
-                            if(ReplayTick < pair.Key) continue;
+                            if (ReplayTick < pair.Key) continue;
 
                             ServerJack.EJackState eJackState = (ServerJack.EJackState)pair.Value;
-                    
+
                             if (jackState.state != eJackState)
                             {
                                 jackState.SetState(eJackState, (JackAnimation)enemy.Animation);
@@ -887,14 +887,14 @@ namespace Demo
                     {
                         zombieState.SetState((ServerZombie.EZombieState)zombieStateIndex);
                     }
-                    else if(PreciseDemo)
+                    else if (PreciseDemo)
                     {
                         foreach (var pair in zombieData.States.OrderBy(item => Math.Abs(ReplayTick - item.Key)))
                         {
-                            if(ReplayTick < pair.Key) continue;
+                            if (ReplayTick < pair.Key) continue;
 
                             ServerZombie.EZombieState eZombieState = (ServerZombie.EZombieState)pair.Value;
-                    
+
                             if (zombieState.state != eZombieState)
                             {
                                 zombieState.SetState(eZombieState);
@@ -908,24 +908,24 @@ namespace Demo
                     DemoTurretData turretData = (DemoTurretData)enemyData;
                     if (turretData.States.TryGetValue(ReplayTick, out var turretStateData))
                     {
-                        Transform target=null;
+                        Transform target = null;
                         if (Entities.TryGetValue(turretStateData.targetId, out var entity))
                         {
                             target = entity.GetTransform();
                         }
                         turretState.SetState((ServerTurret.ETurretState)turretStateData.state, target);
                     }
-                    else if(PreciseDemo)
+                    else if (PreciseDemo)
                     {
                         foreach (var pair in turretData.States.OrderBy(item => Math.Abs(ReplayTick - item.Key)))
                         {
-                            if(ReplayTick < pair.Key) continue;
+                            if (ReplayTick < pair.Key) continue;
 
                             ServerTurret.ETurretState eTurretState = (ServerTurret.ETurretState)pair.Value.state;
-                    
+
                             if (turretState.state != eTurretState)
                             {
-                                Transform target=null;
+                                Transform target = null;
                                 if (Entities.TryGetValue(pair.Value.targetId, out var entity))
                                 {
                                     target = entity.GetTransform();
@@ -941,24 +941,24 @@ namespace Demo
                     DemoKatData katData = (DemoKatData)enemyData;
                     if (katData.States.TryGetValue(ReplayTick, out var katStateData))
                     {
-                        Transform target=null;
+                        Transform target = null;
                         if (Entities.TryGetValue(katStateData.targetId, out var entity))
                         {
                             target = entity.GetTransform();
                         }
                         katState.SetState((ServerKat.EKatState)katStateData.state, target);
                     }
-                    else if(PreciseDemo)
+                    else if (PreciseDemo)
                     {
                         foreach (var pair in katData.States.OrderBy(item => Math.Abs(ReplayTick - item.Key)))
                         {
-                            if(ReplayTick < pair.Key) continue;
+                            if (ReplayTick < pair.Key) continue;
 
                             ServerKat.EKatState eKatState = (ServerKat.EKatState)pair.Value.state;
-                    
+
                             if (katState.state != eKatState)
                             {
-                                Transform target=null;
+                                Transform target = null;
                                 if (Entities.TryGetValue(pair.Value.targetId, out var entity))
                                 {
                                     target = entity.GetTransform();
@@ -1014,7 +1014,7 @@ namespace Demo
         public void DestroyEntity(int id)
         {
             if (!Recording) return;
-            
+
             if (Entities.ContainsKey(id))
             {
                 if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
@@ -1024,11 +1024,11 @@ namespace Demo
                 Entities.Remove(id);
             }
         }
-        
-        public void DestroyEnemy(int id, int attackerId )
+
+        public void DestroyEnemy(int id, int attackerId)
         {
             if (!Recording) return;
-            
+
             if (Entities.ContainsKey(id))
             {
                 if (RecordDemo.EntityList.TryGetValue(id, out var entityData))
@@ -1046,7 +1046,7 @@ namespace Demo
         public void DestroyEverything()
         {
             if (!Recording) return;
-            
+
             for (int i = 0; i < Entities.Values.Count; i++)
             {
                 var entity = Entities.Values.ElementAt(i);
@@ -1064,7 +1064,7 @@ namespace Demo
             {
                 var file = DemoFiles[index];
                 DemoFiles = DemoFiles.Where(e => e != file).ToArray();
-                
+
                 file.Delete();
             }
         }
@@ -1083,29 +1083,29 @@ namespace Demo
             ReplayDemo = null;
 
             Replaying = false;
-            
+
             DemoCanvas.Instance.DeInitialize();
         }
 
         IEnumerator ReadDemoFile(int index)
         {
             float startTime = Time.time;
-            
+
             CoroutineWithData cd = new CoroutineWithData(this,
                 SaveSystem.ReadFileAsyncThread(DemoFiles[index].FullName));
-            
+
             OnDemoLoad?.Invoke(true);
-            
+
             yield return cd.coroutine;
 
-            DeserializeDemoFile(index,cd.result.ToString(), startTime);
+            DeserializeDemoFile(index, cd.result.ToString(), startTime);
         }
 
         async void DeserializeDemoFile(int index, string demo, float startTime)
         {
             try
             {
-                ReplayDemo = await Task.Run((() => JsonConvert.DeserializeObject<DemoData>(demo,_jsonSerializerSettings)));
+                ReplayDemo = await Task.Run((() => JsonConvert.DeserializeObject<DemoData>(demo, _jsonSerializerSettings)));
                 if (ReplayDemo == null) throw new InvalidDataException("The demo file is empty");
                 OnDemoLoad?.Invoke(false);
             }
@@ -1122,7 +1122,7 @@ namespace Demo
 
             ReplayDemo.Name = DemoFiles[index].Name;
             ReplayDemo.DateTime = DemoFiles[index].LastWriteTime;
-                
+
             Debug.Log($"Play Demo {ReplayDemo.mapId}, Loading Time: {Time.time - startTime}");
 
             //Load Map Or Workshop Map
@@ -1134,9 +1134,9 @@ namespace Demo
         void OnSceneLoaded()
         {
             Replaying = true;
-            
+
             ReplayTick = 0;
-            
+
             DemoCanvas.Instance.Initialize(ReplayDemo);
         }
 
@@ -1150,7 +1150,7 @@ namespace Demo
                 Debug.Log("Failed to start demo recording");
                 return false;
             }
-            
+
             string mapId = NetworkManager.Instance.MapId;
 
             if (string.IsNullOrEmpty(mapId))
@@ -1163,12 +1163,12 @@ namespace Demo
 
             RecordTick = 0;
             Recording = true;
-            
+
             OnRecordingChanged?.Invoke(Recording);
-            
+
             Entities.Clear();
 
-            RecordDemo = new DemoData(mapId,NetworkManager.Instance.IsWorkshopMap);
+            RecordDemo = new DemoData(mapId, NetworkManager.Instance.IsWorkshopMap);
 
             foreach (var player in ClientPlayer.list.Values)
             {
@@ -1189,11 +1189,11 @@ namespace Demo
             return true;
         }
 
-        public bool StopRecord(bool debug=false)
+        public bool StopRecord(bool debug = false)
         {
             if (!Recording || RecordDemo == null)
             {
-                if(debug)
+                if (debug)
                     Debug.LogError("Stop recording failed, no record demo file found");
                 return false;
             }
@@ -1201,7 +1201,7 @@ namespace Demo
             Save();
 
             Recording = false;
-            
+
             OnRecordingChanged?.Invoke(Recording);
 
             RecordDemo = null;
@@ -1228,9 +1228,9 @@ namespace Demo
             string data = JsonConvert.SerializeObject(RecordDemo, Formatting.Indented, _jsonSerializerSettings);
 
             string path = Path.Combine(SavePath, $"{_saveName}.dem");
-            
+
             SaveSystem.WriteFile(path, data);
-            
+
             Debug.Log($"{path} Saved Successfully");
 
             return true;
@@ -1247,7 +1247,7 @@ namespace Demo
 
         [JsonIgnore]
         public DateTime DateTime;
-        
+
         public string mapId;
 
         public bool workshopMap;
@@ -1284,9 +1284,9 @@ namespace Demo
         public int destroyTick = Int32.MaxValue;
 
         public MyVector3 position;
-        
+
         public SortedList<int, MyVector3> Positions = new();
-        
+
         public void Destroy(int tick)
         {
             destroyTick = tick;
@@ -1296,18 +1296,18 @@ namespace Demo
         {
             return false;
         }
-        
+
         public virtual bool IsEnemy()
         {
             return false;
         }
-        
+
         public virtual bool IsThrowable()
         {
             return false;
         }
     }
-    
+
     [Serializable]
     public class DemoPlayerData : DemoEntityData
     {
@@ -1322,7 +1322,7 @@ namespace Demo
         public DemoCosmeticIndex cosmeticIndex;
 
         public WeaponUpdateData defaultWeaponData;
-        
+
         public SortedList<int, float> Rotations = new();
         public SortedList<int, float> HeadRotations = new();
         public SortedList<int, MyVector3> Velocities = new();
@@ -1333,15 +1333,15 @@ namespace Demo
 
         public SortedList<int, DamageTakenData> DamageTaken = new();
         public SortedList<int, HealthTakenData> HealthTaken = new();
-        
+
         public SortedList<int, WeaponUpdateData> WeaponUpdates = new();
         public SortedList<int, int> WeaponSwitched = new();
         public SortedList<int, WeaponShootData> WeaponShooting = new();
         public SortedList<int, WeaponReloadData> WeaponReload = new();
-        
+
         public SortedList<int, GrappleData> GrappleDatas = new();
 
-        public DemoPlayerData(int id,int spawnTick, string username, ulong steamId, Vector3 position, int currentWeaponIndex, short[] weapons, InventoryManager.CosmeticIndex cosmeticIndex, bool isInfected)
+        public DemoPlayerData(int id, int spawnTick, string username, ulong steamId, Vector3 position, int currentWeaponIndex, short[] weapons, InventoryManager.CosmeticIndex cosmeticIndex, bool isInfected)
         {
             this.id = id;
             this.spawnTick = spawnTick;
@@ -1377,7 +1377,7 @@ namespace Demo
                 this.weaponSkinIndexes = weaponSkinIndexes;
             }
         }
-        
+
         [Serializable]
         public class WeaponShootData
         {
@@ -1394,7 +1394,7 @@ namespace Demo
                 this.bulletCount = bulletCount;
             }
         }
-        
+
         [Serializable]
         public class WeaponReloadData
         {
@@ -1408,7 +1408,7 @@ namespace Demo
                 this.bulletLeft = bulletLeft;
             }
         }
-        
+
         [Serializable]
         public class GrappleData
         {
@@ -1422,19 +1422,19 @@ namespace Demo
                 this.grapplePoint = grapplePoint;
             }
         }
-        
+
         [Serializable]
         public class DamageTakenData
         {
             public int attackerId = 0;
-            
-            public int damage,health;
+
+            public int damage, health;
 
             public bool headShot;
 
             public Vector3 position, normal;
 
-            public DamageTakenData(int attackerId,int damage,int health, bool headShot, Vector3 position, Vector3 normal)
+            public DamageTakenData(int attackerId, int damage, int health, bool headShot, Vector3 position, Vector3 normal)
             {
                 this.attackerId = attackerId;
                 this.damage = damage;
@@ -1444,24 +1444,24 @@ namespace Demo
                 this.normal = normal;
             }
         }
-        
+
         [Serializable]
         public class HealthTakenData
         {
-            public int health,maxHealth=100;
+            public int health, maxHealth = 100;
 
             public HealthTakenData(int health, int maxHealth)
             {
-                this.health = health;   
-                this.maxHealth = maxHealth;   
+                this.health = health;
+                this.maxHealth = maxHealth;
             }
-            
+
             public HealthTakenData()
             {
-            
+
             }
         }
-        
+
         /// <summary>
         /// Use to record dead or alive state (includes attacker id, weapon index)
         /// </summary>
@@ -1471,7 +1471,7 @@ namespace Demo
             public int state = 0; // 0 -- dead, 1 -- alive, 2 -- infected
             public int attackerId;
             public ushort weaponIndex;
-            public bool headShot,wallbang;
+            public bool headShot, wallbang;
 
             public StateData(int state, int attackerId, ushort weaponIndex)
             {
@@ -1480,20 +1480,20 @@ namespace Demo
                 this.weaponIndex = weaponIndex;
             }
         }
-        
+
         [Serializable]
         public class ChatData
         {
             public ulong steamId;
             public string text;
 
-            public ChatData(ulong steamId,string text)
+            public ChatData(ulong steamId, string text)
             {
                 this.steamId = steamId;
                 this.text = text;
             }
         }
-        
+
         public override bool IsPlayer()
         {
             return true;
@@ -1506,12 +1506,12 @@ namespace Demo
         public int type = 2;
 
         public int playerId;
-        
+
         public int throwableType;
 
         public Vector3 throwDirection;
 
-        public DemoThrowableData(int id,int spawnTick, Vector3 position, int playerId, int throwableType, Vector3 throwDirection)
+        public DemoThrowableData(int id, int spawnTick, Vector3 position, int playerId, int throwableType, Vector3 throwDirection)
         {
             base.id = id;
             base.spawnTick = spawnTick;
@@ -1535,10 +1535,10 @@ namespace Demo
         public int enemyType = 0, index = 0;
 
         public int attackerId;
-        
+
         public SortedList<int, float> Rotations = new();
         public SortedList<int, DamageTakenData> DamageTaken = new(); // the health
-        protected DemoEnemyData(int id,int spawnTick, Vector3 position, int enemyType, int index)
+        protected DemoEnemyData(int id, int spawnTick, Vector3 position, int enemyType, int index)
         {
             base.id = id;
             base.spawnTick = spawnTick;
@@ -1551,14 +1551,14 @@ namespace Demo
         {
             attackerId = attacker;
         }
-        
+
         [Serializable]
         public class DamageTakenData
         {
             public int health = 0;
             public int attackerId;
 
-            public DamageTakenData(int health,int attackerId)
+            public DamageTakenData(int health, int attackerId)
             {
                 this.health = health;
                 this.attackerId = attackerId;
@@ -1570,37 +1570,37 @@ namespace Demo
             return true;
         }
     }
-    
+
     [Serializable]
     public class DemoJackData : DemoEnemyData
     {
         public SortedList<int, int> States = new();
-        
+
         public DemoJackData(int id, int spawnTick, Vector3 position, int enemyType, int index) : base(id, spawnTick, position, enemyType, index)
         {
-            
+
         }
     }
     [Serializable]
     public class DemoZombieData : DemoEnemyData
     {
         public SortedList<int, int> States = new();
-        
+
         public DemoZombieData(int id, int spawnTick, Vector3 position, int enemyType, int index) : base(id, spawnTick, position, enemyType, index)
         {
-            
+
         }
     }
     [Serializable]
     public class DemoKatData : DemoEnemyData
     {
         public SortedList<int, DemoKatStateData> States = new();
-        
+
         public DemoKatData(int id, int spawnTick, Vector3 position, int enemyType, int index) : base(id, spawnTick, position, enemyType, index)
         {
-            
+
         }
-        
+
         [Serializable]
         public class DemoKatStateData
         {
@@ -1616,7 +1616,7 @@ namespace Demo
 
             public DemoKatStateData()
             {
-                
+
             }
         }
     }
@@ -1624,12 +1624,12 @@ namespace Demo
     public class DemoTurretData : DemoEnemyData
     {
         public SortedList<int, DemoTurretStateData> States = new();
-        
+
         public DemoTurretData(int id, int spawnTick, Vector3 position, int enemyType, int index) : base(id, spawnTick, position, enemyType, index)
         {
-            
+
         }
-        
+
         [Serializable]
         public class DemoTurretStateData
         {
@@ -1645,7 +1645,7 @@ namespace Demo
 
             public DemoTurretStateData()
             {
-                
+
             }
         }
     }
@@ -1660,7 +1660,7 @@ namespace Demo
             // TODO handle nulls
             var jObject = JObject.Load(reader);
             DemoEntityData result;
-            if(jObject.TryGetValue("type", StringComparison.InvariantCultureIgnoreCase, out var value))
+            if (jObject.TryGetValue("type", StringComparison.InvariantCultureIgnoreCase, out var value))
             {
                 switch (value.ToObject<int>(serializer))
                 {
@@ -1702,19 +1702,19 @@ namespace Demo
                 return result;
             }
             Debug.Log("No type found");
-            
+
             return null;
         }
     }
-    
+
     [Serializable]
     public class DemoCosmeticIndex
     {
-        public int hatIndex=-1,faceIndex=-1,shoesIndex=-1,hairIndex=-1,clothesIndex=-1,pantIndex=-1;
-        public int hatParticle=-1,faceParticle=-1,shoesParticle=-1,hairParticle=-1,clothesParticle=-1,pantParticle = -1;
-        public MapData.MyColor hatColor=new(Color.clear), faceColor=new(Color.clear), shoesColor=new(Color.clear), hairColor=new(Color.clear), clothesColor=new(Color.clear) ,pantColor = new(Color.clear);
-        public float hatShiny = 0, faceShiny=0,shoesShiny=0,hairShiny=0,clothesShiny=0,pantShiny = 0;
-        
+        public int hatIndex = -1, faceIndex = -1, shoesIndex = -1, hairIndex = -1, clothesIndex = -1, pantIndex = -1;
+        public int hatParticle = -1, faceParticle = -1, shoesParticle = -1, hairParticle = -1, clothesParticle = -1, pantParticle = -1;
+        public MapData.MyColor hatColor = new(Color.clear), faceColor = new(Color.clear), shoesColor = new(Color.clear), hairColor = new(Color.clear), clothesColor = new(Color.clear), pantColor = new(Color.clear);
+        public float hatShiny = 0, faceShiny = 0, shoesShiny = 0, hairShiny = 0, clothesShiny = 0, pantShiny = 0;
+
         public ushort[] weaponIndex = new ushort[30];
 
         public DemoCosmeticIndex(InventoryManager.CosmeticIndex cosmeticIndex)
@@ -1731,7 +1731,7 @@ namespace Demo
             hairColor = new MapData.MyColor(cosmeticIndex.hairColor);
             pantColor = new MapData.MyColor(cosmeticIndex.pantColor);
             clothesColor = new MapData.MyColor(cosmeticIndex.clothesColor);
-            hatShiny =cosmeticIndex. hatShiny;
+            hatShiny = cosmeticIndex.hatShiny;
             faceShiny = cosmeticIndex.faceShiny;
             shoesShiny = cosmeticIndex.shoesShiny;
             hairShiny = cosmeticIndex.hairShiny;
@@ -1744,12 +1744,12 @@ namespace Demo
             hairParticle = cosmeticIndex.hairParticle;
             clothesParticle = cosmeticIndex.clothesParticle;
             pantParticle = cosmeticIndex.pantParticle;
-            
+
         }
 
         public DemoCosmeticIndex()
         {
-            
+
         }
 
         public InventoryManager.CosmeticIndex ToCosmeticIndex()

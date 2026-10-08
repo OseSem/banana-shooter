@@ -15,7 +15,7 @@ using Weapon;
 public class PowerInGameMenu : MonoBehaviour
 {
     public static PowerInGameMenu Instance;
-    
+
     public GameObject power;
 
     public Image fill;
@@ -25,8 +25,8 @@ public class PowerInGameMenu : MonoBehaviour
     public TextMeshProUGUI keyText;
 
     public CanvasGroup group;
-    
-    internal float fillProgress=0;
+
+    internal float fillProgress = 0;
 
     private readonly float increase = 0.005f;
     // private readonly float increase = 0.2f;
@@ -35,7 +35,7 @@ public class PowerInGameMenu : MonoBehaviour
 
     private Image leftFill;
 
-    public bool active=true, inPower = false;
+    public bool active = true, inPower = false;
 
     private bool canUse = false;
     private void Awake()
@@ -45,27 +45,27 @@ public class PowerInGameMenu : MonoBehaviour
         {
             case ServerType.Endless:
                 break;
-            
-                default:
-                    if (NetworkManager.ClientGameMode == GameMode.Randomizer ||
-                        NetworkManager.ClientGameMode == GameMode.GunGame)
-                    {
-                        active = false;
-                    }
-                    break;
+
+            default:
+                if (NetworkManager.ClientGameMode == GameMode.Randomizer ||
+                    NetworkManager.ClientGameMode == GameMode.GunGame)
+                {
+                    active = false;
+                }
+                break;
         }
-        
+
         texture.color = Color.grey;
 
         leftFill = @group.GetComponent<Image>();
-        
+
         GameManager.PowerDetail detail = GameManager.Instance.GetPowerDetail(GameManager.Instance.power);
 
         if (detail != null)
         {
             texture.texture = detail.texture2D;
         }
-        
+
         power.SetActive(active);
     }
 
@@ -77,7 +77,7 @@ public class PowerInGameMenu : MonoBehaviour
 
     private void OnDisable()
     {
-        
+
         GameManager.InputManager.Player.Power.performed -= Use;
     }
 
@@ -89,19 +89,19 @@ public class PowerInGameMenu : MonoBehaviour
         switch (GameManager.Instance.power)
         {
             case GameManager.PowerType.Boomer:
-                message = Message.Create(MessageSendMode.Reliable,(ushort) ClientToServerId.SpecialWeapon);
+                message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.SpecialWeapon);
                 message.Add((short)10);
                 NetworkManager.Instance.SendByte += message.WrittenLength;
                 NetworkManager.Instance.Client.Send(message);
                 break;
             case GameManager.PowerType.Rocket_Launcher:
-                message = Message.Create(MessageSendMode.Reliable,(ushort) ClientToServerId.SpecialWeapon);
+                message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.SpecialWeapon);
                 message.Add((short)16);
                 NetworkManager.Instance.SendByte += message.WrittenLength;
                 NetworkManager.Instance.Client.Send(message);
                 break;
             case GameManager.PowerType.DualSMG:
-                message = Message.Create(MessageSendMode.Reliable,(ushort) ClientToServerId.SpecialWeapon);
+                message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.SpecialWeapon);
                 message.Add((short)17);
                 NetworkManager.Instance.SendByte += message.WrittenLength;
                 NetworkManager.Instance.Client.Send(message);
@@ -110,7 +110,7 @@ public class PowerInGameMenu : MonoBehaviour
         StopBreathe();
     }
 
-    [MessageHandler((ushort) ServerToClientId.SpecialWeaponDisable, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+    [MessageHandler((ushort)ServerToClientId.SpecialWeaponDisable, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
     private static void SpecialWeaponDisable(Message message)
     {
         ushort id = message.GetUShort();
@@ -119,13 +119,13 @@ public class PowerInGameMenu : MonoBehaviour
         {
             if (player.playerState.WeaponManager.SpecialWeapon != null)
             {
-                if (player.playerState.WeaponManager.CurrentWeapon!=null &&  player.playerState.WeaponManager.SpecialWeapon == player.playerState.WeaponManager.CurrentWeapon)
+                if (player.playerState.WeaponManager.CurrentWeapon != null && player.playerState.WeaponManager.SpecialWeapon == player.playerState.WeaponManager.CurrentWeapon)
                 {
                     player.playerState.WeaponManager.SwitchWeapon(0);
                 }
                 player.playerState.WeaponManager.SpecialWeapon = null;
             }
-            
+
             if (player.IsLocal)
             {
                 Instance.ClearSpecialWeaponForLocal();
@@ -143,7 +143,7 @@ public class PowerInGameMenu : MonoBehaviour
             }
             WeaponManager.Instance.DisableSpecialWeapon();
         }
-        if(inPower)
+        if (inPower)
             EnableTimer();
     }
 
@@ -162,7 +162,7 @@ public class PowerInGameMenu : MonoBehaviour
         group.alpha = 0f;
         leftFill.fillAmount = 1f;
     }
-    
+
     private void Update()
     {
         if (NetworkManager.Instance.Client.Connection != null)
@@ -180,7 +180,7 @@ public class PowerInGameMenu : MonoBehaviour
                 }
             }
         }
-        
+
         if (localPlayer != null && localPlayer.Dead) return;
         if (active)
         {
@@ -194,9 +194,9 @@ public class PowerInGameMenu : MonoBehaviour
                     {
                         //stop
                         leftTime = 0.1f;
-                        
+
                     }
-                    
+
                     leftFill.fillAmount = Mathf.Lerp(leftFill.fillAmount, leftTime, Time.deltaTime * 15f);
                 }
                 else
@@ -204,17 +204,17 @@ public class PowerInGameMenu : MonoBehaviour
                     fillProgress += increase * Time.deltaTime;
 
                     fill.fillAmount = Mathf.Lerp(fill.fillAmount, fillProgress, Time.deltaTime * 15f);
-                
+
 
                     if (fillProgress >= 1)
                     {
                         canUse = true;
                         StartBreath();
-                    
+
                         texture.color = Color.white;
                     }
                 }
-                
+
             }
 
             @group.alpha = Mathf.Lerp(@group.alpha, desiredAlpha, Time.deltaTime * 10f);
@@ -224,15 +224,15 @@ public class PowerInGameMenu : MonoBehaviour
     void StartBreath()
     {
         desiredAlpha = 1f;
-        
-        Invoke(nameof(Breathe),.5f);
+
+        Invoke(nameof(Breathe), .5f);
     }
 
     void Breathe()
     {
         desiredAlpha = 0f;
-        
-        Invoke(nameof(StartBreath),.5f);
+
+        Invoke(nameof(StartBreath), .5f);
     }
 
     void StopBreathe()

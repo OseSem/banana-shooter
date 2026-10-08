@@ -29,19 +29,19 @@ namespace PlayerCameraController
 
             if (_dead)
             {
-                if ( target != null)
+                if (target != null)
                     targetPos = target.position;
                 if (Vector3.Distance(deadCameraTransform.position, targetPos) > 1f)
                 {
-                    deadCameraTransform.position = Vector3.Slerp(deadCameraTransform.position,targetPos+_offset,Time.unscaledDeltaTime*10f);
+                    deadCameraTransform.position = Vector3.Slerp(deadCameraTransform.position, targetPos + _offset, Time.unscaledDeltaTime * 10f);
                 }
-            
-                deadCameraTransform.rotation = Quaternion.LookRotation(targetPos+_offset - deadCameraTransform.position);
+
+                deadCameraTransform.rotation = Quaternion.LookRotation(targetPos + _offset - deadCameraTransform.position);
             }
         }
-        
+
         private Vector3 _offset;
-        public void Dead(Vector3 pos,Vector3 offset,Transform head=null)
+        public void Dead(Vector3 pos, Vector3 offset, Transform head = null)
         {
             if (GameUIManager.Instance)
             {
@@ -53,7 +53,7 @@ namespace PlayerCameraController
             deadCameraTransform.localPosition = new Vector3(0, -2, -5);
             // _parent.rotation = ;
             target = head;
-            _coroutine= StartCoroutine(LookToTarget());
+            _coroutine = StartCoroutine(LookToTarget());
         }
 
         private Vector3 targetPos;
@@ -69,10 +69,10 @@ namespace PlayerCameraController
 
         public void Respawn()
         {
-            if(_coroutine!=null)
+            if (_coroutine != null)
                 StopCoroutine(_coroutine);
             _dead = false;
-            if(GameUIManager.Instance) GameUIManager.Instance.gameScene.SetActive(true);
+            if (GameUIManager.Instance) GameUIManager.Instance.gameScene.SetActive(true);
             deadCameraTransform.localRotation = Quaternion.identity;
             deadCameraTransform.localPosition = Vector3.zero;
         }

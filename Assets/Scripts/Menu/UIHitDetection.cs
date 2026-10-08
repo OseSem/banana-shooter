@@ -5,7 +5,7 @@ using UnityEngine.EventSystems;
 
 namespace Menu
 {
-    public class UIHitDetection : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler
+    public class UIHitDetection : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         public UnityEvent pointerEnter;
         public UnityEvent pointerExit;

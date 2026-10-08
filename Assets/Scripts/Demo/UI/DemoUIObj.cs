@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace Demo.UI
 {
-    public class DemoUIObj : MonoBehaviour , IPointerEnterHandler , IPointerExitHandler, IPointerDownHandler
+    public class DemoUIObj : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
     {
         [SerializeField] private RawImage backGround;
 
@@ -25,7 +25,7 @@ namespace Demo.UI
 
         public FileInfo FileInfo;
 
-        public void Initialize(FileInfo fileInfo,int index, Action<int> onClick)
+        public void Initialize(FileInfo fileInfo, int index, Action<int> onClick)
         {
             FileInfo = fileInfo;
             _index = index;
@@ -42,13 +42,13 @@ namespace Demo.UI
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if(!_selected)
+            if (!_selected)
                 backGround.color = highlightColor;
         }
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if(!_selected)
+            if (!_selected)
                 backGround.color = defaultColor;
         }
 

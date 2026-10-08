@@ -1,4 +1,4 @@
- 
+
 using Manager;
 using UnityEngine;
 
@@ -18,7 +18,7 @@ namespace Riptide
         public static Message Add(this Message message, InventoryManager.CosmeticIndex value)
         {
             message.Add(value.weaponIndex);
-            
+
             message.AddInt(value.hatIndex);
             if (value.hatIndex != -1)
             {
@@ -26,7 +26,7 @@ namespace Riptide
                 message.AddFloat(value.hatShiny);
                 message.AddInt(value.hatParticle);
             }
-        
+
             message.AddInt(value.faceIndex);
             if (value.faceIndex != -1)
             {
@@ -34,7 +34,7 @@ namespace Riptide
                 message.AddFloat(value.faceShiny);
                 message.AddInt(value.faceParticle);
             }
-        
+
             message.AddInt(value.shoesIndex);
             if (value.shoesIndex != -1)
             {
@@ -42,7 +42,7 @@ namespace Riptide
                 message.AddFloat(value.shoesShiny);
                 message.AddInt(value.shoesParticle);
             }
-        
+
             message.AddInt(value.hairIndex);
             if (value.hairIndex != -1)
             {
@@ -50,7 +50,7 @@ namespace Riptide
                 message.AddFloat(value.hairShiny);
                 message.AddInt(value.hairParticle);
             }
-            
+
             message.AddInt(value.pantIndex);
             if (value.pantIndex != -1)
             {
@@ -58,7 +58,7 @@ namespace Riptide
                 message.AddFloat(value.pantShiny);
                 message.AddInt(value.pantParticle);
             }
-            
+
             message.AddInt(value.clothesIndex);
             if (value.clothesIndex != -1)
             {
@@ -84,7 +84,7 @@ namespace Riptide
                 cosmeticIndex.hatShiny = message.GetFloat();
                 cosmeticIndex.hatParticle = message.GetInt();
             }
-            
+
             cosmeticIndex.faceIndex = message.GetInt();
 
             if (cosmeticIndex.faceIndex != -1)
@@ -93,7 +93,7 @@ namespace Riptide
                 cosmeticIndex.faceShiny = message.GetFloat();
                 cosmeticIndex.faceParticle = message.GetInt();
             }
-            
+
             cosmeticIndex.shoesIndex = message.GetInt();
 
             if (cosmeticIndex.shoesIndex != -1)
@@ -102,7 +102,7 @@ namespace Riptide
                 cosmeticIndex.shoesShiny = message.GetFloat();
                 cosmeticIndex.shoesParticle = message.GetInt();
             }
-            
+
             cosmeticIndex.hairIndex = message.GetInt();
 
             if (cosmeticIndex.hairIndex != -1)
@@ -111,7 +111,7 @@ namespace Riptide
                 cosmeticIndex.hairShiny = message.GetFloat();
                 cosmeticIndex.hairParticle = message.GetInt();
             }
-            
+
             cosmeticIndex.pantIndex = message.GetInt();
 
             if (cosmeticIndex.pantIndex != -1)
@@ -120,7 +120,7 @@ namespace Riptide
                 cosmeticIndex.pantShiny = message.GetFloat();
                 cosmeticIndex.pantParticle = message.GetInt();
             }
-            
+
             cosmeticIndex.clothesIndex = message.GetInt();
 
             if (cosmeticIndex.clothesIndex != -1)
@@ -129,11 +129,11 @@ namespace Riptide
                 cosmeticIndex.clothesShiny = message.GetFloat();
                 cosmeticIndex.clothesParticle = message.GetInt();
             }
-            
+
 
             return cosmeticIndex;
         }
-        
+
         #endregion
         #region Color
         /// <inheritdoc cref="Add(Message, Vector2)"/>
@@ -156,7 +156,7 @@ namespace Riptide
         /// <returns>The <see cref="Vector2"/> that was retrieved.</returns>
         public static Color GetColor(this Message message)
         {
-            return new Color(message.GetFloat(), message.GetFloat(),message.GetFloat(),message.GetFloat());
+            return new Color(message.GetFloat(), message.GetFloat(), message.GetFloat(), message.GetFloat());
         }
         #endregion
         #region Vector2

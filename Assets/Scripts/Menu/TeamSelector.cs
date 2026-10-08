@@ -20,10 +20,10 @@ namespace Menu
             Instance = this;
         }
 
-        [SerializeField] private GameObject menu,rebelSelected,allianceSelected;
+        [SerializeField] private GameObject menu, rebelSelected, allianceSelected;
 
         [SerializeField] private TextMeshProUGUI timerText;
-        private float _timer=0;
+        private float _timer = 0;
         public bool IsSelecting { get; private set; } = false;
         void SetPage(int time)
         {
@@ -31,10 +31,10 @@ namespace Menu
             IsSelecting = true;
             _timer = time;
             timerText.SetText(_timer.ToString("F"));
-        
+
             menu.SetActive(true);
             GameUIManager.Instance.gameScene.SetActive(false);
-        
+
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
             StartCoroutine(Ticking(time));
@@ -43,10 +43,10 @@ namespace Menu
         {
             yield return new WaitForSeconds(time - 3);
             Tick();
-            
+
             yield return new WaitForSeconds(1);
             Tick();
-            
+
             yield return new WaitForSeconds(1);
             Tick();
         }
@@ -54,7 +54,7 @@ namespace Menu
         {
             AudioManager.Instance.Play("ticking");
         }
-    
+
         private void Update()
         {
             if (IsSelecting)
@@ -64,25 +64,25 @@ namespace Menu
             }
         }
 
-        
+
         public void Select(int t)
         {
-            Team team = (Team) t;
+            Team team = (Team)t;
             rebelSelected.SetActive(team == Team.Rebel);
             allianceSelected.SetActive(team != Team.Rebel);
-        
-            Message message = Message.Create(MessageSendMode.Unreliable,(ushort) ClientToServerId.DoSelectTeam);
+
+            Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ClientToServerId.DoSelectTeam);
             message.Add(t);
             NetworkManager.Instance.SendByte += message.WrittenLength;
             NetworkManager.Instance.Client.Send(message);
         }
 
-        [MessageHandler((ushort) ClientToServerId.DoSelectTeam, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ClientToServerId.DoSelectTeam, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void DoSelectTeam(ushort fromClient, Message message)
         {
             if (NetworkServerManager.ClientData.ContainsKey(fromClient))
             {
-                int team =  message.GetInt();
+                int team = message.GetInt();
 
                 NetworkServerManager.ClientData[fromClient].DesiredTeam = team;
             }

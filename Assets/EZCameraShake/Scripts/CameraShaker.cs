@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections.Generic;
 
 namespace EZCameraShake
@@ -35,7 +35,7 @@ namespace EZCameraShake
 
         void Awake()
         {
-            if(Instance==null && name == "FirstPersonCamera")
+            if (Instance == null && name == "FirstPersonCamera")
                 Instance = this;
             instanceList.Add(gameObject.name, this);
         }

@@ -7,16 +7,16 @@ namespace Menu
     public class MaskedObject : UIBehaviour
     {
         private CanvasRenderer[] canvasRenderersToClip = null;
- 
+
         private Canvas rootCanvas = null;
         [SerializeField]
         private RectTransform maskRectTransform = null;
         private bool initialized = false;
-        
+
         protected override void OnRectTransformDimensionsChange()
         {
             base.OnRectTransformDimensionsChange();
-            if( initialized )
+            if (initialized)
             {
                 SetTargetClippingRect();
             }
@@ -57,15 +57,15 @@ namespace Menu
             SetTargetClippingRect();
             initialized = true;
         }
- 
+
         private void SetTargetClippingRect()
         {
             Rect rect = maskRectTransform.rect;
             // Get local position of maskRect as if it was direct child of root canvas, then offset mask rect by that amount
-            rect.center += (Vector2)rootCanvas.transform.InverseTransformPoint( maskRectTransform.position );
+            rect.center += (Vector2)rootCanvas.transform.InverseTransformPoint(maskRectTransform.position);
             foreach (var canvasRendererToClip in canvasRenderersToClip)
             {
-                canvasRendererToClip.EnableRectClipping( rect );
+                canvasRendererToClip.EnableRectClipping(rect);
             }
         }
     }

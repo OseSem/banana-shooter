@@ -18,7 +18,7 @@ using Random = UnityEngine.Random;
 
 namespace Weapon
 {
-    public abstract class Firearms : MonoBehaviour,IWeapon
+    public abstract class Firearms : MonoBehaviour, IWeapon
     {
         public enum WeaponType
         {
@@ -35,24 +35,24 @@ namespace Weapon
         private Transform weapon;
         public int weaponIndex = 0;
         public Transform leftHandIK, rightHandIK;
-    
+
         [Header("WeaponType")]
-        public WeaponType weaponType=WeaponType.Gun;
-        [Header("Knife")] 
+        public WeaponType weaponType = WeaponType.Gun;
+        [Header("Knife")]
         public float waitTimeToAttack = 0.2f;
-    
+
         [Header("Gun")]
         public Transform muzzlePoint;
         public ParticleSystem muzzleParticle;
 
-        [SerializeField] public AudioClip shoot,reload,reset;
+        [SerializeField] public AudioClip shoot, reload, reset;
 
         public bool useGravity = false;
-    
-        public int maxAmmo=30;
-    
+
+        public int maxAmmo = 30;
+
         public SafeInt currentAmmo;
-        public float fireRate=10;
+        public float fireRate = 10;
         public Animator animator;
 
         public bool cantReload = false;
@@ -111,7 +111,7 @@ namespace Weapon
             Vector3 defaultPos = isAiming ? aimPos : startPos;
 
             bool cursorVisible = Cursor.visible;
-            
+
             float mx = cursorVisible ? 0 : Input.GetAxis("Mouse X");
             float my = cursorVisible ? 0 : Input.GetAxis("Mouse Y");
 
@@ -121,29 +121,29 @@ namespace Weapon
                 my = WeaponManager.Instance.CurrentPlayer.GetDeltaY();
             }
 
-            float b = -mx * gunDrag * currentGunDragMultiplier*drag;
-            float b2 = -my  * gunDrag * currentGunDragMultiplier*drag;
-        
+            float b = -mx * gunDrag * currentGunDragMultiplier * drag;
+            float b2 = -my * gunDrag * currentGunDragMultiplier * drag;
+
             desX = Mathf.Lerp(desX, b, Time.deltaTime * 10f);
             desY = Mathf.Lerp(desY, b2, Time.deltaTime * 10f);
             Rotation(new Vector2(desX, desY));
-            Vector3 b3=defaultPos+ desiredBob + recoilOffset+ speedBob + new Vector3(0f, 0f - reloadPosOffset, 0f) +new Vector3(desX, desY, 0f);
-        
+            Vector3 b3 = defaultPos + desiredBob + recoilOffset + speedBob + new Vector3(0f, 0f - reloadPosOffset, 0f) + new Vector3(desX, desY, 0f);
+
             weapon.localPosition = Vector3.Lerp(weapon.localPosition, b3, Time.deltaTime * 15f);
         }
 
         private float drag = 0.3f;
         public int bulletCount;
-        public bool createBullet=true;
+        public bool createBullet = true;
         List<ClientPlayer> hitPlayer = new List<ClientPlayer>();
         private RaycastHit[] hits = new RaycastHit[20];
         void KnifeAttack()
         {
-            int cnt= Physics.RaycastNonAlloc(PlayerCam.transform.position,
-                PlayerCam.transform.forward,hits, 3f,PrefabManager.Instance.whatIsHittable,QueryTriggerInteraction.Ignore);
+            int cnt = Physics.RaycastNonAlloc(PlayerCam.transform.position,
+                PlayerCam.transform.forward, hits, 3f, PrefabManager.Instance.whatIsHittable, QueryTriggerInteraction.Ignore);
             hitPlayer.Clear();
             clientEnemies.Clear();
-            for(int i=0;i<cnt;i++)
+            for (int i = 0; i < cnt; i++)
             {
                 RaycastHit hit = hits[i];
                 if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ClientPlayer"))
@@ -159,9 +159,9 @@ namespace Weapon
                     if (clientEnemies.Contains(enemy)) continue;
                     clientEnemies.Add(enemy);
                 }
-                Hit(hit,false);
+                Hit(hit, false);
             }
-        
+
             if (cnt > 0)
             {
                 // Message message = Message.Create(MessageSendMode.Unreliable,(ushort)ClientToServerId.Shoot);
@@ -173,10 +173,10 @@ namespace Weapon
                 // NetworkManager.Instance.Client.Send(message);
                 return;
             }
-            cnt= Physics.SphereCastNonAlloc(PlayerCam.transform.position, 1,
-                PlayerCam.transform.forward, hits,3f,PrefabManager.Instance.whatIsHittable,QueryTriggerInteraction.Ignore);
+            cnt = Physics.SphereCastNonAlloc(PlayerCam.transform.position, 1,
+                PlayerCam.transform.forward, hits, 3f, PrefabManager.Instance.whatIsHittable, QueryTriggerInteraction.Ignore);
 
-            for(int i=0;i<cnt;i++)
+            for (int i = 0; i < cnt; i++)
             {
                 RaycastHit hit = hits[i];
                 if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ClientPlayer"))
@@ -192,64 +192,65 @@ namespace Weapon
                     if (clientEnemies.Contains(enemy)) continue;
                     clientEnemies.Add(enemy);
                 }
-                Hit(hit,false);
+                Hit(hit, false);
             }
         }
 
-        void Hit(RaycastHit hit,bool wall)
+        void Hit(RaycastHit hit, bool wall)
         {
             if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Ground"))
             {
-                if(GameManager.Instance.setting.spawnParticle){
-                    ObjectPooler.Instance.SpawnFromPool("BulletHit",hit.point,Quaternion.LookRotation(hit.normal));
+                if (GameManager.Instance.setting.spawnParticle)
+                {
+                    ObjectPooler.Instance.SpawnFromPool("BulletHit", hit.point, Quaternion.LookRotation(hit.normal));
                 }
-                int rand = Random.Range(0, PrefabManager.Instance.broadSwordHit.Length );
+                int rand = Random.Range(0, PrefabManager.Instance.broadSwordHit.Length);
                 AudioManager.Instance.PlayGunReload(PrefabManager.Instance.broadSwordHit[rand]);
             }
             else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ShootingTarget"))
             {
                 var root = hit.transform.root;
                 ShootingTarget target = root.GetComponent<ShootingTarget>();
-                ShootingTarget2 target2 =  root.GetComponent<ShootingTarget2>();
-                if(target!=null)
+                ShootingTarget2 target2 = root.GetComponent<ShootingTarget2>();
+                if (target != null)
                     target.Hit();
-                else if(target2!=null)
+                else if (target2 != null)
                     target2.SetTargetPos();
                 if (GameManager.Instance.setting.spawnParticle)
                 {
-                    ObjectPooler.Instance.SpawnFromPool("BulletHit",hit.point,Quaternion.LookRotation(hit.normal));
+                    ObjectPooler.Instance.SpawnFromPool("BulletHit", hit.point, Quaternion.LookRotation(hit.normal));
                 }
                 HitMarker.Instance.StartHitMarker(Color.white);
-                HitMarker3D h = ObjectPooler.Instance.SpawnFromPool("HitMarker",hit.point, Quaternion.LookRotation(MoveCamera.Instance.transform.position-hit.point)).GetComponent<HitMarker3D>();
+                HitMarker3D h = ObjectPooler.Instance.SpawnFromPool("HitMarker", hit.point, Quaternion.LookRotation(MoveCamera.Instance.transform.position - hit.point)).GetComponent<HitMarker3D>();
                 h.text.SetText(damage.ToString());
             }
             else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Client") && hit.transform.root.CompareTag("Enemy"))
             {
                 ClientEnemy clientEnemy = hit.transform.root.GetComponent<ClientEnemy>();
-                
+
                 NetworkManager.Instance.HitEnemy(clientEnemy.Id, hit.normal);
-                     
+
             }
             else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ClientPlayer"))
             {
                 bool isHead = hit.collider.gameObject.CompareTag("Head");
                 ClientPlayer player = hit.transform.root.GetComponent<ClientPlayer>();
-                if (GameManager.Instance.setting.enableGore&&GameManager.Instance.setting.spawnParticle)
+                if (GameManager.Instance.setting.enableGore && GameManager.Instance.setting.spawnParticle)
                 {
                     ObjectPooler.Instance.SpawnFromPool("Blood", hit.point, Quaternion.LookRotation(hit.normal));
                 }
-                if (NetworkManager.Instance.IsTeamMode(player.playerState) || (NetworkManager.ClientGameMode==GameMode.Infected && player.playerState.IsInfected==InfectedHand.Instance.isInfected)) return;
+                if (NetworkManager.Instance.IsTeamMode(player.playerState) || (NetworkManager.ClientGameMode == GameMode.Infected && player.playerState.IsInfected == InfectedHand.Instance.isInfected)) return;
                 if (isHead)
                 {
                     AudioManager.Instance.Play("headshotrapid");
                 }
-            
-                HitMarker.Instance.StartHitMarker(isHead?Color.yellow:Color.white);
+
+                HitMarker.Instance.StartHitMarker(isHead ? Color.yellow : Color.white);
             }
         }
 
         private MultiplayerWeapon _multiplayerWeapon;
-        [SerializeField] private float recoilX=-.1f, recoilY=.1f, recoilZ=.05f;
+        [SerializeField] private float recoilX = -.1f, recoilY = .1f, recoilZ = .05f;
         private float force = 2f;
         public bool semiAuto = false;
         private Transform camera => MoveCamera.Instance.camTransform;
@@ -263,7 +264,7 @@ namespace Weapon
                 DoReload(0);
                 return;
             }
-            if (!IsAllowShooting() || isReload || WeaponManager.Instance.CurrentPlayer.Health<=0 || NetworkManager.Instance.CheckMultiplayerGameModeStarted())
+            if (!IsAllowShooting() || isReload || WeaponManager.Instance.CurrentPlayer.Health <= 0 || NetworkManager.Instance.CheckMultiplayerGameModeStarted())
             {
                 return;
             }
@@ -272,7 +273,7 @@ namespace Weapon
             Vector3 raycastPos = camera.position;
             lastFireTime = Time.time;
 
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort)ClientToServerId.Shoot);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.Shoot);
 
             uint predictTick = NetworkManager.Instance.InterpolationTick;
             message.Add(predictTick);
@@ -282,7 +283,7 @@ namespace Weapon
             NetworkManager.Instance.SendByte += message.WrittenLength;
 
             NetworkManager.Instance.Client.Send(message);
-            
+
             float dis;
             RaycastHit hit;
             switch (weaponType)
@@ -293,36 +294,36 @@ namespace Weapon
                     KnifeShoot(false);
                     break;
                 case WeaponType.Gun:
-                    
-                    if(isAiming && (!semiAuto || currentAmmo.GetValue()<=0)) WeaponManager.Instance.StopAim(new InputAction.CallbackContext());
+
+                    if (isAiming && (!semiAuto || currentAmmo.GetValue() <= 0)) WeaponManager.Instance.StopAim(new InputAction.CallbackContext());
                     Shoot();
-                    Recoil.Instance.RecoilFir(recoilX,recoilY,recoilZ);
+                    Recoil.Instance.RecoilFir(recoilX, recoilY, recoilZ);
 
                     success = GunShoot(false);
-                    
+
                     lastFireTime = Time.time;
 
                     CancelInvoke(nameof(CheckAmmo));
-                    Invoke(nameof(CheckAmmo),0.3f);
-                    
+                    Invoke(nameof(CheckAmmo), 0.3f);
+
                     break;
                 case WeaponType.LaserGun:
                     Shoot();
                     StopSound();
-                    hitPoint = Vector3.zero; 
+                    hitPoint = Vector3.zero;
                     // + new Vector3(Random.Range(-recoil[hotValue].x, recoil[hotValue].x),
                     //     Random.Range(recoil[hotValue].y - 0.3f, recoil[hotValue].y + 0.3f), 0f)
-                    if (Physics.Raycast(raycastPos, camera.forward, out hit, 5,PrefabManager.Instance.whatIsHittable,QueryTriggerInteraction.Ignore)) hitPoint = hit.point;
+                    if (Physics.Raycast(raycastPos, camera.forward, out hit, 5, PrefabManager.Instance.whatIsHittable, QueryTriggerInteraction.Ignore)) hitPoint = hit.point;
                     ShootAnim();
-                    if(GameManager.Instance.setting.spawnParticle)muzzleParticle.Play();
-                    if(shoot!=null)
+                    if (GameManager.Instance.setting.spawnParticle) muzzleParticle.Play();
+                    if (shoot != null)
                         AudioManager.Instance.PlayGunShoot(shoot);
                     if (hitPoint == Vector3.zero) break;
                     if (hit.collider.gameObject.layer == LayerMask.NameToLayer("Client") && hit.transform.root.CompareTag("Enemy"))
                     {
                         ClientEnemy clientEnemy = hit.transform.root.GetComponent<ClientEnemy>();
 
-                        NetworkManager.Instance.HitEnemy(clientEnemy.Id, hit.normal); 
+                        NetworkManager.Instance.HitEnemy(clientEnemy.Id, hit.normal);
 
                     }
                     else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ShootingTarget"))
@@ -330,7 +331,7 @@ namespace Weapon
                         ShootingTarget target = hit.transform.root.GetComponent<ShootingTarget>();
                         target.Hit();
                         HitMarker.Instance.StartHitMarker(Color.white);
-                        HitMarker3D h = ObjectPooler.Instance.SpawnFromPool("HitMarker",hit.point, Quaternion.LookRotation(MoveCamera.Instance.transform.position-hit.point)).GetComponent<HitMarker3D>();
+                        HitMarker3D h = ObjectPooler.Instance.SpawnFromPool("HitMarker", hit.point, Quaternion.LookRotation(MoveCamera.Instance.transform.position - hit.point)).GetComponent<HitMarker3D>();
                         h.text.SetText(damage.ToString());
                     }
                     else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ClientPlayer"))
@@ -343,16 +344,16 @@ namespace Weapon
                         {
                             AudioManager.Instance.Play("headshotrapid");
                         }
-                        HitMarker.Instance.StartHitMarker(isHead?Color.yellow:Color.white);
-                        
+                        HitMarker.Instance.StartHitMarker(isHead ? Color.yellow : Color.white);
+
                     }
-                    Invoke("StopSound",0.1f);
+                    Invoke("StopSound", 0.1f);
                     break;
                 case WeaponType.Boomer:
                     currentAmmo--;
                     currentAmmo.SetValue(Mathf.Clamp(currentAmmo.GetValue(), 0, maxAmmo));
                     Shoot();
-                    Recoil.Instance.RecoilFir(recoilX,recoilY,recoilZ);
+                    Recoil.Instance.RecoilFir(recoilX, recoilY, recoilZ);
                     if (GameManager.Instance.setting.spawnParticle)
                     {
                         if (trail == null)
@@ -362,20 +363,20 @@ namespace Weapon
                                     .GetComponent<SmokeTrail>();
                             trail.parent = muzzlePoint;
                             trail.weapon = this;
-                            Destroy(trail.gameObject,4f);
+                            Destroy(trail.gameObject, 4f);
                         }
                     }
-                
+
 
                     hitPoint = Vector3.zero;
                     // + new Vector3(Random.Range(-recoil[hotValue].x, recoil[hotValue].x),
                     //     Random.Range(recoil[hotValue].y - 0.3f, recoil[hotValue].y + 0.3f), 0f)
                     if (Physics.Raycast(raycastPos, PlayerCam.transform.forward, out hit, 1000,
-                            PrefabManager.Instance.whatIsHittable,QueryTriggerInteraction.Ignore)) hitPoint = hit.point;
+                            PrefabManager.Instance.whatIsHittable, QueryTriggerInteraction.Ignore)) hitPoint = hit.point;
                     ShootAnim();
                     dis = hitPoint == Vector3.zero ? 1000f : hit.distance;
-                    if(createBullet && dis>8)
-                        CreateExplosiveBullet(hitPoint!=Vector3.zero ? hitPoint : PlayerCam.transform.position + PlayerCam.transform.forward*100f);
+                    if (createBullet && dis > 8)
+                        CreateExplosiveBullet(hitPoint != Vector3.zero ? hitPoint : PlayerCam.transform.position + PlayerCam.transform.forward * 100f);
                     else
                     {
                         enemies.Clear();
@@ -383,25 +384,25 @@ namespace Weapon
                         shootingTarget.Clear();
                         shootingTarget2.Clear();
                         clientEnemies.Clear();
-                    
-                        if(GameManager.Instance.setting.spawnParticle)Instantiate(PrefabManager.Instance.GetPrefab("ExplosionParticle"),hit.point,Quaternion.LookRotation(hit.normal));
-                        
-                        AudioManager.Instance.SoundEffect3D("Explosion",hit.point, 1f, 20f);
-                        int cnt= Physics.OverlapSphereNonAlloc(hit.point, 18f,colliders);
-                        
-                        for(int i=0;i<cnt;i++)
+
+                        if (GameManager.Instance.setting.spawnParticle) Instantiate(PrefabManager.Instance.GetPrefab("ExplosionParticle"), hit.point, Quaternion.LookRotation(hit.normal));
+
+                        AudioManager.Instance.SoundEffect3D("Explosion", hit.point, 1f, 20f);
+                        int cnt = Physics.OverlapSphereNonAlloc(hit.point, 18f, colliders);
+
+                        for (int i = 0; i < cnt; i++)
                         {
                             Collider col = colliders[i];
                             Rigidbody rb = col.GetComponent<Rigidbody>();
                             Transform root = col.transform.root;
-                            ClientPlayer player =root.GetComponent<ClientPlayer>();
+                            ClientPlayer player = root.GetComponent<ClientPlayer>();
                             ClientEnemy clientEnemy = root.GetComponent<ClientEnemy>();
                             if (col.gameObject.layer == LayerMask.NameToLayer("Client") && hit.transform.root.CompareTag("Enemy") && !clientEnemies.Contains(clientEnemy))
                             {
                                 clientEnemies.Add(clientEnemy);
-                            
+
                                 NetworkManager.Instance.HitEnemy(clientEnemy.Id, hit.normal);
-                     
+
                             }
                             else if (col.gameObject.layer == LayerMask.NameToLayer("ClientPlayer") && !clients.Contains(player))
                             {
@@ -409,22 +410,22 @@ namespace Weapon
                                 bool isHead = col.gameObject.CompareTag("Head");
                                 if (NetworkManager.Instance.IsTeamMode(player.playerState)) return;
                                 // if(GameManager.Instance.setting.spawnParticle)Instantiate(PrefabManager.Instance.GetPrefab("Blood"), hit.point, Quaternion.LookRotation(hit.normal));
-                                HitMarker.Instance.StartHitMarker(isHead?Color.yellow:Color.white);
-                            
+                                HitMarker.Instance.StartHitMarker(isHead ? Color.yellow : Color.white);
+
                                 // NetworkManager.Instance.TakeDamage(player.Id,isHead,false,(ushort)weaponIndex);
                             }
                             if (rb)
                             {
-                                rb.AddExplosionForce(80f,hit.point,25f, .5f, ForceMode.Impulse);
-                            } 
+                                rb.AddExplosionForce(80f, hit.point, 25f, .5f, ForceMode.Impulse);
+                            }
                         }
                     }
-                    if(shoot!=null)
+                    if (shoot != null)
                         AudioManager.Instance.PlayGunShoot(shoot);
-                    if(GameManager.Instance.setting.cameraShake)
+                    if (GameManager.Instance.setting.cameraShake)
                         CameraShaker.Instance.ShakeOnce(2, 2, 0.1f, 0.4f);
                     lastFireTime = Time.time;
-                
+
                     // message = Message.Create(MessageSendMode.Unreliable,(ushort)ClientToServerId.Shoot);
                     //
                     // message.Add(bulletCount);
@@ -440,30 +441,30 @@ namespace Weapon
 
         void CheckAmmo()
         {
-            if(currentAmmo.GetValue()<=0) DoReload(0); 
+            if (currentAmmo.GetValue() <= 0) DoReload(0);
         }
 
         public void KnifeShoot(bool visualOnly)
         {
             if (CompareTag("Broadsword"))
             {
-                if(Random.Range(0,2)==0)animator.SetTrigger(Attack);
+                if (Random.Range(0, 2) == 0) animator.SetTrigger(Attack);
                 else animator.SetTrigger("Attack1");
             }
             else
             {
                 animator.SetTrigger(Attack);
             }
-            if(shoot!=null)
+            if (shoot != null)
                 AudioManager.Instance.PlayGunShoot(shoot);
-            if(!visualOnly)
-                Invoke(nameof(KnifeAttack),waitTimeToAttack);
+            if (!visualOnly)
+                Invoke(nameof(KnifeAttack), waitTimeToAttack);
         }
 
         public bool GunShoot(bool visualOnly)
         {
             currentAmmo--;
-            currentAmmo.SetValue( Mathf.Clamp(currentAmmo.GetValue(), 0, maxAmmo));
+            currentAmmo.SetValue(Mathf.Clamp(currentAmmo.GetValue(), 0, maxAmmo));
             bool success = false;
             RaycastHit hit;
             Vector3 raycastPos = camera.position;
@@ -480,16 +481,16 @@ namespace Weapon
                 }
             }
             spreadAngle = Velocity.magnitude > 15f ? runSpread : normalSpread;
-            
+
             ShootAnim();
             for (int i = 0; i < bulletCount; i++)
             {
                 var forward = camera.forward;
                 Vector3 offset = spreadAngle / PlayerCam.fieldOfView * Random.insideUnitCircle;
                 Bullet bullet = ObjectPooler.Instance.SpawnFromPool("Bullet", muzzlePoint.position,
-                    Quaternion.LookRotation(forward+offset)).GetComponent<Bullet>();
+                    Quaternion.LookRotation(forward + offset)).GetComponent<Bullet>();
 
-                bullet.Initialization(forward+offset,1500f,0,LayerMask.NameToLayer("Bullet"),true,useGravity,enableSmokeTrail);
+                bullet.Initialization(forward + offset, 1500f, 0, LayerMask.NameToLayer("Bullet"), true, useGravity, enableSmokeTrail);
 
                 if (!visualOnly)
                 {
@@ -516,10 +517,10 @@ namespace Weapon
                     }
                 }
             }
-            if(GameManager.Instance.setting.spawnParticle)muzzleParticle.Play();
-            if(shoot!=null)
+            if (GameManager.Instance.setting.spawnParticle) muzzleParticle.Play();
+            if (shoot != null)
                 AudioManager.Instance.PlayGunShoot(shoot);
-            if(GameManager.Instance.setting.cameraShake)
+            if (GameManager.Instance.setting.cameraShake)
                 CameraShaker.Instance.ShakeOnce(2, 2, 0.1f, 0.4f);
 
             return success;
@@ -534,15 +535,15 @@ namespace Weapon
         bool GunHit(RaycastHit hit)
         {
             if (hit.point != Vector3.zero)
-            { 
+            {
                 var root = hit.transform.root;
                 Rigidbody rb = hit.collider.gameObject.GetComponent<Rigidbody>();
 
                 if (hit.transform.root.CompareTag("Enemy"))
                 {
                     ClientEnemy clientEnemy = root.GetComponent<ClientEnemy>();
-                    NetworkManager.Instance.HitEnemy(clientEnemy.Id,hit.normal);
-                     
+                    NetworkManager.Instance.HitEnemy(clientEnemy.Id, hit.normal);
+
                     return true;
                 }
                 else if (hit.collider.gameObject.layer == LayerMask.NameToLayer("ClientPlayer"))
@@ -557,32 +558,32 @@ namespace Weapon
                         }
                     }
                     // int actualDamage = isHead ? damage * 2 : damage;
-                    ClientPlayer player =root.GetComponent<ClientPlayer>();
-                    if (GameManager.Instance.setting.enableGore&&GameManager.Instance.setting.spawnParticle)
+                    ClientPlayer player = root.GetComponent<ClientPlayer>();
+                    if (GameManager.Instance.setting.enableGore && GameManager.Instance.setting.spawnParticle)
                     {
                         ObjectPooler.Instance.SpawnFromPool("Blood", hit.point, Quaternion.LookRotation(hit.normal));
                     }
                     if (NetworkManager.Instance.IsTeamMode(player.playerState)) return false;
-                    HitMarker.Instance.StartHitMarker(isHead?Color.yellow:Color.white);
-                    
-                    if(isHead) AudioManager.Instance.Play("headshotrapid");
+                    HitMarker.Instance.StartHitMarker(isHead ? Color.yellow : Color.white);
+
+                    if (isHead) AudioManager.Instance.Play("headshotrapid");
                     // NetworkManager.Instance.TakeDamage(player.Id,isHead,wall,(ushort)weaponIndex);
 
                     return true;
                 }
                 if (rb)
                 {
-                    rb.AddForce(-hit.normal*force,ForceMode.Impulse);
+                    rb.AddForce(-hit.normal * force, ForceMode.Impulse);
                     return false;
                 }
             }
-        
+
             return false;
-        
-        } 
+
+        }
 
         void StopSound()
-        { 
+        {
             AudioManager.Instance.StopGunShoot();
         }
 
@@ -599,12 +600,12 @@ namespace Weapon
             DeAim();
         }
 
-        public bool allowToAim=false;
+        public bool allowToAim = false;
 
         public SmokeTrail trail;
 
         public int spinAmount;
-        public bool isReload=false;
+        public bool isReload = false;
         public bool animateUi = true;
         [Tooltip("Will be multiplied by the reload time for spining")]
         public float spinReloadPercantage = 1;
@@ -615,7 +616,7 @@ namespace Weapon
         /// </summary>
         private uint _reloadRequestTick;
 
-        public void DoReload(int defaultAmmo, bool selfControl=true)
+        public void DoReload(int defaultAmmo, bool selfControl = true)
         {
             if (cantReload) return;
             if (currentAmmo.GetValue() >= maxAmmo || isReload || WeaponManager.Instance.CurrentPlayer.Health <= 0 || NetworkManager.Instance.CheckMultiplayerGameModeStarted()) return;
@@ -623,12 +624,12 @@ namespace Weapon
             isReload = true;
             Reload();
             currentAmmo.SetValue(defaultAmmo);
-            Reload(reloadTime*reloadMultiplier*spinReloadPercantage,spinAmount);
+            Reload(reloadTime * reloadMultiplier * spinReloadPercantage, spinAmount);
             GameUIManager.Instance.RecordPreviusState();
-            if(animateUi)
-                GameUIManager.Instance.Reload(reloadTime*reloadMultiplier);
-            Invoke(nameof(SetReload),reloadTime*reloadMultiplier);
-        
+            if (animateUi)
+                GameUIManager.Instance.Reload(reloadTime * reloadMultiplier);
+            Invoke(nameof(SetReload), reloadTime * reloadMultiplier);
+
             DeAim();
 
             WeaponManager.Instance.arm.enabled = false;
@@ -662,11 +663,11 @@ namespace Weapon
             }
             if (doAnimation)
             {
-                if(reset!=null)
+                if (reset != null)
                     AudioManager.Instance.PlayGunReset(reset);
-                if(weapon)
+                if (weapon)
                     weapon.localPosition = startPos - new Vector3(0, 2, 5);
-                Reload(0.2f,1);
+                Reload(0.2f, 1);
             }
         }
 
@@ -682,7 +683,7 @@ namespace Weapon
             isReload = false;
             desiredReloadRotation = 0;
             gameObject.SetActive(false);
-            
+
         }
 
         public bool playResetAfterReload = false;
@@ -691,7 +692,7 @@ namespace Weapon
         {
             GameUIManager.Instance.StopReload();
             currentAmmo.SetValue(maxAmmo);
-            if(playResetAfterReload&&reset!=null)
+            if (playResetAfterReload && reset != null)
                 AudioManager.Instance.PlayGunReset(reset);
             isReload = false;
 
@@ -711,11 +712,11 @@ namespace Weapon
 
         bool IsAllowShooting()
         {
-            return Time.time-1 / stat.fireRate > lastFireTime  ;
+            return Time.time - 1 / stat.fireRate > lastFireTime;
         }
 
         public int damage;
-        public float spreadAngle,normalSpread,runSpread;
+        public float spreadAngle, normalSpread, runSpread;
 
         private void CreateExplosiveBullet(Vector3 point)
         {
@@ -729,7 +730,7 @@ namespace Weapon
                 Bullet bullet = ObjectPooler.Instance.SpawnFromPool("ExplosiveBullet", muzzlePoint.position,
                     Quaternion.LookRotation(dir)).GetComponent<Bullet>();
 
-                bullet.Initialization(dir,200f,damage,LayerMask.NameToLayer("Bullet"),true,useGravity);
+                bullet.Initialization(dir, 200f, damage, LayerMask.NameToLayer("Bullet"), true, useGravity);
                 dir -= offset;
             }
         }
@@ -752,7 +753,7 @@ namespace Weapon
             desiredBob = new Vector3(x, y, z);
         }
 
-        public float normalReloadTime,reloadTime;
+        public float normalReloadTime, reloadTime;
         private void Rotation(Vector2 offset)
         {
             float num = offset.magnitude * 0.03f;
@@ -777,7 +778,7 @@ namespace Weapon
         private void SpeedBob()
         {
             // Vector2 vector = ReplayManager.Instance.Replaying? _replayPlayer.FindVelRelativeToLook()*drag : PlayerMovement.Instance.FindVelRelativeToLook()*drag;
-            Vector2 vector = WeaponManager.Instance.CurrentPlayer.FindVelRelativeToLook()*drag;
+            Vector2 vector = WeaponManager.Instance.CurrentPlayer.FindVelRelativeToLook() * drag;
             Vector3 vector2 = new Vector3(vector.x, Velocity.y, vector.y);
             vector2 *= -0.01f;
             vector2 = Vector3.ClampMagnitude(vector2, 0.1f);
@@ -789,12 +790,12 @@ namespace Weapon
         public void ShootAnim()
         {
             float num = 1.5f;
-            recoilOffset += -(Vector3.forward*shootBack + Vector3.up * shootVertical- Vector3.right *shootHorizontal);
-            recoilRotation += -new Vector3(shootRotX, Random.Range(10f, 30f)*shootRotYMultiplier, Random.Range(-50f, 50f)*shootRotZMultiplier) * num;
+            recoilOffset += -(Vector3.forward * shootBack + Vector3.up * shootVertical - Vector3.right * shootHorizontal);
+            recoilRotation += -new Vector3(shootRotX, Random.Range(10f, 30f) * shootRotYMultiplier, Random.Range(-50f, 50f) * shootRotZMultiplier) * num;
         }
 
         [SerializeField] private float shootVertical = 0.3f, shootHorizontal = 0.35f;
-        [SerializeField] private float shootRotX = 90f,shootRotZMultiplier=1f,shootRotYMultiplier=1f;
+        [SerializeField] private float shootRotX = 90f, shootRotZMultiplier = 1f, shootRotYMultiplier = 1f;
         private void RecoilGun()
         {
             recoilOffset = Vector3.SmoothDamp(recoilOffset, Vector3.zero, ref recoilOffsetVel, 0.05f);
@@ -803,10 +804,10 @@ namespace Weapon
 
         public void ResetDynamic()
         {
-            recoilOffset=Vector3.zero;
-            recoilRotation=Vector3.zero;
-            desiredBob=Vector3.zero;
-            speedBob=Vector3.zero;
+            recoilOffset = Vector3.zero;
+            recoilRotation = Vector3.zero;
+            desiredBob = Vector3.zero;
+            speedBob = Vector3.zero;
             // weapon.localPosition = startPos;
             // transform.localRotation = Quaternion.identity;
             // if (isReload)
@@ -855,12 +856,12 @@ namespace Weapon
             desiredReloadRotation = -360 * num;
             reloadPosOffset = 0.45f;
         }
-    
+
         protected Vector3 Velocity => WeaponManager.Instance.CurrentPlayer.GetVelocity();
 
         protected Camera PlayerCam => MoveCamera.Instance.cam;
 
-        private Vector3 startPos=new Vector3(0,-0.5f,0);
+        private Vector3 startPos = new Vector3(0, -0.5f, 0);
 
         private Vector3 desiredBob;
 

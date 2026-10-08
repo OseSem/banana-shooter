@@ -10,18 +10,18 @@ namespace Level.Editor
         {
             base.OnInspectorGUI();
 
-            LevelMenu levelMenu = (LevelMenu) target;
+            LevelMenu levelMenu = (LevelMenu)target;
 
             if (GUILayout.Button("Display"))
             {
                 levelMenu.Display();
             }
-            
+
             if (GUILayout.Button("UnDisplay"))
             {
                 levelMenu.UnDisplay();
             }
-            
+
             if (GUILayout.Button("Add Visual XP"))
             {
                 levelMenu.AddVisualXp();

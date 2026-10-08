@@ -39,7 +39,7 @@ namespace Movement
         {
             GameManager.InputManager.Player.Jump.started += StartJump;
             GameManager.InputManager.Player.Jump.canceled += StopZ;
-            
+
             GameManager.InputManager.Player.Crouch.started += StartCrouch;
             GameManager.InputManager.Player.Crouch.canceled += StopZ;
         }
@@ -48,7 +48,7 @@ namespace Movement
         {
             GameManager.InputManager.Player.Jump.started -= StartJump;
             GameManager.InputManager.Player.Jump.canceled -= StopZ;
-            
+
             GameManager.InputManager.Player.Crouch.started -= StartCrouch;
             GameManager.InputManager.Player.Crouch.canceled -= StopZ;
         }
@@ -60,12 +60,12 @@ namespace Movement
 
         public void MyUpdate()
         {
-            
+
         }
 
         public void MyLateUpdate()
         {
-            
+
         }
 
         public void MyOnCollisionEnter(Collision other)
@@ -89,14 +89,14 @@ namespace Movement
             {
                 multiplier = 2f;
             }
-            
+
             Vector3 v = moveSpeed * VerticalInput * multiplier * Time.deltaTime * PlayerCam.forward;
             Vector3 h = moveSpeed * HorizontalInput * multiplier * Time.deltaTime * PlayerCam.right;
             Vector3 z = moveSpeed * _zInput * multiplier * Time.deltaTime * Vector3.up;
 
             Rb.MovePosition(PlayerTransform.position + v + h + z);
         }
-        
+
         private void StopZ(InputAction.CallbackContext obj)
         {
             if (GameUIManager.Instance && GameUIManager.Instance.pause || NetworkManager.Instance.CantPlay())

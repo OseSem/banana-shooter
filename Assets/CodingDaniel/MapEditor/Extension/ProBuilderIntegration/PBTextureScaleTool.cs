@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.ProBuilder;
@@ -9,7 +9,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
     {
         public override void Drag(Vector3 position, Quaternion rotation, Vector3 scale)
         {
-            if(Meshes == null)
+            if (Meshes == null)
             {
                 return;
             }

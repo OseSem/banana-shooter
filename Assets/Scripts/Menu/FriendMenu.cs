@@ -26,7 +26,7 @@ namespace Menu
             {
                 if (friend.PersonalState == EPersonaState.k_EPersonaStateAway || friend.PersonalState == EPersonaState.k_EPersonaStateSnooze) continue;
                 FriendDetailUI ui = Instantiate(prefab, content);
-                
+
                 ui.Initialize(friend);
             }
         }
@@ -43,13 +43,13 @@ namespace Menu
             hit.pointerEnter.RemoveAllListeners();
             hit.pointerExit.RemoveAllListeners();
         }
-        
-        
+
+
         private void PointerEnter()
         {
-            _desiredPos=Vector2.zero;
+            _desiredPos = Vector2.zero;
         }
-        
+
         private void PointerExit()
         {
             _desiredPos = notDisplayPos;
@@ -57,7 +57,7 @@ namespace Menu
 
         private void Update()
         {
-            target.anchoredPosition = Vector2.Lerp(target.anchoredPosition,_desiredPos,Time.deltaTime*10f);
+            target.anchoredPosition = Vector2.Lerp(target.anchoredPosition, _desiredPos, Time.deltaTime * 10f);
         }
     }
 }

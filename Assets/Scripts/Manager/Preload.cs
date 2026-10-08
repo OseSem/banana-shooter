@@ -29,8 +29,8 @@ namespace Manager
 
         private int _currentStep = 0;
 
-        
-        
+
+
         public enum LoadingState
         {
             Loading_Main_Game,
@@ -52,11 +52,11 @@ namespace Manager
 
         private void Awake()
         {
-                
+
             Instance = this;
             Initialized = false;
             _loadingFailed = false;
-                
+
             //GameManager -- 8
             //QuestManager -- 7
             //Load Level -- 1
@@ -80,11 +80,11 @@ namespace Manager
         private IEnumerator Start()
         {
             if (!SteamManager.Initialized) yield break;
-            
+
             Authenticate();
             RolesManager.Instance.TryToInitialize();
             LeaderboardManager.Instance.Refresh();
-            
+
             Stopwatch stopwatch = Stopwatch.StartNew();
 
             yield return WaitForInitialization(() => GameManager.Initialized, LoadingState.Loading_Main_Game);
@@ -102,7 +102,7 @@ namespace Manager
             // {
             //     yield return null;
             // }
-            
+
             yield return WaitForInitialization(() => SteamWorkshopManager.Initialized, LoadingState.Loading_Steam_Workshop);
             if (_loadingFailed) yield break;
 
@@ -119,7 +119,7 @@ namespace Manager
             // Loading Leaderboard
             yield return WaitForInitialization(() => LeaderboardManager.Initialized, LoadingState.Loading_Leaderboard);
             if (_loadingFailed) yield break;
-            
+
             yield return WaitForInitialization(() => Initialized, LoadingState.Authenticating);
             if (_loadingFailed) yield break;
 
@@ -128,10 +128,10 @@ namespace Manager
             stopwatch.Stop();
 
             Debug.Log($"Load The Required Datas in {stopwatch.ElapsedMilliseconds / 1000f}s");
-            
+
             TransitionUI.Instance.StartTransition();
 
-            AsyncOperation operation = SceneManager.LoadSceneAsync("Menu",LoadSceneMode.Single);
+            AsyncOperation operation = SceneManager.LoadSceneAsync("Menu", LoadSceneMode.Single);
 
             operation.allowSceneActivation = false;
 
@@ -151,15 +151,15 @@ namespace Manager
 
             TransitionUI.Instance.ClearTransition();
         }
-        
+
         [Serializable]
         public class PlayerBansResponse
         {
             public List<PlayerBanSummary> players = new List<PlayerBanSummary>();
 
-            PlayerBansResponse(){}
+            PlayerBansResponse() { }
         }
-        
+
         private IEnumerator WaitForInitialization(Func<bool> isReady, LoadingState state)
         {
             menu.SetLoadingStateText(state);
@@ -177,7 +177,7 @@ namespace Manager
                 yield return null;
             }
         }
-        
+
         async void Authenticate()
         {
             try

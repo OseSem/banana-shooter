@@ -9,47 +9,47 @@ namespace PVE
     public class PVEMode : GameModes
     {
         private WaitForSeconds _second;
-        
+
         private void Awake()
         {
             leftTime = 400f;
 
-            _second = new WaitForSeconds( 1f );
+            _second = new WaitForSeconds(1f);
         }
 
         protected override void Init()
         {
-            StartCoroutine( StartLoop() );
+            StartCoroutine(StartLoop());
         }
 
         private IEnumerator StartLoop()
         {
-            while ( !started )
+            while (!started)
             {
                 yield return _second;
             }
 
-            while ( GenerationTest.Instance.CurrentIteration > 0 )
+            while (GenerationTest.Instance.CurrentIteration > 0)
             {
-                while ( ServerEnemy.list.Count > 0 )
+                while (ServerEnemy.list.Count > 0)
                 {
                     yield return _second;
                 }
-                
+
                 yield return Loop();
-                
+
                 GenerationTest.Instance.NewIteration();
             }
         }
 
         private IEnumerator Loop()
         {
-            
+
             // while ( ServerEnemy.list.Count > 0 )
             // {
             //         
             // }
-            yield return new WaitForSeconds( 8f );
+            yield return new WaitForSeconds(8f);
         }
     }
 }

@@ -41,11 +41,11 @@ namespace CodingDaniel.MapEditor.Extension.URP
         protected override void GenerateEdgePickingObjects(IList<ProBuilderMesh> selection, bool doDepthTest, out Dictionary<uint, SimpleTuple<ProBuilderMesh, Edge>> map, out GameObject[] depthObjects, out GameObject[] pickerObjects)
         {
             base.GenerateEdgePickingObjects(selection, doDepthTest, out map, out depthObjects, out pickerObjects);
-            if(depthObjects != null)
+            if (depthObjects != null)
             {
                 _cache.Add(depthObjects.SelectMany(go => go.GetComponentsInChildren<Renderer>()).ToArray());
             }
-            if(pickerObjects != null)
+            if (pickerObjects != null)
             {
                 _cache.Add(pickerObjects.SelectMany(go => go.GetComponentsInChildren<Renderer>()).ToArray());
             }
@@ -61,11 +61,11 @@ namespace CodingDaniel.MapEditor.Extension.URP
         protected override void GenerateVertexPickingObjects(IList<ProBuilderMesh> selection, bool doDepthTest, out Dictionary<uint, SimpleTuple<ProBuilderMesh, int>> map, out GameObject[] depthObjects, out GameObject[] pickerObjects)
         {
             base.GenerateVertexPickingObjects(selection, doDepthTest, out map, out depthObjects, out pickerObjects);
-            if(depthObjects != null)
+            if (depthObjects != null)
             {
                 _cache.Add(depthObjects.SelectMany(go => go.GetComponentsInChildren<Renderer>()).ToArray());
             }
-            if(pickerObjects != null)
+            if (pickerObjects != null)
             {
                 _cache.Add(pickerObjects.SelectMany(go => go.GetComponentsInChildren<Renderer>()).ToArray());
             }

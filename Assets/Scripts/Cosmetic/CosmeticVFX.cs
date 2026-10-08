@@ -15,8 +15,8 @@ namespace Cosmetic
         {
             get
             {
-                if(_myTransformBinder == null)
-                    _myTransformBinder= visualEffect.GetComponent<MyVFXTransformBinder>();
+                if (_myTransformBinder == null)
+                    _myTransformBinder = visualEffect.GetComponent<MyVFXTransformBinder>();
                 return _myTransformBinder;
             }
         }
@@ -25,17 +25,17 @@ namespace Cosmetic
 
         public void SetMesh(Mesh mesh)
         {
-            if(mesh==null)
+            if (mesh == null)
                 visualEffect.ResetOverride("Mesh");
-            else visualEffect.SetMesh("Mesh",mesh);
+            else visualEffect.SetMesh("Mesh", mesh);
         }
 
         public void SetSkinnedMeshRenderer(SkinnedMeshRenderer meshRenderer)
         {
-            visualEffect.SetSkinnedMeshRenderer("SkinnedMeshRenderer",meshRenderer);
+            visualEffect.SetSkinnedMeshRenderer("SkinnedMeshRenderer", meshRenderer);
         }
 
-        public void SetTransform(Transform t,bool localScale=false)
+        public void SetTransform(Transform t, bool localScale = false)
         {
             _target = t;
             MyVFXTransformBinder.Target = t;

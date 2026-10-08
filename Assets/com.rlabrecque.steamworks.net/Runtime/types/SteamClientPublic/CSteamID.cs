@@ -6,7 +6,7 @@
 // Changes to this file will be reverted when you update Steamworks.NET
 
 #if !(UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
-	#define DISABLESTEAMWORKS
+#define DISABLESTEAMWORKS
 #endif
 
 #if !DISABLESTEAMWORKS
@@ -227,7 +227,7 @@ namespace Steamworks {
 			return true;
 		}
 
-		#region Overrides
+        #region Overrides
 		public override string ToString() {
 			return m_SteamID.ToString();
 		}
@@ -262,7 +262,7 @@ namespace Steamworks {
 		public int CompareTo(CSteamID other) {
 			return m_SteamID.CompareTo(other.m_SteamID);
 		}
-		#endregion
+        #endregion
 	}
 }
 

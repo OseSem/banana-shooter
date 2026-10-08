@@ -7,9 +7,9 @@ public class IKEnemy : MonoBehaviour
 {
     public LayerMask whatIsGround;
     public float heightAboveGround;
-    
+
     public FastIKFabric[] legs;
-    
+
     private Transform[] legTargets;
 
     private Vector3[] targetPositions;
@@ -31,7 +31,7 @@ public class IKEnemy : MonoBehaviour
     private Vector3 currentVelocity;
 
     public float upAmount = 2f;
-    
+
     private void Start()
     {
         rigidEnemy = GetComponent<RigidEnemy>();
@@ -46,7 +46,7 @@ public class IKEnemy : MonoBehaviour
         UpdateCurrentLegPosition(1);
         InvokeRepeating("SlowUpdate", 1f, 1f);
     }
-    
+
     private void SlowUpdate()
     {
         UpdateCurrentLegPositions(thresholdDistance * 0.2f);
@@ -80,7 +80,7 @@ public class IKEnemy : MonoBehaviour
             float f = 0.2f;
             Vector3 offset = i == 0 ? new Vector3(-f, 0, 0) : new Vector3(f, 0, 0);
             Vector3 vector = legTargets[i].position - root.position;
-            Vector3 raycastPoint = legTargets[i].position + legTargetOffset.x * vector + currentVelocity + Vector3.up+offset;
+            Vector3 raycastPoint = legTargets[i].position + legTargetOffset.x * vector + currentVelocity + Vector3.up + offset;
             if (Physics.Raycast(raycastPoint, Vector3.down, out var hitInfo, 50f, whatIsGround))
             {
                 targetPositions[i] = hitInfo.point;

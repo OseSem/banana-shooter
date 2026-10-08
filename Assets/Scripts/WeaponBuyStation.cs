@@ -14,22 +14,22 @@ public class WeaponBuyStation : MonoBehaviour
         _anim = GetComponent<Animator>();
     }
 
-    
+
     public void Open()
     {
-        _anim.SetBool(Open1,true);
+        _anim.SetBool(Open1, true);
         AudioManager.Instance.Play("weapon_buy_station_open");
-        
+
     }
 
-    
+
     public void Close()
     {
-        _anim.SetBool(Open1,false);
+        _anim.SetBool(Open1, false);
         AudioManager.Instance.Stop("weapon_buy_station_open");
     }
 
-    
+
     public void StartBuy()
     {
         BuyWeaponMenu.Instance.OpenMenu();

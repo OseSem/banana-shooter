@@ -10,10 +10,10 @@ namespace MapEditor
     {
         public static MapBound Instance;
         public List<Transform> spawnPos = new List<Transform>();
-    
-        [SerializeField] public Vector3 center=Vector3.zero,size=Vector3.one;
 
-        [HideInInspector] public float maxY,maxX,minX,maxZ,minZ;
+        [SerializeField] public Vector3 center = Vector3.zero, size = Vector3.one;
+
+        [HideInInspector] public float maxY, maxX, minX, maxZ, minZ;
 
         [SerializeField] public List<Transform> hills = new();
 
@@ -21,15 +21,15 @@ namespace MapEditor
         {
             Instance = this;
             maxY = center.y + size.y / 2f;
-        
+
             maxX = center.x + size.x / 2f;
             minX = center.x - size.x / 2f;
-        
+
             maxZ = center.z + size.z / 2f;
             minZ = center.z - size.z / 2f;
-        
+
             string n = SceneManager.GetActiveScene().name;
-            if (GameManager.Instance.mapPlayed.TryGetValue(n,out bool f) && !f)
+            if (GameManager.Instance.mapPlayed.TryGetValue(n, out bool f) && !f)
             {
                 GameManager.Instance.mapPlayed[n] = true;
 
@@ -48,7 +48,7 @@ namespace MapEditor
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.green;
-            Gizmos.DrawWireCube(center,size);
+            Gizmos.DrawWireCube(center, size);
         }
     }
 }

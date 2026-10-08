@@ -22,10 +22,10 @@ public class SRBlank : MonoBehaviour
 
         _left.positionCount = 2;
         _right.positionCount = 2;
-        
+
         _left.SetPosition(0, leftFixed.position);
         _left.SetPosition(1, leftBlank.position);
-        
+
         _right.SetPosition(0, rightFixed.position);
         _right.SetPosition(1, rightBlank.position);
     }
@@ -34,7 +34,7 @@ public class SRBlank : MonoBehaviour
     {
         _left.SetPosition(0, leftFixed.position);
         _left.SetPosition(1, leftBlank.position);
-        
+
         _right.SetPosition(0, rightFixed.position);
         _right.SetPosition(1, rightBlank.position);
     }

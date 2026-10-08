@@ -1,4 +1,4 @@
-﻿
+
 using System.Collections.ObjectModel;
 using UnityEngine.ProBuilder;
 namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration

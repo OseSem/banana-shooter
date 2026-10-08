@@ -10,12 +10,13 @@ public class LaserGun : Firearms
     {
         AudioManager.Instance.StopGunReload();
         AudioManager.Instance.PlayGunReload(hitClip);
-        Invoke("StopGunSound",0.2f);
+        Invoke("StopGunSound", 0.2f);
     }
 
     void StopGunSound()
-    {AudioManager.Instance.StopGunReload();
-        
+    {
+        AudioManager.Instance.StopGunReload();
+
     }
     protected override void Reload()
     {

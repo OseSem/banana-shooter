@@ -17,13 +17,13 @@ namespace Movement
         public static PlayerMovement Instance;
 
         public PlayerState currentPlayer;
-    
+
         //Assingables
         public Transform playerCam;
         public Transform orientation;
-        
+
         public GameObject playerSmokeFx;
-    
+
         //Other
         private Rigidbody rb;
 
@@ -34,10 +34,10 @@ namespace Movement
 
         private IPlayerMovement _playerMovement;
         public IPlayerMovement PlayerMovementValue => _playerMovement;
-        
+
         [SerializeField] private Movement movement = new Movement();
         [SerializeField] private NoClipMovement noClipMovement = new NoClipMovement();
-    
+
         public int jumpLeft = 1;
         //Input
         public float x, y;
@@ -50,7 +50,7 @@ namespace Movement
         private CapsuleCollider _collider;
 
         private InputManager _inputManager;
-        
+
         void Awake()
         {
             Instance = this;
@@ -64,18 +64,18 @@ namespace Movement
 
             _inputManager = GameManager.InputManager;
 
-            aimAssist = GameManager.Instance.setting.useController && Input.GetJoystickNames().Length>0;
+            aimAssist = GameManager.Instance.setting.useController && Input.GetJoystickNames().Length > 0;
 
             _playerMovement = movement;
-            
-            PlayerMovementValue.MyAwake(this,playerCam,orientation,playerSmokeFx,rb,_collider, _transform);
-            
+
+            PlayerMovementValue.MyAwake(this, playerCam, orientation, playerSmokeFx, rb, _collider, _transform);
+
             SetPerks();
         }
 
         void EnableMovement()
         {
-            PlayerMovementValue.MyAwake(this,playerCam,orientation,playerSmokeFx,rb,_collider, _transform);
+            PlayerMovementValue.MyAwake(this, playerCam, orientation, playerSmokeFx, rb, _collider, _transform);
             PlayerMovementValue.MyOnEnable();
         }
 
@@ -89,18 +89,18 @@ namespace Movement
         {
             return _collider;
         }
-        
+
         private void OnEnable()
         {
             sensitivity = GameManager.Instance.setting.sensitivity;
-        
+
             PlayerMovementValue.MyOnEnable();
-        
-            if(PerkInGameMenu.Instance)
+
+            if (PerkInGameMenu.Instance)
                 PerkInGameMenu.Instance.Enable();
-        
+
             GameManager.Instance.PlayerSpawn?.Invoke(MoveCamera.Instance.cam);
-        
+
             if (NetworkManager.ClientGameMode == GameMode.GunGame)
             {
                 GunGameWeapon.Instance.Open(player.WeaponLevel);
@@ -111,19 +111,19 @@ namespace Movement
         {
             PlayerMovementValue.DeInitialize();
         }
-        public void SetPerks(bool change=false)
+        public void SetPerks(bool change = false)
         {
             _readyToWallrun = PerkManager.Instance.HasPerk(Perk.WallRun);
             jumpFactor = PerkManager.Instance.HasPerk(Perk.Forg) ? 1.35f : 1f;
             perkMoveSpeedFactor = PerkManager.Instance.HasPerk(Perk.Nerd) ? 0.8f : 1f;
             perkMoveSpeedFactor *= PerkManager.Instance.HasPerk(Perk.Fat) ? 0.8f : 1f;
 
-            if (change&&player != null)
+            if (change && player != null)
             {
                 player.SentPerks();
             }
         }
-    
+
         private void OnDisable()
         {
             PlayerMovementValue.MyOnDisable();
@@ -136,15 +136,16 @@ namespace Movement
 
         private void OnDestroy()
         {
-            if(HitDetection.Instance)
+            if (HitDetection.Instance)
                 HitDetection.Instance.StopAllCoroutines();
         }
 
-        void Start() {
+        void Start()
+        {
             Cursor.lockState = CursorLockMode.Locked;
             Cursor.visible = false;
 
-            if(HitDetection.Instance)
+            if (HitDetection.Instance)
                 HitDetection.Instance.SetProperty(this);
         }
 
@@ -158,13 +159,14 @@ namespace Movement
             moveSpeedFactor = Mathf.Clamp(moveSpeedFactor, 1f, 1.5f);
         }
         private static int lastFrame = -1;
-        private void FixedUpdate() {
+        private void FixedUpdate()
+        {
             PlayerMovementValue.MyFixedUpdate();
-        
-            if ( lastFrame == Time.frameCount )
+
+            if (lastFrame == Time.frameCount)
                 return;
-        
-            if(player!=null)
+
+            if (player != null)
                 player.SendMovement(xRotation);
 
             lastFrame = Time.frameCount;
@@ -176,7 +178,7 @@ namespace Movement
             PlayerMovementValue.MyLateUpdate();
         }
 
-        private bool speed_a=false,speed_B=false;
+        private bool speed_a = false, speed_B = false;
 
         public void ChangeNoClip()
         {
@@ -196,13 +198,13 @@ namespace Movement
         private void Update()
         {
             _fallSpeed = rb.velocity.y;
-       
+
             MyInput();
             if (NetworkManager.Instance.CantPlay()) return;
             PlayerMovementValue.MyUpdate();
             Look();
 
-            if (!speed_a&&rb.velocity.magnitude > 60)
+            if (!speed_a && rb.velocity.magnitude > 60)
             {
                 //faster faster yesssssssss
                 VoiceLine.Instance.PlayVoice(VoiceKey.speed_A);
@@ -225,23 +227,24 @@ namespace Movement
                     //what are you thinking,why don’t you move
                     speed_B = true;
                     VoiceLine.Instance.PlayVoice(VoiceKey.speed_B);
-                
+
                 }
             }
-        
-        
+
+
         }
-    
+
         private bool moved = false;
         /// <summary>
         /// Find user input. Should put this in its own class but im lazy
         /// </summary>
-        private void MyInput() {
+        private void MyInput()
+        {
             if (GameUIManager.Instance && GameUIManager.Instance.pause ||
                 NetworkManager.Instance.CheckMultiplayerGameModeStarted() || NetworkManager.Instance.CantPlay())
             {
-                x=0;
-                y=0;
+                x = 0;
+                y = 0;
                 return;
             }
 
@@ -249,10 +252,10 @@ namespace Movement
             x = input.x;
             y = input.y;
             if (TabHolder.Instance != null) return;
-            if ( !moved&& (Mathf.Abs(x) > 0.1f || Mathf.Abs(y) > 0.1f))
+            if (!moved && (Mathf.Abs(x) > 0.1f || Mathf.Abs(y) > 0.1f))
             {
                 moved = true;
-                if (ClientPlayer.list.ContainsKey(NetworkManager.Instance.Client.Id)&&!ClientPlayer.list[NetworkManager.Instance.Client.Id].moved)
+                if (ClientPlayer.list.ContainsKey(NetworkManager.Instance.Client.Id) && !ClientPlayer.list[NetworkManager.Instance.Client.Id].moved)
                 {
                     ClientPlayer.list[NetworkManager.Instance.Client.Id].moved = true;
                 }
@@ -262,17 +265,17 @@ namespace Movement
         private float stayTimer = 0;
 
 
-        
+
         private Transform _transform;
 
         private DemoPlayer _demoPlayer;
 
         public DemoPlayer DemoPlayer => _demoPlayer;
 
-        public float moveSpeedFactor=1,jumpFactor=1;
+        public float moveSpeedFactor = 1, jumpFactor = 1;
         public float perkMoveSpeedFactor = 1f;
 
-        
+
         private float actualWallRotation;
 
         private float wallRotationVel;
@@ -285,7 +288,7 @@ namespace Movement
         public float XRotation => xRotation;
 
         public bool aimAssist = false;
-        [SerializeField]private LayerMask whatIsAssist;
+        [SerializeField] private LayerMask whatIsAssist;
         private void Look()
         {
             float multiplier = 1f;
@@ -296,8 +299,8 @@ namespace Movement
             {
                 Vector3 camPos = playerCam.position;
                 Vector3 myDir = playerCam.forward;
-                Ray ray = new Ray(camPos,myDir);
-                if (Physics.SphereCast(ray,1f,out var hit,1000f, whatIsAssist))
+                Ray ray = new Ray(camPos, myDir);
+                if (Physics.SphereCast(ray, 1f, out var hit, 1000f, whatIsAssist))
                 {
                     multiplier = 0.5f;
 
@@ -324,7 +327,7 @@ namespace Movement
             //mouseLook.x/20f
             float mouseX = Input.GetAxis("Mouse X") * sensitivity * Time.fixedDeltaTime * sensMultiplier * multiplier;
             float mouseY = Input.GetAxis("Mouse Y") * sensitivity * Time.fixedDeltaTime * sensMultiplier * multiplier;
-        
+
             Recoil.Instance.CalculateRecoil();
             Vector3 recoilRot = Recoil.Instance.currentRotation;
             //Find current look rotation
@@ -336,7 +339,7 @@ namespace Movement
             xRotation -= mouseY;
             xRotation += recoilRot.x;
             xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-       
+
             //Perform the rotations
             playerCam.rotation = Quaternion.Euler(xRotation, desiredX, 0);
             orientation.localRotation = Quaternion.Euler(0, desiredX, 0);
@@ -352,7 +355,7 @@ namespace Movement
             var rotation = playerCam.rotation;
             float num = 0f;
             float current = rotation.eulerAngles.y;
-        
+
             num = Vector3.SignedAngle(new Vector3(0f, 0f, 1f), movement.WallNormalVector, Vector3.up);
             if (Math.Abs(movement.WallNormalVector.x - 1f) < 0.1f)
             {
@@ -403,14 +406,15 @@ namespace Movement
         {
             _readyToWallrun = PerkManager.Instance.perks.Contains(Perk.WallRun);
         }
-        
+
 
         /// <summary>
         /// Find the velocity relative to where the player is looking
         /// Useful for vectors calculations regarding movement and limiting movement
         /// </summary>
         /// <returns></returns>
-        public Vector2 FindVelRelativeToLook() {
+        public Vector2 FindVelRelativeToLook()
+        {
             float lookAngle = orientation.eulerAngles.y;
             var velocity = rb.velocity;
             return VelocityExtensions.FindVelRelativeToLook(lookAngle, velocity);
@@ -420,29 +424,30 @@ namespace Movement
         private float _playerHeight;
 
         public float PlayerHeight => _playerHeight;
-        
+
         public int maxJumpCount = 1;
         private void OnCollisionEnter(Collision other)
         {
             PlayerMovementValue.MyOnCollisionEnter(other);
-        
+
         }
 
-        
+
         private bool _readyToWallrun = false;
         public bool ReadyToWallRun => _readyToWallrun;
-        
+
         /// <summary>
         /// Handle ground detection
         /// </summary>
-        private void OnCollisionStay(Collision other) {
+        private void OnCollisionStay(Collision other)
+        {
             PlayerMovementValue.MyOnCollisionStay(other);
         }
         public bool IsGrounded()
         {
             return movement.grounded;
         }
-    
+
         public bool IsCrouching()
         {
             return movement.crouching;
@@ -475,14 +480,14 @@ namespace Movement
         {
             return rb;
         }
-    
+
         public static Vector3 XZVector(Vector3 v)
         {
             return new Vector3(v.x, 0f, v.z);
         }
 
         public ClientPlayer player;
-    
-        
+
+
     }
 }

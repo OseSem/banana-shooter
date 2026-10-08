@@ -12,13 +12,13 @@ namespace Multiplayer.Entity.Client.Enemy.State
     public abstract class EnemyState : MonoBehaviour
     {
         [HideInInspector] public ServerEnemy.EnemyType enemyType = ServerEnemy.EnemyType.None;
-        
+
         [HideInInspector] public Transform selfTransform;
 
         [HideInInspector] public Rigidbody rb;
-        
+
         [HideInInspector] public AudioSource source;
-        
+
         [HideInInspector] public Quaternion desiredRot;
 
         [SerializeField] public Animator anim;
@@ -34,7 +34,7 @@ namespace Multiplayer.Entity.Client.Enemy.State
             source.outputAudioMixerGroup = UnderWaterSfx.Instance.@group;
             source.loop = false;
             source.playOnAwake = false;
-            
+
             source.spatialBlend = 1f;
 
             selfTransform = transform;
@@ -44,7 +44,7 @@ namespace Multiplayer.Entity.Client.Enemy.State
         {
             if (Health > 0)
             {
-                selfTransform.rotation = Quaternion.Lerp(selfTransform.rotation,desiredRot,Time.deltaTime*Speed);
+                selfTransform.rotation = Quaternion.Lerp(selfTransform.rotation, desiredRot, Time.deltaTime * Speed);
             }
         }
 
@@ -60,26 +60,26 @@ namespace Multiplayer.Entity.Client.Enemy.State
             }
             else
             {
-                AudioManager.Instance.SoundEffect3D("bulletimpact_robot2",position, 25f);
+                AudioManager.Instance.SoundEffect3D("bulletimpact_robot2", position, 25f);
             }
             switch (enemyType)
             {
                 case ServerEnemy.EnemyType.Jack:
-                
-                    Destroy(Instantiate(PrefabManager.Instance.GetPrefab("JackRagdoll"),position,rotation),5f);
+
+                    Destroy(Instantiate(PrefabManager.Instance.GetPrefab("JackRagdoll"), position, rotation), 5f);
                     Instantiate(PrefabManager.Instance.GetPrefab("SmallExplode"), position, rotation);
-                
-                    if(isLocal)
+
+                    if (isLocal)
                         AchievementManager.Instance.SetAchievement(AchievementManager.EAchievements.JACK);
                     break;
                 case ServerEnemy.EnemyType.Turret:
-                    Destroy(Instantiate(PrefabManager.Instance.GetPrefab("TurretRagdoll"),position,rotation),5f);
+                    Destroy(Instantiate(PrefabManager.Instance.GetPrefab("TurretRagdoll"), position, rotation), 5f);
                     Instantiate(PrefabManager.Instance.GetPrefab("BigExplode"), position, rotation);
 
-                    AudioManager.Instance.SoundEffect3D("Explosion",position);
+                    AudioManager.Instance.SoundEffect3D("Explosion", position);
                     if (GameManager.Instance.setting.cameraShake)
                     {
-                        GameManager.Instance.CameraShake3D(5f, 5f, 0.1f, 1 ,position);
+                        GameManager.Instance.CameraShake3D(5f, 5f, 0.1f, 1, position);
                     }
                     break;
             }
@@ -89,11 +89,11 @@ namespace Multiplayer.Entity.Client.Enemy.State
         {
             int damage = Health - health;
             Health = health;
-            if(visual)
+            if (visual)
                 TakeDamageVisual(damage);
             return damage;
         }
-        
+
         public int SetHealth(int health, int attackerId, bool visual)
         {
             DemoEntity entity = DemoManager.Instance.GetEntity(attackerId);
@@ -101,7 +101,7 @@ namespace Multiplayer.Entity.Client.Enemy.State
             {
                 HitMarker.Instance.StartHitMarker(Color.white);
             }
-            return SetHealth(health,visual);
+            return SetHealth(health, visual);
         }
 
         void TakeDamageVisual(int damage)
@@ -111,12 +111,12 @@ namespace Multiplayer.Entity.Client.Enemy.State
                     Quaternion.LookRotation(ListenerManager.Instance.cameraTransform.position - position))
                 .GetComponent<HitMarker3D>();
             h.text.SetText(damage.ToString());
-            
+
             if (GameManager.Instance.setting.spawnParticle)
             {
                 // Instantiate(PrefabManager.Instance.GetPrefab("robotHit"), pos, rot);
                 Quaternion rot = Quaternion.LookRotation(Vector3.up);
-                ObjectPooler.Instance.SpawnFromPool("BulletHit",position,rot);
+                ObjectPooler.Instance.SpawnFromPool("BulletHit", position, rot);
                 Instantiate(PrefabManager.Instance.GetPrefab("robotHIt2"), position, rot);
                 AudioManager.Instance.SoundEffect3D("bulletimpact_robot", position);
             }
@@ -133,7 +133,7 @@ namespace Multiplayer.Entity.Client.Enemy.State
                     break;
                 case ServerEnemy.EnemyType.Zombie:
                     enemy =
-                        Instantiate(PrefabManager.Instance.GetPrefab("ClientZombie"+index), pos, Quaternion.identity);
+                        Instantiate(PrefabManager.Instance.GetPrefab("ClientZombie" + index), pos, Quaternion.identity);
                     break;
                 case ServerEnemy.EnemyType.Kat:
                     enemy =
@@ -146,7 +146,7 @@ namespace Multiplayer.Entity.Client.Enemy.State
                 default:
                     enemy =
                         Instantiate(PrefabManager.Instance.GetPrefab("ClientJack"), pos, Quaternion.identity);
-                
+
                     break;
             }
 

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Console.CommandScript
 {
-    [CreateAssetMenu(fileName = "Help Command",menuName = "Utilities/DeveloperConsole/Commands/Help Command")]
+    [CreateAssetMenu(fileName = "Help Command", menuName = "Utilities/DeveloperConsole/Commands/Help Command")]
     public class HelpCommand : ConsoleCommand
     {
         public List<Argument> helps = new List<Argument>();

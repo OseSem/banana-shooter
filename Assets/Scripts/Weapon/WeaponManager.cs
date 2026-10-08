@@ -17,11 +17,11 @@ namespace Weapon
     public class WeaponManager : MonoBehaviour
     {
         public static WeaponManager Instance;
-        
+
         public const int MaxStoredSize = 128;
         public bool[] ShootingBuffer { get; } = new bool[MaxStoredSize];
-        
-        private int _currentWeaponIndex=0;
+
+        private int _currentWeaponIndex = 0;
 
         public int CurrentWeaponIndex
         {
@@ -42,28 +42,28 @@ namespace Weapon
         [SerializeField] public ThrowableManager throwableManager;
 
         private IWeaponManager _weaponManager;
-    
+
         private Firearms _currentWeapon;
 
         private Firearms[] _weapons = new Firearms[4];
 
         public List<Camera> cams = new();
         [HideInInspector]
-        public float desiredFOV,defaultFOV,speedUpFOV;
+        public float desiredFOV, defaultFOV, speedUpFOV;
         public SkinnedMeshRenderer arm;
 
         private PlayerState _currentPlayer;
 
         public PlayerState CurrentPlayer => _currentPlayer;
 
-        public GameObject nightVission,flashLight;
-        public Queue<Tuple<uint,int>> LastReloadTick { get; } = new();
-        
+        public GameObject nightVission, flashLight;
+        public Queue<Tuple<uint, int>> LastReloadTick { get; } = new();
+
         public Animator armAnimator;
         public LookedToObject leftHandTarget, rightHandTarget;
 
         [SerializeField] public LayerMask weaponCamDefaultLayer, weaponCamAimingLayer;
-        
+
         public bool WeaponSelectAnimation { get; set; } = true;
         private void Awake()
         {
@@ -71,25 +71,25 @@ namespace Weapon
 
             ClientPlayer.SetWeaponManagerClass(this);
         }
-        
+
         private void OnEnable()
         {
             GameManager.InputManager.Player.Shoot.started += StartShoot;
-            GameManager.InputManager.Player.Shoot.canceled +=  StopShoot;
+            GameManager.InputManager.Player.Shoot.canceled += StopShoot;
             GameManager.InputManager.Player.Shoot.performed += Shoot;
-        
+
             GameManager.InputManager.Player.Reload.performed += Reload;
-        
+
             GameManager.InputManager.Player.Weapon0.performed += Weapon0;
             GameManager.InputManager.Player.Weapon1.performed += Weapon1;
             GameManager.InputManager.Player.Weapon2.performed += Weapon2;
             GameManager.InputManager.Player.Power.performed += Weapon3;
-        
+
             GameManager.InputManager.Player.NextWeapon.performed += NextWeapon;
-        
-            GameManager.InputManager.Player.Aim.started +=  StartAim;
-            GameManager.InputManager.Player.Aim.canceled +=  StopAim;
-        
+
+            GameManager.InputManager.Player.Aim.started += StartAim;
+            GameManager.InputManager.Player.Aim.canceled += StopAim;
+
             GameManager.InputManager.Player.FlashLight.performed += FlashLight;
 
             if (GameManager.SettingsLoaded)
@@ -100,27 +100,27 @@ namespace Weapon
             GameManager.OnSettingLoaded += LoadFov;
         }
 
-    
+
         private void OnDisable()
         {
             GameManager.InputManager.Player.Shoot.started -= StartShoot;
-            GameManager.InputManager.Player.Shoot.canceled -=  StopShoot;
+            GameManager.InputManager.Player.Shoot.canceled -= StopShoot;
             GameManager.InputManager.Player.Shoot.performed -= Shoot;
-        
+
             GameManager.InputManager.Player.Reload.performed -= Reload;
-        
+
             GameManager.InputManager.Player.Weapon0.performed -= Weapon0;
             GameManager.InputManager.Player.Weapon1.performed -= Weapon1;
             GameManager.InputManager.Player.Weapon2.performed -= Weapon2;
             GameManager.InputManager.Player.Power.performed -= Weapon3;
-        
+
             GameManager.InputManager.Player.NextWeapon.performed -= NextWeapon;
-        
-            GameManager.InputManager.Player.Aim.started -=  StartAim;
-            GameManager.InputManager.Player.Aim.canceled -=  StopAim;
-        
-            GameManager.InputManager.Player.FlashLight.performed-= FlashLight;
-        
+
+            GameManager.InputManager.Player.Aim.started -= StartAim;
+            GameManager.InputManager.Player.Aim.canceled -= StopAim;
+
+            GameManager.InputManager.Player.FlashLight.performed -= FlashLight;
+
             GameManager.OnSettingLoaded -= LoadFov;
         }
 
@@ -130,7 +130,7 @@ namespace Weapon
             defaultFOV = desiredFOV;
             speedUpFOV = defaultFOV + 6f;
         }
-        
+
         public void InitializePlayer(PlayerState currentPlayer)
         {
             // Switching the controlled or spectated player must not keep the scope
@@ -138,8 +138,8 @@ namespace Weapon
             ResetAim();
 
             _currentPlayer = currentPlayer;
-            _weaponManager = currentPlayer.selfControlled ? new LocalWeaponManager(this,_currentPlayer) : new SpectateWeaponManager(this);
-            
+            _weaponManager = currentPlayer.selfControlled ? new LocalWeaponManager(this, _currentPlayer) : new SpectateWeaponManager(this);
+
             throwableManager.InitializePlayer(currentPlayer);
         }
 
@@ -148,7 +148,7 @@ namespace Weapon
         void FlashLight(InputAction.CallbackContext ctx)
         {
             if (NetworkManager.Instance.CantPlay()) return;
-        
+
             flashLight.SetActive(!flashLight.activeSelf);
             if (GameManager.Instance.setting.useNightVission)
             {
@@ -161,7 +161,7 @@ namespace Weapon
                 AudioManager.Instance.Play("tip");
             }
 
-            Message message = Message.Create(MessageSendMode.Unreliable,(ushort)ClientToServerId.TurnLight);
+            Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ClientToServerId.TurnLight);
             message.Add(nightVission.activeSelf);
             NetworkManager.Instance.SendByte += message.WrittenLength;
             NetworkManager.Instance.Client.Send(message);
@@ -186,7 +186,7 @@ namespace Weapon
 
             if (_weaponManager.StopAim(ctx.canceled))
             {
-                if(_currentWeapon)
+                if (_currentWeapon)
                     _currentWeapon.DoNoAim();
                 desiredFOV = defaultFOV;
                 isAiming = false;
@@ -276,8 +276,8 @@ namespace Weapon
             if (_weaponManager.TryToSwitchWeapon())
             {
                 if (_weapons[1] != null && _weapons[1] == _currentWeapon) return;
-        
-                if(_currentWeapon)
+
+                if (_currentWeapon)
                 {
                 }
 
@@ -289,8 +289,8 @@ namespace Weapon
             if (_weaponManager.TryToSwitchWeapon())
             {
                 if (_weapons[2] != null && _weapons[2] == _currentWeapon) return;
-        
-                if(_currentWeapon)
+
+                if (_currentWeapon)
                 {
                 }
 
@@ -302,7 +302,7 @@ namespace Weapon
             if (_weaponManager.TryToSwitchWeapon())
             {
                 if (_weapons[3] != null && _weapons[3] == _currentWeapon) return;
-                if(_currentWeapon)
+                if (_currentWeapon)
                 {
                 }
 
@@ -324,9 +324,9 @@ namespace Weapon
 
         private void Update()
         {
-            if(!isAiming)
-                desiredFOV = Mathf.Lerp(desiredFOV,_currentPlayer.GetVelocity().magnitude > 20f ? speedUpFOV : defaultFOV,Time.deltaTime*10f);
-            
+            if (!isAiming)
+                desiredFOV = Mathf.Lerp(desiredFOV, _currentPlayer.GetVelocity().magnitude > 20f ? speedUpFOV : defaultFOV, Time.deltaTime * 10f);
+
             // float offset = 1;
             // int index = 0;
             foreach (var cam in cams)
@@ -337,7 +337,7 @@ namespace Weapon
                 cam.fieldOfView = Mathf.Lerp(cam.fieldOfView, desiredFOV, Time.deltaTime * 20f);
                 // index++;
             }
-            
+
             _weaponManager.Update();
         }
 
@@ -345,11 +345,11 @@ namespace Weapon
         {
             // Stop throwing
             throwableManager.IsThrowing = false;
-            
+
             // Stop The Current Weapon Audio
             AudioManager.Instance.StopGunReload();
             AudioManager.Instance.StopGunReset();
-            
+
             if (_currentWeapon != null)
             {
                 if (_currentWeapon.isAiming)
@@ -362,14 +362,14 @@ namespace Weapon
             }
             // Stops when the player is dead or infected
             if (_currentPlayer.Health <= 0 || _currentPlayer.IsInfected) return;
-            
+
             // Deselect every weapon ui
             foreach (var weapon in GameUIManager.Instance.weaponUis)
             {
                 weapon.DeSelect();
             }
             GameUIManager.Instance.weaponUis[3].DeSelect();
-            
+
             // Disable arms when switching
             if (GameManager.Instance.setting.useArm)
             {
@@ -377,12 +377,12 @@ namespace Weapon
                 rightHandTarget.parent = null;
                 arm.enabled = false;
             }
-            
+
             // Execute the command
             _weaponManager.SwitchWeapon(index);
 
             _currentWeapon = _weapons[index];
-            
+
             //TODO: Set the ui back
             if (_currentWeapon != null)
             {
@@ -401,8 +401,8 @@ namespace Weapon
                     rightHandTarget.parent = _currentWeapon.rightHandIK;
                     arm.enabled = true;
                 }
-            
-                armAnimator.SetInteger(WeaponIndex,_currentWeapon.weaponIndex);
+
+                armAnimator.SetInteger(WeaponIndex, _currentWeapon.weaponIndex);
             }
 
             WeaponSelectAnimation = true;
@@ -446,7 +446,7 @@ namespace Weapon
             }
 
             arm.enabled = false;
-            
+
             if (_currentWeapon)
             {
                 _currentWeapon.DeSelect();
@@ -455,7 +455,7 @@ namespace Weapon
 
             for (int i = 0; i < 4; i++)
             {
-                if(_weapons[i]!=null)
+                if (_weapons[i] != null)
                     _weapons[i].DeSelect();
                 _weapons[i] = null;
             }
@@ -466,12 +466,12 @@ namespace Weapon
             MultiplayerWeapon multiplayerWeapon = weapons[weaponIndex];
             _weapons[index] = multiplayerWeapon.GetComponent<Firearms>();
             _weapons[index].currentAmmo = new SafeInt(_weapons[index].maxAmmo);
-            GameUIManager.Instance.weaponUis[index].SetText(UIManager.IsItChinese()? NetworkManager.Instance.GetWeaponChineseName(multiplayerWeapon.name) : multiplayerWeapon.name);
+            GameUIManager.Instance.weaponUis[index].SetText(UIManager.IsItChinese() ? NetworkManager.Instance.GetWeaponChineseName(multiplayerWeapon.name) : multiplayerWeapon.name);
             GameUIManager.Instance.weaponUis[index].SetTexture(NetworkManager.Instance.GetWeaponTexture(multiplayerWeapon.name));
             GameUIManager.Instance.weaponUis[index].DeSelect();
             GameUIManager.Instance.weaponUis[index].Display();
         }
 
-        
+
     }
 }

@@ -35,7 +35,7 @@ namespace Menu
 
         IEnumerator GetLobby()
         {
-            yield return new WaitForSeconds(.5f); 
+            yield return new WaitForSeconds(.5f);
             // LobbyMenu.Instance.GetLobbyList(ELobbyDistanceFilter.k_ELobbyDistanceFilterWorldwide,SearchLobbyType.Tournament);
         }
 
@@ -47,7 +47,7 @@ namespace Menu
             public int IconIndex;
             public List<int> Prizes;
 
-            public TournamentItem(string name, string desc, int iconIndex, List<int> prizes,CSteamID lobbyId)
+            public TournamentItem(string name, string desc, int iconIndex, List<int> prizes, CSteamID lobbyId)
             {
                 Name = name;
                 Desc = desc;
@@ -57,7 +57,7 @@ namespace Menu
             }
         }
 
-        
+
         private List<TournamentItem> _tournaments = new List<TournamentItem>();
 
         private static List<ulong> existTournament = new List<ulong>();
@@ -81,25 +81,25 @@ namespace Menu
                     }
                 }
 
-                TournamentItem item = new TournamentItem(tourName,tourDesc,0,prizes,lobbyId);
-                
+                TournamentItem item = new TournamentItem(tourName, tourDesc, 0, prizes, lobbyId);
+
                 _tournaments.Add(item);
                 preview.interactable = _currentIndex != 0;
                 next.interactable = _currentIndex != _tournaments.Count - 1;
                 if (_tournaments.Count == 1)
                 {
                     _currentIndex = 0;
-                    
+
                     GenerateItems(item);
-                    
+
                 }
-                
+
                 existTournament.Add(lobbyId.m_SteamID);
             }
         }
 
         private int _currentIndex = 0;
-        
+
         public void NextTournament(int i)
         {
             _currentIndex += i;
@@ -107,11 +107,11 @@ namespace Menu
             if (_currentIndex < 0) _currentIndex = _tournaments.Count - 1;
             preview.interactable = _currentIndex != 0;
             next.interactable = _currentIndex != _tournaments.Count - 1;
-            
+
             GenerateItems(_tournaments[_currentIndex]);
         }
 
-        [SerializeField] private Button next, preview,join;
+        [SerializeField] private Button next, preview, join;
         void GenerateItems(TournamentItem tournamentItem)
         {
             for (int i = 0; i < prizePoolContent.childCount; i++)
@@ -119,7 +119,7 @@ namespace Menu
                 Destroy(prizePoolContent.GetChild(i).gameObject);
             }
             menu.SetActive(true);
-            nameText.StringReference.Arguments = new List<object>(){tournamentItem.Name};
+            nameText.StringReference.Arguments = new List<object>() { tournamentItem.Name };
             nameText.RefreshString();
             desc.SetText(tournamentItem.Desc);
 
@@ -128,7 +128,7 @@ namespace Menu
                 CosmeticItem cosmeticItem = CosmeticManager.ItemIdToItem[prize];
                 Transform item = Instantiate(PrefabManager.Instance.GetPrefab("Cosmetic"),
                     prizePoolContent).transform;
-            
+
                 item.GetChild(2).GetChild(0).GetComponent<RawImage>().texture = cosmeticItem.icon;
                 Transform child3 = item.GetChild(3);
                 child3.GetComponent<TextMeshProUGUI>().color = cosmeticItem.GetColor();

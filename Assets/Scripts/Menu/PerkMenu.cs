@@ -18,7 +18,7 @@ namespace Menu
         {
             public Button btn;
             public LocalizeStringEvent text;
-            public RawImage icon,bg;
+            public RawImage icon, bg;
         }
 
         public List<PerkItemUI> items = new List<PerkItemUI>();
@@ -32,7 +32,7 @@ namespace Menu
                 var i1 = i;
                 item.btn.onClick.AddListener(delegate { SelectPerk(i1); });
 
-                int index = (int) PerkManager.Instance.perks[i] - 1;
+                int index = (int)PerkManager.Instance.perks[i] - 1;
                 item.icon.texture = PerkManager.Instance.perkItems[index].texture2D;
                 item.text.SetEntry(PerkManager.Instance.perkItems[index].key);
                 i++;
@@ -45,12 +45,12 @@ namespace Menu
         void SelectPerk(int index)
         {
             AudioManager.Instance.PlayButton();
-            
+
             currentIndex = index;
             selectObjMenu.SetActive(true);
         }
 
-        
+
         public void ClearSelect()
         {
             foreach (var item in items)
@@ -59,7 +59,7 @@ namespace Menu
             }
         }
 
-        
+
         public void SetPerk(int index)
         {
             AudioManager.Instance.PlayButton();
@@ -69,17 +69,17 @@ namespace Menu
                 item.btn.interactable = true;
             }
             if (currentIndex == -1) return;
-            Perk perk = (Perk) index;
+            Perk perk = (Perk)index;
             PerkManager.Instance.perks[currentIndex] = perk;
-            
-            items[currentIndex].text.SetEntry(PerkManager.Instance.perkItems[index-1].key);
-            items[currentIndex].icon.texture=(PerkManager.Instance.perkItems[index-1].texture2D);
+
+            items[currentIndex].text.SetEntry(PerkManager.Instance.perkItems[index - 1].key);
+            items[currentIndex].icon.texture = (PerkManager.Instance.perkItems[index - 1].texture2D);
 
             if (PlayerMovement.Instance)
             {
                 PlayerMovement.Instance.SetPerks(true);
                 Recoil.Instance.SetFactor(PerkManager.Instance.HasPerk(Perk.Bot) ? 0.3f : 1.25f);
-                HitDetection.Instance.enabled=PerkManager.Instance.HasPerk(Perk.HitDetection);
+                HitDetection.Instance.enabled = PerkManager.Instance.HasPerk(Perk.HitDetection);
             }
             CloseDescription();
             currentIndex = -1;
@@ -101,8 +101,8 @@ namespace Menu
         {
             descriptionPannel.SetActive(false);
         }
-        
-        
+
+
 
     }
 }

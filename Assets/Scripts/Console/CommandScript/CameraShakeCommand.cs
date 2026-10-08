@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Console.CommandScript
 {
-    [CreateAssetMenu(fileName = "CameraShake Command",menuName = "Utilities/DeveloperConsole/Commands/CameraShake Command")]
+    [CreateAssetMenu(fileName = "CameraShake Command", menuName = "Utilities/DeveloperConsole/Commands/CameraShake Command")]
     public class CameraShakeCommand : ConsoleCommand
     {
         public override bool Process(string[] args)
@@ -34,7 +34,7 @@ namespace Console.CommandScript
 
             if (SpectateMovement.Instance)
             {
-                SpectateMovement.Instance.CameraShake(amplitude,frequency,duration);
+                SpectateMovement.Instance.CameraShake(amplitude, frequency, duration);
             }
 
             return true;

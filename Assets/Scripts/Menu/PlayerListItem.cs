@@ -12,7 +12,7 @@ using Utils;
 
 namespace Menu
 {
-    public class PlayerListItem : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,IPointerDownHandler
+    public class PlayerListItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
     {
         private GameUIManager manager;
         public string playerName;
@@ -22,25 +22,25 @@ namespace Menu
         public LevelSystem levelSystem;
 
         public ushort kills, deaths;
-        
-        [SerializeField] public TextMeshProUGUI playerNameText,killsText,deathsText,expText,latencyText,timeText;
-        [SerializeField] private RawImage avatar,levelImage;
+
+        [SerializeField] public TextMeshProUGUI playerNameText, killsText, deathsText, expText, latencyText, timeText;
+        [SerializeField] private RawImage avatar, levelImage;
 
         public RawImage image;
         private Color desiredColor;
         private Color defaultColor;
-        public Color normalColor=Color.white,targetColor=Color.grey;
-        public Color redColor=Color.red,redTargetColor=Color.grey;
-        public Color blueColor=Color.blue,blueTargetColor=Color.grey;
+        public Color normalColor = Color.white, targetColor = Color.grey;
+        public Color redColor = Color.red, redTargetColor = Color.grey;
+        public Color blueColor = Color.blue, blueTargetColor = Color.grey;
 
-        public Color infectedColor=Color.green, infectedTargetColor;
-        
-        public Texture2D clanOwnerVerified,alive,dead,infected;
+        public Color infectedColor = Color.green, infectedTargetColor;
+
+        public Texture2D clanOwnerVerified, alive, dead, infected;
 
         [SerializeField] private Gradient latencyColor;
         private void Start()
         {
-            manager=GameUIManager.Instance;
+            manager = GameUIManager.Instance;
         }
 
         private void Update()
@@ -49,7 +49,7 @@ namespace Menu
         }
 
         private bool team = false, red = false;
-        public void SetPlayerValues(string _playerName,ushort _connectionId,ulong steamId,int exp,bool isInfected,short ping, PlayerState playerState)
+        public void SetPlayerValues(string _playerName, ushort _connectionId, ulong steamId, int exp, bool isInfected, short ping, PlayerState playerState)
         {
             playerName = _playerName;
             connectionId = _connectionId;
@@ -87,7 +87,7 @@ namespace Menu
                 desiredColor = red ? redColor : blueColor;
             }
             else desiredColor = defaultColor;
-        
+
             latencyText.SetText(ping.ToString());
 
             latencyText.color = latencyColor.Evaluate(ping / 200f);
@@ -96,7 +96,7 @@ namespace Menu
             {
                 timeText.transform.parent.gameObject.SetActive(true);
             }
-        
+
             SetState(PlayerItemState.Alive);
         }
 
@@ -120,7 +120,7 @@ namespace Menu
             GameUIManager.Instance.SortPlayer();
             killsText.SetText(kill.ToString());
         }
-    
+
         public enum PlayerItemState
         {
             Alive,
@@ -143,16 +143,16 @@ namespace Menu
         {
             stayTime = time;
             int h = time / 60;
-            int s = time - h*60;
+            int s = time - h * 60;
             timeText.SetText(h.ToString("D2") + ":" + s.ToString("D2"));
         }
 
-        private PlayerItemState state=PlayerItemState.Dead;
-        [SerializeField] private RawImage stateImage;  
+        private PlayerItemState state = PlayerItemState.Dead;
+        [SerializeField] private RawImage stateImage;
 
         public void OnPointerEnter(PointerEventData eventData)
         {
-            if (state==PlayerItemState.Infected)
+            if (state == PlayerItemState.Infected)
             {
                 desiredColor = infectedTargetColor;
                 return;
@@ -165,7 +165,7 @@ namespace Menu
 
         public void OnPointerExit(PointerEventData eventData)
         {
-            if (state==PlayerItemState.Infected)
+            if (state == PlayerItemState.Infected)
             {
                 desiredColor = infectedColor;
                 return;
@@ -180,18 +180,18 @@ namespace Menu
             manager.currentSelectPlayer = this;
             manager.serverManage.gameObject.SetActive(true);
             manager.serverManage.position = Input.mousePosition;
-        
+
             manager.profileName.SetText(playerName);
             manager.profileAvatar.texture = avatar.texture;
-        
+
             Color color = LevelManager.Instance.GetColor(levelSystem.GetLevel());
 
             foreach (var raw in manager.levelImages)
             {
                 raw.color = color;
             }
-        
-            manager.levelText.SetText(levelSystem.GetLevel().ToString()); 
+
+            manager.levelText.SetText(levelSystem.GetLevel().ToString());
             manager.expText.SetText($"{levelSystem.GetExp()} / {levelSystem.GetExpToNext()}");
             manager.expSlider.minValue = levelSystem.GetMinExp();
             manager.expSlider.maxValue = levelSystem.GetExpToNext();
@@ -200,23 +200,23 @@ namespace Menu
 
         private void OnDisable()
         {
-            if (state==PlayerItemState.Infected)
+            if (state == PlayerItemState.Infected)
             {
                 desiredColor = infectedColor;
                 return;
             }
-        
+
             if (team)
                 desiredColor = red ? redColor : blueColor;
             else desiredColor = defaultColor;
         }
 
         private Texture2D currentTexture;
-    
+
         public void SetState(PlayerItemState s)
         {
             state = s;
-        
+
             switch (s)
             {
                 case PlayerItemState.Alive:

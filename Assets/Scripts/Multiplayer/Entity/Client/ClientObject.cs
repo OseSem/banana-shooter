@@ -16,7 +16,7 @@ namespace Multiplayer.Client
         public ushort Id;
 
         public ObjectType type;
-    
+
         private Transform _transform;
         private Rigidbody _rigidbody;
 
@@ -25,7 +25,7 @@ namespace Multiplayer.Client
         void Initialize(ushort id)
         {
             Id = id;
-            list.Add(Id,this);
+            list.Add(Id, this);
 
             _transform = transform;
             _rigidbody = GetComponent<Rigidbody>();
@@ -33,18 +33,18 @@ namespace Multiplayer.Client
             var position = _transform.position;
             desiredPos = position;
             desiredRot = _transform.rotation;
-        
-            AudioManager.Instance.SoundEffect3D("tip",position);
-        
+
+            AudioManager.Instance.SoundEffect3D("tip", position);
+
         }
 
         private void Update()
         {
             if (Vector3.Distance(_transform.position, desiredPos) > 0.1f)
             {
-                _transform.position = Vector3.Lerp(_transform.position,desiredPos,Time.deltaTime*10f);
+                _transform.position = Vector3.Lerp(_transform.position, desiredPos, Time.deltaTime * 10f);
             }
-            _transform.rotation = Quaternion.Lerp(_transform.rotation,desiredRot,Time.deltaTime*10f);
+            _transform.rotation = Quaternion.Lerp(_transform.rotation, desiredRot, Time.deltaTime * 10f);
         }
 
         private void OnDestroy()
@@ -52,7 +52,7 @@ namespace Multiplayer.Client
             if (list.ContainsKey(Id))
                 list.Remove(Id);
         }
-        [MessageHandler((ushort) ServerToClientId.ObjectMovement, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.ObjectMovement, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void ObjectMovement(Message message)
         {
             ushort id = message.GetUShort();
@@ -62,7 +62,7 @@ namespace Multiplayer.Client
                 Vector3 pos = message.GetVector3();
 
                 clientObject.desiredPos = pos;
-                
+
                 Quaternion rot = message.GetQuaternion();
 
                 clientObject.desiredRot = rot;
@@ -72,7 +72,7 @@ namespace Multiplayer.Client
                 clientObject._rigidbody.velocity = vel;
             }
         }
-        [MessageHandler((ushort) ServerToClientId.ObjectDestroy, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.ObjectDestroy, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void ObjectDestroy(Message message)
         {
             ushort id = message.GetUShort();
@@ -82,15 +82,15 @@ namespace Multiplayer.Client
                 Destroy(clientObject.gameObject);
             }
         }
-        [MessageHandler((ushort) ServerToClientId.ObjHitWall, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.ObjHitWall, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void ObjHitWall(Message message)
         {
             Vector3 point = message.GetVector3();
 
             string n = "hit" + Random.Range(0, 5);
-            AudioManager.Instance.SoundEffect3D(n,point);
+            AudioManager.Instance.SoundEffect3D(n, point);
         }
-        [MessageHandler((ushort) ServerToClientId.ObjectSpawn, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.ObjectSpawn, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void ObjectSpawn(Message message)
         {
             ushort id = message.GetUShort();
@@ -109,25 +109,25 @@ namespace Multiplayer.Client
                 case ObjectType.SodaCan:
                     o = Instantiate(PrefabManager.Instance.GetPrefab("ClientSodaCan"), pos,
                         Quaternion.identity).GetComponent<ClientObject>();
-                
+
                     o.Initialize(id);
                     break;
                 case ObjectType.Book:
                     o = Instantiate(PrefabManager.Instance.GetPrefab("client_book"), pos,
                         Quaternion.identity).GetComponent<ClientObject>();
-                
+
                     o.Initialize(id);
                     break;
                 case ObjectType.Crate:
                     o = Instantiate(PrefabManager.Instance.GetPrefab("ClientCrate"), pos,
                         Quaternion.identity).GetComponent<ClientObject>();
-                
+
                     o.Initialize(id);
                     break;
                 case ObjectType.Package:
                     o = Instantiate(PrefabManager.Instance.GetPrefab("ClientPackage"), pos,
                         Quaternion.identity).GetComponent<ClientObject>();
-                
+
                     o.Initialize(id);
                     break;
                 default:

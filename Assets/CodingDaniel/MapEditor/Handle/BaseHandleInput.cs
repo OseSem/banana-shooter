@@ -8,7 +8,7 @@ namespace CodingDaniel.MapEditor.Handle
     public class BaseHandleInput : MonoBehaviour
     {
         protected IME _editor;
-        
+
         protected BaseHandle _handle;
         public virtual BaseHandle Handle
         {
@@ -33,15 +33,15 @@ namespace CodingDaniel.MapEditor.Handle
                 _handle.BeginDrag();
             }
         }
-        
+
         protected virtual void Update()
         {
-            if(_handle == null)
+            if (_handle == null)
             {
                 Destroy(this);
                 return;
             }
-            if(!_handle.enabled)
+            if (!_handle.enabled)
             {
                 return;
             }
@@ -55,7 +55,7 @@ namespace CodingDaniel.MapEditor.Handle
                 _handle.EndDrag();
             }
 
-            if(_handle != null && _handle.IsDragging)
+            if (_handle != null && _handle.IsDragging)
             {
                 _handle.UnitSnapping = UnitSnappingAction();
             }
@@ -78,7 +78,7 @@ namespace CodingDaniel.MapEditor.Handle
                 }
             }
         }
-        
+
         protected virtual bool BeginDragAction()
         {
             return Input.GetMouseButtonDown(0);
@@ -91,7 +91,7 @@ namespace CodingDaniel.MapEditor.Handle
 
         protected virtual bool UnitSnappingAction()
         {
-            return Input.GetKey(KeyCode.LeftControl) ;
+            return Input.GetKey(KeyCode.LeftControl);
         }
 
         protected virtual bool BeginVertexSnappingAction()

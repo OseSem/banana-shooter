@@ -18,10 +18,10 @@ namespace CodingDaniel.MapEditor.UI.Component
             dropdown.ClearOptions();
             dropdown.AddOptions(str);
         }
-        public override void Init(string n, object o,bool c)
+        public override void Init(string n, object o, bool c)
         {
-            base.Init(n, o,c);
-            dropdown.onValueChanged.AddListener(delegate(int arg0) { SetValue(arg0); });
+            base.Init(n, o, c);
+            dropdown.onValueChanged.AddListener(delegate (int arg0) { SetValue(arg0); });
 
             dropdown.interactable = c;
         }

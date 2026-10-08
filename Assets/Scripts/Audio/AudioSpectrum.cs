@@ -20,7 +20,7 @@ namespace Audio
         {
             if (!Running)
                 return;
-            
+
             AudioListener.GetSpectrumData(_audioSpectrum, 0, FFTWindow.Hamming);
 
             if (_audioSpectrum is { Length: > 0 })

@@ -17,7 +17,7 @@ namespace Menu
     public class ServerSettingUI : MonoBehaviour
     {
         public static ServerSettingUI Instance;
-    
+
         public List<AllowWeapon> allowWeapons = new List<AllowWeapon>();
 
         [Serializable]
@@ -32,11 +32,11 @@ namespace Menu
         {
             Instance = this;
 
-            
-            
-            
-            
-            
+
+
+
+
+
         }
 
         private bool isServer = false;
@@ -67,12 +67,12 @@ namespace Menu
                 bool flag = NetworkServerManager.AllowedWeapon[weaponIndex];
                 allowWeapon.toggle.isOn = flag;
                 allowWeapon.btn.interactable = flag;
-                
-                if(isServer)
+
+                if (isServer)
                 {
                     //local copy: the listener must not capture the loop variable
                     short index = weaponIndex;
-                    allowWeapon.toggle.onValueChanged.AddListener(delegate(bool arg0) { SetAllowedWeapon(index,arg0); });
+                    allowWeapon.toggle.onValueChanged.AddListener(delegate (bool arg0) { SetAllowedWeapon(index, arg0); });
                 }
             }
 
@@ -80,17 +80,17 @@ namespace Menu
             randomGameMode.interactable = isServer;
             serverInput.interactable = isServer;
             disableSpecialWeaponToggle.interactable = isServer;
-            
+
             lobbyId = LobbyManager.Instance.lobbyId;
-            string name= SteamMatchmaking.GetLobbyData(lobbyId, "ashdaghj");
+            string name = SteamMatchmaking.GetLobbyData(lobbyId, "ashdaghj");
             SetServerText(name);
             serverName = name;
 
             randomMap.isOn = NetworkManager.ClientRandomMap;
             randomGameMode.isOn = NetworkManager.ClientRandomGameMode;
             disableSpecialWeaponToggle.isOn = NetworkManager.ClientDisableSpecialWeapon;
-        
-        
+
+
             serverInput.onDeselect.AddListener(SetServername);
             randomMap.onValueChanged.AddListener(SetRandomMap);
             randomGameMode.onValueChanged.AddListener(SetRandomGameMode);
@@ -98,7 +98,7 @@ namespace Menu
             GameUIManager.Instance.gameModeText.SetText(NetworkManager.ClientGameMode + "\n" + NetworkManager.ClientServerType);
             enableTournamentToggle.isOn = LobbyManager.ClientTournamentStarted;
             enableTournamentToggle.onValueChanged.AddListener(TurnTournament);
-            
+
             ulong steamId = NetworkManager.Instance.steamId.m_SteamID;
             if (!RolesManager.Instance.CheckIsAdmin(steamId) &&
                 !RolesManager.Instance.CheckIsHelper(steamId) && !LobbyManager.ClientTournamentStarted)
@@ -107,7 +107,7 @@ namespace Menu
                 {
                     t.SetActive(false);
                 }
-                
+
             }
             foreach (var obj in tournamentInfo)
             {
@@ -132,7 +132,7 @@ namespace Menu
             {
                 enableTournamentToggle.interactable = false;
             }
-            
+
         }
 
         private void SetDisableSpecialWeapon(bool arg0)
@@ -152,7 +152,7 @@ namespace Menu
             disableSpecialWeaponToggle.isOn = NetworkManager.ClientDisableSpecialWeapon;
             SetServerText(serverName);
         }
-        public Toggle randomMap, randomGameMode,disableSpecialWeaponToggle;
+        public Toggle randomMap, randomGameMode, disableSpecialWeaponToggle;
         void SetRandomMap(bool arg)
         {
             if (randomMap.isOn != arg)
@@ -177,13 +177,13 @@ namespace Menu
         {
             serverName = name;
             if (!isServer) return;
-        
-            SteamMatchmaking.SetLobbyData(LobbyManager.Instance.lobbyId,"LobbyName",serverName);
+
+            SteamMatchmaking.SetLobbyData(LobbyManager.Instance.lobbyId, "LobbyName", serverName);
             NetworkServerManager.Instance.SendServerSetting(serverName);
         }
         void SetServerText(string name)
         {
-            serverInput.text=name;
+            serverInput.text = name;
         }
         private static short GetWeaponIndex(string weaponName)
         {
@@ -198,7 +198,7 @@ namespace Menu
             return -1;
         }
 
-        void SetAllowedWeapon(short weapon,bool flag)
+        void SetAllowedWeapon(short weapon, bool flag)
         {
             if (!NetworkServerManager.Instance.Server.IsRunning) return;
             if (weapon < 0 || weapon >= NetworkServerManager.AllowedWeapon.Count) return;
@@ -223,13 +223,13 @@ namespace Menu
                 //Refused, it would leave fewer than 4 allowed weapons: keep it enabled.
                 flag = true;
             }
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort)ServerToClientId.AllowedWeapon);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.AllowedWeapon);
             message.Add(weapon);
             message.Add(flag);
             NetworkServerManager.Instance.Server.SendToAll(message);
-        
+
         }
-        [MessageHandler((ushort) ServerToClientId.AllowedWeapon, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.AllowedWeapon, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void AllowedWeapon(Message message)
         {
             short weapon = message.GetShort();
@@ -255,12 +255,12 @@ namespace Menu
                 break;
             }
 
-        
+
         }
         [SerializeField] GameObject[] tournaments;
         [SerializeField] GameObject[] tournamentInfo;
 
-        private bool _enableAddReward=false;
+        private bool _enableAddReward = false;
         [SerializeField] private GameObject rewardMenu;
         [SerializeField] private Transform addRewardContent;
         [SerializeField] private Transform btn;
@@ -280,13 +280,13 @@ namespace Menu
         }
 
         private bool spawnItem;
-        
+
         public void AddReward()
         {
             rewardMenu.transform.position = btn.position;
             _enableAddReward = !_enableAddReward;
             rewardMenu.SetActive(_enableAddReward);
-            
+
             if (!spawnItem)
             {
                 for (int i = 0; i < addRewardContent.childCount; i++)
@@ -298,63 +298,63 @@ namespace Menu
                     spawnItem = true;
                     foreach (var itemsValue in InventoryManager.InventoryItems.Values)
                     {
-                         CosmeticItem cosmeticItem = CosmeticManager.ItemIdToItem[itemsValue.itemDetails.m_iDefinition.m_SteamItemDef];
-                         
-                         Transform item = Instantiate(PrefabManager.Instance.GetPrefab("Cosmetic"),
-                             addRewardContent).transform;
-                         
-                         item.GetChild(2).GetChild(0).GetComponent<RawImage>().texture = cosmeticItem.icon;
-                         Transform child3 = item.GetChild(3);
-                         child3.GetComponent<TextMeshProUGUI>().color = cosmeticItem.GetColor();
-                         Transform child1 = item.GetChild(1);
-                         switch (cosmeticItem.rarity)
-                         {
-                             case CosmeticItem.Rarity.Common:
-                                 child1.GetComponent<RawImage>().color = Color.white;
-                                 child3.GetComponent<TextMeshProUGUI>().color = Color.white;
-                                 break;
-                             case CosmeticItem.Rarity.Original:
-                                 child1.GetComponent<RawImage>().color = new Color(255/255f,215/255f,0);
-                                 child3.GetComponent<TextMeshProUGUI>().color = new Color(255/255f,215/255f,0);
-                                 break;
-                             case CosmeticItem.Rarity.Rare:
-                                 child1.GetComponent<RawImage>().color = Color.red;
-                                 child3.GetComponent<TextMeshProUGUI>().color = Color.red;
-                                 break;
-                             case CosmeticItem.Rarity.Legendary:
-                                 child1.GetComponent<RawImage>().color = Color.yellow;
-                                 child3.GetComponent<TextMeshProUGUI>().color = Color.yellow;
-                                 break;
-                             case CosmeticItem.Rarity.Uncommon:
-                                 child1.GetComponent<RawImage>().color = Color.cyan;
-                                 child3.GetComponent<TextMeshProUGUI>().color = Color.cyan;
-                                 break;
-                             case CosmeticItem.Rarity.Extraordinary:
-                                 child1.GetComponent<RawImage>().color =new Color(1,105/255f,180/255f);
-                                 child3.GetComponent<TextMeshProUGUI>().color =new Color(1,105/255f,180/255f);
-                                 break;
-                             case CosmeticItem.Rarity.Unique:
-                                 child1.GetComponent<RawImage>().color =new Color(0,1,0);
-                                 child3.GetComponent<TextMeshProUGUI>().color =new Color(0,1,0);
-                                 break;
-                             case CosmeticItem.Rarity.Epic:
-                                 child1.GetComponent<RawImage>().color =new Color(255/255f,69/255f,0);
-                                 child3.GetComponent<TextMeshProUGUI>().color =new Color(255/255f,69/255f,0);
-                                 break;
-                         }
-         
-                         child3.GetComponent<TextMeshProUGUI>().SetText(cosmeticItem.displayName);
-                         
-                         item.GetComponent<Button>().onClick.AddListener(delegate { AddActualReward(cosmeticItem,item.gameObject); });
+                        CosmeticItem cosmeticItem = CosmeticManager.ItemIdToItem[itemsValue.itemDetails.m_iDefinition.m_SteamItemDef];
+
+                        Transform item = Instantiate(PrefabManager.Instance.GetPrefab("Cosmetic"),
+                            addRewardContent).transform;
+
+                        item.GetChild(2).GetChild(0).GetComponent<RawImage>().texture = cosmeticItem.icon;
+                        Transform child3 = item.GetChild(3);
+                        child3.GetComponent<TextMeshProUGUI>().color = cosmeticItem.GetColor();
+                        Transform child1 = item.GetChild(1);
+                        switch (cosmeticItem.rarity)
+                        {
+                            case CosmeticItem.Rarity.Common:
+                                child1.GetComponent<RawImage>().color = Color.white;
+                                child3.GetComponent<TextMeshProUGUI>().color = Color.white;
+                                break;
+                            case CosmeticItem.Rarity.Original:
+                                child1.GetComponent<RawImage>().color = new Color(255 / 255f, 215 / 255f, 0);
+                                child3.GetComponent<TextMeshProUGUI>().color = new Color(255 / 255f, 215 / 255f, 0);
+                                break;
+                            case CosmeticItem.Rarity.Rare:
+                                child1.GetComponent<RawImage>().color = Color.red;
+                                child3.GetComponent<TextMeshProUGUI>().color = Color.red;
+                                break;
+                            case CosmeticItem.Rarity.Legendary:
+                                child1.GetComponent<RawImage>().color = Color.yellow;
+                                child3.GetComponent<TextMeshProUGUI>().color = Color.yellow;
+                                break;
+                            case CosmeticItem.Rarity.Uncommon:
+                                child1.GetComponent<RawImage>().color = Color.cyan;
+                                child3.GetComponent<TextMeshProUGUI>().color = Color.cyan;
+                                break;
+                            case CosmeticItem.Rarity.Extraordinary:
+                                child1.GetComponent<RawImage>().color = new Color(1, 105 / 255f, 180 / 255f);
+                                child3.GetComponent<TextMeshProUGUI>().color = new Color(1, 105 / 255f, 180 / 255f);
+                                break;
+                            case CosmeticItem.Rarity.Unique:
+                                child1.GetComponent<RawImage>().color = new Color(0, 1, 0);
+                                child3.GetComponent<TextMeshProUGUI>().color = new Color(0, 1, 0);
+                                break;
+                            case CosmeticItem.Rarity.Epic:
+                                child1.GetComponent<RawImage>().color = new Color(255 / 255f, 69 / 255f, 0);
+                                child3.GetComponent<TextMeshProUGUI>().color = new Color(255 / 255f, 69 / 255f, 0);
+                                break;
+                        }
+
+                        child3.GetComponent<TextMeshProUGUI>().SetText(cosmeticItem.displayName);
+
+                        item.GetComponent<Button>().onClick.AddListener(delegate { AddActualReward(cosmeticItem, item.gameObject); });
                     }
                 }
             }
-            
 
-            
+
+
         }
 
-        
+
         public void CloseRewardMenu()
         {
             _enableAddReward = false;
@@ -365,13 +365,13 @@ namespace Menu
         [SerializeField] private Transform actualRewardContent;
 
         [SerializeField] private TMP_InputField tourName, tourDesc;
-        void AddActualReward(CosmeticItem cosmeticItem,GameObject obj)
+        void AddActualReward(CosmeticItem cosmeticItem, GameObject obj)
         {
             Destroy(obj);
             CloseRewardMenu();
-            
+
             AddObjToContent(cosmeticItem);
-            
+
             LobbyManager.ServerTournamentPrizes.Add(cosmeticItem.itemdefid);
         }
 
@@ -379,7 +379,7 @@ namespace Menu
         {
             Transform item = Instantiate(PrefabManager.Instance.GetPrefab("Cosmetic"),
                 actualRewardContent).transform;
-            
+
             item.GetChild(2).GetChild(0).GetComponent<RawImage>().texture = cosmeticItem.icon;
             Transform child3 = item.GetChild(3);
             child3.GetComponent<TextMeshProUGUI>().color = cosmeticItem.GetColor();
@@ -391,8 +391,8 @@ namespace Menu
                     child3.GetComponent<TextMeshProUGUI>().color = Color.white;
                     break;
                 case CosmeticItem.Rarity.Original:
-                    child1.GetComponent<RawImage>().color = new Color(255/255f,215/255f,0);
-                    child3.GetComponent<TextMeshProUGUI>().color = new Color(255/255f,215/255f,0);
+                    child1.GetComponent<RawImage>().color = new Color(255 / 255f, 215 / 255f, 0);
+                    child3.GetComponent<TextMeshProUGUI>().color = new Color(255 / 255f, 215 / 255f, 0);
                     break;
                 case CosmeticItem.Rarity.Rare:
                     child1.GetComponent<RawImage>().color = Color.red;
@@ -407,16 +407,16 @@ namespace Menu
                     child3.GetComponent<TextMeshProUGUI>().color = Color.cyan;
                     break;
                 case CosmeticItem.Rarity.Extraordinary:
-                    child1.GetComponent<RawImage>().color =new Color(1,105/255f,180/255f);
-                    child3.GetComponent<TextMeshProUGUI>().color =new Color(1,105/255f,180/255f);
+                    child1.GetComponent<RawImage>().color = new Color(1, 105 / 255f, 180 / 255f);
+                    child3.GetComponent<TextMeshProUGUI>().color = new Color(1, 105 / 255f, 180 / 255f);
                     break;
                 case CosmeticItem.Rarity.Unique:
-                    child1.GetComponent<RawImage>().color =new Color(0,1,0);
-                    child3.GetComponent<TextMeshProUGUI>().color =new Color(0,1,0);
+                    child1.GetComponent<RawImage>().color = new Color(0, 1, 0);
+                    child3.GetComponent<TextMeshProUGUI>().color = new Color(0, 1, 0);
                     break;
                 case CosmeticItem.Rarity.Epic:
-                    child1.GetComponent<RawImage>().color =new Color(255/255f,69/255f,0);
-                    child3.GetComponent<TextMeshProUGUI>().color =new Color(255/255f,69/255f,0);
+                    child1.GetComponent<RawImage>().color = new Color(255 / 255f, 69 / 255f, 0);
+                    child3.GetComponent<TextMeshProUGUI>().color = new Color(255 / 255f, 69 / 255f, 0);
                     break;
             }
 
@@ -424,30 +424,30 @@ namespace Menu
         }
 
 
-        [SerializeField] private Button tournamentStartButton,addRewardBtn;
-        
+        [SerializeField] private Button tournamentStartButton, addRewardBtn;
+
         public void StartTournament()
         {
             tournamentStartButton.interactable = false;
             tourName.interactable = false;
             tourDesc.interactable = false;
             addRewardBtn.interactable = false;
-            
+
             LobbyManager.ServerTournamentStarted = true;
             LobbyManager.ServerTournamentName = new StringBuilder(tourName.text);
             LobbyManager.ServerTournamentDesc = new StringBuilder(tourDesc.text);
-            
-            SteamMatchmaking.SetLobbyData(lobbyId,"tournament_enable","1");
-            SteamMatchmaking.SetLobbyData(lobbyId,"tournament_name",LobbyManager.ServerTournamentName.ToString());
-            SteamMatchmaking.SetLobbyData(lobbyId,"tournament_desc",LobbyManager.ServerTournamentDesc.ToString());
+
+            SteamMatchmaking.SetLobbyData(lobbyId, "tournament_enable", "1");
+            SteamMatchmaking.SetLobbyData(lobbyId, "tournament_name", LobbyManager.ServerTournamentName.ToString());
+            SteamMatchmaking.SetLobbyData(lobbyId, "tournament_desc", LobbyManager.ServerTournamentDesc.ToString());
 
             StringBuilder p = new StringBuilder();
             foreach (var prize in LobbyManager.ServerTournamentPrizes)
             {
                 p.Append(prize + ";");
             }
-            SteamMatchmaking.SetLobbyData(lobbyId,"tournament_prize_pool",p.ToString());
-            
+            SteamMatchmaking.SetLobbyData(lobbyId, "tournament_prize_pool", p.ToString());
+
         }
     }
 }

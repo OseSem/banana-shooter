@@ -6,7 +6,7 @@
 // Changes to this file will be reverted when you update Steamworks.NET
 
 #if !(UNITY_STANDALONE_WIN || UNITY_STANDALONE_LINUX || UNITY_STANDALONE_OSX || STEAMWORKS_WIN || STEAMWORKS_LIN_OSX)
-	#define DISABLESTEAMWORKS
+#define DISABLESTEAMWORKS
 #endif
 
 #if !DISABLESTEAMWORKS
@@ -98,7 +98,7 @@ namespace Steamworks {
 			m_GameID = GameID;
 		}
 
-		#region Private Setters for internal use
+        #region Private Setters for internal use
 		private void SetAppID(AppId_t other) {
 			m_GameID = (m_GameID & ~(0xFFFFFFul << (ushort)0)) | (((ulong)(other) & 0xFFFFFFul) << (ushort)0);
 		}
@@ -110,9 +110,9 @@ namespace Steamworks {
 		private void SetModID(uint other) {
 			m_GameID = (m_GameID & ~(0xFFFFFFFFul << (ushort)32)) | (((ulong)(other) & 0xFFFFFFFFul) << (ushort)32);
 		}
-		#endregion
+        #endregion
 
-		#region Overrides
+        #region Overrides
 		public override string ToString() {
 			return m_GameID.ToString();
 		}
@@ -147,7 +147,7 @@ namespace Steamworks {
 		public int CompareTo(CGameID other) {
 			return m_GameID.CompareTo(other.m_GameID);
 		}
-		#endregion
+        #endregion
 	}
 }
 

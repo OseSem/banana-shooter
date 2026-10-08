@@ -21,7 +21,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
             List<Face> faces = new List<Face>();
 
-            for(int m = 0; m < Meshes.Length; ++m)
+            for (int m = 0; m < Meshes.Length; ++m)
             {
                 ProBuilderMesh mesh = Meshes[m];
                 Vector2[] origins = Origins[m];
@@ -43,7 +43,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                 mesh.textures = textures;
                 mesh.GetFaces(Selection.SelectedFaces[mesh.gameObject], faces);
-               
+
                 mesh.RefreshUV(faces);
                 faces.Clear();
             }

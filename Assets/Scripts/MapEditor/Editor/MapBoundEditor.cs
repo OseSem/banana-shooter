@@ -10,7 +10,7 @@ namespace MapEditor.Editor
     {
         protected override void OnEnableOverride()
         {
-            Parameters = new[] { "Base", "Hill"};
+            Parameters = new[] { "Base", "Hill" };
         }
 
         protected override void OnInspectorGUIOverride()
@@ -24,9 +24,9 @@ namespace MapEditor.Editor
                     EditorGUI.indentLevel = 1;
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.spawnPos)), new GUIContent("Spawn Point", "The spawn point of the map"));
                     GUILayout.EndVertical();
-                    
+
                     GUILayout.Space(Space);
-                    
+
                     EditorGUI.indentLevel = 0;
                     GUILayout.BeginVertical("Box");
                     EditorGUILayout.LabelField("Bound", EditorStyles.boldLabel);

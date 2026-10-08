@@ -22,7 +22,7 @@ namespace Menu
         private const uint MaxAmount = 16;
 
         private WorkshopMapItemUI[] _items = new WorkshopMapItemUI[MaxAmount];
-        
+
         private List<List<WorkshopItem>> _pages = new();
 
         [SerializeField] private Toggle enableWorkshopToggle;
@@ -33,9 +33,9 @@ namespace Menu
         private int _currentPage = 0;
 
         [SerializeField] private Transform pageContent;
-        
+
         private List<Toggle> _pageToggles = new();
-        
+
         [SerializeField] private Toggle pagePrefab;
         [SerializeField] private ToggleGroup pageGroup;
         private void Awake()
@@ -45,10 +45,10 @@ namespace Menu
                 WorkshopMapItemUI itemUI = Instantiate(item, content);
 
                 _items[i] = itemUI;
-                
+
                 itemUI.gameObject.SetActive(false);
             }
-            
+
             if (SteamWorkshopManager.QueryLoaded)
             {
                 InitMaps();
@@ -63,7 +63,7 @@ namespace Menu
             NetworkServerManager.OnEnabledMapsChanged += CheckMaps;
 
             enableWorkshopToggle.isOn = NetworkServerManager.ServerEnableWorkshop;
-            
+
             enableWorkshopToggle.onValueChanged.AddListener(SetEnableWorkshop);
         }
 
@@ -83,7 +83,7 @@ namespace Menu
             else
                 createBtn.interactable = true;
         }
-        
+
         private void OnWorkshopItemInstalled(WorkshopItem obj)
         {
             if (obj != null)
@@ -109,10 +109,10 @@ namespace Menu
             {
                 AddWorkshopItem(workshopItem);
             }
-            
+
             Refresh();
         }
-        
+
         void AddWorkshopItem(WorkshopItem workshopItem)
         {
             bool newPage = false;
@@ -146,7 +146,7 @@ namespace Menu
         {
             StopAllCoroutines();
             _pageToggles.Clear();
-            
+
             for (int i = 0; i < pageContent.childCount; i++)
             {
                 Destroy(pageContent.GetChild(i).gameObject);
@@ -160,8 +160,8 @@ namespace Menu
                 toggle.isOn = i == _currentPage;
 
                 var i1 = i;
-                toggle.onValueChanged.AddListener(delegate(bool arg0) { SetPage(arg0, i1); });
-                
+                toggle.onValueChanged.AddListener(delegate (bool arg0) { SetPage(arg0, i1); });
+
                 _pageToggles.Add(toggle);
             }
             for (int i = 0; i < MaxAmount; i++)
@@ -173,27 +173,27 @@ namespace Menu
                 for (int i = 0; i < _pages[_currentPage].Count; i++)
                 {
                     WorkshopItem workshopItem = _pages[_currentPage][i];
-                    
+
                     _items[i].gameObject.SetActive(true);
-                    
-                    _items[i].Init(workshopItem.Details.m_rgchTitle, workshopItem.previewUrl, workshopItem.fileId,this);
+
+                    _items[i].Init(workshopItem.Details.m_rgchTitle, workshopItem.previewUrl, workshopItem.fileId, this);
                 }
             }
         }
-        
-        void SetPage(bool flag,int page)
+
+        void SetPage(bool flag, int page)
         {
             if (flag)
             {
                 _currentPage = page;
-                
-                pageText.SetText((_currentPage+1).ToString());
-                
+
+                pageText.SetText((_currentPage + 1).ToString());
+
                 Refresh();
             }
         }
 
-        
+
         public void NextPage(int offset)
         {
             _currentPage += offset;
@@ -208,9 +208,9 @@ namespace Menu
                 _currentPage = 0;
                 return;
             }
-            
-            pageText.SetText((_currentPage+1).ToString());
-            
+
+            pageText.SetText((_currentPage + 1).ToString());
+
             Refresh();
         }
     }

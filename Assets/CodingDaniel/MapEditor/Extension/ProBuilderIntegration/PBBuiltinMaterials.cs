@@ -42,7 +42,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             get
             {
-                if(_defaultMaterial == null)
+                if (_defaultMaterial == null)
                 {
                     _defaultMaterial = Resources.Load<Material>(DefaultMaterialName);
 
@@ -72,13 +72,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             material.Color(Color.white);
             return material;
         }
- 
+
         private static Material _linesMaterial;
         public static Material LinesMaterial
         {
             get
             {
-                if(_linesMaterial == null)
+                if (_linesMaterial == null)
                 {
                     _linesMaterial = new Material(Shader.Find(lineShader));
                 }
@@ -140,7 +140,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 return _VertexPickerMaterial;
             }
         }
-        
+
         internal static Material edgePickerMaterial
         {
             get
@@ -164,7 +164,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 //Following line calls BuiltinMaterials.defaultMaterial which in turn raises NullReferenceExeption enclosed in a try catch... and this prevents unhandled exeption in future.
                 var defaultMaterial = BuiltinMaterials.defaultMaterial;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 Debug.LogWarning(e);
             }
@@ -186,7 +186,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             }
 
             if ((_EdgePickerMaterial = Resources.Load<Material>("Materials/PBEdgePicker")) == null)
-            {                
+            {
                 _EdgePickerMaterial = new Material(Shader.Find("CodingDaniel/MEBuilder/EdgePicker"));
             }
         }

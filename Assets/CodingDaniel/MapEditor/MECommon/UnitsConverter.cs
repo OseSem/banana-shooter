@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace CodingDaniel.MapEditor.MECommon
 {
-    public static class UnitsConverter 
+    public static class UnitsConverter
     {
         public static Vector3 MetersToFeet(Vector3 meters)
         {

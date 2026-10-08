@@ -12,28 +12,28 @@ namespace Multiplayer.Entity.Client
         private static readonly int Attack = Animator.StringToHash("Attack");
         private bool IsLocal { get; set; }
 
-        private Transform _weaponHolder,_headTransform;
+        private Transform _weaponHolder, _headTransform;
 
         private AudioSource _audioSource;
 
         private PlayerState _playerState;
 
         private Animator _clawKnifeAnimator;
-        
+
         private List<MultiplayerWeapon> _weaponObjects;
-        
+
         public MultiplayerWeapon CurrentWeapon;
         public MultiplayerWeapon[] Weapon = new MultiplayerWeapon[3];
         public MultiplayerWeapon SpecialWeapon;
-        
+
         private LookedToObject _leftHandTarget, _rightHandTarget;
         private List<FastIKFabric> _iks;
-        
-        public short[] WeaponIndexes { get; set; } = {-1,-1,-1};
+
+        public short[] WeaponIndexes { get; set; } = { -1, -1, -1 };
         public int CurrentWeaponIndex { get; set; }
         public ushort[] WeaponSkinIndexes { get; set; }
 
-        public PlayerWeaponManager(bool isLocal, List<MultiplayerWeapon> weaponObjects, LookedToObject leftHandTarget, LookedToObject rightHandTarget, List<FastIKFabric> iks, PlayerState playerState, Animator clawKnifeAnim, AudioSource audioSource, Transform weaponHolder,Transform headTransform)
+        public PlayerWeaponManager(bool isLocal, List<MultiplayerWeapon> weaponObjects, LookedToObject leftHandTarget, LookedToObject rightHandTarget, List<FastIKFabric> iks, PlayerState playerState, Animator clawKnifeAnim, AudioSource audioSource, Transform weaponHolder, Transform headTransform)
         {
             IsLocal = isLocal;
             _weaponObjects = weaponObjects;
@@ -79,7 +79,7 @@ namespace Multiplayer.Entity.Client
         public void Update()
         {
             Vector3 weaponHolderLookPoint = _headTransform.position + _headTransform.forward * 5f;
-            
+
             _weaponHolder.LookAt(weaponHolderLookPoint);
         }
 
@@ -89,7 +89,7 @@ namespace Multiplayer.Entity.Client
             {
                 if (!_playerState.selfControlled)
                 {
-                    if(CurrentWeaponIndex!=index)
+                    if (CurrentWeaponIndex != index)
                         SwitchWeapon(index);
                     if (WeaponManager.Instance.CurrentWeapon != null)
                     {
@@ -109,7 +109,7 @@ namespace Multiplayer.Entity.Client
                     switch (CurrentWeapon.Type)
                     {
                         case Firearms.WeaponType.Gun:
-                            CurrentWeapon.Reload(CurrentWeapon.stat.reloadTime,CurrentWeapon.stat.spinAmount);
+                            CurrentWeapon.Reload(CurrentWeapon.stat.reloadTime, CurrentWeapon.stat.spinAmount);
                             break;
                     }
                 }
@@ -145,7 +145,7 @@ namespace Multiplayer.Entity.Client
                 else
                 {
                     Debug.Log($"Shooting  Failed: {result}");
-                    if(WeaponManager.Instance.CurrentWeapon!=null)WeaponManager.Instance.CurrentWeapon.ResetDynamic();
+                    if (WeaponManager.Instance.CurrentWeapon != null) WeaponManager.Instance.CurrentWeapon.ResetDynamic();
                 }
             }
             else if (_playerState.IsInfected)
@@ -163,7 +163,7 @@ namespace Multiplayer.Entity.Client
                             CurrentWeapon.animator.SetTrigger(Random.Range(0, 2) == 0 ? "Attack0" : "Attack1");
                         }
                         else CurrentWeapon.animator.SetTrigger("Attack");
-                        if (CurrentWeapon.shoot!=null)
+                        if (CurrentWeapon.shoot != null)
                         {
                             _audioSource.PlayOneShot(CurrentWeapon.shoot);
                         }
@@ -183,12 +183,12 @@ namespace Multiplayer.Entity.Client
                             dir += offset;
                             Bullet bullet = ObjectPooler.Instance.SpawnFromPool("Bullet", CurrentWeapon.tip.position,
                                 Quaternion.LookRotation(dir)).GetComponent<Bullet>();
-                            bullet.Initialization(dir,1500f,0,LayerMask.NameToLayer("Bullet"),false,CurrentWeapon.useGravity);
+                            bullet.Initialization(dir, 1500f, 0, LayerMask.NameToLayer("Bullet"), false, CurrentWeapon.useGravity);
                             dir -= offset;
                         }
                         CurrentWeapon.particleSystem.Play();
                         CurrentWeapon.ShootAnim();
-                        if (CurrentWeapon.shoot!=null)
+                        if (CurrentWeapon.shoot != null)
                         {
                             _audioSource.PlayOneShot(CurrentWeapon.shoot);
                         }
@@ -196,13 +196,13 @@ namespace Multiplayer.Entity.Client
                     case Firearms.WeaponType.LaserGun:
                         CurrentWeapon.particleSystem.Play();
                         CurrentWeapon.ShootAnim();
-                        if (CurrentWeapon.shoot!=null)
+                        if (CurrentWeapon.shoot != null)
                         {
                             _audioSource.PlayOneShot(CurrentWeapon.shoot);
                         }
                         break;
                     case Firearms.WeaponType.Boomer:
-        
+
                         for (int i = 0; i < bulletCount; i++)
                         {
                             Vector3 offset = CurrentWeapon.spreadAngle / 60 * Random.insideUnitCircle;
@@ -210,11 +210,11 @@ namespace Multiplayer.Entity.Client
                             Bullet bullet = ObjectPooler.Instance.SpawnFromPool("ExplosiveBullet", CurrentWeapon.tip.position,
                                 Quaternion.LookRotation(dir)).GetComponent<Bullet>();
 
-                            bullet.Initialization(dir,100f,0,LayerMask.NameToLayer("Bullet"),false,CurrentWeapon.useGravity);
+                            bullet.Initialization(dir, 100f, 0, LayerMask.NameToLayer("Bullet"), false, CurrentWeapon.useGravity);
                             dir -= offset;
                         }
                         CurrentWeapon.ShootAnim();
-                        if (CurrentWeapon.shoot!=null)
+                        if (CurrentWeapon.shoot != null)
                         {
                             _audioSource.PlayOneShot(CurrentWeapon.shoot);
                         }
@@ -222,15 +222,15 @@ namespace Multiplayer.Entity.Client
                 }
             }
         }
-        
-        public void UpdateWeapons(short[] weaponNames,int weaponIndex,ushort[] weaponIndexs)
+
+        public void UpdateWeapons(short[] weaponNames, int weaponIndex, ushort[] weaponIndexs)
         {
             WeaponIndexes = weaponNames;
 
             CurrentWeaponIndex = weaponIndex;
 
             WeaponSkinIndexes = weaponIndexs;
-            
+
             foreach (var weapon in _weaponObjects)
             {
                 weapon.gameObject.SetActive(false);
@@ -255,7 +255,7 @@ namespace Multiplayer.Entity.Client
                 if (weaponNames[i] >= 0 && weaponNames[i] < _weaponObjects.Count)
                 {
                     var firearm = _weaponObjects[weaponNames[i]];
-                    
+
                     if (firearm.skins.Count > 1)
                     {
                         for (int k = 0; k < firearm.skins.Count; k++)
@@ -272,7 +272,7 @@ namespace Multiplayer.Entity.Client
 
                     if (IsLocal)
                     {
-                        WeaponManager.Instance.SetWeapons(weaponNames[i],i);
+                        WeaponManager.Instance.SetWeapons(weaponNames[i], i);
                     }
                     Weapon[i] = firearm;
                 }
@@ -282,7 +282,7 @@ namespace Multiplayer.Entity.Client
             if (weaponIndex > 2) weaponIndex = 0;
             CurrentWeapon = Weapon[weaponIndex];
 
-            if (CurrentWeapon != null  && CurrentWeapon.gameObject!=null)
+            if (CurrentWeapon != null && CurrentWeapon.gameObject != null)
             {
                 CurrentWeapon.gameObject.SetActive(true);
                 if (IsLocal)
@@ -296,16 +296,16 @@ namespace Multiplayer.Entity.Client
                     _rightHandTarget.parent = CurrentWeapon.rightHand;
                     foreach (var ik in _iks)
                     {
-                        ik.enabled=true;
+                        ik.enabled = true;
                     }
                 }
             }
         }
-        
+
         public void SetSpecialWeapon(short w)
         {
             CurrentWeaponIndex = 3;
-            if (CurrentWeapon != null && CurrentWeapon.gameObject!=null)
+            if (CurrentWeapon != null && CurrentWeapon.gameObject != null)
             {
                 if (!IsLocal)
                 {
@@ -314,7 +314,7 @@ namespace Multiplayer.Entity.Client
                     DisableIK();
                     CurrentWeapon.gameObject.SetActive(false);
                 }
-            
+
                 CurrentWeapon = null;
             }
 
@@ -332,7 +332,7 @@ namespace Multiplayer.Entity.Client
             }
 
             CurrentWeapon = SpecialWeapon;
-        
+
             if (CurrentWeapon != null && CurrentWeapon.gameObject != null)
             {
                 if (!IsLocal)
@@ -342,7 +342,7 @@ namespace Multiplayer.Entity.Client
                     _rightHandTarget.parent = CurrentWeapon.rightHand;
                     foreach (var ik in _iks)
                     {
-                        ik.enabled=true;
+                        ik.enabled = true;
                     }
                     // fakeRig.enabled = true;
                     // fakeAnimator.enabled = true;
@@ -353,8 +353,8 @@ namespace Multiplayer.Entity.Client
         public void SwitchWeapon(int i)
         {
             CurrentWeaponIndex = i;
-            
-            if (CurrentWeapon != null && CurrentWeapon.gameObject!=null)
+
+            if (CurrentWeapon != null && CurrentWeapon.gameObject != null)
             {
                 _leftHandTarget.parent = null;
                 _rightHandTarget.parent = null;
@@ -362,7 +362,7 @@ namespace Multiplayer.Entity.Client
                 DisableIK();
                 CurrentWeapon = null;
             }
-            if(i<3)
+            if (i < 3)
                 CurrentWeapon = Weapon[i];
             else if (CurrentWeaponIndex == 3)
             {
@@ -377,17 +377,17 @@ namespace Multiplayer.Entity.Client
             {
                 if (CurrentWeapon != null && CurrentWeapon.gameObject != null)
                 {
-                    CurrentWeapon.gameObject.SetActive(true);       
+                    CurrentWeapon.gameObject.SetActive(true);
                     _leftHandTarget.parent = CurrentWeapon.leftHand;
                     _rightHandTarget.parent = CurrentWeapon.rightHand;
                     foreach (var ik in _iks)
                     {
-                        ik.enabled=true;
+                        ik.enabled = true;
                     }
                 }
             }
 
-            
+
         }
 
         public void DisableAllWeapons()
@@ -402,12 +402,12 @@ namespace Multiplayer.Entity.Client
                 Weapon[i] = null;
             }
         }
-        
+
         void DisableIK()
         {
             foreach (var ik in _iks)
             {
-                ik.enabled=false;
+                ik.enabled = false;
             }
         }
 
@@ -415,7 +415,7 @@ namespace Multiplayer.Entity.Client
         {
             if (SpecialWeapon != null)
             {
-                if (CurrentWeapon!=null &&  SpecialWeapon == CurrentWeapon)
+                if (CurrentWeapon != null && SpecialWeapon == CurrentWeapon)
                 {
                     CurrentWeapon = null;
                     CurrentWeaponIndex = 0;

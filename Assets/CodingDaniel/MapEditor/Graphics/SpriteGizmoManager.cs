@@ -18,10 +18,10 @@ namespace CodingDaniel.MapEditor.Graphics
         void Refresh();
     }
     [DefaultExecutionOrder(-1)]
-    public class SpriteGizmoManager : MonoBehaviour,ISpriteGizmoManager
+    public class SpriteGizmoManager : MonoBehaviour, ISpriteGizmoManager
     {
         public static SpriteGizmoManager Instance { private set; get; }
-        
+
         private readonly Dictionary<Type, string> _builtIn = new Dictionary<Type, string>
         {
             {  typeof(Light), "LightGizmoMat" },
@@ -29,14 +29,14 @@ namespace CodingDaniel.MapEditor.Graphics
             {  typeof(DecalProjector), "Decal" },
             {  typeof(AudioSource), "AudioSource" },
         };
-        
+
         private Dictionary<Type, Tuple<Mesh, Material>> _registered = new Dictionary<Type, Tuple<Mesh, Material>>();
         private Dictionary<Type, Tuple<Mesh, Material>> _typeToMeshAndMaterial;
         private Type[] _types;
         private IME _editor;
         private IMEGraphic _graphics;
         private IMeshesCache _meshesCache;
-        
+
         [SerializeField]
         [FormerlySerializedAs("m_gizmoScale")]
         private float _gizmoScale = 1;
@@ -51,7 +51,7 @@ namespace CodingDaniel.MapEditor.Graphics
             Instance = this;
             _editor = MEBase.Instance;
             _graphics = MEBase.Instance.Graphics;
-            if(_editor == null)
+            if (_editor == null)
             {
                 Debug.LogError("ME is null");
             }
@@ -62,7 +62,7 @@ namespace CodingDaniel.MapEditor.Graphics
             _meshesCache = _graphics.CreateSharedMeshesCache(CameraEvent.BeforeImageEffects);
             _meshesCache.RefreshMode = CacheRefreshMode.OnTransformChange;
             Refresh();
-            
+
         }
 
         private void OnDisable()
@@ -87,10 +87,10 @@ namespace CodingDaniel.MapEditor.Graphics
             Cleanup();
             Initialize();
         }
-        
+
         public void Register(Type type, Material material)
         {
-            if(!material.enableInstancing)
+            if (!material.enableInstancing)
             {
                 Debug.LogWarning("material enableInstance == false");
                 return;
@@ -114,8 +114,8 @@ namespace CodingDaniel.MapEditor.Graphics
 
             return tuple.Item2;
         }
-        
-        protected virtual void GreateGizmo(GameObject go,  Component component, Type type)
+
+        protected virtual void GreateGizmo(GameObject go, Component component, Type type)
         {
             Tuple<Mesh, Material> tuple;
             if (_typeToMeshAndMaterial.TryGetValue(type, out tuple))
@@ -166,17 +166,17 @@ namespace CodingDaniel.MapEditor.Graphics
             }
 
             _typeToMeshAndMaterial = new Dictionary<Type, Tuple<Mesh, Material>>();
-            foreach(KeyValuePair<Type, Tuple<Mesh, Material>> kvp in _registered)
+            foreach (KeyValuePair<Type, Tuple<Mesh, Material>> kvp in _registered)
             {
                 if (kvp.Value != null)
                 {
                     _typeToMeshAndMaterial.Add(kvp.Key, kvp.Value);
-                }   
+                }
             }
 
             foreach (KeyValuePair<Type, string> kvp in _builtIn)
             {
-                if(_typeToMeshAndMaterial.ContainsKey(kvp.Key))
+                if (_typeToMeshAndMaterial.ContainsKey(kvp.Key))
                 {
                     continue;
                 }
@@ -205,17 +205,17 @@ namespace CodingDaniel.MapEditor.Graphics
         }
         private void Cleanup()
         {
-            if(_typeToMeshAndMaterial != null)
+            if (_typeToMeshAndMaterial != null)
             {
-                foreach(var kvp in _typeToMeshAndMaterial)
+                foreach (var kvp in _typeToMeshAndMaterial)
                 {
-                    if(_registered.ContainsKey(kvp.Key))
+                    if (_registered.ContainsKey(kvp.Key))
                     {
                         continue;
                     }
 
                     Mesh mesh = kvp.Value.Item1;
-                    if(mesh != null)
+                    if (mesh != null)
                     {
                         Destroy(mesh);
                     }
@@ -270,14 +270,14 @@ namespace CodingDaniel.MapEditor.Graphics
 
         private void Unsubscribe()
         {
-            if(_editor != null && _editor.Object != null)
+            if (_editor != null && _editor.Object != null)
             {
                 _editor.Object.Awaked -= OnAwaked;
                 _editor.Object.Destroyed -= OnDestroyed;
                 _editor.Object.MarkAsDestroyedChanged -= OnMarkAsDestroyedChanged;
             }
         }
-        
+
         private void OnAwaked(ExposeToEditor obj)
         {
             bool refresh = false;
@@ -291,12 +291,12 @@ namespace CodingDaniel.MapEditor.Graphics
                 }
             }
 
-            if(refresh)
+            if (refresh)
             {
                 _meshesCache.Refresh();
             }
         }
-        
+
         private void OnDestroyed(ExposeToEditor obj)
         {
             bool refresh = false;
@@ -310,7 +310,7 @@ namespace CodingDaniel.MapEditor.Graphics
                 }
             }
 
-            if(refresh)
+            if (refresh)
             {
                 _meshesCache.Refresh();
             }

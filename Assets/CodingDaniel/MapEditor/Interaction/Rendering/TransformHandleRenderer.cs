@@ -85,7 +85,7 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
             bool xLocked = lockObject != null && lockObject.PositionX;
             bool yLocked = lockObject != null && lockObject.PositionY;
             bool zLocked = lockObject != null && lockObject.PositionZ;
-            
+
             float screenScale = GetScreenScale(settings.Position, camera);
             Matrix4x4 linesTransform = Matrix4x4.TRS(settings.Position, settings.Rotation, new Vector3(screenScale, screenScale, screenScale) * HandleScale);
             DoAxes(commandBuffer, propertyBlocks, linesTransform, selectedAxis, xLocked, yLocked, zLocked, drawLocked);
@@ -106,13 +106,13 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
             }
             else
             {
-                if(!PositionHandleArrowOnly)
+                if (!PositionHandleArrowOnly)
                 {
                     Vector3 toCam = transform.inverse.MultiplyVector(camera.transform.position - settings.Position);
                     Matrix4x4 quadTransform = Matrix4x4.TRS(Vector3.zero, Quaternion.identity,
                         new Vector3(
-                            Mathf.Sign(Vector3.Dot(toCam, Vector3.right)) * 0.2f, 
-                            Mathf.Sign(Vector3.Dot(toCam, Vector3.up)) * 0.2f, 
+                            Mathf.Sign(Vector3.Dot(toCam, Vector3.right)) * 0.2f,
+                            Mathf.Sign(Vector3.Dot(toCam, Vector3.up)) * 0.2f,
                             Mathf.Sign(Vector3.Dot(toCam, Vector3.forward)) * 0.2f));
 
                     Matrix4x4 matrix = linesTransform * quadTransform;
@@ -172,7 +172,7 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
             {
                 if (xLocked)
                 {
-                    if(drawLocked)
+                    if (drawLocked)
                     {
                         commandBuffer.DrawMesh(DisabledArrowX, transform, _shapesMaterialZTest, 0, 0);
                     }
@@ -191,31 +191,31 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
 
                 if (yLocked)
                 {
-                    if(drawLocked)
+                    if (drawLocked)
                     {
                         commandBuffer.DrawMesh(DisabledArrowY, transform, _shapesMaterialZTest, 0, 0);
                     }
                 }
-                else 
+                else
                 {
                     if ((selectedAxis & HandleAxis.Y) != 0)
                     {
-                        commandBuffer.DrawMesh(SelectionArrowY, transform, _shapesMaterialZTest, 0, 0); 
+                        commandBuffer.DrawMesh(SelectionArrowY, transform, _shapesMaterialZTest, 0, 0);
                     }
                     else
                     {
                         commandBuffer.DrawMesh(ArrowY, transform, _shapesMaterialZTest, 0, 0);
-                    }     
+                    }
                 }
 
                 if (zLocked)
                 {
-                    if(drawLocked)
+                    if (drawLocked)
                     {
                         commandBuffer.DrawMesh(DisabledArrowZ, transform, _shapesMaterialZTest, 0, 0);
                     }
                 }
-                else 
+                else
                 {
                     if ((selectedAxis & HandleAxis.Z) != 0)
                     {
@@ -224,7 +224,7 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
                     else
                     {
                         commandBuffer.DrawMesh(ArrowZ, transform, _shapesMaterialZTest, 0, 0);
-                    }    
+                    }
                 }
             }
         }
@@ -232,7 +232,7 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
         {
             if (xLocked)
             {
-                if(drawLocked && Palette.DisabledColor.a > 0)
+                if (drawLocked && Palette.DisabledColor.a > 0)
                 {
                     propertyBlocks[0].SetColor("_Color", Palette.DisabledColor);
                     commandBuffer.DrawMesh(Axes, transform, _linesMaterial, 0, 0, propertyBlocks[0]);
@@ -246,7 +246,7 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
 
             if (yLocked)
             {
-                if(drawLocked && Palette.DisabledColor.a > 0)
+                if (drawLocked && Palette.DisabledColor.a > 0)
                 {
                     propertyBlocks[1].SetColor("_Color", Palette.DisabledColor);
                     commandBuffer.DrawMesh(Axes, transform, _linesMaterial, 1, 0, propertyBlocks[1]);
@@ -260,7 +260,7 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
 
             if (zLocked)
             {
-                if(drawLocked && Palette.DisabledColor.a > 0)
+                if (drawLocked && Palette.DisabledColor.a > 0)
                 {
                     propertyBlocks[2].SetColor("_Color", Palette.DisabledColor);
                     commandBuffer.DrawMesh(Axes, transform, _linesMaterial, 2, 0, propertyBlocks[2]);
@@ -312,7 +312,7 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
 
             if (freeLocked)
             {
-                if(drawLocked)
+                if (drawLocked)
                 {
                     propertyBlocks[0].SetColor("_Color", Palette.DisabledColor);
                 }
@@ -336,7 +336,7 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
             }
             GraphicsUtility.DrawMesh(commandBuffer, WireCircle11, matrix, material, propertyBlocks[1]);
 
-            if(cameraFacingBillboardMode)
+            if (cameraFacingBillboardMode)
             {
                 material = _linesClipUsingClipPlaneMaterial;
             }
@@ -344,8 +344,8 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
             {
                 material = _linesClipMaterial;
             }
-            
-            if(xLocked)
+
+            if (xLocked)
             {
                 if (drawLocked)
                 {
@@ -355,12 +355,12 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
             else
             {
                 propertyBlocks[2].SetColor("_Color", selectedAxis != HandleAxis.X ? Palette.XColor : Palette.SelectionColor);
-            }   
+            }
             GraphicsUtility.DrawMesh(commandBuffer, WireCircle, objToWorld * xTranform, material, propertyBlocks[2]);
 
             if (yLocked)
             {
-                if(drawLocked)
+                if (drawLocked)
                 {
                     propertyBlocks[3].SetColor("_Color", Palette.DisabledColor);
                 }
@@ -370,7 +370,7 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
                 propertyBlocks[3].SetColor("_Color", selectedAxis != HandleAxis.Y ? Palette.YColor : Palette.SelectionColor);
             }
             GraphicsUtility.DrawMesh(commandBuffer, WireCircle, objToWorld * yTranform, material, propertyBlocks[3]);
-            
+
             if (zLocked)
             {
                 if (drawLocked)
@@ -406,7 +406,7 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
             bool xyzLocked = xLocked && yLocked && zLocked;
 
             DoAxes(commandBuffer, propertyBlocks, linesTransform, selectedAxis, xLocked, yLocked, zLocked, drawLocked);
-                     
+
             Matrix4x4 rotM = Matrix4x4.TRS(Vector3.zero, rotation, scale);
             Vector3 screenScale = new Vector3(sScale, sScale, sScale);
             Vector3 xOffset = rotM.MultiplyVector(Vector3.right) * sScale * HandleScale;
@@ -415,7 +415,7 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
 
             drawLocked = drawLocked && Palette.DisabledColor.a > 0;
             if (selectedAxis == HandleAxis.X)
-            {  
+            {
                 DrawMesh(commandBuffer, drawLocked || !xLocked, xLocked ? DisabledCube : SelectionCube, Matrix4x4.TRS(position + xOffset, rotation, screenScale), _shapesMaterialZTest);
                 DrawMesh(commandBuffer, drawLocked || !yLocked, yLocked ? DisabledCube : CubeY, Matrix4x4.TRS(position + yOffset, rotation, screenScale), _shapesMaterialZTest);
                 DrawMesh(commandBuffer, drawLocked || !zLocked, zLocked ? DisabledCube : CubeZ, Matrix4x4.TRS(position + zOffset, rotation, screenScale), _shapesMaterialZTest);
@@ -452,11 +452,11 @@ namespace CodingDaniel.MapEditor.Interaction.Rendering
         }
         private void DrawMesh(CommandBuffer commandBuffer, bool draw, Mesh mesh, Matrix4x4 matrix, Material material)
         {
-            if(draw)
+            if (draw)
             {
                 commandBuffer.DrawMesh(mesh, matrix, material, 0, 0);
             }
         }
-        
+
     }
 }

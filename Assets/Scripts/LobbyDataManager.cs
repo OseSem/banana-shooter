@@ -11,19 +11,19 @@ public class LobbyDataManager : MonoBehaviour
 
     private void Awake()
     {
-        if(Instance==null)
+        if (Instance == null)
             Instance = this;
     }
 
     [Serializable]
-    public class LobbyData 
+    public class LobbyData
     {
         public ulong playerId;
         public string playerName;
         public uint kills = 0, deaths = 0;
 
-        public uint exp=0;
-        public LobbyData(ulong id, string name, uint kills, uint deaths,uint xp)
+        public uint exp = 0;
+        public LobbyData(ulong id, string name, uint kills, uint deaths, uint xp)
         {
             playerId = id;
             playerName = name;
@@ -42,7 +42,7 @@ public class LobbyDataManager : MonoBehaviour
             deaths++;
         }
     }
-    
+
     public class CompareLobbyDataByKill : IComparer<LobbyData>
     {
         public int Compare(LobbyData x, LobbyData y)

@@ -19,7 +19,7 @@ public class JuicyScore : MonoBehaviour
     private CanvasGroup group;
 
     private float desiredAlpha = 0f;
-    private Vector3 desiredSize=Vector3.one;
+    private Vector3 desiredSize = Vector3.one;
 
     private void Update()
     {
@@ -28,8 +28,8 @@ public class JuicyScore : MonoBehaviour
     }
 
     private int currentScore = 0;
-    
-    
+
+
     public enum ScoreType
     {
         None,
@@ -37,14 +37,14 @@ public class JuicyScore : MonoBehaviour
         Usd
     }
 
-    public void UpdateScore(int score,ScoreType flag)
+    public void UpdateScore(int score, ScoreType flag)
     {
         CancelInvoke(nameof(Clear));
         currentScore += score;
 
         desiredAlpha = 1f;
         desiredSize = Vector3.one;
-        transform.localScale = Vector3.one*2f;
+        transform.localScale = Vector3.one * 2f;
         switch (flag)
         {
             case ScoreType.Xp:
@@ -58,7 +58,7 @@ public class JuicyScore : MonoBehaviour
                 scoreText.SetText($"+{currentScore}$");
                 break;
         }
-        Invoke(nameof(Clear),1.5f);
+        Invoke(nameof(Clear), 1.5f);
     }
 
     void Clear()

@@ -46,7 +46,7 @@ namespace CodingDaniel.MapEditor.Interaction.Picking
             Quaternion rotation = settings.Rotation;
 
             Matrix4x4 _matrix = Matrix4x4.TRS(position, rotation, InvertZAxis ? new Vector3(1, 1, -1) : Vector3.one);
-            
+
             float scale = GetScreenScale(position, camera);
             if (!PositionHandleArrowOnly)
             {
@@ -107,7 +107,7 @@ namespace CodingDaniel.MapEditor.Interaction.Picking
             distance = float.PositiveInfinity;
             return HandleAxis.None;
         }
-        
+
         private bool HitQuad(Camera camera, Ray ray, Vector3 position, Vector3 axis, Matrix4x4 matrix, float size, out float distance)
         {
             Plane plane = new Plane(matrix.MultiplyVector(axis).normalized, matrix.MultiplyPoint(Vector3.zero));
@@ -135,7 +135,7 @@ namespace CodingDaniel.MapEditor.Interaction.Picking
             bool result = point.x >= lowBound && point.x <= size && point.y >= lowBound && point.y <= size && point.z >= lowBound && point.z <= size;
             return result;
         }
-        
+
         private bool HitAxis(Camera camera, Ray ray, Vector3 axis, Matrix4x4 matrix, out float distanceToAxis)
         {
             Vector3 position = matrix.GetColumn(3);
@@ -148,7 +148,7 @@ namespace CodingDaniel.MapEditor.Interaction.Picking
             screenVector.Normalize();
 
             Vector2 screenPosition;
-            if(!GetScreenPosition(camera, ray, position, out screenPosition))
+            if (!GetScreenPosition(camera, ray, position, out screenPosition))
             {
                 distanceToAxis = float.PositiveInfinity;
                 return false;
@@ -174,7 +174,7 @@ namespace CodingDaniel.MapEditor.Interaction.Picking
             }
 
         }
-        
+
         private bool HitScreenAxis(Vector2 screenPosition, Vector2 screenVectorBegin, Vector3 screenVector, float screenVectorMag, out float distanceToAxis)
         {
             Vector2 perp = PerpendicularClockwise(screenVector).normalized;
@@ -217,7 +217,7 @@ namespace CodingDaniel.MapEditor.Interaction.Picking
             screenPosition = camera.WorldToScreenPoint(ray.GetPoint(distance));
             return true;
         }
-        
+
 
         public HandleAxis HitTestRotationHandle(Camera camera, Ray ray, HandleDrawSettings settings, out float distance)
         {
@@ -228,7 +228,7 @@ namespace CodingDaniel.MapEditor.Interaction.Picking
             float scale = GetScreenScale(position, camera) * HandleScale;
             if (Intersect(ray, position, outerRadius * scale, out hit1Distance, out hit2Distance))
             {
-                HandleAxis selectedAxis = HitAxis(camera, ray, settings, startingRotationInv,  out distance);
+                HandleAxis selectedAxis = HitAxis(camera, ray, settings, startingRotationInv, out distance);
                 Vector3 axis = Vector3.zero;
                 switch (selectedAxis)
                 {
@@ -366,7 +366,7 @@ namespace CodingDaniel.MapEditor.Interaction.Picking
                     {
                         Vector3 position = objToWorld.GetColumn(3);
                         Vector2 screenPosition;
-                        if(!GetScreenPosition(camera, ray, position, out screenPosition))
+                        if (!GetScreenPosition(camera, ray, position, out screenPosition))
                         {
                             return false;
                         }
@@ -412,13 +412,13 @@ namespace CodingDaniel.MapEditor.Interaction.Picking
 
             return true;
         }
-        
+
 
         public HandleAxis HitTestScaleHandle(Camera camera, Ray ray, HandleDrawSettings settings, out float distance)
         {
             Vector3 position = settings.Position;
             float screenScale = GetScreenScale(position, camera) * HandleScale;
-          
+
             Matrix4x4 matrix = Matrix4x4.TRS(position, settings.Rotation, new Vector3(screenScale, screenScale, screenScale));
             if (HitCenter(camera, ray, position, out distance))
             {
@@ -428,7 +428,7 @@ namespace CodingDaniel.MapEditor.Interaction.Picking
             float distToYAxis;
             float distToZAxis;
             float distToXAxis;
-            bool hit = HitAxis(camera, ray,Vector3.up, matrix, out distToYAxis);
+            bool hit = HitAxis(camera, ray, Vector3.up, matrix, out distToYAxis);
             hit |= HitAxis(camera, ray, Forward, matrix, out distToZAxis);
             hit |= HitAxis(camera, ray, Vector3.right, matrix, out distToXAxis);
 
@@ -459,12 +459,12 @@ namespace CodingDaniel.MapEditor.Interaction.Picking
         {
             Vector2 screenCenter = camera.WorldToScreenPoint(position);
             Vector2 screnPosition;
-            if(!GetScreenPosition(camera, ray, position, out screnPosition))
+            if (!GetScreenPosition(camera, ray, position, out screnPosition))
             {
                 distance = float.PositiveInfinity;
                 return false;
             }
-            
+
             distance = (screnPosition - screenCenter).magnitude;
             return distance <= SelectionMargin * SelectionMarginPixels;
         }

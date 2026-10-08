@@ -32,14 +32,14 @@ namespace Menu
         void SetValues(PlayerState playerState)
         {
             panel.SetActive(true);
-            
+
             nameText.SetText(playerState.Username);
-            
+
             profileImage.texture = playerState.AvatarImage;
 
             if (playerState.TryGetComponent(out ClientPlayer clientPlayer))
             {
-                SetKd(clientPlayer.Kills,clientPlayer.Deaths);
+                SetKd(clientPlayer.Kills, clientPlayer.Deaths);
             }
             else
             {
@@ -52,7 +52,7 @@ namespace Menu
             panel.SetActive(false);
         }
 
-        public void SetKd(int kill,int death)
+        public void SetKd(int kill, int death)
         {
             kdText.SetText($"{kill}K / {death}D");
         }

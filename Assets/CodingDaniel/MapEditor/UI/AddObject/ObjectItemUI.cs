@@ -10,8 +10,8 @@ using UnityEngine.UI;
 
 namespace CodingDaniel.MapEditor.UI.AddObject
 {
-    
-    public class ObjectItemUI : MonoBehaviour,IPointerDownHandler
+
+    public class ObjectItemUI : MonoBehaviour, IPointerDownHandler
     {
         [SerializeField] private ObjectItem item;
 
@@ -24,8 +24,8 @@ namespace CodingDaniel.MapEditor.UI.AddObject
         public ObjectType type;
 
         [Header("Decal")][HideInInspector] public int decalMaterialIndex;
-        [Header("Audio")] [HideInInspector]public int audioClipIndex;
-        public string n="";
+        [Header("Audio")][HideInInspector] public int audioClipIndex;
+        public string n = "";
 
         [SerializeField] public GameObject checkMark;
 
@@ -36,7 +36,7 @@ namespace CodingDaniel.MapEditor.UI.AddObject
             gameObject.AddComponent<ButtonSelect>();
         }
 
-        public void Init(ObjectType t, string key, Texture2D texture2D, int ex,Canvas rootCanvas,RectTransform maskRect, bool local, ObjectItem objectItem=null)
+        public void Init(ObjectType t, string key, Texture2D texture2D, int ex, Canvas rootCanvas, RectTransform maskRect, bool local, ObjectItem objectItem = null)
         {
             type = t;
             n = key;
@@ -61,8 +61,8 @@ namespace CodingDaniel.MapEditor.UI.AddObject
                     audioClipIndex = ex;
                     break;
             }
-            
-            masked.Initialize(rootCanvas,maskRect);
+
+            masked.Initialize(rootCanvas, maskRect);
         }
 
         public void SetTexture(Texture2D texture2D)
@@ -76,13 +76,13 @@ namespace CodingDaniel.MapEditor.UI.AddObject
             if (item != null)
             {
                 AddObjectMenu.Instance.SelectItem(item);
-                
+
             }
             else
             {
                 AddExternalObjectMenu.Instance.SetSelectItem(this);
             }
-            
+
         }
 
         public void OnPointerDown(PointerEventData eventData)
@@ -96,7 +96,7 @@ namespace CodingDaniel.MapEditor.UI.AddObject
             {
                 _clickedObject = this;
                 checkMark.SetActive(true);
-            } 
+            }
             else if (_clickedObject != this)
             {
                 _clickedObject.checkMark.SetActive(false);

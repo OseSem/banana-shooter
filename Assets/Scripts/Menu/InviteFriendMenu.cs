@@ -26,9 +26,9 @@ namespace Menu
             {
                 // if (friend.PersonalState == EPersonaState.k_EPersonaStateAway || friend.PersonalState == EPersonaState.k_EPersonaStateSnooze) continue;
                 FriendDetailUI ui = Instantiate(prefab, content);
-                
-                ui.Initialize(friend,true);
-                
+
+                ui.Initialize(friend, true);
+
                 ui.inviteBtn.onClick.AddListener(delegate { Invite(friend.SteamID); });
             }
         }
@@ -37,11 +37,11 @@ namespace Menu
         {
             if (SteamFriends.InviteUserToGame(id, NetworkManager.Instance.ConnectionString))
             {
-                NotificationMenu.Instance.NewItem("nc_message","nc_invite_sent");
+                NotificationMenu.Instance.NewItem("nc_message", "nc_invite_sent");
             }
         }
 
-        
+
         public void DisplayInviteWindow()
         {
             AudioManager.Instance.PlayButton();

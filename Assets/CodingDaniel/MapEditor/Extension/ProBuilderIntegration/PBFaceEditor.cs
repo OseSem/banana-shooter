@@ -18,7 +18,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         private Vector3[][] _initialPositions;
         private Vector3 _initialPostion;
         private Quaternion _initialRotation;
-        
+
         public override bool HasSelection
         {
             get { return _faceSelection.FacesCount > 0; }
@@ -28,7 +28,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             get
             {
-                if(UVEditingMode)
+                if (UVEditingMode)
                 {
                     return _faceSelection.LastPosition;
                 }
@@ -42,36 +42,36 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             get
             {
-                if(UVEditingMode)
+                if (UVEditingMode)
                 {
                     return _faceSelection.LastNormal;
                 }
 
                 return (CenterMode && _faceSelection.FacesCount > 1) ? Vector3.forward : _faceSelection.LastNormal;
             }
-        }    
-        
+        }
+
         public override Quaternion Rotation
         {
             get
             {
-                if(_faceSelection.LastMesh == null || !UVEditingMode && CenterMode && _faceSelection.FacesCount > 1)
+                if (_faceSelection.LastMesh == null || !UVEditingMode && CenterMode && _faceSelection.FacesCount > 1)
                 {
                     return Quaternion.identity;
                 }
 
                 MeshSelection selection = GetSelection();
-                if(selection == null)
+                if (selection == null)
                 {
                     return Quaternion.identity;
                 }
                 IList<int> faces;
-                if(!selection.SelectedFaces.TryGetValue(_faceSelection.LastMesh.gameObject, out faces))
+                if (!selection.SelectedFaces.TryGetValue(_faceSelection.LastMesh.gameObject, out faces))
                 {
                     return Quaternion.identity;
                 }
 
-                if(faces == null || faces.Count == 0)
+                if (faces == null || faces.Count == 0)
                 {
                     return Quaternion.identity;
                 }
@@ -90,7 +90,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         private void OnDestroy()
         {
-            if(_faceSelection != null)
+            if (_faceSelection != null)
             {
                 Destroy(_faceSelection);
             }
@@ -115,7 +115,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 _meshes.Add(mesh, faces);
             }
 
-            if(UVEditingMode)
+            if (UVEditingMode)
             {
                 _faceSelection.IsRendererEnabled = false;
             }
@@ -147,12 +147,12 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             Vector3 offset = to - from;
 
             bool wasMoveInProgress = _isMoveInProgress;
-            if(!wasMoveInProgress)
+            if (!wasMoveInProgress)
             {
                 BeginMove();
             }
 
-            foreach(KeyValuePair<ProBuilderMesh, IList<Face>> kvp in _meshes)
+            foreach (KeyValuePair<ProBuilderMesh, IList<Face>> kvp in _meshes)
             {
                 ProBuilderMesh mesh = kvp.Key;
                 Vector3 localOffset = mesh.transform.InverseTransformVector(offset);
@@ -168,7 +168,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
             RaisePBMeshesChanged(true);
 
-            if(!wasMoveInProgress)
+            if (!wasMoveInProgress)
             {
                 EndMove();
             }
@@ -297,7 +297,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             Vector3 center = Position;
             int meshIndex = 0;
             IEnumerable<ProBuilderMesh> meshes = _faceSelection.Meshes;
-            
+
             foreach (ProBuilderMesh mesh in meshes)
             {
                 IList<Vector3> positions = mesh.positions.ToArray();
@@ -329,9 +329,9 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             MeshSelection selection = null;
             MeshAndFace result = PBUtility.PickFace(camera, pointer);
-            if(result.face != null)
+            if (result.face != null)
             {
-                if(ctrl)
+                if (ctrl)
                 {
                     int submeshIndex = result.face.submeshIndex;
                     IList<Face> faces = result.mesh.faces;
@@ -339,7 +339,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                     bool wasSelected = false;
                     bool wasUnselected = false;
-                    
+
                     _faceSelection.BeginChange();
                     for (int i = 0; i < faces.Count; ++i)
                     {
@@ -360,9 +360,9 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                         }
                     }
 
-                    if(wasSelected && !wasUnselected)
+                    if (wasSelected && !wasUnselected)
                     {
-                        for(int i = 0; i < sameMaterialFaces.Count; ++i)
+                        for (int i = 0; i < sameMaterialFaces.Count; ++i)
                         {
                             _faceSelection.Remove(result.mesh, sameMaterialFaces[i]);
                         }
@@ -421,7 +421,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     {
                         selection = null;
                     }
-                    _faceSelection.Clear(); 
+                    _faceSelection.Clear();
                 }
             }
             return selection;
@@ -433,7 +433,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             ProBuilderMesh[] meshes = _faceSelection.Meshes.OrderBy(m => m == _faceSelection.LastMesh).ToArray();
             foreach (ProBuilderMesh mesh in meshes)
             {
-                if(mesh == null)
+                if (mesh == null)
                 {
                     continue;
                 }
@@ -469,7 +469,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     selection.SelectedFaces.Add(mesh.gameObject, notSelected);
                 }
             }
-            else if(mode == MeshEditorSelectionMode.Substract)
+            else if (mode == MeshEditorSelectionMode.Substract)
             {
                 foreach (KeyValuePair<ProBuilderMesh, HashSet<Face>> kvp in result)
                 {
@@ -484,7 +484,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     selection.UnselectedFaces.Add(mesh.gameObject, selected);
                 }
             }
-            else if(mode == MeshEditorSelectionMode.Difference)
+            else if (mode == MeshEditorSelectionMode.Difference)
             {
                 foreach (KeyValuePair<ProBuilderMesh, HashSet<Face>> kvp in result)
                 {
@@ -500,7 +500,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                         _faceSelection.Remove(mesh, face);
                     }
 
-                    foreach(int face in notSelected)
+                    foreach (int face in notSelected)
                     {
                         _faceSelection.Add(mesh, face);
                     }
@@ -512,7 +512,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
             _faceSelection.EndChange();
 
-            if(selection.SelectedFaces.Count == 0 && selection.UnselectedFaces.Count == 0)
+            if (selection.SelectedFaces.Count == 0 && selection.UnselectedFaces.Count == 0)
             {
                 selection = null;
             }
@@ -529,10 +529,10 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             {
                 IList<int> faces = kvp.Value;
                 ProBuilderMesh mesh = kvp.Key.GetComponent<ProBuilderMesh>();
-                for(int i = faces.Count - 1; i >= 0; i--)
+                for (int i = faces.Count - 1; i >= 0; i--)
                 {
                     int face = faces[i];
-                    if(_faceSelection.IsSelected(mesh, face))
+                    if (_faceSelection.IsSelected(mesh, face))
                     {
                         faces.Remove(face);
                     }
@@ -542,13 +542,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     }
                 }
 
-                if(faces.Count == 0)
+                if (faces.Count == 0)
                 {
                     selection.SelectedFaces.Remove(kvp.Key);
                 }
             }
             _faceSelection.EndChange();
-            if(selection.SelectedFaces.Count == 0)
+            if (selection.SelectedFaces.Count == 0)
             {
                 return null;
             }
@@ -607,7 +607,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 foreach (KeyValuePair<GameObject, IList<int>> kvp in selection.SelectedFaces)
                 {
                     ProBuilderMesh mesh = kvp.Key.GetComponent<ProBuilderMesh>();
-                    if(mesh == null)
+                    if (mesh == null)
                     {
                         continue;
                     }
@@ -692,7 +692,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public override void Extrude(float distance)
         {
             _faceSelection.BeginChange();
-            
+
             ProBuilderMesh[] meshes = _faceSelection.Meshes.OrderBy(m => m == _faceSelection.LastMesh).ToArray();
             foreach (ProBuilderMesh mesh in meshes)
             {
@@ -708,7 +708,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                 mesh.ToMesh();
                 mesh.Refresh();
-                
+
                 for (int i = 0; i < faceIndexes.Count; ++i)
                 {
                     _faceSelection.Add(mesh, faceIndexes[i]);
@@ -769,7 +769,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     for (int j = 0; j < numFaceVertices; j++)
                     {
                         int vertexIndex = selectedFace.distinctIndexes[j];
-                        
+
                         if (!uniqueVertices.Contains(mesh.GetVertices()[vertexIndex]))
                         {
                             // This vertex is not part of the original face, so add it to the new face
@@ -831,7 +831,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         }
         public override void Delete()
         {
-            ProBuilderMesh[] meshes = _faceSelection.Meshes.OrderBy(m => m == _faceSelection.LastMesh).ToArray();   
+            ProBuilderMesh[] meshes = _faceSelection.Meshes.OrderBy(m => m == _faceSelection.LastMesh).ToArray();
             foreach (ProBuilderMesh mesh in meshes)
             {
                 IList<Face> faces = new List<Face>();

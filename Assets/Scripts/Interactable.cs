@@ -7,7 +7,7 @@ using UnityEngine.Events;
 
 public class Interactable : MonoBehaviour
 {
-    public UnityEvent interactEvent,highLightEvent,deSelectEvent;
+    public UnityEvent interactEvent, highLightEvent, deSelectEvent;
 
     public Outline outline;
 
@@ -34,7 +34,7 @@ public class Interactable : MonoBehaviour
         outline.enabled = true;
     }
 
-    private Vector3 desiredSize,defaultSize,interactSize;
+    private Vector3 desiredSize, defaultSize, interactSize;
     public bool isAnimated = false;
 
     private Transform _transform;
@@ -42,18 +42,18 @@ public class Interactable : MonoBehaviour
     private void Update()
     {
         if (!isAnimated) return;
-        
-        _transform.localScale = Vector3.Lerp(_transform.localScale,desiredSize,Time.deltaTime*15f);
+
+        _transform.localScale = Vector3.Lerp(_transform.localScale, desiredSize, Time.deltaTime * 15f);
     }
 
-    
+
     public void InteractScale()
     {
         AudioManager.Instance.Play("tip");
         desiredSize = interactSize;
-        
+
         CancelInvoke(nameof(BackToDefault));
-        Invoke(nameof(BackToDefault),0.1f);
+        Invoke(nameof(BackToDefault), 0.1f);
     }
 
     void BackToDefault()

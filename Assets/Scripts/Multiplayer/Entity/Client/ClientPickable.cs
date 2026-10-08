@@ -16,16 +16,16 @@ namespace Multiplayer.Client
         private Transform _transform;
         [HideInInspector]
         public int ObjectIndex { get; private set; }
-        void Initialize(ushort id,int index)
+        void Initialize(ushort id, int index)
         {
             Id = id;
             ObjectIndex = index;
 
             _transform = transform;
-        
-            list.Add(Id,this);
+
+            list.Add(Id, this);
         }
-        
+
         private void OnDestroy()
         {
             if (list.ContainsKey(Id))
@@ -33,10 +33,10 @@ namespace Multiplayer.Client
         }
         private void FixedUpdate()
         {
-            if(_transform.position.y<=-300f) Destroy(gameObject);
+            if (_transform.position.y <= -300f) Destroy(gameObject);
         }
-        
-        [MessageHandler((ushort) ServerToClientId.PickableSpawned, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+
+        [MessageHandler((ushort)ServerToClientId.PickableSpawned, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void ObjectSpawn(Message message)
         {
             ushort id = message.GetUShort();
@@ -50,14 +50,14 @@ namespace Multiplayer.Client
                     string weaponName = NetworkManager.Instance.weaponInfo[objectIndex].weaponName;
                     o = Instantiate(PrefabManager.Instance.GetPrefab("client_pick_" + weaponName), pos,
                         Quaternion.identity).GetComponent<ClientPickable>();
-                    
-                    o.Initialize(id,objectIndex);
+
+                    o.Initialize(id, objectIndex);
                     break;
                 default: break;
             }
         }
-        
-        [MessageHandler((ushort) ServerToClientId.PickablePos, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+
+        [MessageHandler((ushort)ServerToClientId.PickablePos, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void PickablePos(Message message)
         {
             ushort id = message.GetUShort();
@@ -69,7 +69,7 @@ namespace Multiplayer.Client
                 clientObject._transform.position = pos;
             }
         }
-        [MessageHandler((ushort) ServerToClientId.PickableRot, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.PickableRot, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void PickableRot(Message message)
         {
             ushort id = message.GetUShort();
@@ -81,7 +81,7 @@ namespace Multiplayer.Client
                 clientObject._transform.rotation = rot;
             }
         }
-        [MessageHandler((ushort) ServerToClientId.PickableDestroy, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.PickableDestroy, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void PickableDestroy(Message message)
         {
             ushort id = message.GetUShort();

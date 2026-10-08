@@ -12,7 +12,7 @@ namespace Menu
     public class DLCMenu : MonoBehaviour
     {
         [SerializeField] private Button btn;
-        
+
         [SerializeField] private RawImage thumbnail;
         [SerializeField] private TextMeshProUGUI text;
 
@@ -26,20 +26,22 @@ namespace Menu
         {
             if (!SteamApps.BIsDlcInstalled((AppId_t)2238100))
             {
-                
+
                 btn.onClick.AddListener(OpenDLCPage);
-            
+
                 text.SetText("<color=#05a1cf><b><size=24>Banana Shooter - Cyber Upgrade</size></b></color>\nBuy it now to get your new outfit and main menu, exclusive servers");
 
                 thumbnail.texture = thumbnailTexture;
 
-            } else{
+            }
+            else
+            {
                 enabled = false;
-                
+
                 GetComponent<NewsMenu>().enabled = true;
 
                 canvas.alpha = 0.0f;
-                
+
                 nextNew.SetActive(true);
             }
 

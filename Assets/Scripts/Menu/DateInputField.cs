@@ -8,7 +8,7 @@ namespace Menu
     {
         private TMP_InputField _inputField;
 
-        private int _year=0, _month=0, _day=0;
+        private int _year = 0, _month = 0, _day = 0;
 
         public Action OnDateSet;
 
@@ -29,7 +29,7 @@ namespace Menu
             _inputField.onEndEdit.RemoveListener(CheckInput);
 
         }
-        
+
         private void CheckInput(string arg0)
         {
             _day = 0;
@@ -57,7 +57,7 @@ namespace Menu
                                     i += len;
                                 }
                                 break;
-                            
+
                             case 1:
                                 len = 1;
                                 if (char.IsDigit(arg0[i + 1]))
@@ -79,8 +79,8 @@ namespace Menu
                                         break;
                                     }
                                 }
-                                
-                                
+
+
                                 break;
                         }
 
@@ -88,13 +88,13 @@ namespace Menu
                     }
                 }
             }
-            
+
             // Debug.Log(GetDateTime());
-            
-            if(_day!=0 && _month!=0 && _year!=0)
+
+            if (_day != 0 && _month != 0 && _year != 0)
                 OnDateSet?.Invoke();
         }
-        
+
         private bool allSlashAdded = false;
 
         private char ValidateTimeBegin(string text, int charindex, char addedchar)
@@ -105,13 +105,13 @@ namespace Menu
 
             bool isDay = text.Length == 1;
             bool isMonth = text.Length == 6;
-     
+
             if (!allSlashAdded && (isDay || isMonth) && char.IsDigit(addedchar))
             {
                 allSlashAdded = text.Length == 7;
- 
+
                 _inputField.text = text + addedchar + " / ";
-                
+
                 _inputField.stringPosition = _inputField.text.Length;
 
                 // if (isDay)
@@ -132,7 +132,7 @@ namespace Menu
                 //         
                 //     }
                 // }
- 
+
                 return '\0';
             }
 
@@ -144,26 +144,26 @@ namespace Menu
             //     {
             //     }
             // }
- 
+
             // Debug.Log(addedchar + " is digit : " + char.IsDigit(addedchar));
- 
+
             return char.IsDigit(addedchar) ? addedchar : '\0';
         }
 
         public void SetDateTime(DateTime dateTime)
         {
-            if(_inputField==null)
+            if (_inputField == null)
                 _inputField = GetComponent<TMP_InputField>();
             _day = dateTime.Day;
             _month = dateTime.Month;
             _year = dateTime.Year;
-            
+
             _inputField.SetTextWithoutNotify($"{_day} / {_month} / {_year}");
         }
 
         public DateTime GetDateTime()
         {
-            if (_day == 0 || _month ==0 || _year==0) return DateTime.Today;
+            if (_day == 0 || _month == 0 || _year == 0) return DateTime.Today;
 
             return new DateTime(_year, _month, _day);
         }

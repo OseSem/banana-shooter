@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Console.CommandScript
 {
-    [CreateAssetMenu(fileName = "Specter Command",menuName = "Utilities/DeveloperConsole/Commands/Specter Command")]
+    [CreateAssetMenu(fileName = "Specter Command", menuName = "Utilities/DeveloperConsole/Commands/Specter Command")]
     public class SpecterCommand : ConsoleCommand
     {
         public override bool Process(string[] args)
@@ -19,7 +19,7 @@ namespace Console.CommandScript
                     return false;
                 }
             }
-        
+
             if (args.Length != 1)
             {
                 DeveloperConsoleUI.Instance.AddMessageToConsole("<color=yellow>Console : arguments should be 1</color>");
@@ -29,12 +29,12 @@ namespace Console.CommandScript
             if (bool.TryParse(args[0], out var i))
             {
                 bool flag = i;
-            
-                Message message = Message.Create(MessageSendMode.Reliable,(ushort) ClientToServerId.SpecterMode);
+
+                Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.SpecterMode);
 
                 message.Add(flag);
                 NetworkManager.Instance.SendByte += message.WrittenLength;
-            
+
                 NetworkManager.Instance.Client.Send(message);
                 return true;
             }

@@ -13,16 +13,16 @@ public class SpawnObject : MonoBehaviour
 
     public Transform[] spawnPos;
 
-    
+
     public void Spawn()
     {
         if (type == ObjectType.SodaCan)
         {
             AchievementManager.Instance.SetAchievement(AchievementManager.EAchievements.MMM_SODA);
         }
-        Message message = Message.Create(MessageSendMode.Unreliable,(ushort) ClientToServerId.RequestSpawnObj);
+        Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ClientToServerId.RequestSpawnObj);
 
-        message.Add((int) type);
+        message.Add((int)type);
         Transform spawn = spawnPos[Random.Range(0, spawnPos.Length)];
         message.Add(spawn.position);
         message.Add(1);
@@ -33,7 +33,7 @@ public class SpawnObject : MonoBehaviour
         }
 
         NetworkManager.Instance.SendByte += message.WrittenLength;
-        
+
         NetworkManager.Instance.Client.Send(message);
     }
 }

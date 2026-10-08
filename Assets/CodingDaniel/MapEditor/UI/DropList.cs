@@ -22,11 +22,11 @@ namespace CodingDaniel.MapEditor.UI
     public class DropList : MonoBehaviour
     {
         private const float canvasX = 1920, canvasY = 1080;
-        
+
         [SerializeField] private Transform content;
 
-        [SerializeField] private TabListItem btnPrefab,hasChildPrefab;
-        public void SetTabList(RectTransform tabItem, List<DropListItem> items,bool offsetYEnable=true,bool offsetXEnable=false)
+        [SerializeField] private TabListItem btnPrefab, hasChildPrefab;
+        public void SetTabList(RectTransform tabItem, List<DropListItem> items, bool offsetYEnable = true, bool offsetXEnable = false)
         {
             var position = tabItem.position;
             float offsetY = offsetYEnable ? tabItem.sizeDelta.y : 0f;
@@ -34,7 +34,7 @@ namespace CodingDaniel.MapEditor.UI
 
             offsetY *= Screen.height / canvasY;
             offsetX *= Screen.width / canvasX;
-            transform.position = new Vector2(position.x + offsetX, position.y -offsetY);
+            transform.position = new Vector2(position.x + offsetX, position.y - offsetY);
             // Debug.Log(position + " " +transform.position);
 
             foreach (var item in items)
@@ -43,7 +43,7 @@ namespace CodingDaniel.MapEditor.UI
                 {
                     TabListItem tabListItem = Instantiate(btnPrefab, content);
 
-                    tabListItem.Init(item,this);
+                    tabListItem.Init(item, this);
 
                     tabListItems.Add(tabListItem);
                 }
@@ -51,7 +51,7 @@ namespace CodingDaniel.MapEditor.UI
                 {
                     TabListItem tabListItem = Instantiate(hasChildPrefab, content);
 
-                    tabListItem.Init(item,this);
+                    tabListItem.Init(item, this);
 
                     tabListItems.Add(tabListItem);
                 }
@@ -60,14 +60,14 @@ namespace CodingDaniel.MapEditor.UI
 
         public readonly List<TabListItem> tabListItems = new List<TabListItem>();
         public readonly List<DropList> dropLists = new List<DropList>();
-        public void SpawnList(RectTransform listItem,List<DropListItem> items,bool offsetYEnable=true,bool offsetXEnable=false)
+        public void SpawnList(RectTransform listItem, List<DropListItem> items, bool offsetYEnable = true, bool offsetXEnable = false)
         {
             DropList dropList = Instantiate(TabList.Instance.dropListPrefab, TabList.Instance.tab);
-            
+
             dropLists.Add(dropList);
             TabList.Instance.dropLists.Add(dropList);
 
-            dropList.SetTabList(listItem, items,offsetYEnable,offsetXEnable);
+            dropList.SetTabList(listItem, items, offsetYEnable, offsetXEnable);
         }
         public void ClearSelection()
         {
@@ -85,7 +85,7 @@ namespace CodingDaniel.MapEditor.UI
                 Destroy(dropLists[i].gameObject);
             }
             dropLists.Clear();
-            
+
         }
     }
 }

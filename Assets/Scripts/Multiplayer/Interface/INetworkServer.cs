@@ -9,23 +9,23 @@ namespace Multiplayer.Interface
     public interface INetworkServer : INetworkServerPacketSent
     {
         void StopServer();
-        
+
         #region Server Callback Function
 
         void NewPlayerConnect(object sender, ServerConnectedEventArgs e);
         void ClientDisconnect(object sender, ServerDisconnectedEventArgs e);
 
         #endregion
-        
+
 
         #region Game Logic
 
         void StopGame();
-        
-        void ShootLagCompensation(uint tick, Vector3 lookDir,Vector3 raycastPos,ushort fromClient, ActiveWeapon weapon);
+
+        void ShootLagCompensation(uint tick, Vector3 lookDir, Vector3 raycastPos, ushort fromClient, ActiveWeapon weapon);
 
         #endregion
-        
+
         #region Returns of the server properties
 
         /// <summary>
@@ -44,7 +44,7 @@ namespace Multiplayer.Interface
 
         #region Set the server properties outside
 
-        void SetGameState(GameState state,bool send=true);
+        void SetGameState(GameState state, bool send = true);
 
         void ResetProperties();
 

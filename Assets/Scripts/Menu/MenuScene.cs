@@ -7,12 +7,12 @@ namespace Menu
     public class MenuScene : MonoBehaviour
     {
         public static MenuScene Instance;
-        
+
         [Serializable]
         public class MapScene
         {
             public GameObject obj;
-            
+
             public Color fogColor = Color.black;
 
             public float fogDensity = 0;
@@ -47,7 +47,7 @@ namespace Menu
         {
             if (index >= maps.Length)
                 return;
-            
+
             RenderSettings.fogColor = maps[index].fogColor;
             RenderSettings.fogDensity = maps[index].fogDensity;
 

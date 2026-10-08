@@ -10,7 +10,7 @@ namespace Multiplayer.Editor
     {
         protected override void OnEnableOverride()
         {
-            Parameters = new[] { "Base", "Art", "Weapons", "Misc"};
+            Parameters = new[] { "Base", "Art", "Weapons", "Misc" };
         }
 
         protected override void OnInspectorGUIOverride()
@@ -25,13 +25,13 @@ namespace Multiplayer.Editor
                 EditorGUILayout.HelpBox("Local Player Will Have Less Properties to Fill", UnityEditor.MessageType.Info);
             }
             GUILayout.Space(Space);
-            
+
             switch (Tool)
             {
                 case 0: //Base
                     EditorGUI.indentLevel = 0;
                     GUILayout.BeginVertical("Box");
-                    
+
                     EditorGUILayout.LabelField("Base", EditorStyles.boldLabel);
                     EditorGUI.indentLevel = 1;
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.orientation)), new GUIContent("Client Player"));
@@ -46,13 +46,13 @@ namespace Multiplayer.Editor
                         EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.bones)), new GUIContent("Bones", "For ragdolls to sync the bones"));
                         EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.nameCanvas)), new GUIContent("Name Canvas"));
                     }
-                    
+
                     GUILayout.EndVertical();
                     break;
                 case 1: // Art
                     EditorGUI.indentLevel = 0;
                     GUILayout.BeginVertical("Box");
-                    
+
                     EditorGUILayout.LabelField("Base", EditorStyles.boldLabel);
                     EditorGUI.indentLevel = 1;
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.bananaObj)), new GUIContent("Banana Object"));
@@ -65,57 +65,57 @@ namespace Multiplayer.Editor
                         EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.eyes)), new GUIContent("Eyes Transform"));
                         EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.fire)), new GUIContent("Fire Particle"));
                     }
-                    
+
                     GUILayout.EndVertical();
-                    
+
                     if (!Target.isLocal)
                     {
                         GUILayout.Space(Space);
-                        
+
                         EditorGUI.indentLevel = 0;
                         GUILayout.BeginVertical("Box");
-                    
+
                         EditorGUILayout.LabelField("Audio", EditorStyles.boldLabel);
                         EditorGUI.indentLevel = 1;
                         EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.audioSource)), new GUIContent("The Original Audio Source"));
                         EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.voice)), new GUIContent("The Voice Chat Audio Source"));
-                        
+
                         GUILayout.EndVertical();
-                        
+
                         GUILayout.Space(Space);
-                        
+
                         EditorGUI.indentLevel = 0;
                         GUILayout.BeginVertical("Box");
-                    
+
                         EditorGUILayout.LabelField("Light", EditorStyles.boldLabel);
                         EditorGUI.indentLevel = 1;
                         EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.Light)), new GUIContent("The Flash light"));
-                        
+
                         GUILayout.EndVertical();
-                        
+
                         GUILayout.Space(Space);
-                    
+
                         EditorGUI.indentLevel = 0;
                         GUILayout.BeginVertical("Box");
-                    
+
                         EditorGUILayout.LabelField("Cosmetics", EditorStyles.boldLabel);
                         EditorGUI.indentLevel = 1;
-                        
+
                         EditorGUILayout.LabelField("Default Cosmetics", EditorStyles.boldLabel);
                         EditorGUI.indentLevel = 2;
-                        
+
                         EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.daveHair)), new GUIContent("Dave Hair"));
                         EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.clothes)), new GUIContent("Clothe"));
                         EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.pant)), new GUIContent("Pant"));
                         EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.models)), new GUIContent("Default Cosmetic Models"));
-                        
+
                         GUILayout.Space(Space);
-                        
+
                         EditorGUI.indentLevel = 1;
-                        
+
                         EditorGUILayout.LabelField("Cosmetic Objects", EditorStyles.boldLabel);
                         EditorGUI.indentLevel = 2;
-                        
+
                         // EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.hatCosmetics)), new GUIContent("Hat Cosmetics"));
                         // EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.faceCosmetics)), new GUIContent("Face Cosmetics"));
                         // EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.shoeLCosmetics)), new GUIContent("Shoe L Cosmetics"));
@@ -123,15 +123,15 @@ namespace Multiplayer.Editor
                         // EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.hairCosmetics)), new GUIContent("Hair Cosmetics"));
                         // EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.clothesCosmetics)), new GUIContent("Clothes Cosmetics"));
                         // EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.pantCosmetics)), new GUIContent("Pant Cosmetics"));
-                        
+
                         GUILayout.EndVertical();
                     }
-                    
+
                     break;
                 case 2: //Weapons
                     EditorGUI.indentLevel = 0;
                     GUILayout.BeginVertical("Box");
-                    
+
                     EditorGUILayout.LabelField("Base", EditorStyles.boldLabel);
                     EditorGUI.indentLevel = 1;
                     // EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.weapons)), new GUIContent("Weapon Objects"));
@@ -140,13 +140,13 @@ namespace Multiplayer.Editor
                     {
                         EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.clawKnifeAnim)), new GUIContent("Weapon Objects"));
                     }
-                    
+
                     GUILayout.EndVertical();
                     break;
                 case 3: //Misc
                     EditorGUI.indentLevel = 0;
                     GUILayout.BeginVertical("Box");
-                    
+
                     EditorGUILayout.LabelField("Base", EditorStyles.boldLabel);
                     EditorGUI.indentLevel = 1;
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.col)), new GUIContent("Collider"));
@@ -155,16 +155,16 @@ namespace Multiplayer.Editor
                     {
                         EditorGUILayout.PropertyField(serializedObject.FindProperty("interpolator"), new GUIContent("Interpolator"));
                     }
-                    
+
                     GUILayout.EndVertical();
-                    
+
                     if (!Target.isLocal)
                     {
                         GUILayout.Space(Space);
-                        
+
                         EditorGUI.indentLevel = 0;
                         GUILayout.BeginVertical("Box");
-                    
+
                         EditorGUILayout.LabelField("Ik", EditorStyles.boldLabel);
                         EditorGUI.indentLevel = 1;
                         EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.iks)), new GUIContent("iks"));
@@ -173,7 +173,7 @@ namespace Multiplayer.Editor
 
                         GUILayout.EndVertical();
                     }
-                    
+
                     break;
             }
         }

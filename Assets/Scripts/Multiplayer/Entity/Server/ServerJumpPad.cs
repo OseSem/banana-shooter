@@ -20,13 +20,13 @@ namespace Multiplayer.Entity.Server
         public void Initialize()
         {
             _transform = transform;
-            
+
             Id = NetworkServerManager.GetId();
-            
-            NetworkServerManager.AddEntity(Id,this);
+
+            NetworkServerManager.AddEntity(Id, this);
 
             _spawnedTime = Time.time;
-            
+
             Destroy(gameObject, 30f);
 
             SendSpawnToAll();
@@ -50,7 +50,7 @@ namespace Multiplayer.Entity.Server
             message.AddVector3(_transform.position);
             message.AddQuaternion(_transform.rotation);
             message.AddFloat(30 - Time.time + _spawnedTime);
-            
+
             return message;
         }
 
@@ -65,11 +65,11 @@ namespace Multiplayer.Entity.Server
         }
 
         public bool IsEnemy() => false;
-        
+
         public bool IsPlayer() => false;
-        
+
         public bool IsVoid() => true;
-        
+
         public bool IsThrowable() => false;
     }
 }

@@ -23,10 +23,10 @@ public class RigidEnemy : MonoBehaviour
 
     private Rigidbody torsoRb;
 
-    
+
     public EnemyState state = EnemyState.Recovering;
     [HideInInspector]
-    public float standUpForce,standUpMultiForce;
+    public float standUpForce, standUpMultiForce;
     public bool minOneGrounded;
     [HideInInspector]
     public Rigidbody[] rigs;
@@ -66,11 +66,11 @@ public class RigidEnemy : MonoBehaviour
     [HideInInspector]
     public IKEnemy ik;
     public float groundCheckRadius = 0.2f;
-    public float upMultiForceFadeSpeed=4000;
+    public float upMultiForceFadeSpeed = 4000;
     public float legPushForce = 0.55f;
     public float gravityForceMultiplayer = 15000;
     public float gravityFactor = 0;
-    
+
     public float moveSpeed = 10f;
 
     private float rotationForce = 300f;
@@ -119,7 +119,7 @@ public class RigidEnemy : MonoBehaviour
                 headDistanceToGround = hitInfo.distance;
             }
         }
-        standUpMultiForce = upMultiForceFadeSpeed * (ik.heightAboveGround-headDistanceToGround);
+        standUpMultiForce = upMultiForceFadeSpeed * (ik.heightAboveGround - headDistanceToGround);
         float num2 = Vector3.Angle(Vector3.up, root.up);
         if (state == EnemyState.Falling)
         {
@@ -141,8 +141,8 @@ public class RigidEnemy : MonoBehaviour
             bool flag = Physics.CheckSphere(root.position, 0.5f, ik.whatIsGround);
             if (headDistanceToGround < ik.heightAboveGround || flag)
             {
-                headRb.AddForce(Vector3.up * (standUpForce+standUpMultiForce) * recoveryForce * .8f);
-                rb.AddForce(Vector3.up * (standUpForce+standUpMultiForce) * recoveryForce * 0.2f);
+                headRb.AddForce(Vector3.up * (standUpForce + standUpMultiForce) * recoveryForce * .8f);
+                rb.AddForce(Vector3.up * (standUpForce + standUpMultiForce) * recoveryForce * 0.2f);
             }
             if ((num2 < getupAng && torsoRb.velocity.magnitude < getupMagT) || (headDistanceToGround > ik.heightAboveGround * 0.85f && headDistanceToGround < ik.heightAboveGround * 1.85f && num2 < 30f))
             {
@@ -157,8 +157,8 @@ public class RigidEnemy : MonoBehaviour
             headRb.AddForce(Vector3.up * (standUpForce) * 0.86f);
             return;
         }
-       
-        float num3 = Mathf.Clamp(1f -headDistanceToGround / ik.heightAboveGround, -1f, 1f);
+
+        float num3 = Mathf.Clamp(1f - headDistanceToGround / ik.heightAboveGround, -1f, 1f);
         if (num2 < tumbleAngle)
         {
             UpdateState(EnemyState.Active);
@@ -174,8 +174,8 @@ public class RigidEnemy : MonoBehaviour
         if (minOneGrounded)
         {
             gravityFactor = 0;
-            rb.AddForce(root.up * (standUpForce) *num3*1f);
-            rb.AddForce(root.up * (standUpForce) *legPushForce);
+            rb.AddForce(root.up * (standUpForce) * num3 * 1f);
+            rb.AddForce(root.up * (standUpForce) * legPushForce);
         }
 
         // bool touchGround = false;
@@ -200,11 +200,11 @@ public class RigidEnemy : MonoBehaviour
         //         rigs[i].AddForce(Vector3.down * gravityForceMultiplayer * gravityFactor * Time.fixedDeltaTime);
         //     }
         // }
-        if (headDistanceToGround < ik.heightAboveGround*2)
+        if (headDistanceToGround < ik.heightAboveGround * 2)
         {
             StandBalance();
         }
-       
+
     }
     private void RecoveryCooldown()
     {
@@ -224,8 +224,8 @@ public class RigidEnemy : MonoBehaviour
     }
     void StandBalance()
     {
-        headRb.AddForce(Vector3.up*(standUpForce+standUpMultiForce));
-        torsoRb.AddForce(Vector3.down*standUpForce);
+        headRb.AddForce(Vector3.up * (standUpForce + standUpMultiForce));
+        torsoRb.AddForce(Vector3.down * standUpForce);
     }
     float GetTotalMassInChild()
     {
@@ -235,7 +235,7 @@ public class RigidEnemy : MonoBehaviour
             mass += rigs[i].mass;
         }
 
-        return mass*(-Physics.gravity.y);
+        return mass * (-Physics.gravity.y);
     }
     private void ConfigureLegs(bool makeRagdoll)
     {
@@ -250,7 +250,7 @@ public class RigidEnemy : MonoBehaviour
             ik.ForceCurrentPosition(i);
         }
     }
-    [HideInInspector]public float headDistanceToGround;
+    [HideInInspector] public float headDistanceToGround;
     private void DisableSelfCollision(bool ignore)
     {
         Collider[] componentsInChildren = GetComponentsInChildren<Collider>();
@@ -285,21 +285,21 @@ public class RigidEnemy : MonoBehaviour
             switch (s)
             {
                 case EnemyState.Active:
-                    ConfigureRb(5f,5f,1f);
+                    ConfigureRb(5f, 5f, 1f);
                     break;
                 case EnemyState.Tumbling:
-                    ConfigureRb(1f, 4f,.1f);
+                    ConfigureRb(1f, 4f, .1f);
                     break;
                 case EnemyState.Falling:
-                    ConfigureRb(0f, 0f,0);
+                    ConfigureRb(0f, 0f, 0);
                     Concuss();
                     break;
                 case EnemyState.Recovering:
-                    ConfigureRb(4f, 4f,.15f);
+                    ConfigureRb(4f, 4f, .15f);
                     break;
                 case EnemyState.Dead:
                     HitMarker.Instance.StartHitMarker(Color.red);
-                    ConfigureRb(0f, 0f,0);
+                    ConfigureRb(0f, 0f, 0);
                     KillRigidEnemy();
                     break;
                 default:
@@ -314,20 +314,20 @@ public class RigidEnemy : MonoBehaviour
         ConfigureLegs(true);
         CancelInvoke();
         ik.CollectGarbage();
-        
-        Destroy(gameObject,10f);
+
+        Destroy(gameObject, 10f);
         Destroy(ik);
         Destroy(GetComponent<Enemy>());
-       
+
     }
-    private void ConfigureRb(float drag, float angularDrag,float stabilize)
+    private void ConfigureRb(float drag, float angularDrag, float stabilize)
     {
         for (int i = 0; i < rigs.Length; i++)
         {
             rigs[i].drag = drag;
             rigs[i].angularDrag = angularDrag;
         }
-       
+
         stabilizeForce = stabilize;
     }
     private float moveLegsWithSpeedScale = .2f;
@@ -346,7 +346,7 @@ public class RigidEnemy : MonoBehaviour
     }
     public void RotateBody(Vector3 dir)
     {
-        if (state != EnemyState.Active && state!=EnemyState.Tumbling) return;
+        if (state != EnemyState.Active && state != EnemyState.Tumbling) return;
         float y = root.transform.eulerAngles.y;
         float y2 = Quaternion.LookRotation(dir).eulerAngles.y;
         float value = Mathf.DeltaAngle(y, y2);
@@ -356,7 +356,7 @@ public class RigidEnemy : MonoBehaviour
 
     public void MoveBody(Vector3 dir)
     {
-        if (state != EnemyState.Active && state!=EnemyState.Tumbling) return;
+        if (state != EnemyState.Active && state != EnemyState.Tumbling) return;
         rb.AddForce(dir * moveSpeed * rb.mass);
         headRb.AddForce(dir * moveSpeed * headRb.mass);
         torsoRb.AddForce(dir * moveSpeed * torsoRb.mass);

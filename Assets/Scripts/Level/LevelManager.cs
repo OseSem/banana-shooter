@@ -11,10 +11,10 @@ namespace Level
 
         public Action OnInitialize;
 
-        public LevelSystem levelSystem=null;
-        public LevelSystemAnimated levelSystemAnimated=null;
+        public LevelSystem levelSystem = null;
+        public LevelSystemAnimated levelSystemAnimated = null;
 
-        public int expWaitToAdd=0;
+        public int expWaitToAdd = 0;
 
 
         public Color[] colors = new Color[10];
@@ -45,7 +45,7 @@ namespace Level
                 levelSystemAnimated = new LevelSystemAnimated(levelSystem);
 
                 Initialized = true;
-                
+
                 OnInitialize?.Invoke();
             }
         }

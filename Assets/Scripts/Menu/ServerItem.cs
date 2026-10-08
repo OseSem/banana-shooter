@@ -19,22 +19,22 @@ namespace Menu
         public bool WorkshopEnable = false;
         public int PlayerAmount = 0;
         public int PlayerMaxAmount = 0;
-        
+
         public string Name;
-        
+
         public string Version;
-        
+
         public string Mode;
 
         public string DescShort;
-        
+
         public string ServerMode;
 
         public bool TournamentEnable = false;
 
         public ServerFilter.SearchServerType SearchServerType;
 
-        public int Ping=0;
+        public int Ping = 0;
 
         public servernetadr_t NetAdr = new servernetadr_t();
 
@@ -45,11 +45,11 @@ namespace Menu
         public bool IsPlayerHost = false;
 
         public List<Friend> FriendsPlaying = new List<Friend>();
-        public ServerDetail(CSteamID id, bool workshopEnable, int playerAmount,int playerMaxAmount,string name,string version,string mode,string serverMode,bool tournamentEnable, ServerFilter.SearchServerType searchServerType,int ping,bool isPlayerHost,string descShort)
+        public ServerDetail(CSteamID id, bool workshopEnable, int playerAmount, int playerMaxAmount, string name, string version, string mode, string serverMode, bool tournamentEnable, ServerFilter.SearchServerType searchServerType, int ping, bool isPlayerHost, string descShort)
         {
             Id = id;
             DescShort = descShort;
-            WorkshopEnable=workshopEnable;
+            WorkshopEnable = workshopEnable;
             PlayerAmount = playerAmount;
             PlayerMaxAmount = playerMaxAmount;
             Name = name;
@@ -75,17 +75,17 @@ namespace Menu
         public ServerDetail ServerDetail;
 
         public ulong lobbyId;
-        [SerializeField] TextMeshProUGUI playerCount,version,nameText,pingText,descShortText;
+        [SerializeField] TextMeshProUGUI playerCount, version, nameText, pingText, descShortText;
         [SerializeField] Button joinBtn;
 
-        [SerializeField] RawImage versionImage,serverSetting, serverModeBg;
+        [SerializeField] RawImage versionImage, serverSetting, serverModeBg;
 
-        [SerializeField] LocalizeStringEvent editText, friendsText,serverModeText;
+        [SerializeField] LocalizeStringEvent editText, friendsText, serverModeText;
 
         [SerializeField] private RawImage icon;
 
         [SerializeField] private Texture2D[] texture2Ds;
-        [SerializeField] private GameObject tournament,workshopIcon,friends;
+        [SerializeField] private GameObject tournament, workshopIcon, friends;
 
         [SerializeField] private Toggle favouriteToggle;
 
@@ -96,7 +96,7 @@ namespace Menu
             workshopIcon.SetActive(serverDetail.WorkshopEnable);
             playerCount.SetText($"{serverDetail.PlayerAmount}/{serverDetail.PlayerMaxAmount}");
             nameText.SetText(serverDetail.Name);
-            pingText.SetText($"{serverDetail.Ping} ms" );
+            pingText.SetText($"{serverDetail.Ping} ms");
 
             string version = serverDetail.Version;
             // versionImage.color =
@@ -104,24 +104,24 @@ namespace Menu
             // this.version.SetText(version);
             joinBtn.interactable = version == Application.version;
             joinBtn.onClick.AddListener(UIManager.Instance.ButtonSound);
-            
+
             if (serverDetail.IsPlayerHost)
             {
                 favouriteToggle.interactable = false;
-                joinBtn.onClick.AddListener(delegate {LobbyMenu.Instance.JoinLobby(lobbyId);});
+                joinBtn.onClick.AddListener(delegate { LobbyMenu.Instance.JoinLobby(lobbyId); });
             }
             else
             {
                 favouriteToggle.SetIsOnWithoutNotify(serverDetail.Favourited);
                 favouriteToggle.onValueChanged.AddListener(SetFavourite);
-                
+
                 joinBtn.onClick.AddListener(delegate
                 {
                     SteamFriends.SetRichPresence("server", serverDetail.Id.ToString());
-                    ServerManager.Instance.Connect(serverDetail.NetAdr.GetIP(),serverDetail.NetAdr.GetConnectionPort());
+                    ServerManager.Instance.Connect(serverDetail.NetAdr.GetIP(), serverDetail.NetAdr.GetConnectionPort());
                 });
             }
-            
+
             // serverSetting.color = serverDetail.WorkshopEnable ? new Color(0,140/255f,219/255f) : new Color(45/255f,205/255f,0);
             // editText.SetEntry(serverDetail.WorkshopEnable ? "modded" : "default");
 
@@ -152,14 +152,14 @@ namespace Menu
                 descShortText.gameObject.SetActive(true);
                 descShortText.SetText(serverDetail.DescShort);
             }
-            
+
             friends.SetActive(ServerDetail.FriendsPlaying.Count > 0);
 
             StringBuilder friendStr = new StringBuilder();
 
             for (int i = 0; i < ServerDetail.FriendsPlaying.Count; i++)
             {
-                if (i +1 >= ServerDetail.FriendsPlaying.Count)
+                if (i + 1 >= ServerDetail.FriendsPlaying.Count)
                 {
                     friendStr.Append(ServerDetail.FriendsPlaying[i].Name);
                     break;
@@ -167,7 +167,7 @@ namespace Menu
                 friendStr.Append(ServerDetail.FriendsPlaying[i].Name + ", ");
             }
 
-            friendsText.StringReference.Arguments = new List<object>() {friendStr};
+            friendsText.StringReference.Arguments = new List<object>() { friendStr };
             friendsText.RefreshString();
         }
 
@@ -193,10 +193,10 @@ namespace Menu
         {
             if (flag)
             {
-                int i= SteamMatchmaking.AddFavoriteGame(SteamWorkshopManager._appId, ServerDetail.NetAdr.GetIP(),
+                int i = SteamMatchmaking.AddFavoriteGame(SteamWorkshopManager._appId, ServerDetail.NetAdr.GetIP(),
                     ServerDetail.NetAdr.GetConnectionPort(), ServerDetail.NetAdr.GetQueryPort(), 255,
                     ServerDetail.LastTimePlayed);
-                
+
                 Debug.Log("Add " + ServerDetail.NetAdr.GetConnectionAddressString() + " to the favourite " + i);
             }
             else

@@ -7,7 +7,7 @@ namespace Menu
     public class EndScreenUI : MonoBehaviour
     {
         public static EndScreenUI Instance { get; private set; }
-        
+
         public GameObject endScreen;
         public TextMeshProUGUI winnerNameText;
 
@@ -16,10 +16,10 @@ namespace Menu
             Instance = this;
         }
 
-        public void SetEndScreenValue(string playerName,string description)
+        public void SetEndScreenValue(string playerName, string description)
         {
             endScreen.SetActive(true);
-            winnerNameText.SetText(playerName + " : "+ description);
+            winnerNameText.SetText(playerName + " : " + description);
         }
 
         public void CloseEndScreen()

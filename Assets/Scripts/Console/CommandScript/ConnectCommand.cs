@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Console.CommandScript
 {
-    [CreateAssetMenu(fileName = "Connect Command",menuName = "Utilities/DeveloperConsole/Commands/Connect Command")]
+    [CreateAssetMenu(fileName = "Connect Command", menuName = "Utilities/DeveloperConsole/Commands/Connect Command")]
     public class ConnectCommand : ConsoleCommand
     {
         public override bool Process(string[] args)
@@ -19,9 +19,9 @@ namespace Console.CommandScript
                 DeveloperConsoleUI.Instance.AddMessageToConsole("<color=yellow>Console : Client has already connected</color>");
                 return false;
             }
-            
+
             ServerManager.Instance.Connect(args[0]);
-            
+
             return false;
         }
     }

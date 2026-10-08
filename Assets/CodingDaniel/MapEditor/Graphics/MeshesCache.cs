@@ -42,12 +42,12 @@ namespace CodingDaniel.MapEditor.Graphics
 
         void Destroy();
     }
-    
+
     public class RenderMeshesBatch
     {
         public readonly Mesh Mesh;
         public readonly Material Material;
-        
+
         protected Matrix4x4[] _matrices;
         public Matrix4x4[] Matrices
         {
@@ -66,7 +66,7 @@ namespace CodingDaniel.MapEditor.Graphics
 
         }
     }
-    public class MeshesCache : MonoBehaviour,IMeshesCache
+    public class MeshesCache : MonoBehaviour, IMeshesCache
     {
         public event Action Refreshing;
 
@@ -121,7 +121,7 @@ namespace CodingDaniel.MapEditor.Graphics
             get { return _batches.Count == 0; }
         }
 
-        
+
         private readonly List<RenderMeshesBatch> _batches = new List<RenderMeshesBatch>();
         public IList<RenderMeshesBatch> Batches
         {
@@ -146,7 +146,7 @@ namespace CodingDaniel.MapEditor.Graphics
 
         private void Update()
         {
-            if(_refreshMode == CacheRefreshMode.Always)
+            if (_refreshMode == CacheRefreshMode.Always)
             {
                 Refresh(true);
             }
@@ -155,7 +155,7 @@ namespace CodingDaniel.MapEditor.Graphics
                 for (int i = 0; i < _transforms.Count; ++i)
                 {
                     Transform t = _transforms[i];
-                    if(t != null)
+                    if (t != null)
                     {
                         PRS prs = _prs[i];
                         if (prs.Position != t.position || prs.Rotation != t.rotation || prs.LocalScale != t.localScale)
@@ -180,7 +180,7 @@ namespace CodingDaniel.MapEditor.Graphics
         {
             _meshToBatch.Remove(mesh);
         }
-   
+
         public void Add(Mesh mesh, Transform transform)
         {
             Tuple<Material, List<Transform>> data;
@@ -214,7 +214,7 @@ namespace CodingDaniel.MapEditor.Graphics
             {
                 data.Item2.Remove(transform);
                 int index = _transforms.IndexOf(transform);
-                if(index >= 0)
+                if (index >= 0)
                 {
                     _transforms.RemoveAt(index);
                     _prs.RemoveAt(index);
@@ -239,7 +239,7 @@ namespace CodingDaniel.MapEditor.Graphics
 
         public void Refresh(bool batchesOnly = false, int maxBatchSize = 128)
         {
-            if(batchesOnly)
+            if (batchesOnly)
             {
                 RefreshBatches();
                 return;
@@ -249,7 +249,7 @@ namespace CodingDaniel.MapEditor.Graphics
 
             foreach (KeyValuePair<Mesh, Tuple<Material, List<Transform>>> kvp in _meshToData)
             {
-                if(kvp.Key == null)
+                if (kvp.Key == null)
                 {
                     continue;
                 }
@@ -274,7 +274,7 @@ namespace CodingDaniel.MapEditor.Graphics
                 }
             }
 
-            foreach(KeyValuePair<Mesh, RenderMeshesBatch> kvp in _meshToBatch)
+            foreach (KeyValuePair<Mesh, RenderMeshesBatch> kvp in _meshToBatch)
             {
                 if (kvp.Key == null)
                 {

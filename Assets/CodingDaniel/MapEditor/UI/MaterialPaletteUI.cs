@@ -14,9 +14,9 @@ using UnityEngine.UI;
 
 namespace CodingDaniel.MapEditor.UI
 {
-    public class MaterialPaletteUI : MonoBehaviour,IPointerDownHandler
+    public class MaterialPaletteUI : MonoBehaviour, IPointerDownHandler
     {
-        public static  MaterialPaletteUI Instance { private set; get; }
+        public static MaterialPaletteUI Instance { private set; get; }
         [SerializeField] private RectTransform ui;
         [SerializeField] private ToggleGroup toggleGroup;
 
@@ -24,16 +24,16 @@ namespace CodingDaniel.MapEditor.UI
         [SerializeField] private Transform content;
 
         [SerializeField] private List<Material> materials;
-        public List<Tuple<string,string,string,Material>> externalMats;
+        public List<Tuple<string, string, string, Material>> externalMats;
         private Vector2 _desiredPos;
 
         private float offset;
-        
+
         public Material SelectedMaterial { private set; get; }
-        
+
         public bool DisplayingUI { private set; get; }
 
-        [SerializeField] private Button applyBtn,tryToAddMatBtn,addMatBtn;
+        [SerializeField] private Button applyBtn, tryToAddMatBtn, addMatBtn;
 
         [SerializeField] public Transform option;
 
@@ -42,22 +42,22 @@ namespace CodingDaniel.MapEditor.UI
         private void Awake()
         {
             Instance = this;
-            
+
             _loadTexture = new Texture2D(512, 512, TextureFormat.RGB24, false);
-            
+
             applyBtn.onClick.AddListener(Apply);
             tryToAddMatBtn.onClick.AddListener(TryToAddMaterial);
             addMatBtn.onClick.AddListener(AddMaterial);
-            
-            baseTextureBtn.onClick.AddListener(delegate { SelectTexture(baseTextureImg,baseTexture,0); });
-            heightTextureBtn.onClick.AddListener(delegate { SelectTexture(heightTextureImg,heightTexture,1); });
-            normalTextureBtn.onClick.AddListener(delegate { SelectTexture(normalTextureImg,normalTexture,2); });
-            
+
+            baseTextureBtn.onClick.AddListener(delegate { SelectTexture(baseTextureImg, baseTexture, 0); });
+            heightTextureBtn.onClick.AddListener(delegate { SelectTexture(heightTextureImg, heightTexture, 1); });
+            normalTextureBtn.onClick.AddListener(delegate { SelectTexture(normalTextureImg, normalTexture, 2); });
+
             smoothnessSlider.onValueChanged.AddListener(SetSmoothness);
             metallicSlider.onValueChanged.AddListener(SetMetallic);
             normalScaleSlider.onValueChanged.AddListener(SetNormalScale);
             heightSlider.onValueChanged.AddListener(SetHeight);
-            
+
             selectBtn.onClick.AddListener(Select);
             editBtn.onClick.AddListener(Edit);
             removeBtn.onClick.AddListener(Remove);
@@ -70,7 +70,7 @@ namespace CodingDaniel.MapEditor.UI
             applyBtn.onClick.RemoveListener(Apply);
             tryToAddMatBtn.onClick.RemoveListener(TryToAddMaterial);
             addMatBtn.onClick.RemoveListener(AddMaterial);
-            
+
             baseTextureBtn.onClick.RemoveAllListeners();
             heightTextureBtn.onClick.RemoveAllListeners();
             normalTextureBtn.onClick.RemoveAllListeners();
@@ -79,29 +79,29 @@ namespace CodingDaniel.MapEditor.UI
             metallicSlider.onValueChanged.RemoveListener(SetMetallic);
             normalScaleSlider.onValueChanged.RemoveListener(SetNormalScale);
             heightSlider.onValueChanged.RemoveListener(SetHeight);
-            
+
             selectBtn.onClick.RemoveListener(Select);
             editBtn.onClick.RemoveListener(Edit);
             removeBtn.onClick.RemoveListener(Remove);
-            
-            
+
+
             MapSaver.Instance.OnMapLoaded -= InitExternalMat;
         }
 
         private void Start()
         {
-            me=MEBase.Instance;
+            me = MEBase.Instance;
 
             materials = MapSaver.Instance.materials;
-            
+
             foreach (var material in materials)
             {
                 MaterialPaletteUIITem item = Instantiate(prefab, content);
-                
-                item.Init(material.name,material.mainTexture,material,toggleGroup,this);
+
+                item.Init(material.name, material.mainTexture, material, toggleGroup, this);
             }
-            
-            InvokeRepeating(nameof(Refresh),0,5f);
+
+            InvokeRepeating(nameof(Refresh), 0, 5f);
         }
 
         void InitExternalMat()
@@ -111,8 +111,8 @@ namespace CodingDaniel.MapEditor.UI
             {
                 var material = tuple.Item4;
                 MaterialPaletteUIITem item = Instantiate(prefab, content);
-                
-                item.Init(material.name,material.mainTexture,material,toggleGroup,this,true);
+
+                item.Init(material.name, material.mainTexture, material, toggleGroup, this, true);
             }
         }
         void Refresh()
@@ -128,10 +128,10 @@ namespace CodingDaniel.MapEditor.UI
         private void Update()
         {
             DisplayingUI = !MEBase.Instance.Tools.IsViewing && (Input.mousePosition.y < offset || option.gameObject.activeSelf);
-            _desiredPos = DisplayingUI ? new Vector2(0,0) : new Vector2(0,-100);
-            
-            
-            ui.anchoredPosition = Vector2.Lerp(ui.anchoredPosition,_desiredPos,Time.deltaTime*15f);
+            _desiredPos = DisplayingUI ? new Vector2(0, 0) : new Vector2(0, -100);
+
+
+            ui.anchoredPosition = Vector2.Lerp(ui.anchoredPosition, _desiredPos, Time.deltaTime * 15f);
 
             if (DisplayingUI)
             {
@@ -145,13 +145,13 @@ namespace CodingDaniel.MapEditor.UI
                         flag = me.Selection.ActiveGameObject == ProBuilderTool.Instance._pivot.gameObject;
                     }
                 }
-                
+
 
                 applyBtn.interactable = flag;
             }
         }
 
-        public void SelectMaterial(MaterialPaletteUIITem item=null)
+        public void SelectMaterial(MaterialPaletteUIITem item = null)
         {
             if (item == null)
             {
@@ -177,19 +177,19 @@ namespace CodingDaniel.MapEditor.UI
             public string path;
             public Texture2D texture;
         }
-        private TextureWithPath baseTexture = new (), heightTexture = new(), normalTexture = new();
+        private TextureWithPath baseTexture = new(), heightTexture = new(), normalTexture = new();
 
-        private bool setBase=false, setHeight=false, setNormal=false;
+        private bool setBase = false, setHeight = false, setNormal = false;
 
         [SerializeField] private Slider smoothnessSlider;
         [SerializeField] private TextMeshProUGUI smoothnessText;
 
         [SerializeField] private Slider metallicSlider;
         [SerializeField] private TextMeshProUGUI metallicText;
-        
+
         [SerializeField] private Slider normalScaleSlider;
         [SerializeField] private TextMeshProUGUI normalScaleText;
-        
+
         [SerializeField] private Slider heightSlider;
         [SerializeField] private TextMeshProUGUI heightText;
         void SetSmoothness(float value)
@@ -213,7 +213,7 @@ namespace CodingDaniel.MapEditor.UI
             addMatPanel.SetActive(true);
 
             setBase = setHeight = setNormal = false;
-            
+
             baseTextureImg.gameObject.SetActive(false);
             heightTextureImg.gameObject.SetActive(false);
             normalTextureImg.gameObject.SetActive(false);
@@ -222,7 +222,7 @@ namespace CodingDaniel.MapEditor.UI
             metallicSlider.value = 0;
             heightSlider.value = 0.005f;
             normalScaleSlider.value = 1;
-            
+
             nameInput.SetTextWithoutNotify("");
 
             baseTextureImg.texture = null;
@@ -233,16 +233,16 @@ namespace CodingDaniel.MapEditor.UI
             normalTexture.texture = new Texture2D(512, 512, TextureFormat.RGB24, false);
         }
 
-        void SelectTexture(RawImage img, TextureWithPath texture,int key)
+        void SelectTexture(RawImage img, TextureWithPath texture, int key)
         {
             string path = FileIOUtil.OpenFileDialog(FileType.Texture);
-            if(!string.IsNullOrEmpty(path))
-                LoadImage(path,img,texture,key);
+            if (!string.IsNullOrEmpty(path))
+                LoadImage(path, img, texture, key);
         }
-        async void LoadImage(string path,RawImage img, TextureWithPath texture,int key)
+        async void LoadImage(string path, RawImage img, TextureWithPath texture, int key)
         {
             byte[] data = await SaveSystem.ReadByteFromFileAsync(path);
-            
+
             texture.texture.LoadImage(data);
             texture.path = path;
 
@@ -266,7 +266,7 @@ namespace CodingDaniel.MapEditor.UI
         {
             Material material = new Material(MapSaver.Instance.dummyMat);
 
-            
+
             material.EnableKeyword("_METALLICGLOSSMAP");
 
 
@@ -274,13 +274,13 @@ namespace CodingDaniel.MapEditor.UI
             material.SetFloat(MapSaver.Metallic, metallicSlider.value);
 
             material.name = nameInput.text;
-            
+
             material.mainTexture = setBase ? baseTexture.texture : null;
 
             if (setHeight)
             {
                 material.SetTexture(MapSaver.ParallaxMap, heightTexture.texture);
-                material.EnableKeyword ("_PARALLAXMAP");
+                material.EnableKeyword("_PARALLAXMAP");
             }
             else
             {
@@ -295,24 +295,24 @@ namespace CodingDaniel.MapEditor.UI
             else
             {
                 material.SetTexture(MapSaver.BumpMap, null);
-                
+
             }
-            
-            material.SetFloat(MapSaver.BumpScale,normalScaleSlider.value);
-            material.SetFloat(MapSaver.Parallax,heightSlider.value);
-            
-            MapSaver.Instance.externalMaterials.Add(new Tuple<string, string, string, Material>(baseTexture.path,heightTexture.path,normalTexture.path,material));
-            
+
+            material.SetFloat(MapSaver.BumpScale, normalScaleSlider.value);
+            material.SetFloat(MapSaver.Parallax, heightSlider.value);
+
+            MapSaver.Instance.externalMaterials.Add(new Tuple<string, string, string, Material>(baseTexture.path, heightTexture.path, normalTexture.path, material));
+
             MaterialPaletteUIITem item = Instantiate(prefab, content);
-                
-            item.Init(material.name,material.mainTexture,material,toggleGroup,this,true);
+
+            item.Init(material.name, material.mainTexture, material, toggleGroup, this, true);
         }
 
         private MaterialPaletteUIITem _selectedItem;
         public void SetSelectMaterial(MaterialPaletteUIITem item)
         {
             _selectedItem = item;
-            
+
             option.gameObject.SetActive(true);
             option.position = Input.mousePosition;
         }
@@ -330,7 +330,7 @@ namespace CodingDaniel.MapEditor.UI
         void Edit()
         {
             option.gameObject.SetActive(false);
-            
+
             MaterialEditingPanel.Instance.OpenPanel(_selectedItem.material);
         }
 
@@ -368,7 +368,7 @@ namespace CodingDaniel.MapEditor.UI
         {
             option.gameObject.SetActive(false);
             _selectedItem = null;
-            
+
             AddExternalObjectMenu.Instance.CloseEditBar();
         }
     }

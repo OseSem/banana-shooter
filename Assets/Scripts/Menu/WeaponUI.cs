@@ -15,7 +15,7 @@ namespace Menu
         [SerializeField] private GameObject select, deselect;
 
         [SerializeField] private TextMeshProUGUI keyText;
-        [SerializeField] private string actionName=String.Empty;
+        [SerializeField] private string actionName = String.Empty;
 
         private void Awake()
         {
@@ -42,10 +42,10 @@ namespace Menu
         {
             @select.SetActive(true);
             deselect.SetActive(false);
-        
+
             GameUIManager.Instance.SetWeaponAlpha();
         }
-    
+
         public void DeSelect()
         {
             @select.SetActive(false);
@@ -56,7 +56,7 @@ namespace Menu
         {
             gameObject.SetActive(true);
         }
-    
+
         public void NotDisplay()
         {
             gameObject.SetActive(false);

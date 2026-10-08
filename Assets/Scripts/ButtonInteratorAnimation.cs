@@ -7,10 +7,10 @@ using UnityEngine;
 public class ButtonInteratorAnimation : MonoBehaviour
 {
     public Outline outline;
-    
-    private Vector3 _desiredSize,_defaultSize,_desiredPos,_defaultPos;
+
+    private Vector3 _desiredSize, _defaultSize, _desiredPos, _defaultPos;
     private Transform _btn;
-    
+
     private AudioSource _source;
     void Start()
     {
@@ -25,21 +25,21 @@ public class ButtonInteratorAnimation : MonoBehaviour
     private void Update()
     {
         _btn.localScale = Vector3.Lerp(_btn.localScale, _desiredSize, Time.deltaTime * 10f);
-        _btn.localPosition = Vector3.Lerp(_btn.localPosition,_desiredPos,Time.deltaTime*10f);
+        _btn.localPosition = Vector3.Lerp(_btn.localPosition, _desiredPos, Time.deltaTime * 10f);
     }
-    
-    
+
+
     public void Click()
     {
         float size = 0.85f;
-        _desiredSize = _defaultSize*size;
+        _desiredSize = _defaultSize * size;
         float y = 0.05f;
         _desiredPos = _defaultPos - new Vector3(0, y, 0);
         CancelInvoke("Clear");
-        Invoke("Clear",0.1f);
+        Invoke("Clear", 0.1f);
         _source.PlayOneShot(PrefabManager.Instance.buttonPress);
     }
-    
+
     void Clear()
     {
         _desiredSize = _defaultSize;

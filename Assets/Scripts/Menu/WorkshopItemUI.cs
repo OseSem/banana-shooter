@@ -11,21 +11,21 @@ using UnityEngine.UI;
 
 namespace Menu
 {
-    public class WorkshopItemUI : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler
+    public class WorkshopItemUI : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         [SerializeField] private CanvasGroup hoverDescription;
-        [SerializeField] private RectTransform sizeTransform, authorTransform, installTransform,uninstallTransform;
+        [SerializeField] private RectTransform sizeTransform, authorTransform, installTransform, uninstallTransform;
 
         [SerializeField] private TextMeshProUGUI nameText, descriptionText, sizeText, authorText;
 
-        [SerializeField] private RawImage previewImage,sizeImage,authorImage;
+        [SerializeField] private RawImage previewImage, sizeImage, authorImage;
 
         [SerializeField] private Image bg;
 
         [SerializeField] private Button installBtn, uninstallBtn;
 
         private bool _isHovered = false;
-        
+
         [SerializeField]
         private EItemState state = EItemState.k_EItemStateNone;
 
@@ -54,19 +54,19 @@ namespace Menu
             SteamWorkshopManager.OnItemStartDownloading -= ItemStateChanged;
             SteamWorkshopManager.OnUnSubscribeItem -= ItemStateChanged;
             SteamWorkshopManager.OnSubscribeItem -= ItemStateChanged;
-            
+
             GameManager.Instance.OnPersonaStateChanged -= SetAuthorName;
         }
 
         public void Initialize(WorkshopItem item)
         {
-            if(!gameObject.activeSelf)return;
+            if (!gameObject.activeSelf) return;
             _item = item;
             nameText.SetText(item.Details.m_rgchTitle);
             descriptionText.SetText(item.Details.m_rgchDescription);
             sizeText.SetText(GameManager.GetObjectSize(item.Details.m_nFileSize));
 
-            if (!SteamFriends.RequestUserInformation((CSteamID)item.Details.m_ulSteamIDOwner,true))
+            if (!SteamFriends.RequestUserInformation((CSteamID)item.Details.m_ulSteamIDOwner, true))
             {
                 SetAuthorName((CSteamID)item.Details.m_ulSteamIDOwner, EPersonaChange.k_EPersonaChangeName);
             }
@@ -87,18 +87,19 @@ namespace Menu
                 uninstallTransform.gameObject.SetActive(false);
                 installTransform.gameObject.SetActive(true);
             }
-            
-            if(previewImage.texture!=null){
+
+            if (previewImage.texture != null)
+            {
                 Destroy(previewImage.texture);
             }
 
             previewImage.texture = null;
             StartCoroutine(LoadTextureToItem(item.previewUrl));
-            
+
             SetColors();
         }
 
-        void SetAuthorName(CSteamID id,EPersonaChange change)
+        void SetAuthorName(CSteamID id, EPersonaChange change)
         {
             if (id.m_SteamID != _item.Details.m_ulSteamIDOwner) return;
             authorText.SetText(SteamFriends.GetFriendPersonaName(id));
@@ -108,12 +109,12 @@ namespace Menu
         {
             ItemStateChanged(item.fileId);
         }
-        
+
         private void ItemStateChanged(PublishedFileId_t obj)
         {
             if (_item.fileId != obj) return;
             _item.state = (EItemState)SteamUGC.GetItemState(obj);
-            
+
             state = _item.state;
 
             if (state == (EItemState.k_EItemStateInstalled ^ EItemState.k_EItemStateSubscribed))
@@ -126,7 +127,7 @@ namespace Menu
                 uninstallTransform.gameObject.SetActive(false);
                 installTransform.gameObject.SetActive(true);
             }
-            
+
             SetColors();
         }
 
@@ -134,7 +135,7 @@ namespace Menu
         {
             SteamUGC.SubscribeItem(_item.fileId);
         }
-        
+
         void Uninstall()
         {
             SteamUGC.UnsubscribeItem(_item.fileId);
@@ -155,7 +156,7 @@ namespace Menu
                 previewImage.texture = texture;
             }
         }
-        
+
         void SetColors()
         {
             Color[] colors = GetColors();
@@ -168,7 +169,7 @@ namespace Menu
 
             nameText.color = descriptionText.color = sizeText.color = authorText.color = textColor;
 
-            bg.color =sizeImage.color =authorImage.color = bgColor;
+            bg.color = sizeImage.color = authorImage.color = bgColor;
         }
 
         Color[] GetColors()
@@ -189,7 +190,7 @@ namespace Menu
                     return noneColors;
             }
         }
-        
+
         public void OnPointerEnter(PointerEventData eventData)
         {
             _isHovered = true;
@@ -218,11 +219,11 @@ namespace Menu
             else
             {
                 hoverDescription.alpha = Mathf.Lerp(hoverDescription.alpha, 0, Time.deltaTime * 10f);
-                sizeTransform.anchoredPosition = Vector2.Lerp(sizeTransform.anchoredPosition, Vector2.zero, 
+                sizeTransform.anchoredPosition = Vector2.Lerp(sizeTransform.anchoredPosition, Vector2.zero,
                     Time.deltaTime * 10f);
-                authorTransform.anchoredPosition = Vector2.Lerp(authorTransform.anchoredPosition, Vector2.zero, 
+                authorTransform.anchoredPosition = Vector2.Lerp(authorTransform.anchoredPosition, Vector2.zero,
                     Time.deltaTime * 10f);
-                
+
                 installTransform.anchoredPosition = Vector2.Lerp(installTransform.anchoredPosition, new Vector2(-2, -30f),
                     Time.deltaTime * 10f);
                 uninstallTransform.anchoredPosition = Vector2.Lerp(installTransform.anchoredPosition, new Vector2(-2, -30f),

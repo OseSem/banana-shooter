@@ -9,12 +9,12 @@ namespace Demo.Entity.Enemy
     public abstract class DemoEnemy : DemoEntity
     {
         [SerializeField] public EnemyState enemyState;
-        
+
         public EnemyAnimation Animation;
-        
+
         private readonly float _movementThreshold = 0.02f;
         private float _squareMovementThreshold;
-        
+
         private Vector3 _to, _previous;
 
         [HideInInspector]
@@ -30,9 +30,9 @@ namespace Demo.Entity.Enemy
             if (DemoManager.Replaying)
             {
                 float lerp = Time.deltaTime / (0.02f / Time.timeScale);
-                
+
                 lerp = Mathf.Max(0.02f, lerp);
-                
+
                 InterpolatePosition(lerp);
 
                 if (Animation != null)
@@ -51,7 +51,7 @@ namespace Demo.Entity.Enemy
                 selfTrans.position = Vector3.Lerp(from, _to, lerpAmount);
             }
         }
-        
+
         public void NewPosition(Vector3 position)
         {
             _previous = _to;
@@ -70,7 +70,7 @@ namespace Demo.Entity.Enemy
 
         public void NewRotation(float rot)
         {
-            enemyState.desiredRot = Quaternion.Euler(0,rot,0);
+            enemyState.desiredRot = Quaternion.Euler(0, rot, 0);
         }
 
         public override void Destroy(params object[] objects)

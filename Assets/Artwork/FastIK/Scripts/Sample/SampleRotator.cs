@@ -1,10 +1,10 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace DitzelGames.FastIK
 {
     public class SampleRotator : MonoBehaviour
     {
-        
+
         void Update()
         {
             //just rotate the object

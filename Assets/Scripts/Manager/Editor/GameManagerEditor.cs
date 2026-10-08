@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Manager.Editor
 {
-    [CustomEditor(typeof(GameManager)),CanEditMultipleObjects]
+    [CustomEditor(typeof(GameManager)), CanEditMultipleObjects]
     public class GameManagerEditor : ToolEditor<GameManager>
     {
         protected override void OnEnableOverride()
@@ -24,16 +24,16 @@ namespace Manager.Editor
                     EditorGUI.indentLevel = 1;
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.setting)), new GUIContent("Settings", "Setting"));
                     GUILayout.EndVertical();
-                    
+
                     GUILayout.Space(Space);
 
                     EditorGUI.indentLevel = 0;
                     GUILayout.BeginVertical("Box");
                     EditorGUILayout.LabelField("Intro Theme", EditorStyles.boldLabel);
                     EditorGUI.indentLevel = 1;
-                    Target.introTheme = GUILayout.Toolbar(Target.introTheme, new[] { "Original", "Gray", "Blue", "Pink", "Dark", "Brown", "Red", "Milk"});
+                    Target.introTheme = GUILayout.Toolbar(Target.introTheme, new[] { "Original", "Gray", "Blue", "Pink", "Dark", "Brown", "Red", "Milk" });
                     GUILayout.EndVertical();
-            
+
                     GUILayout.Space(Space);
 
                     EditorGUI.indentLevel = 0;
@@ -50,9 +50,9 @@ namespace Manager.Editor
                     EditorGUI.indentLevel = 1;
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.maps)), new GUIContent("Maps", "A list of the available maps to be tracked for the 'World Travel' achievement"));
                     GUILayout.EndVertical();
-                    
+
                     GUILayout.Space(Space);
-                    
+
                     EditorGUI.indentLevel = 0;
                     GUILayout.BeginVertical("Box");
                     EditorGUILayout.LabelField("Upgrade", EditorStyles.boldLabel);
@@ -60,9 +60,9 @@ namespace Manager.Editor
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.upgradeDetaileds)), new GUIContent("Upgrade Details", "A list of the available upgrades can be used in game"));
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.upgrades)), new GUIContent("Upgrades", "The upgrades the current user is using"));
                     GUILayout.EndVertical();
-                    
+
                     GUILayout.Space(Space);
-                    
+
                     EditorGUI.indentLevel = 0;
                     GUILayout.BeginVertical("Box");
                     EditorGUILayout.LabelField("Power Upgrade", EditorStyles.boldLabel);
@@ -70,16 +70,16 @@ namespace Manager.Editor
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.powerDetails)), new GUIContent("Power Upgrade Details", "A list of the available power upgrades can be used in game"));
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.power)), new GUIContent("Power Upgrade", "The power upgrade the current user is using"));
                     GUILayout.EndVertical();
-                    
+
                     GUILayout.Space(Space);
-                    
+
                     EditorGUI.indentLevel = 0;
                     GUILayout.BeginVertical("Box");
                     EditorGUILayout.LabelField("Throwable", EditorStyles.boldLabel);
                     EditorGUI.indentLevel = 1;
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.tacticalProp)), new GUIContent("Throwable Type", "A list of the available throwables can be used in game"));
                     GUILayout.EndVertical();
-                    
+
                     break;
                 case 2:
                     EditorGUI.indentLevel = 0;

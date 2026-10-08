@@ -15,7 +15,7 @@ public class AudioFreqController : MonoBehaviour
 
     private void Awake()
     {
-        if(Instance==null)
+        if (Instance == null)
             Instance = this;
     }
 
@@ -29,7 +29,7 @@ public class AudioFreqController : MonoBehaviour
         if (!NetworkManager.Instance.Client.IsConnected) return;
         if (player == null)
         {
-            if (ClientPlayer.list.TryGetValue(NetworkManager.Instance.Client.Id,out var p))
+            if (ClientPlayer.list.TryGetValue(NetworkManager.Instance.Client.Id, out var p))
             {
                 player = p;
             }
@@ -46,19 +46,19 @@ public class AudioFreqController : MonoBehaviour
             {
                 float thr = 0.9f;
                 int maxHealth = player.playerState.MaxHealth;
-                hz =  ((float) health /  maxHealth) <=  thr ? ((float) health / (maxHealth))*thr : 1f;
+                hz = ((float)health / maxHealth) <= thr ? ((float)health / (maxHealth)) * thr : 1f;
             }
             if (PlayerMovement.Instance.inWater)
                 hz = 0.05f;
-            mixer.GetFloat("LowpassFre",out float currentFre);
-            mixer.SetFloat("LowpassFre",Mathf.Lerp(currentFre, 22000f * hz, Time.deltaTime * 8f));
+            mixer.GetFloat("LowpassFre", out float currentFre);
+            mixer.SetFloat("LowpassFre", Mathf.Lerp(currentFre, 22000f * hz, Time.deltaTime * 8f));
             // filter.cutoffFrequency = Mathf.Lerp(filter.cutoffFrequency, 22000f * hz, Time.deltaTime * 8f);
         }
     }
 
     public void ResetStat()
     {
-        mixer.SetFloat("LowpassFre",22000f);
+        mixer.SetFloat("LowpassFre", 22000f);
         // filter.cutoffFrequency = 22000f;
     }
 }

@@ -15,7 +15,7 @@ namespace Menu
     [Serializable]
     public class ServerFilter
     {
-        
+
         public enum SearchServerType
         {
             DlcOnly,
@@ -29,16 +29,16 @@ namespace Menu
         }
         //Search which type of server players need
         public SearchServerType searchServerType = SearchServerType.Official;
-        
+
         //The server name players want to search
-        public string searchServerName= String.Empty;
+        public string searchServerName = String.Empty;
 
         public ServerType serverType = ServerType.None;
 
         //Closed Server Only
         public bool closedServerOnly = true;
         //Hot Server is the player amount / max players is bigger than 0.5f 
-        public bool isHotServer=false;
+        public bool isHotServer = false;
         //Server is not full
         public bool isNotFull = false;
     }
@@ -48,16 +48,16 @@ namespace Menu
 
         [SerializeField] private TMP_InputField searchServerNameInput;
 
-        [SerializeField] private Toggle closeServerOnlyToggle, hotServerToggle,notFullToggle;
+        [SerializeField] private Toggle closeServerOnlyToggle, hotServerToggle, notFullToggle;
 
         [SerializeField] private Transform content;
 
         [SerializeField] private SearchServerTypeItem[] serverTypeItems = new SearchServerTypeItem[6];
 
         private bool _ownedDlc;
-        
+
         private SearchLobbyType _searchLobbyType;
-        
+
         public Dictionary<CSteamID, ServerItem> ActiveServerItems = new();
 
         private Dictionary<CSteamID, ServerDetail> _playerHostedServer = new();
@@ -76,18 +76,18 @@ namespace Menu
             Instance = this;
 
             _ownedDlc = SteamApps.BIsDlcInstalled(new AppId_t(2238100));
-            
+
             //Reset the closed server only toggle
             closeServerOnlyToggle.isOn =
                 LobbyManager.Instance.filter == ELobbyDistanceFilter.k_ELobbyDistanceFilterDefault;
             closeServerOnlyToggle.onValueChanged.AddListener(SetCloseServerOnly);
-            
+
             hotServerToggle.SetIsOnWithoutNotify(ServerFilter.isHotServer);
             hotServerToggle.onValueChanged.AddListener(SetHotServer);
-            
+
             notFullToggle.SetIsOnWithoutNotify(ServerFilter.isNotFull);
             notFullToggle.onValueChanged.AddListener(SetNotFull);
-            
+
             searchServerNameInput.SetTextWithoutNotify(ServerFilter.searchServerName);
             searchServerNameInput.onEndEdit.AddListener(SetSearchName);
 
@@ -95,15 +95,15 @@ namespace Menu
             {
                 int index = i;
                 serverTypeItems[i].toggle.SetIsOnWithoutNotify((int)ServerFilter.searchServerType == index);
-                
+
                 serverTypeItems[i].toggle.onValueChanged.AddListener(delegate { SetServerType(index); });
-                
+
                 serverTypeItems[i].serverAmountText.StringReference.Arguments =
-                    new List<object>() {0};
+                    new List<object>() { 0 };
                 serverTypeItems[i].serverAmountText.RefreshString();
 
                 serverTypeItems[i].playerAmountText.StringReference.Arguments =
-                    new List<object>() {0};
+                    new List<object>() { 0 };
                 serverTypeItems[i].playerAmountText.RefreshString();
             }
         }
@@ -118,39 +118,39 @@ namespace Menu
             ServerManager.Instance.OnServerRespond -= DisplayServer;
         }
 
-        
+
         public void RefreshServerList()
         {
             IsQuickMatch = false;
             _searchLobbyType = SearchLobbyType.Normal;
-            
+
             for (int i = 0; i < serverTypeItems.Length; i++)
             {
                 serverTypeItems[i].serverAmountText.StringReference.Arguments =
-                    new List<object>() {0};
+                    new List<object>() { 0 };
                 serverTypeItems[i].serverAmountText.RefreshString();
 
                 serverTypeItems[i].playerAmountText.StringReference.Arguments =
-                    new List<object>() {0};
+                    new List<object>() { 0 };
                 serverTypeItems[i].playerAmountText.RefreshString();
             }
-            
+
             LobbyManager.Instance.GetLobbiesList(LobbyManager.Instance.filter);
-            
+
             ServerManager.Instance.RefreshServer();
         }
-        
-        
+
+
         public void QuickMatch()
         {
             IsQuickMatch = true;
             _searchLobbyType = SearchLobbyType.Normal;
 
             LobbyManager.Instance.GetLobbiesList(LobbyManager.Instance.filter);
-            
+
             ServerManager.Instance.RefreshServer();
         }
-        
+
         void RefreshTable()
         {
             DestroyLobbies();
@@ -188,32 +188,32 @@ namespace Menu
             {
                 if (IsAvailable(detail))
                 {
-                    ServerItem createdItem = Instantiate(PrefabManager.Instance.serverPrefab,content);
-                                                    
+                    ServerItem createdItem = Instantiate(PrefabManager.Instance.serverPrefab, content);
+
                     createdItem.SetPlayerValues(detail);
-                            
-                    ActiveServerItems.Add(detail.Id,createdItem);
+
+                    ActiveServerItems.Add(detail.Id, createdItem);
                 }
             }
         }
-        
-        public void DisplayLobbiesP2P(List<CSteamID> lobbyIds,LobbyDataUpdate_t result)
+
+        public void DisplayLobbiesP2P(List<CSteamID> lobbyIds, LobbyDataUpdate_t result)
         {
             for (int i = 0; i < lobbyIds.Count; i++)
             {
                 switch (_searchLobbyType)
                 {
                     case SearchLobbyType.Normal:
-                        CSteamID id = (CSteamID) result.m_ulSteamIDLobby;
+                        CSteamID id = (CSteamID)result.m_ulSteamIDLobby;
                         if (lobbyIds[i].m_SteamID == result.m_ulSteamIDLobby && !_playerHostedServer.ContainsKey(id))
                         {
                             string temp = SteamMatchmaking.GetLobbyData(id, "ServerType");
-                            string serverMode="";
+                            string serverMode = "";
                             if (int.TryParse(temp, out int t))
                             {
-                                ServerType type = (ServerType) t;
-                                if (ServerType.None != ServerFilter.serverType&&
-                                    type!=ServerFilter.serverType)
+                                ServerType type = (ServerType)t;
+                                if (ServerType.None != ServerFilter.serverType &&
+                                    type != ServerFilter.serverType)
                                 {
                                     continue;
                                 }
@@ -232,13 +232,13 @@ namespace Menu
                             }
                             string serverName = SteamMatchmaking.GetLobbyData(id, "ashdaghj");
                             string gameMode = SteamMatchmaking.GetLobbyData(id, "GameMode");
-    
+
                             bool workshopEnable =
-                                SteamMatchmaking.GetLobbyData((CSteamID) result.m_ulSteamIDLobby,
+                                SteamMatchmaking.GetLobbyData((CSteamID)result.m_ulSteamIDLobby,
                                     "WorkshopEnable") == "1";
-                       
+
                             if (string.IsNullOrEmpty(serverName)
-                                ||string.IsNullOrEmpty(gameMode)) continue;
+                                || string.IsNullOrEmpty(gameMode)) continue;
 
                             string p = SteamMatchmaking.GetLobbyData(id, "ping");
 
@@ -256,22 +256,22 @@ namespace Menu
                                 SteamMatchmaking.GetNumLobbyMembers(id),
                                 SteamMatchmaking.GetLobbyMemberLimit(id), serverName,
                                 SteamMatchmaking.GetLobbyData(id, "Version"), gameMode, serverMode,
-                                SteamMatchmaking.GetLobbyData(id, "tournament_enable") == "1",ServerFilter.SearchServerType.P2P,ping,true,String.Empty);
+                                SteamMatchmaking.GetLobbyData(id, "tournament_enable") == "1", ServerFilter.SearchServerType.P2P, ping, true, String.Empty);
 
                             if (IsAvailable(serverDetail))
                             {
-                                ServerItem createdItem = Instantiate(PrefabManager.Instance.serverPrefab,content);
-                                                    
+                                ServerItem createdItem = Instantiate(PrefabManager.Instance.serverPrefab, content);
+
                                 createdItem.SetPlayerValues(serverDetail);
-                                
-                                ActiveServerItems.Add(id,createdItem);
+
+                                ActiveServerItems.Add(id, createdItem);
                             }
 
-                            _playerHostedServer.Add(id,serverDetail);
-                            
-                            int j = (int) ServerFilter.SearchServerType.P2P;
+                            _playerHostedServer.Add(id, serverDetail);
+
+                            int j = (int)ServerFilter.SearchServerType.P2P;
                             serverTypeItems[j].serverAmountText.StringReference.Arguments =
-                                new List<object>() {_playerHostedServer.Count};
+                                new List<object>() { _playerHostedServer.Count };
                             serverTypeItems[j].serverAmountText.RefreshString();
 
                             int playerAmount = 0;
@@ -279,9 +279,9 @@ namespace Menu
                             {
                                 playerAmount += detail.PlayerAmount;
                             }
-                            
+
                             serverTypeItems[j].playerAmountText.StringReference.Arguments =
-                                new List<object>() {playerAmount};
+                                new List<object>() { playerAmount };
                             serverTypeItems[j].playerAmountText.RefreshString();
                         }
                         break;
@@ -293,27 +293,27 @@ namespace Menu
                         break;
                 }
             }
-        
+
         }
-        
-        void DisplayServer(gameserveritem_t gameserveritemT,ServerFilter.SearchServerType type)
+
+        void DisplayServer(gameserveritem_t gameserveritemT, ServerFilter.SearchServerType type)
         {
             string[] tags = gameserveritemT.GetGameTags().Split(';');
 
             string serverMode = ServerType.Normal.ToString();
 
-            bool workshopEnable =false;
-            
+            bool workshopEnable = false;
+
             string descShort = String.Empty;
             if (tags.Length >= 2)
             {
                 if (int.TryParse(tags[0], out var index))
                 {
-                    serverMode = ((ServerType) index).ToString();
+                    serverMode = ((ServerType)index).ToString();
                 }
-                
+
                 workshopEnable = tags[1] == "1";
-                
+
                 if (tags.Length >= 4)
                 {
                     descShort = tags[3];
@@ -328,7 +328,7 @@ namespace Menu
                 gameserveritemT.m_nPlayers,
                 gameserveritemT.m_nMaxPlayers, gameserveritemT.GetServerName(),
                 version.ToString(), "", serverMode,
-                false,type,gameserveritemT.m_nPing,false,descShort)
+                false, type, gameserveritemT.m_nPing, false, descShort)
             {
                 NetAdr = gameserveritemT.m_NetAdr,
                 LastTimePlayed = gameserveritemT.m_ulTimeLastPlayed,
@@ -340,17 +340,17 @@ namespace Menu
                 if (IsQuickMatch)
                 {
                     IsQuickMatch = false;
-                    ServerManager.Instance.Connect(serverDetail.NetAdr.GetIP(),serverDetail.NetAdr.GetConnectionPort()); 
+                    ServerManager.Instance.Connect(serverDetail.NetAdr.GetIP(), serverDetail.NetAdr.GetConnectionPort());
                     return;
                 }
-                ServerItem createdItem = Instantiate(PrefabManager.Instance.serverPrefab,content);
-                    
+                ServerItem createdItem = Instantiate(PrefabManager.Instance.serverPrefab, content);
+
                 createdItem.SetPlayerValues(serverDetail);
-                ActiveServerItems.Add(serverDetail.Id,createdItem);
+                ActiveServerItems.Add(serverDetail.Id, createdItem);
             }
 
             Dictionary<CSteamID, ServerDetail> dictionary = _lanServer;
-            
+
             switch (type)
             {
                 case ServerFilter.SearchServerType.Official:
@@ -377,21 +377,21 @@ namespace Menu
                 dictionary.Remove(serverDetail.Id);
             dictionary.Add(serverDetail.Id, serverDetail);
 
-            int j = (int) type;
+            int j = (int)type;
             serverTypeItems[j].serverAmountText.StringReference.Arguments =
-                new List<object>() {dictionary.Count};
+                new List<object>() { dictionary.Count };
             serverTypeItems[j].serverAmountText.RefreshString();
-            
+
             int playerAmount = 0;
             foreach (var detail in dictionary.Values)
             {
                 playerAmount += detail.PlayerAmount;
             }
-            
+
             serverTypeItems[j].playerAmountText.StringReference.Arguments =
-                new List<object>() {playerAmount};
+                new List<object>() { playerAmount };
             serverTypeItems[j].playerAmountText.RefreshString();
-            
+
         }
         static bool IsAvailable(ServerDetail detail)
         {
@@ -400,7 +400,7 @@ namespace Menu
             {
                 if (ServerFilter.isHotServer)
                 {
-                    flag &= (float) detail.PlayerAmount / 15 > 0.3f;
+                    flag &= (float)detail.PlayerAmount / 15 > 0.3f;
                 }
 
                 if (ServerFilter.isNotFull)
@@ -439,13 +439,13 @@ namespace Menu
             ActiveServerItems.Clear();
         }
 
-        
+
 
         #region SetValues
 
         void SetServerType(int index)
         {
-            ServerFilter.searchServerType = (ServerFilter.SearchServerType) (index);
+            ServerFilter.searchServerType = (ServerFilter.SearchServerType)(index);
 
             if (ServerFilter.searchServerType == ServerFilter.SearchServerType.DlcOnly && !_ownedDlc)
                 ServerFilter.searchServerType = ServerFilter.SearchServerType.Official;
@@ -465,24 +465,24 @@ namespace Menu
         void SetHotServer(bool flag)
         {
             ServerFilter.isHotServer = flag;
-            
+
             RefreshTable();
         }
         void SetNotFull(bool flag)
         {
             ServerFilter.isNotFull = flag;
-            
+
             RefreshTable();
         }
 
         private void SetSearchName(string str)
         {
             ServerFilter.searchServerName = str;
-            
+
             RefreshTable();
         }
         #endregion
-       
+
         [Serializable]
         public class SearchServerTypeItem
         {

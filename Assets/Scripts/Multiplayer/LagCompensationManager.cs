@@ -15,7 +15,7 @@ namespace Multiplayer
 
         private const int MaxPendingShots = 1024;
         private const int MaxShotsPerPhysicsStep = 128;
-        
+
         private Queue<ShootLagCompensationData> _shootQueue = new();
 
         private void Awake()
@@ -35,15 +35,15 @@ namespace Multiplayer
                     data.Weapon?.Stat == null ||
                     !ReferenceEquals(player.GetCurrentWeapon(), data.Weapon))
                     continue;
-                
+
                 EShootingResult result = data.IsInfected ? EShootingResult.EResultOk : data.Weapon.DoAttack();
-                
+
                 // Debug.Log("Client: " + lookDir);
                 // Debug.Log("Server: " + ((ServerPlayer)player).head.forward);
 
                 if (result == EShootingResult.EResultOk)
                 {
-                    if(NetworkServerManager.Instance.Server.TryGetClient(data.PlayerServer.Id,out _))
+                    if (NetworkServerManager.Instance.Server.TryGetClient(data.PlayerServer.Id, out _))
                     {
                         // Debug.Log($"Before: {tick}");
                         // ushort tickLatency = (ushort)Math.Ceiling(connection.SmoothRTT / 30f);
@@ -54,7 +54,7 @@ namespace Multiplayer
                     }
                 }
 
-                Message msg = Message.Create(MessageSendMode.Unreliable,(ushort)ServerToClientId.Shoot);
+                Message msg = Message.Create(MessageSendMode.Unreliable, (ushort)ServerToClientId.Shoot);
                 msg.Add(data.PlayerServer.Id);
                 msg.AddInt((int)result);
                 msg.Add(data.Weapon.Stat.bulletAmount);
@@ -62,16 +62,16 @@ namespace Multiplayer
                 NetworkServerManager.Instance.Server.SendToAll(msg);
             }
         }
-        
+
         [MessageHandler((ushort)ClientToServerId.Shoot, NetworkServerManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void Shoot(ushort fromClient, Message message)
         {
             if (Instance == null || Instance._shootQueue.Count >= MaxPendingShots) return;
-            
-            if (ServerPlayer.list.TryGetValue(fromClient,out var player))
+
+            if (ServerPlayer.list.TryGetValue(fromClient, out var player))
             {
                 player.DisableInvincible();
-                
+
                 uint tick = message.GetUInt();
 
                 Vector3 lookDir = message.GetVector3();
@@ -100,7 +100,7 @@ namespace Multiplayer
 
         public Vector3 LookDirection, RaycastPos;
 
-        public ShootLagCompensationData(IPlayerServer playerServer, uint tick, ActiveWeapon weapon, bool isInfected, Vector3 lookDirection,Vector3 raycastPos)
+        public ShootLagCompensationData(IPlayerServer playerServer, uint tick, ActiveWeapon weapon, bool isInfected, Vector3 lookDirection, Vector3 raycastPos)
         {
             PlayerServer = playerServer;
             Tick = tick;

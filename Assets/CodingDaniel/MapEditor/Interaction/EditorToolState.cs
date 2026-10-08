@@ -21,7 +21,7 @@ namespace CodingDaniel.MapEditor.Interaction
         Local,
         Global
     }
-    
+
     public enum MEPivotMode
     {
         Center = 0,
@@ -62,10 +62,10 @@ namespace CodingDaniel.MapEditor.Interaction
             get { return _isViewing; }
             set
             {
-                if(_isViewing != value)
+                if (_isViewing != value)
                 {
                     _isViewing = value;
-                    if(_isViewing)
+                    if (_isViewing)
                     {
                         ActiveTool = null;
                     }
@@ -80,7 +80,7 @@ namespace CodingDaniel.MapEditor.Interaction
             get { return _autoFocus; }
             set
             {
-                if(_autoFocus != value)
+                if (_autoFocus != value)
                 {
                     _autoFocus = value;
                     AutoFocusChanged?.Invoke();
@@ -94,7 +94,7 @@ namespace CodingDaniel.MapEditor.Interaction
             get { return _unitSnapping; }
             set
             {
-                if(_unitSnapping != value)
+                if (_unitSnapping != value)
                 {
                     _unitSnapping = value;
                     UnitSnappingChanged?.Invoke();
@@ -102,13 +102,13 @@ namespace CodingDaniel.MapEditor.Interaction
             }
         }
 
-        private bool _isSnapping=false;
+        private bool _isSnapping = false;
         public bool IsSnapping
         {
             get { return _isSnapping; }
             set
             {
-                if(_isSnapping != value)
+                if (_isSnapping != value)
                 {
                     _isSnapping = value;
                     IsSnappingChanged?.Invoke();
@@ -122,7 +122,7 @@ namespace CodingDaniel.MapEditor.Interaction
             get { return _snappingMode; }
             set
             {
-                if(_snappingMode != value)
+                if (_snappingMode != value)
                 {
                     _snappingMode = value;
                     SnappingModeChanged?.Invoke();
@@ -151,7 +151,7 @@ namespace CodingDaniel.MapEditor.Interaction
             get { return _lockAxes; }
             set
             {
-                if(_lockAxes != value)
+                if (_lockAxes != value)
                 {
                     _lockAxes = value;
                     LockAxesChanged?.Invoke();
@@ -169,7 +169,7 @@ namespace CodingDaniel.MapEditor.Interaction
                 {
                     ToolChanging?.Invoke(value, null);
                     _current = value;
-                    if(_current != EditorTool.Custom)
+                    if (_current != EditorTool.Custom)
                     {
                         _isBoxSelectionEnabled = true;
                     }
@@ -185,7 +185,7 @@ namespace CodingDaniel.MapEditor.Interaction
             get { return _custom; }
             set
             {
-                if(_custom != value)
+                if (_custom != value)
                 {
                     ToolChanging?.Invoke(EditorTool.Custom, value);
                     _current = EditorTool.Custom;
@@ -195,14 +195,14 @@ namespace CodingDaniel.MapEditor.Interaction
             }
         }
 
-      
+
         private bool _isBoxSelectionEnabled = true;
         public bool IsBoxSelectionEnabled
         {
             get { return _isBoxSelectionEnabled; }
-            set 
-            { 
-                if(_isBoxSelectionEnabled != value)
+            set
+            {
+                if (_isBoxSelectionEnabled != value)
                 {
                     _isBoxSelectionEnabled = value;
                     IsBoxSelectionEnabledChanged?.Invoke();
@@ -231,7 +231,7 @@ namespace CodingDaniel.MapEditor.Interaction
             get { return _pivotMode; }
             set
             {
-                if(_pivotMode != value)
+                if (_pivotMode != value)
                 {
                     PivotModeChanging?.Invoke();
                     _pivotMode = value;
@@ -257,6 +257,6 @@ namespace CodingDaniel.MapEditor.Interaction
             _pivotMode = MEPivotMode.Center;
         }
 
-        
+
     }
 }

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
@@ -86,14 +86,14 @@ namespace CodingDaniel.MapEditor.Utils
                     uniqueName = string.Format("{0} {1}{2}", desiredName, number, ext);
                 }
 
-                if(noSpace)
+                if (noSpace)
                 {
                     uniqueName = uniqueName.Replace(" ", "");
                 }
 
                 if (!existingNamesHS.Contains(uniqueName.ToLower()))
                 {
-                    if(noSpace)
+                    if (noSpace)
                     {
                         return string.Format("{0} {1}", desiredName, number).Replace(" ", "");
                     }

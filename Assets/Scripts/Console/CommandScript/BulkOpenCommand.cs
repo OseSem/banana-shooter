@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Console.CommandScript
 {
-    [CreateAssetMenu(fileName = "BulkOpen Command",menuName = "Utilities/DeveloperConsole/Commands/BulkOpen Command")]
+    [CreateAssetMenu(fileName = "BulkOpen Command", menuName = "Utilities/DeveloperConsole/Commands/BulkOpen Command")]
     public class BulkOpenCommand : ConsoleCommand
     {
         private DeveloperConsoleUI _console;
@@ -22,7 +22,7 @@ namespace Console.CommandScript
                 if (_console == null) return _console = DeveloperConsoleUI.Instance;
                 return _console;
             }
-        } 
+        }
         public override bool Process(string[] args)
         {
             if (args.Length != 3)
@@ -35,7 +35,7 @@ namespace Console.CommandScript
             string itemName = args[0];
 
             var crates = Console.crates;
-            if (int.TryParse(args[1], out var amount)&&bool.TryParse(args[2], out var flag))
+            if (int.TryParse(args[1], out var amount) && bool.TryParse(args[2], out var flag))
             {
                 InventoryManager.Instance.CrateOpenAnimationEnable = flag;
                 foreach (var crate in crates)
@@ -62,7 +62,7 @@ namespace Console.CommandScript
                         return true;
                     }
                 }
-            
+
             }
 
 

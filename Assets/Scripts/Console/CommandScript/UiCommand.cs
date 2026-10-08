@@ -4,7 +4,7 @@ using Console;
 using Menu;
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "Ui Command",menuName = "Utilities/DeveloperConsole/Commands/Ui Command")]
+[CreateAssetMenu(fileName = "Ui Command", menuName = "Utilities/DeveloperConsole/Commands/Ui Command")]
 public class UiCommand : ConsoleCommand
 {
     private DeveloperConsoleUI console;
@@ -15,8 +15,8 @@ public class UiCommand : ConsoleCommand
             if (console == null) return console = DeveloperConsoleUI.Instance;
             return console;
         }
-    } 
-    
+    }
+
     public override bool Process(string[] args)
     {
         GameUIManager manager = GameUIManager.Instance;

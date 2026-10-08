@@ -11,14 +11,14 @@ namespace Weapon.WeaponStats
         public int price = 0;
         public Texture2D texture;
         public List<Skin> skins = new List<Skin>();
-        public Vector3 size,defaultRotation=new Vector3(-90,0,0);
+        public Vector3 size, defaultRotation = new Vector3(-90, 0, 0);
 
         public int damage = 0;
         [HideInInspector]
         public int damageOffset = 10;
-        public bool specialWeapon=false;
+        public bool specialWeapon = false;
         public int spinAmount;
-        
+
         public WeaponType weaponType = WeaponType.None;
         [Serializable]
         public class Skin
@@ -26,7 +26,7 @@ namespace Weapon.WeaponStats
             public Mesh mesh;
             public Material[] materials;
         }
-        
+
         public enum WeaponType
         {
             None,
@@ -42,7 +42,7 @@ namespace Weapon.WeaponStats
         }
 
         public bool bUseGravity = false;
-        public uint maxAmmo=30;
+        public uint maxAmmo = 30;
         public float fireRate = 10;
         public uint bulletAmount = 1;
         public float spreadAngle = 0f;

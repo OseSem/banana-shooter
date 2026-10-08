@@ -27,7 +27,7 @@ using UnityEngine.UI;
 
 namespace Manager
 {
-    public class LoadingManager : MonoBehaviour,ILoading
+    public class LoadingManager : MonoBehaviour, ILoading
     {
         public static LoadingManager Instance { private set; get; }
         public static ILoading Iinstance;
@@ -61,7 +61,7 @@ namespace Manager
         private NetworkManager _networkManager;
 
         [SerializeField] RawImage backGround;
-        [SerializeField] LocalizeStringEvent title, progress,desc;
+        [SerializeField] LocalizeStringEvent title, progress, desc;
 
         private TextMeshProUGUI _titleText, _descText;
 
@@ -72,7 +72,8 @@ namespace Manager
         void SetAlpha(float a)
         {
             desiredAlpha = a;
-            if (Math.Abs(a - 1) < 0.01f){
+            if (Math.Abs(a - 1) < 0.01f)
+            {
                 @group.interactable = true;
                 @group.blocksRaycasts = true;
             }
@@ -91,11 +92,11 @@ namespace Manager
         }
 
         [SerializeField] private Button menuBtn;
-        
+
         public void Leave()
         {
             StopAllCoroutines();
-            if(!NetworkManager.Instance.Client.IsConnected)
+            if (!NetworkManager.Instance.Client.IsConnected)
                 Menu();
             LobbyManager.Instance.LeaveLobby();
         }
@@ -103,7 +104,7 @@ namespace Manager
         /// <summary>
         /// Reset Everything Then Load a Scene
         /// </summary>
-        public void ResetScene(bool isWorkshopMap=false)
+        public void ResetScene(bool isWorkshopMap = false)
         {
             Time.timeScale = 1f;
             PlayerState.DisplayPlayerName = true;
@@ -111,18 +112,18 @@ namespace Manager
             AudioFreqController.Instance.ResetStat();
             UnderWaterSfx.Instance.SetUnderWater(false);
             PitchManager.Instance.SetPitch(1f);
-            if(WarningUI.Instance)
+            if (WarningUI.Instance)
                 WarningUI.Instance.playerSpawn = false;
             ClientPlayer.existGroup.Clear();
             GameManager.Entities.Clear();
-            
+
             PlayerParticle.Instance.DeInitialize();
             Interactor.Instance.DeInitialize();
             PickInteractor.Instance.DeInitialize();
             SlideAudio.Instance.DeInitialize();
-            
+
             MapSaver.Instance.Cleanup();
-            
+
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
             backGround.texture = shootingRange;
@@ -138,16 +139,16 @@ namespace Manager
             }
 
             DemoManager.Instance.DestroyEverything();
-            
+
             foreach (var clientPlayer in ClientPlayer.list.Values)
             {
-                if(clientPlayer!=null)
+                if (clientPlayer != null)
                     Destroy(clientPlayer.gameObject);
             }
             ClientPlayer.list.Clear();
             foreach (var serverPlayer in ServerPlayer.list.Values)
             {
-                if(serverPlayer!=null)
+                if (serverPlayer != null)
                     serverPlayer.Destroy();
             }
             ServerPlayer.list.Clear();
@@ -171,23 +172,23 @@ namespace Manager
         }
 
         public MenuType menuType = MenuType.None;
-        public string additionalMessage=String.Empty;
+        public string additionalMessage = String.Empty;
 
         public bool isLoading = false;
 
         private Coroutine loadingCoroutine = null;
 
-        public void LoadGame(string map,Texture2D texture2D,string otherText,params int[ ] external)
+        public void LoadGame(string map, Texture2D texture2D, string otherText, params int[] external)
         {
             SteamUGC.StopPlaytimeTrackingForAllItems();
             if (asyncOperation != null) asyncOperation.allowSceneActivation = true;
-            if(loadingCoroutine!=null)
+            if (loadingCoroutine != null)
                 StopCoroutine(loadingCoroutine);
-            loadingCoroutine= StartCoroutine(JoinGame(map, texture2D, otherText, external));
-        
+            loadingCoroutine = StartCoroutine(JoinGame(map, texture2D, otherText, external));
+
         }
 
-        public void LoadWorkshopGame(PublishedFileId_t map,int external)
+        public void LoadWorkshopGame(PublishedFileId_t map, int external)
         {
             SteamUGC.StopPlaytimeTrackingForAllItems();
             SteamUGC.StartPlaytimeTracking(new[] { map }, 1);
@@ -197,20 +198,20 @@ namespace Manager
         public void Menu()
         {
             if (asyncOperation != null) asyncOperation.allowSceneActivation = true;
-            if(loadingCoroutine!=null)
+            if (loadingCoroutine != null)
                 StopCoroutine(loadingCoroutine);
-            loadingCoroutine=StartCoroutine(BackToMenu());
+            loadingCoroutine = StartCoroutine(BackToMenu());
         }
         IEnumerator BackToMenu()
         {
             TransitionUI.Instance.StartTransition();
-            
+
             Chat.Instance.DestroyEveryThing();
             SteamUGC.StopPlaytimeTrackingForAllItems();
             ResetScene();
             isLoading = false;
             NotificationMenu.Instance.SetCanvas(false);
-            
+
             NetworkServerManager.Iinstance.ResetProperties();
 
             LobbyDataManager.datas.Clear();
@@ -227,40 +228,40 @@ namespace Manager
             NetworkManager.ClientRandomGameMode = true;
             NetworkManager.ClientGameMode = GameMode.None;
             _networkManager.GameModeChanged?.Invoke(NetworkManager.ClientGameMode);
-            
+
             foreach (var clientPlayer in ClientPlayer.list.Values)
             {
-                if(clientPlayer!=null)
+                if (clientPlayer != null)
                     Destroy(clientPlayer.gameObject);
             }
             ClientPlayer.list.Clear();
-            
+
             DemoManager.Instance.StopPlayDemo();
 
             // yield return new WaitForSeconds(0.2f);
-        
+
             title.SetEntry("Menu");
             title.RefreshString();
 
             AsyncOperation asyncOperation = SceneManager.LoadSceneAsync("Menu", LoadSceneMode.Single);
             progress.SetEntry("progress");
-            progress.StringReference.Arguments = new List<object>() {0};
+            progress.StringReference.Arguments = new List<object>() { 0 };
 
-            while (asyncOperation.progress<0.9f  || Mathf.Abs(@group.alpha-desiredAlpha)>0.001f)
+            while (asyncOperation.progress < 0.9f || Mathf.Abs(@group.alpha - desiredAlpha) > 0.001f)
             {
-                progress.StringReference.Arguments[0] = (int) (asyncOperation.progress * 100);
+                progress.StringReference.Arguments[0] = (int)(asyncOperation.progress * 100);
                 progress.RefreshString();
                 yield return null;
             }
             progress.StringReference.Arguments[0] = 100;
             progress.RefreshString();
-        
-            while(!asyncOperation.isDone)
+
+            while (!asyncOperation.isDone)
                 yield return null;
 
             SetAlpha(0);
 
-            FailedWindow window=null;
+            FailedWindow window = null;
             switch (menuType)
             {
                 case MenuType.Kick:
@@ -272,14 +273,14 @@ namespace Manager
                 case MenuType.ConnectionFailed:
                     window = Instantiate(PrefabManager.Instance.failedWindow, UIManager.Instance.transform)
                         .GetComponent<FailedWindow>();
-                    window.SetTitle(UIManager.IsItChinese()? "连接失败" : "connection failed");
+                    window.SetTitle(UIManager.IsItChinese() ? "连接失败" : "connection failed");
                     window.SetReason(UIManager.IsItChinese() ? "网络问题或者服务器无了" : "network problem or server has been gone");
                     break;
                 case MenuType.HostQuit:
                     window = Instantiate(PrefabManager.Instance.failedWindow, UIManager.Instance.transform)
                         .GetComponent<FailedWindow>();
-                    window.SetTitle(UIManager.IsItChinese()?"房主退出":"Host Quit");
-                    window.SetReason(UIManager.IsItChinese()?"看起来腐竹好像跑路了":"It seems server has been gone");
+                    window.SetTitle(UIManager.IsItChinese() ? "房主退出" : "Host Quit");
+                    window.SetReason(UIManager.IsItChinese() ? "看起来腐竹好像跑路了" : "It seems server has been gone");
 
                     if (lastKill > 15)
                     {
@@ -305,10 +306,10 @@ namespace Manager
             }
 
             menuType = MenuType.None;
-            
+
             TransitionUI.Instance.ClearTransition();
-            
-            additionalMessage=String.Empty;
+
+            additionalMessage = String.Empty;
         }
 
         public bool requestDone = false;
@@ -317,10 +318,10 @@ namespace Manager
         private static readonly int step = 5;
         private static float percent = 0;
         private AsyncOperation asyncOperation;
-        IEnumerator JoinGame(string map,Texture2D texture2D,string otherText,params int[ ] external)
+        IEnumerator JoinGame(string map, Texture2D texture2D, string otherText, params int[] external)
         {
             // TransitionUI.Instance.StartTransition();
-            
+
             ResetScene();
             NotificationMenu.Instance.SetCanvas(false);
             desiredProgress = 0;
@@ -335,28 +336,28 @@ namespace Manager
             else desc.SetEntry($"gm_{NetworkManager.ClientGameMode.ToString().ToLower()}_desc");
 
             backGround.texture = texture2D;
-            
+
             yield return new WaitForSeconds(.1f);
-            
+
             SetAlpha(1f);
 
             #region Loading
-        
+
             progress.SetEntry("progress");
-            progress.StringReference.Arguments = new List<object>() {0};
+            progress.StringReference.Arguments = new List<object>() { 0 };
             progress.RefreshString();
 
             yield return new WaitForSeconds(.3f);
-            
+
             TransitionUI.Instance.ClearTransition();
-            
+
             asyncOperation = SceneManager.LoadSceneAsync(map, LoadSceneMode.Single);
             asyncOperation.allowSceneActivation = false;
             isLoading = true;
-            while (asyncOperation.progress<0.9f  || Mathf.Abs(@group.alpha-desiredAlpha)>0.001f)
+            while (asyncOperation.progress < 0.9f || Mathf.Abs(@group.alpha - desiredAlpha) > 0.001f)
             {
-                desiredProgress = ( asyncOperation.progress * percent);
-                progress.StringReference.Arguments[0] = (int) (asyncOperation.progress * 100);
+                desiredProgress = (asyncOperation.progress * percent);
+                progress.StringReference.Arguments[0] = (int)(asyncOperation.progress * 100);
                 progress.RefreshString();
                 yield return null;
             }
@@ -369,18 +370,18 @@ namespace Manager
 
             progress.SetEntry(NetworkServerManager.Instance.Server.IsRunning ? "wait_players" : "wait_server");
             progress.RefreshString();
-            
+
             while (NetworkManager.GameState != GameState.MidMatch && NetworkManager.GameState != GameState.Warmup && !NetworkServerManager.Instance.Server.IsRunning)
             {
                 yield return null;
             }
-            
+
             asyncOperation.allowSceneActivation = true;
             while (!asyncOperation.isDone)
             {
                 yield return null;
             }
-            
+
             if (NetworkServerManager.Instance.Server.IsRunning)
             {
                 NetworkServerManager.Iinstance.SetGameState(GameState.Warmup);
@@ -390,22 +391,22 @@ namespace Manager
             asyncOperation = null;
             #endregion
             // ReplayManager.Instance.SetRecord(true,map);
-            
+
             desiredProgress += percent;
-        
+
             progress.SetEntry("retrieving_server_info");
             Request(RequestDataType.Init);
             desiredProgress += percent;
 
             #region UI
-            
+
             PowerInGameMenu.Instance.active = !NetworkManager.ClientDisableSpecialWeapon;
-            
+
             if (NetworkManager.ClientGameMode == GameMode.GunGame ||
                 NetworkManager.ClientGameMode == GameMode.RocketMode ||
                 NetworkManager.ClientGameMode == GameMode.Randomizer)
                 PowerInGameMenu.Instance.active = false;
-            
+
             PowerInGameMenu.Instance.power.SetActive(PowerInGameMenu.Instance.active);
 
             if (ServerSettingUI.Instance)
@@ -414,15 +415,15 @@ namespace Manager
             }
 
             GameModeTip.Instance.SetTipText();
-        
+
             BuyWeaponMenu.Instance.Init();
 
             #endregion
 
             InitNetwork(external[0]);
             if (NetworkManager.ClientGameMode != GameMode.None &&
-                NetworkManager.ClientGameMode != GameMode.SpecialGameMode &&NetworkManager.ClientGameMode != GameMode.SpecialNormalGameMode && NetworkManager.GameState == GameState.MidMatch)
-            { 
+                NetworkManager.ClientGameMode != GameMode.SpecialGameMode && NetworkManager.ClientGameMode != GameMode.SpecialNormalGameMode && NetworkManager.GameState == GameState.MidMatch)
+            {
                 requestDone = false;
                 Request(RequestDataType.InitRound);
                 while (!requestDone)
@@ -430,7 +431,7 @@ namespace Manager
                     yield return null;
                 }
             }
-        
+
             progress.SetEntry("init_player");
             requestDone = false;
             Request(RequestDataType.PlayerSpawn);
@@ -443,27 +444,27 @@ namespace Manager
             isLoading = false;
 
             yield return new WaitForSeconds(0.5f);
-            
+
             SetAlpha(0);
 
             string gamemode = NetworkManager.ClientGameMode.ToString();
 
             if (map == "ShootingRange")
                 gamemode = "ShootingRange";
-            else if(map == "Endless")
+            else if (map == "Endless")
                 gamemode = "Endless";
-            else if ( map == "ProcMap" )
+            else if (map == "ProcMap")
             {
                 GenerationTest.Instance.seed = (uint)external[1];
 
-                GenerationTest.Instance.Generate( 5 );
+                GenerationTest.Instance.Generate(5);
             }
-            
+
             GameUIManager.Instance.gameModeMap.SetEntry($"{gamemode}_Map");
-            GameUIManager.Instance.gameModeMap.StringReference.Arguments = new List<object> {map};
+            GameUIManager.Instance.gameModeMap.StringReference.Arguments = new List<object> { map };
             GameUIManager.Instance.gameModeMap.RefreshString();
         }
-        IEnumerator JoinWorkshopMap(PublishedFileId_t map,int external)
+        IEnumerator JoinWorkshopMap(PublishedFileId_t map, int external)
         {
             ResetScene(true);
             NotificationMenu.Instance.SetCanvas(false);
@@ -473,7 +474,7 @@ namespace Manager
 
             SetAlpha(1f);
             yield return new WaitForSeconds(0.2f);
-            
+
             MapData data;
 
             if (MapSaver.WorkshopMaps.TryGetValue(map, out var file))
@@ -483,11 +484,11 @@ namespace Manager
                 yield return cd.coroutine;
 
                 string content = cd.result.ToString();
-                if (string.IsNullOrEmpty (content) || content == "{}" || (!content.Contains("{") || !content.Contains("}")))
+                if (string.IsNullOrEmpty(content) || content == "{}" || (!content.Contains("{") || !content.Contains("}")))
                 {
                     yield break;
                 }
-                
+
                 // var jsonTask = Task.Run(() => JsonConvert.DeserializeObject<MapData>(content, new JsonSerializerSettings
                 // {
                 //     MaxDepth = 256
@@ -498,9 +499,9 @@ namespace Manager
                 {
                     yield return null;
                 }
-                
+
                 data = jsonTask.Result;
-            
+
                 if (data == null)
                 {
                     _networkManager.DisconnectClient();
@@ -512,12 +513,12 @@ namespace Manager
                     yield break;
                 }
 
-                data.path = file.FullName.Substring(0,file.FullName.Length-file.Name.Length);
-                
+                data.path = file.FullName.Substring(0, file.FullName.Length - file.Name.Length);
+
                 _titleText.SetText(data.name);
                 _descText.SetText(data.description);
 
-                var t = SaveSystem.ReadByteFromFileAsync(data.path + "/" + data.GetNameString()+".jpg");
+                var t = SaveSystem.ReadByteFromFileAsync(data.path + "/" + data.GetNameString() + ".jpg");
 
                 while (!t.IsCompleted)
                 {
@@ -526,7 +527,7 @@ namespace Manager
 
                 Texture2D texture2D = new Texture2D(1, 1, TextureFormat.RGB24, false);
                 texture2D.LoadImage(t.Result);
-            
+
                 backGround.texture = texture2D;
             }
             else
@@ -537,37 +538,37 @@ namespace Manager
 
 
             #region Loading
-        
+
             progress.SetEntry("progress");
-            progress.StringReference.Arguments = new List<object>() {0};
+            progress.StringReference.Arguments = new List<object>() { 0 };
             progress.RefreshString();
 
             yield return new WaitForSeconds(.3f);
-            
+
             TransitionUI.Instance.ClearTransition();
             asyncOperation = SceneManager.LoadSceneAsync("CustomMap", LoadSceneMode.Single);
             asyncOperation.allowSceneActivation = false;
             isLoading = true;
-            while (asyncOperation.progress<0.9f  || Mathf.Abs(@group.alpha-desiredAlpha)>0.001f)
+            while (asyncOperation.progress < 0.9f || Mathf.Abs(@group.alpha - desiredAlpha) > 0.001f)
             {
-                desiredProgress = ( asyncOperation.progress * percent);
-                progress.StringReference.Arguments[0] = (int) (asyncOperation.progress * 100);
+                desiredProgress = (asyncOperation.progress * percent);
+                progress.StringReference.Arguments[0] = (int)(asyncOperation.progress * 100);
                 progress.RefreshString();
                 yield return null;
             }
             progress.StringReference.Arguments[0] = 100;
             progress.RefreshString();
             desiredProgress = percent;
-        
+
             asyncOperation.allowSceneActivation = true;
             while (!asyncOperation.isDone)
             {
                 yield return null;
             }
-        
+
             progress.SetEntry("Load WorkshopMap");
             progress.RefreshString();
-            var task =  MapSaver.Instance.LoadWorkshopMap(map,data);
+            var task = MapSaver.Instance.LoadWorkshopMap(map, data);
 
             while (!task.IsCompleted)
             {
@@ -576,10 +577,10 @@ namespace Manager
             #endregion
 
             #region Waitting for server
-        
+
             progress.SetEntry(NetworkServerManager.Instance.Server.IsRunning ? "wait_players" : "wait_server");
             progress.RefreshString();
-            
+
             while (NetworkManager.GameState != GameState.MidMatch && NetworkManager.GameState != GameState.Warmup && !NetworkServerManager.Instance.Server.IsRunning)
             {
                 yield return null;
@@ -595,15 +596,15 @@ namespace Manager
             #endregion
             // ReplayManager.Instance.SetRecord(true,map);
 
-        
+
             desiredProgress += percent;
-        
+
             progress.SetEntry("retrieving_server_info");
             Request(RequestDataType.Init);
             desiredProgress += percent;
-            
+
             #region UI
-            
+
             PowerInGameMenu.Instance.active = !NetworkManager.ClientDisableSpecialWeapon;
             PowerInGameMenu.Instance.power.SetActive(!NetworkManager.ClientDisableSpecialWeapon);
 
@@ -611,10 +612,10 @@ namespace Manager
             {
                 ServerSettingUI.Instance.Init();
             }
-            
-            
+
+
             GameModeTip.Instance.SetTipText();
-        
+
             BuyWeaponMenu.Instance.Init();
 
             #endregion
@@ -622,16 +623,16 @@ namespace Manager
             InitNetwork(external);
             if (NetworkManager.ClientGameMode != GameMode.None &&
                 NetworkManager.ClientGameMode != GameMode.SpecialGameMode && NetworkManager.GameState == GameState.MidMatch)
-            { 
+            {
                 requestDone = false;
                 Request(RequestDataType.InitRound);
                 while (!requestDone)
                 {
                     yield return new WaitForSeconds(0.1f);
                 }
-            
+
             }
-        
+
             progress.SetEntry("init_player");
             requestDone = false;
             Request(RequestDataType.PlayerSpawn);
@@ -645,18 +646,18 @@ namespace Manager
             isLoading = false;
             yield return new WaitForSeconds(0.5f);
             SetAlpha(0);
-            
+
             GameUIManager.Instance.gameModeMap.SetEntry($"{NetworkManager.ClientGameMode.ToString()}_Map");
-            GameUIManager.Instance.gameModeMap.StringReference.Arguments = new List<object> {data.name};
+            GameUIManager.Instance.gameModeMap.StringReference.Arguments = new List<object> { data.name };
             GameUIManager.Instance.gameModeMap.RefreshString();
-            
-            
+
+
         }
-        public IEnumerator PlayDemo(string map,Texture2D texture2D, Action onSceneLoaded = null)
+        public IEnumerator PlayDemo(string map, Texture2D texture2D, Action onSceneLoaded = null)
         {
             if (isLoading) yield break;
-            float p = 0.5f;        
-        
+            float p = 0.5f;
+
             ResetScene();
             NotificationMenu.Instance.SetCanvas(false);
             desiredProgress = 0;
@@ -667,26 +668,26 @@ namespace Manager
             SetAlpha(1f);
 
             #region Loading
-        
+
             progress.SetEntry("progress");
-            progress.StringReference.Arguments = new List<object>() {0};
+            progress.StringReference.Arguments = new List<object>() { 0 };
             progress.RefreshString();
 
             yield return new WaitForSeconds(.5f);
             AsyncOperation asyncOperation = SceneManager.LoadSceneAsync(map, LoadSceneMode.Single);
             asyncOperation.allowSceneActivation = false;
             isLoading = true;
-            while (asyncOperation.progress<0.9f  || Mathf.Abs(@group.alpha-desiredAlpha)>0.001f)
+            while (asyncOperation.progress < 0.9f || Mathf.Abs(@group.alpha - desiredAlpha) > 0.001f)
             {
-                desiredProgress = ( asyncOperation.progress * p);
-                progress.StringReference.Arguments[0] = (int) (asyncOperation.progress * 100);
+                desiredProgress = (asyncOperation.progress * p);
+                progress.StringReference.Arguments[0] = (int)(asyncOperation.progress * 100);
                 progress.RefreshString();
                 yield return null;
             }
             progress.StringReference.Arguments[0] = 100;
             progress.RefreshString();
             desiredProgress = p;
-        
+
             asyncOperation.allowSceneActivation = true;
             while (!asyncOperation.isDone)
             {
@@ -699,20 +700,20 @@ namespace Manager
             isLoading = false;
             yield return new WaitForSeconds(0.5f);
             SetAlpha(0);
-            
+
             SpectateMovement.Instance.StartSpect();
-            
+
             onSceneLoaded?.Invoke();
         }
         public IEnumerator PlayWorkshopMapDemo(PublishedFileId_t map, Action onSceneLoaded = null)
         {
             TransitionUI.Instance.StartTransition();
-            
+
             ResetScene(true);
             NotificationMenu.Instance.SetCanvas(false);
             desiredProgress = 0;
             progressBar.value = 0;
-            float p = 0.5f;        
+            float p = 0.5f;
 
             MapData data;
 
@@ -723,7 +724,7 @@ namespace Manager
                 yield return cd.coroutine;
 
                 string content = cd.result.ToString();
-                if (string.IsNullOrEmpty (content) || content == "{}" || (!content.Contains("{") || !content.Contains("}")))
+                if (string.IsNullOrEmpty(content) || content == "{}" || (!content.Contains("{") || !content.Contains("}")))
                 {
                     TransitionUI.Instance.ClearTransition();
                     yield break;
@@ -738,9 +739,9 @@ namespace Manager
                 {
                     yield return null;
                 }
-                
+
                 data = jsonTask.Result;
-            
+
                 if (data == null)
                 {
                     TransitionUI.Instance.ClearTransition();
@@ -752,12 +753,12 @@ namespace Manager
                     yield break;
                 }
 
-                data.path = file.FullName.Substring(0,file.FullName.Length-file.Name.Length);
-                
+                data.path = file.FullName.Substring(0, file.FullName.Length - file.Name.Length);
+
                 _titleText.SetText(data.name);
                 _descText.SetText(data.description);
 
-                var t = SaveSystem.ReadByteFromFileAsync(data.path + "/" + data.GetNameString()+".jpg");
+                var t = SaveSystem.ReadByteFromFileAsync(data.path + "/" + data.GetNameString() + ".jpg");
 
                 while (!t.IsCompleted)
                 {
@@ -766,7 +767,7 @@ namespace Manager
 
                 Texture2D texture2D = new Texture2D(1, 1, TextureFormat.RGB24, false);
                 texture2D.LoadImage(t.Result);
-            
+
                 backGround.texture = texture2D;
             }
             else
@@ -780,66 +781,66 @@ namespace Manager
             SetAlpha(1f);
 
             #region Loading
-        
+
             progress.SetEntry("progress");
-            progress.StringReference.Arguments = new List<object>() {0};
+            progress.StringReference.Arguments = new List<object>() { 0 };
             progress.RefreshString();
 
             yield return new WaitForSeconds(.3f);
-            
+
             TransitionUI.Instance.ClearTransition();
             asyncOperation = SceneManager.LoadSceneAsync("CustomMap", LoadSceneMode.Single);
             asyncOperation.allowSceneActivation = false;
             isLoading = true;
-            while (asyncOperation.progress<0.9f  || Mathf.Abs(@group.alpha-desiredAlpha)>0.001f)
+            while (asyncOperation.progress < 0.9f || Mathf.Abs(@group.alpha - desiredAlpha) > 0.001f)
             {
-                desiredProgress = ( asyncOperation.progress * p);
-                progress.StringReference.Arguments[0] = (int) (asyncOperation.progress * 100);
+                desiredProgress = (asyncOperation.progress * p);
+                progress.StringReference.Arguments[0] = (int)(asyncOperation.progress * 100);
                 progress.RefreshString();
                 yield return null;
             }
             progress.StringReference.Arguments[0] = 100;
             progress.RefreshString();
             desiredProgress = percent;
-        
+
             asyncOperation.allowSceneActivation = true;
             while (!asyncOperation.isDone)
             {
                 yield return null;
             }
-        
+
             progress.SetEntry("Load WorkshopMap");
             progress.RefreshString();
-            var task =  MapSaver.Instance.LoadWorkshopMap(map,data);
+            var task = MapSaver.Instance.LoadWorkshopMap(map, data);
 
             while (!task.IsCompleted)
             {
                 yield return null;
             }
             #endregion
-            
+
             desiredProgress = 1f;
             asyncOperation = null;
-            
+
             isLoading = false;
             yield return new WaitForSeconds(0.5f);
             SetAlpha(0);
 
             SpectateMovement.Instance.StartSpect();
-            
+
             onSceneLoaded?.Invoke();
         }
-        
+
         void Request(RequestDataType dataType)
         {
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort) ClientToServerId.RequestData);
-            message.Add((ushort) dataType);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.RequestData);
+            message.Add((ushort)dataType);
             NetworkManager.Instance.SendByte += message.WrittenLength;
             NetworkManager.Instance.Client.Send(message);
         }
         void InitNetwork(int external)
         {
-            GameModes gameMode=null;
+            GameModes gameMode = null;
             switch (NetworkManager.ClientGameMode)
             {
                 case GameMode.Brawl:
@@ -859,8 +860,8 @@ namespace Manager
                     break;
                 case GameMode.KingOfTheHill:
                     gameMode = MapBound.Instance.gameObject.AddComponent<KingOfTheHill>();
-                    
-                    if(external!=-1)
+
+                    if (external != -1)
                         KingOfTheHill.Instance.SetNewHillClient(external);
                     break;
                 case GameMode.GunGame:
@@ -883,8 +884,8 @@ namespace Manager
 
             NetworkServerManager.Instance.game = gameMode;
             NetworkManager.Instance.game = gameMode;
-        
-            if (NetworkManager.ClientGameMode == GameMode.None || NetworkManager.ClientGameMode == GameMode.SpecialGameMode|| NetworkManager.ClientGameMode == GameMode.SpecialNormalGameMode) return;
+
+            if (NetworkManager.ClientGameMode == GameMode.None || NetworkManager.ClientGameMode == GameMode.SpecialGameMode || NetworkManager.ClientGameMode == GameMode.SpecialNormalGameMode) return;
             if (NetworkServerManager.Instance.Server.IsRunning)
             {
                 NetworkServerManager.Instance.StartGameFromLoad();
@@ -892,12 +893,12 @@ namespace Manager
         }
 
 
-        public void StartLoadVotingScene(float time,List<Tuple<ushort,LobbyDataManager.LobbyData>> datas,int minimalPlayerCount)
+        public void StartLoadVotingScene(float time, List<Tuple<ushort, LobbyDataManager.LobbyData>> datas, int minimalPlayerCount)
         {
-            StartCoroutine(LoadVotingScene(time,datas,minimalPlayerCount));
+            StartCoroutine(LoadVotingScene(time, datas, minimalPlayerCount));
         }
 
-        IEnumerator LoadVotingScene(float time,List<Tuple<ushort,LobbyDataManager.LobbyData>> datas,int minimalPlayerCount)
+        IEnumerator LoadVotingScene(float time, List<Tuple<ushort, LobbyDataManager.LobbyData>> datas, int minimalPlayerCount)
         {
             TransitionUI.Instance.StartTransition();
             ResetScene();
@@ -907,7 +908,7 @@ namespace Manager
 
             ao.allowSceneActivation = false;
 
-            while (ao.progress<0.9f)
+            while (ao.progress < 0.9f)
             {
                 yield return null;
             }
@@ -920,11 +921,11 @@ namespace Manager
             {
                 yield return null;
             }
-            
-            
+
+
             TransitionUI.Instance.ClearTransition();
-            
-            GameVoteMenu.Instance.SetVotePage(time,datas,minimalPlayerCount);
+
+            GameVoteMenu.Instance.SetVotePage(time, datas, minimalPlayerCount);
         }
     }
 }

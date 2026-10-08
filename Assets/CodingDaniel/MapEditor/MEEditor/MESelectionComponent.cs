@@ -105,7 +105,7 @@ namespace CodingDaniel.MapEditor.MEEditor
         {
             get;
         }
-        
+
         ScaleHandle ScaleHandle
         {
             get;
@@ -138,7 +138,7 @@ namespace CodingDaniel.MapEditor.MEEditor
             get;
             set;
         }
-        
+
         bool IsScaleHandleEnabled
         {
             get;
@@ -190,13 +190,13 @@ namespace CodingDaniel.MapEditor.MEEditor
 
         Transform[] GetHandleTargets();
     }
-    
-    public class MESelectionComponent : MonoBehaviour,IMESelectionComponent
+
+    public class MESelectionComponent : MonoBehaviour, IMESelectionComponent
     {
         public static MESelectionComponent Instance { private set; get; }
 
         private IME _editor;
-        
+
         public event EventHandler<MESelectionFilteringArgs> Filtering;
         public event EventHandler<MESelectionChangingArgs> SelectionChanging;
         public event EventHandler SelectionChanged;
@@ -231,8 +231,8 @@ namespace CodingDaniel.MapEditor.MEEditor
         [SerializeField]
         [FormerlySerializedAs("m_secondaryPivot")]
         private Transform _secondaryPivot = null;
-        
-        
+
+
 
         protected Transform PivotTransform
         {
@@ -243,7 +243,7 @@ namespace CodingDaniel.MapEditor.MEEditor
         {
             get { return _secondaryPivot; }
         }
-        
+
         public virtual bool IsOrthographic
         {
             get { return _editor.Camera.orthographic; }
@@ -268,7 +268,7 @@ namespace CodingDaniel.MapEditor.MEEditor
 
         public void Focus()
         {
-            
+
         }
 
         public void Focus(FocusMode mode = FocusMode.Selected)
@@ -295,13 +295,13 @@ namespace CodingDaniel.MapEditor.MEEditor
                 _editor.Camera.transform.LookAt(Pivot);
             }
         }
-        
+
         public virtual Vector3 SecondaryPivot
         {
             get { return _secondaryPivot.transform.position; }
             set { _secondaryPivot.transform.position = value; }
         }
-        
+
         public BoxSelection BoxSelection
         {
             get { return _boxSelection; }
@@ -356,7 +356,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 }
             }
         }
-        
+
         public bool IsScaleHandleEnabled
         {
             get { return _isScaleHandleEnabled && _scaleHandle != null; }
@@ -373,7 +373,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 }
             }
         }
-        
+
         public bool IsRectToolEnabled
         {
             get { return _isRectToolEnabled && _rectTool != null; }
@@ -407,7 +407,7 @@ namespace CodingDaniel.MapEditor.MEEditor
         {
             get { return _rotationHandle; }
         }
-        
+
         public ScaleHandle ScaleHandle
         {
             get { return _scaleHandle; }
@@ -529,7 +529,7 @@ namespace CodingDaniel.MapEditor.MEEditor
             {
                 _scaleHandle.SizeOfGrid = SizeOfGrid;
             }
-            
+
             if (_rectTool != null)
             {
                 _rectTool.SizeOfGrid = SizeOfGrid;
@@ -584,7 +584,7 @@ namespace CodingDaniel.MapEditor.MEEditor
         {
             Instance = this;
             _editor = MEBase.Instance;
-            
+
             if (_boxSelection == null)
             {
                 _boxSelection = GetComponentInChildren<BoxSelection>(true);
@@ -595,7 +595,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 _positionHandle = GetComponentInChildren<PositionHandle>(true);
 
             }
-            
+
             if (_rotationHandle == null)
             {
                 _rotationHandle = GetComponentInChildren<RotationHandle>(true);
@@ -612,7 +612,7 @@ namespace CodingDaniel.MapEditor.MEEditor
             {
                 _grid = GetComponentInChildren<SceneGridVisual>(true);
             }
-            
+
             if (_boxSelection != null)
             {
                 _boxSelection.Filtering += OnSelectionFiltering;
@@ -627,39 +627,39 @@ namespace CodingDaniel.MapEditor.MEEditor
                 _positionHandle.BeforeDrag.AddListener(OnBeforeDrag);
                 _positionHandle.Drop.AddListener(OnDrop);
             }
-            
-            
+
+
             if (_rotationHandle != null)
             {
-            
+
                 _rotationHandle.gameObject.SetActive(true);
                 _rotationHandle.gameObject.SetActive(false);
-            
+
                 _rotationHandle.BeforeDrag.AddListener(OnBeforeDrag);
                 _rotationHandle.Drop.AddListener(OnDrop);
             }
-            
+
             if (_scaleHandle != null)
             {
                 _scaleHandle.gameObject.SetActive(true);
                 _scaleHandle.gameObject.SetActive(false);
-            
+
                 _scaleHandle.BeforeDrag.AddListener(OnBeforeDrag);
                 _scaleHandle.Drop.AddListener(OnDrop);
             }
-            
+
             if (_rectTool != null)
             {
                 _rectTool.gameObject.SetActive(true);
                 _rectTool.gameObject.SetActive(false);
-            
+
                 _rectTool.BeforeDrag.AddListener(OnBeforeDrag);
                 _rectTool.Drop.AddListener(OnDrop);
             }
 
             _editor.Selection.SelectionChanged += OnRuntimeEditorSelectionChanged;
             _editor.Tools.ToolChanged += OnRuntimeToolChanged;
-            
+
             if (_pivot == null)
             {
                 GameObject pivot = new GameObject("Pivot");
@@ -674,7 +674,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 secondaryPivot.transform.position = Vector3.zero;
                 _secondaryPivot = secondaryPivot.transform;
             }
-            
+
             OnRuntimeEditorSelectionChanged(null);
         }
         protected virtual bool CanTransformObject(GameObject go)
@@ -713,13 +713,13 @@ namespace CodingDaniel.MapEditor.MEEditor
                 _rotationHandle.gameObject.SetActive(true);
                 _rotationHandle.gameObject.SetActive(false);
             }
-            
+
             if (_scaleHandle != null && !_scaleHandle.gameObject.activeSelf)
             {
                 _scaleHandle.gameObject.SetActive(true);
                 _scaleHandle.gameObject.SetActive(false);
             }
-            
+
             if (_rectTool != null && !_rectTool.gameObject.activeSelf)
             {
                 _rectTool.gameObject.SetActive(true);
@@ -752,13 +752,13 @@ namespace CodingDaniel.MapEditor.MEEditor
                 _rotationHandle.BeforeDrag.RemoveListener(OnBeforeDrag);
                 _rotationHandle.Drop.RemoveListener(OnDrop);
             }
-            
+
             if (_scaleHandle != null)
             {
                 _scaleHandle.BeforeDrag.RemoveListener(OnBeforeDrag);
                 _scaleHandle.Drop.RemoveListener(OnDrop);
             }
-            
+
             if (_rectTool != null)
             {
                 _rectTool.BeforeDrag.RemoveListener(OnBeforeDrag);
@@ -777,14 +777,14 @@ namespace CodingDaniel.MapEditor.MEEditor
                 _selectionOverride = null;
             }
         }
-        
+
         public virtual void SelectGO(bool multiselect, bool allowUnselect)
         {
             if (!CanSelect)
             {
                 return;
             }
-            if(_boxSelection != null && _boxSelection.IsThresholdPassed)
+            if (_boxSelection != null && _boxSelection.IsThresholdPassed)
             {
                 return;
             }
@@ -803,7 +803,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 hits = new RaycastHit[0];
             }
 
-            if (hits.Length != 1 || !(hits[0].collider is TerrainCollider) )
+            if (hits.Length != 1 || !(hits[0].collider is TerrainCollider))
             {
                 SelectGO(multiselect, allowUnselect, hits, hit => hit.collider.gameObject);
             }
@@ -826,7 +826,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 }
                 else
                 {
-                    Selection.Select(selection.FirstOrDefault(),selection);
+                    Selection.Select(selection.FirstOrDefault(), selection);
                 }
                 RaiseSelectionChanged();
             }
@@ -874,7 +874,7 @@ namespace CodingDaniel.MapEditor.MEEditor
             }
 
             Ray pointer = _editor.Pointer;
-            if(_prevPointer.origin == pointer.origin && _prevPointer.direction == pointer.direction)
+            if (_prevPointer.origin == pointer.origin && _prevPointer.direction == pointer.direction)
             {
                 if (Selection.ActiveGameObject != null)
                 {
@@ -918,11 +918,11 @@ namespace CodingDaniel.MapEditor.MEEditor
             }
         }
         private void SelectGO(bool multiselect, bool allowUnselect, GameObject hitGO)
-        {   
-            if(GetFilteredSelection(multiselect, allowUnselect, hitGO, out UnityObject[] selection))
+        {
+            if (GetFilteredSelection(multiselect, allowUnselect, hitGO, out UnityObject[] selection))
             {
                 UpdateSelection(multiselect, selection);
-            } 
+            }
         }
         private bool GetFilteredSelection(bool multiselect, bool allowUnselect, GameObject hitGO, out UnityObject[] filteredSelection)
         {
@@ -1050,13 +1050,13 @@ namespace CodingDaniel.MapEditor.MEEditor
             _uiBoxcastResults.Clear();
 
             Bounds bounds = _boxSelection.SelectionBounds;
-            
+
             Vector3[] corners = new Vector3[4];
             foreach (BaseRaycaster raycaster in FindRaycasters())
             {
                 CanvasRenderer[] renderers = raycaster.GetComponentsInChildren<CanvasRenderer>();
 
-                for(int i = 0; i < renderers.Length; ++i)
+                for (int i = 0; i < renderers.Length; ++i)
                 {
                     CanvasRenderer renderer = renderers[i];
                     RectTransform rectTransform = (RectTransform)renderer.transform;
@@ -1071,7 +1071,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                             if (CanSelectObject(renderer.gameObject))
                             {
                                 ExposeToEditor exposeToEditor = renderer.GetComponentInParent<ExposeToEditor>();
-                                if(exposeToEditor != null)
+                                if (exposeToEditor != null)
                                 {
                                     _uiBoxcastResults.Add(exposeToEditor.gameObject);
                                 }
@@ -1240,7 +1240,7 @@ namespace CodingDaniel.MapEditor.MEEditor
         private bool RaiseSelectionChanging(UnityObject[] selected, out UnityObject[] filteredSelection)
         {
             // selected = RuntimeSelectionUtil.GetRoots(selected);
-          
+
             if (SelectionChanging != null)
             {
                 MESelectionChangingArgs args = new MESelectionChangingArgs(selected);
@@ -1252,7 +1252,7 @@ namespace CodingDaniel.MapEditor.MEEditor
             filteredSelection = selected;
             return true;
         }
-        
+
         private void OnRuntimeToolChanged()
         {
             bool hasSelection = Selection.ActiveTransform != null;

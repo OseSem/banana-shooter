@@ -7,7 +7,7 @@ namespace Demo.Entity
     public class DemoThrowable : DemoEntity
     {
         public int PlayerId { get; private set; }
-        
+
         [SerializeField] private Throwable throwable;
 
         private Vector3 _lastVel;
@@ -37,7 +37,7 @@ namespace Demo.Entity
             if (!IsDestroyed)
             {
                 IsDestroyed = true;
-                if(visualEffect)
+                if (visualEffect)
                     throwable.Explode(GetTransform().position, false);
                 gameObject.SetActive(false);
             }
@@ -56,7 +56,7 @@ namespace Demo.Entity
 
         public void TryToSetCurrentVelocity()
         {
-            if (_velSet  && DemoManager.ReplayTick > _tick)
+            if (_velSet && DemoManager.ReplayTick > _tick)
             {
                 _velSet = false;
                 rb.isKinematic = false;

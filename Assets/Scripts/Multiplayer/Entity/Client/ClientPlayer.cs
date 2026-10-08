@@ -33,7 +33,7 @@ namespace Multiplayer.Entity.Client
     public class ClientPlayer : MonoBehaviour
     {
         public static Dictionary<ushort, ClientPlayer> list = new Dictionary<ushort, ClientPlayer>();
-        
+
         public static ClientPlayer LocalPlayer { get; private set; }
 
         private PlayerMovement playerMovement;
@@ -45,7 +45,7 @@ namespace Multiplayer.Entity.Client
                 if (playerMovement == null)
                     return playerMovement = PlayerMovement.Instance;
                 return playerMovement;
-            } 
+            }
         }
 
         public bool isLocal = false;
@@ -53,14 +53,14 @@ namespace Multiplayer.Entity.Client
         public DemoPlayer demoPlayer;
         public PlayerState playerState;
         public ushort Id { get; private set; }
-        
+
         public bool IsLocal { get; private set; }
-        
+
         public bool Dead { get; set; }
         public ushort Kills { get; set; }
         public ushort Deaths { get; set; }
         public int StayTime { get; set; }
-        public bool DisplayTag { get;private set; }
+        public bool DisplayTag { get; private set; }
 
         public bool HasBanana { get; private set; } = false;
 
@@ -78,16 +78,16 @@ namespace Multiplayer.Entity.Client
         [SerializeField] public Animator animator;
 
         public int Exp { get; private set; }
-    
+
         public Rigidbody player;
         [SerializeField] public TextMeshProUGUI nameText;
 
-        private Vector3 desiredPos=Vector3.zero;
-        private Quaternion desiredRot=Quaternion.identity;
+        private Vector3 desiredPos = Vector3.zero;
+        private Quaternion desiredRot = Quaternion.identity;
 
         // [Obsolete]
         // public List<MultiplayerWeapon> weapons = new List<MultiplayerWeapon>();
-        
+
         [SerializeField] public LookedToObject leftHandTarget, rightHandTarget;
 
         //public List<GameObject> hatCosmetics = new List<GameObject>();
@@ -97,13 +97,13 @@ namespace Multiplayer.Entity.Client
         //public List<GameObject> hairCosmetics = new List<GameObject>();
         //public List<GameObject> clothesCosmetics = new List<GameObject>();
         //public List<GameObject> pantCosmetics = new List<GameObject>();
-        public SkinnedMeshRenderer daveHair,clothes,pant;
+        public SkinnedMeshRenderer daveHair, clothes, pant;
 
         public List<Transform> eyes = new List<Transform>();
 
         public SkinnedMeshRenderer[] models;
 
-        public List<Perk> perks = new List<Perk>(){Perk.None,Perk.None,Perk.None} ;
+        public List<Perk> perks = new List<Perk>() { Perk.None, Perk.None, Perk.None };
         public int WeaponLevel { get; private set; }
 
         public SteamVoiceChatPeer Peer;
@@ -138,12 +138,12 @@ namespace Multiplayer.Entity.Client
         {
             if (NetworkManager.ClientEnableWorkshop && NetworkManager.LocalClientData == null) return;
             NetworkManager.GameState = GameState.Voting;
-            
+
             float time = message.GetFloat();
             ushort minimalPlayerCount = message.GetUShort();
             ushort len = message.GetUShort();
 
-            List<Tuple<ushort,LobbyDataManager.LobbyData>> datas = new List<Tuple<ushort,LobbyDataManager.LobbyData>>();
+            List<Tuple<ushort, LobbyDataManager.LobbyData>> datas = new List<Tuple<ushort, LobbyDataManager.LobbyData>>();
 
             for (int i = 0; i < len; i++)
             {
@@ -151,9 +151,9 @@ namespace Multiplayer.Entity.Client
 
                 uint kills = message.GetUInt();
 
-                if (NetworkManager.ClientData.TryGetValue(id,out var clientData))
+                if (NetworkManager.ClientData.TryGetValue(id, out var clientData))
                 {
-                    string n = Chat.Instance.GetPlayerNameNetwork(clientData.Name,clientData.SteamId,clientData.DisplayTag);
+                    string n = Chat.Instance.GetPlayerNameNetwork(clientData.Name, clientData.SteamId, clientData.DisplayTag);
                     LobbyDataManager.LobbyData data =
                         new LobbyDataManager.LobbyData(clientData.SteamId, n, kills, 0, (uint)clientData.Exp);
 
@@ -161,7 +161,7 @@ namespace Multiplayer.Entity.Client
                 }
             }
 
-            LoadingManager.Instance.StartLoadVotingScene(time-NetworkManager.Instance.Client.RTT/1000f,datas,minimalPlayerCount);
+            LoadingManager.Instance.StartLoadVotingScene(time - NetworkManager.Instance.Client.RTT / 1000f, datas, minimalPlayerCount);
         }
         [MessageHandler((ushort)ServerToClientId.OtherMode, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void OtherMode(Message message)
@@ -178,20 +178,20 @@ namespace Multiplayer.Entity.Client
             NetworkManager.Instance.MapId = map;
 
             NetworkManager.GameState = GameState.MidMatch;
-        
+
             NetworkManager.Instance.GameModeChanged?.Invoke(NetworkManager.ClientGameMode);
             LoadingManager.Iinstance.LoadGame(map, MapManager.Instance.GetMapTexture(map), "", -1);
         }
 
-        [MessageHandler((ushort)ServerToClientId.StartGame,NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.StartGame, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void StartGameClient(Message message)
         {
-            GameState roundStart =(GameState) message.GetUShort();
+            GameState roundStart = (GameState)message.GetUShort();
 
             NetworkManager.GameState = roundStart;
 
-            bool isWorkshopMap = message.GetBool(); 
-            
+            bool isWorkshopMap = message.GetBool();
+
             GameMode gameMode = (GameMode)message.GetUShort();
             Debug.Log($"Game Mode is {gameMode}");
             string map = message.GetString();
@@ -210,8 +210,8 @@ namespace Multiplayer.Entity.Client
             {
                 external = message.GetInt();
             }
-            
-            if ( map == "ProcMap" )
+
+            if (map == "ProcMap")
             {
                 seed = message.GetUInt();
             }
@@ -220,7 +220,7 @@ namespace Multiplayer.Entity.Client
             {
                 PublishedFileId_t mapId = (PublishedFileId_t)ulong.Parse(map);
                 string workshopMapHash = message.GetString();
-                
+
                 Debug.Log($"{map} server hash: {workshopMapHash}");
 
                 if (MapSaver.WorkshopMaps.TryGetValue(mapId, out var fileInfo))
@@ -240,20 +240,20 @@ namespace Multiplayer.Entity.Client
                     NetworkManager.Instance.DisconnectClient();
                     return;
                 }
-                LoadingManager.Iinstance.LoadWorkshopGame(mapId,external);
+                LoadingManager.Iinstance.LoadWorkshopGame(mapId, external);
             }
             else
             {
-                LoadingManager.Iinstance.LoadGame( map, MapManager.Instance.GetMapTexture( map ), "", external,  (int)seed );
+                LoadingManager.Iinstance.LoadGame(map, MapManager.Instance.GetMapTexture(map), "", external, (int)seed);
             }
         }
 
         private ulong groupId;
-        public static List<ulong> existGroup= new List<ulong>();
+        public static List<ulong> existGroup = new List<ulong>();
         public string GetGroupName()
         {
             string groupTag = SteamFriends.GetClanTag(new CSteamID(groupId));
-            string groupName = $"<size=15><color={StringColor.Colors[existGroup.FindIndex(a=>a==groupId)]}>{groupTag}</color></size>";
+            string groupName = $"<size=15><color={StringColor.Colors[existGroup.FindIndex(a => a == groupId)]}>{groupTag}</color></size>";
 
             return string.IsNullOrEmpty(groupTag) ? "" : groupName;
         }
@@ -269,8 +269,8 @@ namespace Multiplayer.Entity.Client
 
         public void SentPerks()
         {
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort) ClientToServerId.SendPerks);
-            ushort[] perks = 
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.SendPerks);
+            ushort[] perks =
             {
                 (ushort) PerkManager.Instance.perks[0], (ushort) PerkManager.Instance.perks[1],
                 (ushort) PerkManager.Instance.perks[2]
@@ -281,7 +281,7 @@ namespace Multiplayer.Entity.Client
             NetworkManager.Instance.Client.Send(message);
         }
         public int WeaponIndex { get; set; }
-        [MessageHandler((ushort) ServerToClientId.SpawnPlayer,NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.SpawnPlayer, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void SpawnPlayer(Message message)
         {
             ushort id = message.GetUShort();
@@ -292,10 +292,10 @@ namespace Multiplayer.Entity.Client
             string name = message.GetString();
             if (!NetworkManager.ClientData.TryGetValue(id, out var data))
             {
-                data = new ClientData(id,name, 0,false, 0, String.Empty, 0, true,false, null,null);
+                data = new ClientData(id, name, 0, false, 0, String.Empty, 0, true, false, null, null);
             }
             short rtt = -1;
-            if(message.GetBool())
+            if (message.GetBool())
                 rtt = message.GetShort();
             Vector3 pos = message.GetVector3();
             ushort kills = message.GetUShort();
@@ -308,10 +308,10 @@ namespace Multiplayer.Entity.Client
             if (id == NetworkManager.Instance.Client.Id)
             {
                 //lcoal
-            
-                player = Instantiate(NetworkManager.Instance.LocalPlayerPrefab,pos, Quaternion.identity).GetComponent<ClientPlayer>();
+
+                player = Instantiate(NetworkManager.Instance.LocalPlayerPrefab, pos, Quaternion.identity).GetComponent<ClientPlayer>();
                 player.IsLocal = true;
-            
+
                 // player.SetCosmeticLocal();
 
                 if (LoadingManager.Instance.isLoading)
@@ -336,8 +336,8 @@ namespace Multiplayer.Entity.Client
                     player.StartCoroutine(player.SetNameCorrectly());
                 }
             }
-        
-            list.Add(id,player);
+
+            list.Add(id, player);
             player.Id = id;
             player.groupId = data.GroupId;
             player.Kills = kills;
@@ -345,14 +345,14 @@ namespace Multiplayer.Entity.Client
             player.playerState.Health = player.playerState.MaxHealth;
             player.WeaponIndex = message.GetInt();
             player.desiredPos = pos;
-            
-            if(player.interpolator)player.interpolator.NewUpdate(NetworkManager.Instance.ServerTick,false,pos);
 
-            if (NetworkManager.Instance.testMode || NetworkManager.ClientGameMode==GameMode.SpecialGameMode)
+            if (player.interpolator) player.interpolator.NewUpdate(NetworkManager.Instance.ServerTick, false, pos);
+
+            if (NetworkManager.Instance.testMode || NetworkManager.ClientGameMode == GameMode.SpecialGameMode)
             {
                 player.coins = 1000;
                 player.lastCoin = 1000;
-                if(player.IsLocal)
+                if (player.IsLocal)
                     UpgradeInGameMenu.Instance.AutoUpgrade();
                 foreach (var item in UpgradeInGameMenu.Instance.upgradeItems)
                 {
@@ -377,12 +377,12 @@ namespace Multiplayer.Entity.Client
 
             player.Cash = message.GetInt();
 
-            player.playerState.SetValues(player.isLocal ,data.SteamId, data.Name, (Team) team, !specter);
-            
+            player.playerState.SetValues(player.isLocal, data.SteamId, data.Name, (Team)team, !specter);
+
             player.playerState.SetPlayerCosmetics(data.CosmeticIndex);
-            
+
             player.InitializeWeaponManager();
-        
+
             if (!player.IsLocal)
             {
                 if (NetworkManager.ClientGameMode == GameMode.TeamDeathMatch)
@@ -392,14 +392,14 @@ namespace Multiplayer.Entity.Client
             }
             if (_gameUi != null)
             {
-                _gameUi.AddPlayerToContent(name,id,data.SteamId,data.OwnedDlc,kills,deaths,player.IsReady,player.Exp,player.playerState.IsInfected,player.WeaponLevel,player.StayTime,rtt,player.DisplayTag, player.playerState);
+                _gameUi.AddPlayerToContent(name, id, data.SteamId, data.OwnedDlc, kills, deaths, player.IsReady, player.Exp, player.playerState.IsInfected, player.WeaponLevel, player.StayTime, rtt, player.DisplayTag, player.playerState);
             }
-            player.SetWeapon(weapons,player.WeaponIndex,data.CosmeticIndex.weaponIndex,true);
-            
+            player.SetWeapon(weapons, player.WeaponIndex, data.CosmeticIndex.weaponIndex, true);
+
             player.SetInfect();
-            
+
             player.StartCoroutine(player.WaitToSpect(specter));
-            
+
             DemoManager.Instance.AddPlayerSpawned(player);
         }
 
@@ -418,25 +418,25 @@ namespace Multiplayer.Entity.Client
 
             yield return new WaitForSeconds(0.5f);
 
-            if (_gameUi&&NetworkManager.Instance.IsTeamMode(playerState))
+            if (_gameUi && NetworkManager.Instance.IsTeamMode(playerState))
             {
                 //TODO: SPAWN ICON
-                _gameUi.AddPlayerDot(head,Id,Vector3.up*0.5f,playerState.Username,this);
+                _gameUi.AddPlayerDot(head, Id, Vector3.up * 0.5f, playerState.Username, this);
             }
         }
         IEnumerator WaitToSpect(bool spect)
         {
             yield return new WaitForSeconds(0.1f);
-        
-            Spect(spect,false);
+
+            Spect(spect, false);
         }
 
         public Animator clawKnifeAnim;
         void SetInfect()
         {
             playerState.SetInfect();
-            
-            if (_gameUi &&_gameUi.PlayerList.ContainsKey(Id))
+
+            if (_gameUi && _gameUi.PlayerList.ContainsKey(Id))
             {
                 _gameUi.PlayerList[Id].SetInfect(playerState.IsInfected);
             }
@@ -445,9 +445,9 @@ namespace Multiplayer.Entity.Client
             {
                 if (NetworkManager.ClientGameMode == GameMode.TeamDeathMatch)
                 {
-                    if(_setTeamOutline!=null)
+                    if (_setTeamOutline != null)
                         StopCoroutine(_setTeamOutline);
-                    _setTeamOutline= StartCoroutine(SetTeamOutline());
+                    _setTeamOutline = StartCoroutine(SetTeamOutline());
                 }
             }
         }
@@ -459,7 +459,7 @@ namespace Multiplayer.Entity.Client
             {
                 yield return null;
             }
-        
+
             if (NetworkManager.Instance.IsTeamMode(playerState))
             {
                 playerState.SetOutlineType(OutlineType.Team);
@@ -470,16 +470,16 @@ namespace Multiplayer.Entity.Client
         public void GetWeapon()
         {
             if (playerState.IsInfected) return;
-            Message msg = Message.Create(MessageSendMode.Reliable,(ushort)ClientToServerId.GetWeapon);
+            Message msg = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.GetWeapon);
 
             msg.Add(NetworkManager.Instance.Weapons);
-        
+
             NetworkManager.Instance.SendByte += msg.WrittenLength;
-        
+
             NetworkManager.Instance.Client.Send(msg);
         }
 
-        [MessageHandler((ushort) ServerToClientId.PlayerMovement, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.PlayerMovement, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void Movement(Message message)
         {
             ushort id = message.GetUShort();
@@ -489,20 +489,20 @@ namespace Multiplayer.Entity.Client
             float rot = message.GetFloat();
             float xRotation = message.GetFloat();
             bool ground = message.GetBool();
-            if (list.TryGetValue(id,out var player))
+            if (list.TryGetValue(id, out var player))
             {
                 float deltaY = AngleUtils.WrapAngle(player.head.eulerAngles.x) - xRotation;
                 float deltaX = AngleUtils.WrapAngle(rot) - AngleUtils.WrapAngle(player.orientation.localEulerAngles.y);
 
                 float deltaThreshold = 3.5f * Time.timeScale;
-            
-                deltaY = Mathf.Clamp(deltaY * 0.1f,-deltaThreshold, deltaThreshold);
-                deltaX = Mathf.Clamp(deltaX * 0.1f,-deltaThreshold, deltaThreshold);
-                
+
+                deltaY = Mathf.Clamp(deltaY * 0.1f, -deltaThreshold, deltaThreshold);
+                deltaX = Mathf.Clamp(deltaX * 0.1f, -deltaThreshold, deltaThreshold);
+
                 Vector3 offset = player.Crouch ? new Vector3(0, 0.25f, 0) : Vector3.zero;
                 Vector3 ogPos = player.desiredPos;
-                player.desiredPos = pos+offset;
-                player.desiredRot = Quaternion.Euler(0,rot,0);
+                player.desiredPos = pos + offset;
+                player.desiredRot = Quaternion.Euler(0, rot, 0);
                 player.xRotation = xRotation;
                 if (!player.IsLocal)
                 {
@@ -510,7 +510,7 @@ namespace Multiplayer.Entity.Client
                     // Head pivot keeps the vertical (pitch) look so the first
                     // person spectate camera (MoveCamera) can tilt up/down with
                     // the spectated player.
-                    player.head.localRotation = Quaternion.Euler(xRotation,0f,0f);
+                    player.head.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
                     player.playerState.SetVelocity(vel);
 
                     Vector3 dir = player.desiredPos - ogPos;
@@ -530,10 +530,10 @@ namespace Multiplayer.Entity.Client
                 }
 
                 player.Grounded = ground;
-                
-                player.playerState.SetDelta(deltaX,deltaY);
 
-                if(player.interpolator)player.interpolator.NewUpdate(tick,false,player.desiredPos);
+                player.playerState.SetDelta(deltaX, deltaY);
+
+                if (player.interpolator) player.interpolator.NewUpdate(tick, false, player.desiredPos);
             }
         }
 
@@ -547,107 +547,107 @@ namespace Multiplayer.Entity.Client
             if (list.TryGetValue(id, out var player))
             {
                 player.playerState.SetAiming(aiming);
-                
+
                 DemoManager.Instance.AddPlayerAiming(player.demoPlayer.Id, aiming);
             }
         }
 
-        
+
         public Transform head;
         private float xRotation = 0;
-        [MessageHandler((ushort) ServerToClientId.PlayerStartCrouch, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.PlayerStartCrouch, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void PlayerStartCrouch(Message message)
         {
             ushort id = message.GetUShort();
-        
-            if (list.TryGetValue(id,out var player))
+
+            if (list.TryGetValue(id, out var player))
             {
                 player.Crouch = true;
 
                 player.playerState.IsCrouching = true;
-                
-                if(player.Grounded)
+
+                if (player.Grounded)
                     AudioManager.Instance.SoundEffect3D("start_slide", player.player.transform.position, 0.8f);
-                
+
                 player.col.height = ServerPlayer.CrouchSize;
 
                 player.demoPlayer.NewCrouch(true);
-                
+
                 player._playerAnimation.SetCrouch(true);
             }
         }
-        [MessageHandler((ushort) ServerToClientId.PlayerStopCrouch, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.PlayerStopCrouch, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void PlayerStopCrouch(Message message)
         {
             ushort id = message.GetUShort();
-        
-            if (list.TryGetValue(id,out var player))
+
+            if (list.TryGetValue(id, out var player))
             {
                 player.Crouch = false;
-                
+
                 player.playerState.IsCrouching = false;
-                
+
                 player.col.height = ServerPlayer.NormalSize;
 
                 player.demoPlayer.NewCrouch(false);
-                
+
                 player._playerAnimation.SetCrouch(false);
             }
         }
-        public bool IsReady { get;private set; }
+        public bool IsReady { get; private set; }
 
-        [MessageHandler((ushort) ServerToClientId.GetWeapon, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.GetWeapon, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void GetWeapon(Message message)
         {
             ushort id = message.GetUShort();
             int weaponIndex = message.GetInt();
-            if (list.TryGetValue(id,out var player) && !player.playerState.IsInfected && !player.specting && !player.Dead)
+            if (list.TryGetValue(id, out var player) && !player.playerState.IsInfected && !player.specting && !player.Dead)
             {
                 short[] weapons = message.GetShorts();
                 // ushort[] weaponIndexs = message.GetUShorts();
-                player.SetWeapon(weapons,weaponIndex,player.playerState.CosmeticIndex.weaponIndex);
+                player.SetWeapon(weapons, weaponIndex, player.playerState.CosmeticIndex.weaponIndex);
 
                 if (message.GetBool())
                 {
-                    AudioManager.Instance.PlayPitched("weapon_bought",.4f);
+                    AudioManager.Instance.PlayPitched("weapon_bought", .4f);
                 }
                 else
                 {
-                    AudioManager.Instance.SoundEffect3DPitch("weapon_bought",player.transform.position,.4f);
+                    AudioManager.Instance.SoundEffect3DPitch("weapon_bought", player.transform.position, .4f);
                 }
             }
         }
-        [MessageHandler((ushort) ServerToClientId.PickupWeapon, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.PickupWeapon, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void PickupWeapon(Message message)
         {
             ushort id = message.GetUShort();
             int weaponIndex = message.GetInt();
-            if (list.TryGetValue(id,out var player) && !player.playerState.IsInfected &&!player.specting)
+            if (list.TryGetValue(id, out var player) && !player.playerState.IsInfected && !player.specting)
             {
                 string weapon = message.GetString();
 
                 // ushort[] weaponIndexs = message.GetUShorts();
-                player.PickupWeapon(weapon,weaponIndex,player.playerState.CosmeticIndex.weaponIndex);
+                player.PickupWeapon(weapon, weaponIndex, player.playerState.CosmeticIndex.weaponIndex);
             }
         }
         public GameObject fire;
-    
-        [MessageHandler((ushort) ServerToClientId.TakeDamage, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+
+        [MessageHandler((ushort)ServerToClientId.TakeDamage, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void TakeDamage(Message message)
         {
             uint tick = message.GetUInt();
             ushort id = message.GetUShort();
             ushort fromClient = message.GetUShort();
             bool headShot = message.GetBool();
-            if (list.TryGetValue(id,out var player))
+            if (list.TryGetValue(id, out var player))
             {
                 int damage = message.GetInt();
-                
-                player.TakeDamage(damage,headShot,player.player.transform.position,Vector3.up, fromClient,tick);
+
+                player.TakeDamage(damage, headShot, player.player.transform.position, Vector3.up, fromClient, tick);
             }
         }
 
-        [MessageHandler((ushort) ServerToClientId.PlayerFire, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.PlayerFire, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void PlayerFire(Message message)
         {
             ushort id = message.GetUShort();
@@ -659,7 +659,7 @@ namespace Multiplayer.Entity.Client
                 {
                     if (_gameUi)
                     {
-                        _gameUi.SetFire(isFire ? 1f: 0f);
+                        _gameUi.SetFire(isFire ? 1f : 0f);
                     }
                 }
                 else
@@ -667,9 +667,9 @@ namespace Multiplayer.Entity.Client
                     list[id].fire.SetActive(isFire);
                 }
             }
-        
+
         }
-        [MessageHandler((ushort) ServerToClientId.Dead, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.Dead, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void PlayerDead(Message message)
         {
             ushort id = message.GetUShort();
@@ -678,41 +678,41 @@ namespace Multiplayer.Entity.Client
             bool wall = message.GetBool();
             bool isAiming = message.GetBool();
             ushort weaponIndex = message.GetUShort();
-            ServerPlayer.DamageType damageType = (ServerPlayer.DamageType) message.GetUShort();
+            ServerPlayer.DamageType damageType = (ServerPlayer.DamageType)message.GetUShort();
             if (list.ContainsKey(id))
             {
                 list[id].playerState.MaxHealth = 100;
                 if (list[id].HasPerk(Perk.Fat))
-                    list[id].playerState.MaxHealth = (int) (list[id].playerState.MaxHealth * PerkManager.FatMultiplier);
-                list[id].PlayerDead(fromClient,hitHead,wall,isAiming,weaponIndex,damageType);
+                    list[id].playerState.MaxHealth = (int)(list[id].playerState.MaxHealth * PerkManager.FatMultiplier);
+                list[id].PlayerDead(fromClient, hitHead, wall, isAiming, weaponIndex, damageType);
                 if (id == NetworkManager.Instance.Client.Id)
                 {
                     if (_gameUi)
                     {
-                        _gameUi.Hurt(0,100);
+                        _gameUi.Hurt(0, 100);
                     }
                 }
             }
         }
-        [MessageHandler((ushort) ServerToClientId.Respawn, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.Respawn, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void PlayerRespawn(Message message)
         {
             ushort id = message.GetUShort();
-            if (list.TryGetValue(id,out var player))
+            if (list.TryGetValue(id, out var player))
             {
                 player.PlayerRespawn(message.GetVector3());
                 short[] weapons = message.GetShorts();
                 int weaponIndex = message.GetInt();
-                player.SetWeapon(weapons,weaponIndex,player.playerState.CosmeticIndex.weaponIndex);
+                player.SetWeapon(weapons, weaponIndex, player.playerState.CosmeticIndex.weaponIndex);
             }
         }
 
         public bool bloodThirsty = false;
-        void TakeDamage(int damage,bool headShot, Vector3 point, Vector3 normal, ushort fromClient,uint tick)
+        void TakeDamage(int damage, bool headShot, Vector3 point, Vector3 normal, ushort fromClient, uint tick)
         {
-            if(!hitted)
+            if (!hitted)
                 hitted = true;
-            
+
             bool fromPlayerIsLocal = fromClient == NetworkManager.Instance.Client.Id;
             int attackerId = demoPlayer.Id;
             if (list.TryGetValue(fromClient, out var attacker))
@@ -720,37 +720,37 @@ namespace Multiplayer.Entity.Client
                 attackerId = attacker.demoPlayer.Id;
                 fromPlayerIsLocal = attacker.playerState.IsLocal;
             }
-            
-            playerState.TakeDamage(damage,headShot,point,normal,!fromPlayerIsLocal, fromPlayerIsLocal);
+
+            playerState.TakeDamage(damage, headShot, point, normal, !fromPlayerIsLocal, fromPlayerIsLocal);
             if (IsLocal)
             {
-                DamageTracker.DamageTaken(fromClient,damage);
+                DamageTracker.DamageTaken(fromClient, damage);
                 HitDetection.Instance.CreateIndicator(list.TryGetValue(fromClient, out var cp)
                     ? cp.player.transform.position
                     : Vector3.zero);
             }
 
-            DemoManager.Instance.AddPlayerTakeDamage(demoPlayer.Id, attackerId,damage ,playerState.Health,headShot,point,normal);
+            DemoManager.Instance.AddPlayerTakeDamage(demoPlayer.Id, attackerId, damage, playerState.Health, headShot, point, normal);
 
-            if (fromClient == Id || fromClient==41) return;
+            if (fromClient == Id || fromClient == 41) return;
 
             if (fromPlayerIsLocal)
             {
                 if (list.TryGetValue(fromClient, out var localPlayer))
                 {
-                    localPlayer.DamageTracker.DamageGiven(Id,damage);
+                    localPlayer.DamageTracker.DamageGiven(Id, damage);
                 }
                 if (!_weaponManager.ShootingBuffer[tick % WeaponManager.MaxStoredSize])
                 {
                     HitMarker.Instance.StartHitMarker(headShot ? Color.yellow : Color.white);
-                    if (GameManager.Instance.setting.enableGore&&GameManager.Instance.setting.spawnParticle)
+                    if (GameManager.Instance.setting.enableGore && GameManager.Instance.setting.spawnParticle)
                     {
                         ObjectPooler.Instance.SpawnFromPool("Blood", point, Quaternion.LookRotation(normal));
                     }
                 }
             }
         }
-        [MessageHandler((ushort) ServerToClientId.UpdateWeaponIndex, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.UpdateWeaponIndex, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void UpdateWeaponIndex(Message message)
         {
             ushort id = message.GetUShort();
@@ -761,12 +761,12 @@ namespace Multiplayer.Entity.Client
                 list[id].SetWeapon(index);
             }
         }
-    
-        [MessageHandler((ushort) ServerToClientId.TakeHealth, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+
+        [MessageHandler((ushort)ServerToClientId.TakeHealth, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void TakeHealth(Message message)
         {
             ushort id = message.GetUShort();
-            if (list.TryGetValue(id,out var player))
+            if (list.TryGetValue(id, out var player))
             {
                 int health = message.GetInt();
 
@@ -779,20 +779,20 @@ namespace Multiplayer.Entity.Client
             DemoManager.Instance.AddPlayerTakeHealth(demoPlayer.Id, health, playerState.MaxHealth);
             playerState.TakeHealth(health, playerState.MaxHealth);
             bloodThirsty = true;
-            Invoke(nameof(ClearBloodThirsty),0.5f);
+            Invoke(nameof(ClearBloodThirsty), 0.5f);
         }
 
         void ClearBloodThirsty()
         {
             bloodThirsty = false;
         }
-        [MessageHandler((ushort) ServerToClientId.Upgrade, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.Upgrade, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void UpgradeHealth(Message message)
         {
             ushort id = message.GetUShort();
             uint tick = message.GetUInt();
             bool success = message.GetBool();
-            if (list.TryGetValue(id,out var player))
+            if (list.TryGetValue(id, out var player))
             {
                 uint upgradeIndex = message.GetUInt();
 
@@ -837,31 +837,31 @@ namespace Multiplayer.Entity.Client
                                     break;
                             }
                         }
-                        
+
                     }
                 }
-                
 
-               
+
+
             }
         }
-        public AudioSource audioSource,voice;
+        public AudioSource audioSource, voice;
 
-        [MessageHandler((ushort) ServerToClientId.Shoot, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.Shoot, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void Shoot(Message message)
         {
             ushort id = message.GetUShort();
             EShootingResult result = (EShootingResult)message.GetInt();
             int bulletCount = message.GetInt();
             Vector3 dir = message.GetVector3();
-            if (list.TryGetValue(id,out var player) && !player.Dead)
+            if (list.TryGetValue(id, out var player) && !player.Dead)
             {
                 if (result == EShootingResult.EResultOk)
                 {
                     DemoManager.Instance.AddPlayerWeaponShoot(player.demoPlayer.Id, player.playerState.WeaponManager.CurrentWeaponIndex, dir,
                         bulletCount);
                 }
-                player.playerState.WeaponManager.Shoot(dir ,bulletCount, result);
+                player.playerState.WeaponManager.Shoot(dir, bulletCount, result);
             }
         }
 
@@ -874,11 +874,11 @@ namespace Multiplayer.Entity.Client
             if (list.TryGetValue(id, out var player))
             {
                 player.playerState.WeaponManager.StartReloading(index);
-                DemoManager.Instance.AddPlayerWeaponReload(player.demoPlayer.Id,player.playerState.WeaponManager.CurrentWeaponIndex, player.playerState.WeaponManager.CurrentWeapon != null ? 0 : 0);
+                DemoManager.Instance.AddPlayerWeaponReload(player.demoPlayer.Id, player.playerState.WeaponManager.CurrentWeaponIndex, player.playerState.WeaponManager.CurrentWeapon != null ? 0 : 0);
             }
         }
 
-        [MessageHandler((ushort) ServerToClientId.WeaponReloaded, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.WeaponReloaded, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void WeaponReloaded(Message message)
         {
             ushort id = message.GetUShort();
@@ -898,39 +898,39 @@ namespace Multiplayer.Entity.Client
                             // Debug.LogError($"{index} reload failed, tick: {tick}, reason: time out");
                             return;
                         }
-                    
+
                         if (t.Item1 == tick && t.Item2 == index)
                         {
                             //TODO: Reload success
                             // Debug.Log($"{index} reload success, tick: {tick}");
-                        
+
                             if (player.IsLocal)
                             {
-                    
+
                             }
                             else
                             {
-                    
+
                             }
-                        
+
                             return;
                         }
                     }
-                    if(_weaponManager.CurrentWeapon!=null)_weaponManager.CurrentWeapon.ResetDynamic();
+                    if (_weaponManager.CurrentWeapon != null) _weaponManager.CurrentWeapon.ResetDynamic();
                 }
                 else
                 {
-                    
+
                 }
-                
+
                 // Debug.LogError($"{index} reload failed, tick: {tick}");
             }
 
         }
 
         public Light Light;
-    
-        [MessageHandler((ushort) ServerToClientId.TurnLight, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+
+        [MessageHandler((ushort)ServerToClientId.TurnLight, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void TurnLight(Message message)
         {
             ushort id = message.GetUShort();
@@ -942,13 +942,13 @@ namespace Multiplayer.Entity.Client
             }
         }
 
-        [MessageHandler((ushort) ServerToClientId.PlayerInfect, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.PlayerInfect, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void PlayerInfect(Message message)
         {
             ushort id = message.GetUShort();
             ushort fromClient = message.GetUShort();
 
-            if (list.TryGetValue(id,out var player))
+            if (list.TryGetValue(id, out var player))
             {
                 player.playerState.IsInfected = true;
 
@@ -956,14 +956,14 @@ namespace Multiplayer.Entity.Client
                 {
                     player.Kills = 0;
                     player.Deaths++;
-                
-                    if (list.TryGetValue(fromClient,out var attacker))
+
+                    if (list.TryGetValue(fromClient, out var attacker))
                     {
                         attacker.Kills++;
                         if (Mathf.Abs(attacker.coins - attacker.lastCoin) > 1) return;
                         attacker.lastCoin = attacker.coins;
                         attacker.coins++;
-                        if(attacker.IsLocal)
+                        if (attacker.IsLocal)
                             UpgradeInGameMenu.Instance.AutoUpgrade();
                         attacker.currentLifeKill++;
                         if (attacker.IsLocal)
@@ -986,16 +986,16 @@ namespace Multiplayer.Entity.Client
                         }
                     }
                 }
-            
+
                 DemoManager.Instance.AddPlayerState(player.demoPlayer.Id, player.Dead, player.playerState.IsInfected, -1, 0);
-            
+
                 player.SetInfect();
             }
         }
 
         public bool hitted = false;
 
-        [MessageHandler((ushort) ServerToClientId.SpecialWeapon, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.SpecialWeapon, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void SpecialWeapon(Message message)
         {
             ushort fromClient = message.GetUShort();
@@ -1010,23 +1010,23 @@ namespace Multiplayer.Entity.Client
         void SpecialWeapon(short w)
         {
             WeaponIndex = 3;
-            
+
             playerState.WeaponManager.SetSpecialWeapon(w);
         }
-        [MessageHandler((ushort) ServerToClientId.ManageToKick, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.ManageToKick, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void ManageToKick(Message message)
         {
             ushort kickPlayerId = message.GetUShort();
 
             ushort fromClient = message.GetUShort();
-            VoteKicking voteKicking = new VoteKicking(kickPlayerId,fromClient);
+            VoteKicking voteKicking = new VoteKicking(kickPlayerId, fromClient);
 
             if (_gameUi)
             {
                 _gameUi.AddVote(voteKicking);
             }
         }
-        [MessageHandler((ushort) ServerToClientId.AgreeKicking, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.AgreeKicking, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void AgreeKicking(Message message)
         {
             if (_gameUi)
@@ -1035,7 +1035,7 @@ namespace Multiplayer.Entity.Client
             }
         }
 
-        [MessageHandler((ushort) ServerToClientId.SetTime, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.SetTime, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void SetTime(Message message)
         {
             ushort id = message.GetUShort();
@@ -1061,12 +1061,12 @@ namespace Multiplayer.Entity.Client
             if (IsLocal)
             {
                 AudioManager.Instance.Play("reward_2");
-            
+
                 _gameUi.Ticking();
-                _gameUi.Invoke(nameof(_gameUi.ClearTicking),1.2f);
+                _gameUi.Invoke(nameof(_gameUi.ClearTicking), 1.2f);
             }
         }
-        [MessageHandler((ushort) ServerToClientId.DisAgreeKicking, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.DisAgreeKicking, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void DisAgreeKicking(Message message)
         {
             if (_gameUi)
@@ -1074,7 +1074,7 @@ namespace Multiplayer.Entity.Client
                 _gameUi.DisAgreedVote();
             }
         }
-        [MessageHandler((ushort) ServerToClientId.ClearKick, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.ClearKick, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void ClearKick(Message message)
         {
             if (_gameUi)
@@ -1082,13 +1082,13 @@ namespace Multiplayer.Entity.Client
                 _gameUi.ClearKick();
             }
         }
-        [MessageHandler((ushort) ServerToClientId.VoteToKickFinish, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.VoteToKickFinish, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void VoteToKickFinish(Message message)
         {
-        
+
             ushort kickPlayerId = message.GetUShort();
-        
-            
+
+
             if (kickPlayerId == NetworkManager.Instance.Client.Id)
             {
                 if (NetworkServerManager.Instance.Server.IsRunning)
@@ -1099,7 +1099,7 @@ namespace Multiplayer.Entity.Client
                     }
                     return;
                 }
-                if (LoadingManager.Instance.menuType == LoadingManager.MenuType.None)LoadingManager.Instance.menuType= LoadingManager.MenuType.Kick;
+                if (LoadingManager.Instance.menuType == LoadingManager.MenuType.None) LoadingManager.Instance.menuType = LoadingManager.MenuType.Kick;
                 LobbyManager.Instance.LeaveLobby();
                 return;
             }
@@ -1111,7 +1111,7 @@ namespace Multiplayer.Entity.Client
 
         [SerializeField] public GameObject bananaObj;
 
-        [MessageHandler((ushort) ServerToClientId.PlayerHasBanana,
+        [MessageHandler((ushort)ServerToClientId.PlayerHasBanana,
             NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void PlayerHasBanana(Message message)
         {
@@ -1121,7 +1121,7 @@ namespace Multiplayer.Entity.Client
             {
                 player.SetHasBanana(message.GetBool());
             }
-            
+
         }
 
         void SetHasBanana(bool flag)
@@ -1131,13 +1131,13 @@ namespace Multiplayer.Entity.Client
             bananaObj.SetActive(flag);
             if (flag)
             {
-                Tutorial.Instance.SetText("catchthebanana_hint_0",5f);
+                Tutorial.Instance.SetText("catchthebanana_hint_0", 5f);
             }
 
             playerState.SetOutlineType(OutlineType.HasBanana);
-            OutlineDisplay(new Color(255/255f,151/255f,0), Outline.Mode.OutlineAll);
+            OutlineDisplay(new Color(255 / 255f, 151 / 255f, 0), Outline.Mode.OutlineAll);
         }
-        [MessageHandler((ushort) ServerToClientId.ChangeCosmetic, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.ChangeCosmetic, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void ChangeCosmetic(Message message)
         {
             ushort fromClient = message.GetUShort();
@@ -1146,16 +1146,16 @@ namespace Multiplayer.Entity.Client
             Color color = message.GetColor();
             float shiny = message.GetFloat();
             int particle = message.GetInt();
-            if (list.TryGetValue(fromClient,out var player))
+            if (list.TryGetValue(fromClient, out var player))
             {
-                player.playerState.ChangeCosmetic(type,index,color,shiny,particle);
+                player.playerState.ChangeCosmetic(type, index, color, shiny, particle);
 
                 player.playerState.CosmeticIndex = player.playerState.CosmeticIndex;
             }
-        
+
         }
 
-        [MessageHandler((ushort) ServerToClientId.GrindCash,
+        [MessageHandler((ushort)ServerToClientId.GrindCash,
             NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void GrindCash(Message message)
         {
@@ -1164,7 +1164,7 @@ namespace Multiplayer.Entity.Client
             if (list.TryGetValue(id, out var player))
             {
                 int cash = message.GetInt();
-                
+
                 player.SetCash(cash);
             }
         }
@@ -1179,16 +1179,16 @@ namespace Multiplayer.Entity.Client
 
                 if (offset > 0)
                 {
-                    JuicyScore.Instance.UpdateScore(offset,JuicyScore.ScoreType.Usd);
+                    JuicyScore.Instance.UpdateScore(offset, JuicyScore.ScoreType.Usd);
                 }
             }
 
             if (_gameUi)
             {
-                _gameUi.SetPlayerDotName(Id,this);
+                _gameUi.SetPlayerDotName(Id, this);
             }
         }
-        [MessageHandler((ushort) ServerToClientId.DisableInvincible, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.DisableInvincible, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void DisableInvincible(Message message)
         {
             ushort id = message.GetUShort();
@@ -1210,13 +1210,13 @@ namespace Multiplayer.Entity.Client
                 }
             }
         }
-        
-        
+
+
         public bool HasPerk(Perk perk)
         {
             return perks.Contains(perk);
         }
-        [MessageHandler((ushort) ServerToClientId.SendPerks, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.SendPerks, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void ReceivePerks(Message message)
         {
             ushort fromClient = message.GetUShort();
@@ -1227,11 +1227,11 @@ namespace Multiplayer.Entity.Client
                 int i = 0;
                 foreach (var perk in p)
                 {
-                    list[fromClient].perks[i++] = (Perk) perk;
+                    list[fromClient].perks[i++] = (Perk)perk;
                 }
 
                 if (list[fromClient].HasPerk(Perk.Fat))
-                    list[fromClient].playerState.MaxHealth = (int) (100 * PerkManager.FatMultiplier);
+                    list[fromClient].playerState.MaxHealth = (int)(100 * PerkManager.FatMultiplier);
                 if (fromClient == NetworkManager.Instance.Client.Id)
                 {
                     if (_gameUi)
@@ -1243,7 +1243,7 @@ namespace Multiplayer.Entity.Client
             }
         }
 
-        [MessageHandler((ushort) ServerToClientId.PlayerWeaponLevel, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.PlayerWeaponLevel, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void PlayerWeaponLevel(Message message)
         {
             ushort fromClient = message.GetUShort();
@@ -1251,22 +1251,22 @@ namespace Multiplayer.Entity.Client
             {
                 int weaponLevel = message.GetInt();
                 player.WeaponLevel = weaponLevel;
-            
+
                 if (_gameUi)
                 {
                     if (player.IsLocal)
                     {
                         GunGameWeapon.Instance.UpdateWeapon(weaponLevel);
                     }
-                
-                    if(_gameUi.PlayerList.TryGetValue(fromClient, out var playerListItem))
+
+                    if (_gameUi.PlayerList.TryGetValue(fromClient, out var playerListItem))
                         playerListItem.SetWeaponLevel(weaponLevel);
                 }
             }
-       
-        
+
+
         }
-        [MessageHandler((ushort) ServerToClientId.SendLatency, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.SendLatency, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void SendLatency(Message message)
         {
             if (_gameUi == null) return;
@@ -1278,7 +1278,7 @@ namespace Multiplayer.Entity.Client
             }
         }
 
-        [MessageHandler((ushort) ServerToClientId.SpecterMode, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.SpecterMode, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void SpecterMode(Message message)
         {
             ushort fromClient = message.GetUShort();
@@ -1286,19 +1286,19 @@ namespace Multiplayer.Entity.Client
             if (list.TryGetValue(fromClient, out var player))
             {
                 bool flag = message.GetBool();
-            
-                player.Spect(flag,true);
+
+                player.Spect(flag, true);
             }
         }
 
         public bool specting = false;
 
-        void Spect(bool flag,bool f)
+        void Spect(bool flag, bool f)
         {
             specting = flag;
 
             playerState.SetCanSpectate(!flag);
-            
+
             if (_gameUi.PlayerList.TryGetValue(Id, out var item))
             {
                 item.gameObject.SetActive(!flag);
@@ -1306,7 +1306,7 @@ namespace Multiplayer.Entity.Client
 
             if (!flag && !f) return;
             player.gameObject.SetActive(!flag);
-            
+
             if (flag)
             {
                 Dead = true;
@@ -1320,16 +1320,16 @@ namespace Multiplayer.Entity.Client
                     SpectateMovement.Instance.StartSpect();
                     SpectateMovement.Instance.ChangePerspective(EPerspective.FirstPerson);
                     Tutorial.Instance.SetText("SpectateTip");
-                
+
                     if (_gameUi)
                     {
-                        _gameUi.Hurt(playerState.Health,playerState.MaxHealth);
+                        _gameUi.Hurt(playerState.Health, playerState.MaxHealth);
                         _gameUi.Clear();
                         _gameUi.DeleteDeath();
                     }
                 }
 
-                
+
             }
         }
 
@@ -1360,43 +1360,43 @@ namespace Multiplayer.Entity.Client
         {
             _gameUi = manager;
         }
-        
+
         [SerializeField] public List<FastIKFabric> iks = new();
-        public int lastCoin=0;
+        public int lastCoin = 0;
         public bool moved = false;
-    
+
         public ushort currentLifeKill = 0;
-        void PlayerDead(ushort fromClient,bool hitHead,bool wall,bool isAiming,ushort weaponIndex,ServerPlayer.DamageType damageType)
+        void PlayerDead(ushort fromClient, bool hitHead, bool wall, bool isAiming, ushort weaponIndex, ServerPlayer.DamageType damageType)
         {
             if (Dead) return;
             Dead = true;
-            if(NetworkManager.ClientGameMode!=GameMode.KillConfirm)
+            if (NetworkManager.ClientGameMode != GameMode.KillConfirm)
                 Deaths++;
 
             bool attackerIsLocal = false;
             if (list.TryGetValue(fromClient, out var attacker))
                 attackerIsLocal = attacker.playerState.IsLocal;
-            playerState.Dead(hitHead,wall,weaponIndex,attackerIsLocal);
+            playerState.Dead(hitHead, wall, weaponIndex, attackerIsLocal);
 
             SetCash(0);
 
-            if (_gameUi.PlayerList.TryGetValue(Id,out var playerListItem))
+            if (_gameUi.PlayerList.TryGetValue(Id, out var playerListItem))
                 playerListItem.SetState(PlayerListItem.PlayerItemState.Dead);
             switch (damageType)
             {
                 case ServerPlayer.DamageType.Player:
-                    if (list.TryGetValue(fromClient,out var fromPlayer))
+                    if (list.TryGetValue(fromClient, out var fromPlayer))
                     {
-                        if (NetworkManager.ClientGameMode != GameMode.KillConfirm && fromClient!=Id)
+                        if (NetworkManager.ClientGameMode != GameMode.KillConfirm && fromClient != Id)
                         {
                             fromPlayer.Kills++;
                             if (Mathf.Abs(list[fromClient].coins - list[fromClient].lastCoin) > 1) return;
                             fromPlayer.lastCoin = fromPlayer.coins;
                             fromPlayer.coins++;
-                            if(fromPlayer.IsLocal)
+                            if (fromPlayer.IsLocal)
                                 UpgradeInGameMenu.Instance.AutoUpgrade();
                             fromPlayer.currentLifeKill++;
-                
+
                             if (_gameUi)
                             {
                                 if (_gameUi.PlayerList.TryGetValue(Id, out var playerUi))
@@ -1408,11 +1408,11 @@ namespace Multiplayer.Entity.Client
                                     playerUi.SetKills(list[fromClient].Kills);
                                 }
                             }
-                            
-                            if(fromPlayer.playerState.IsLocal)
-                                _gameUi.spectateCanvas.SetKd(Kills,Deaths);
+
+                            if (fromPlayer.playerState.IsLocal)
+                                _gameUi.spectateCanvas.SetKd(Kills, Deaths);
                         }
-            
+
                         if (fromPlayer.IsLocal)
                         {
                             foreach (var item in UpgradeInGameMenu.Instance.upgradeItems)
@@ -1422,7 +1422,7 @@ namespace Multiplayer.Entity.Client
                         }
                         if (fromPlayer.playerState.WeaponManager.CurrentWeapon && fromPlayer.playerState.WeaponManager.CurrentWeapon.Type == Firearms.WeaponType.LaserGun)
                         {
-                            if(IsLocal)
+                            if (IsLocal)
                                 AudioManager.Instance.Play("Pew");
                             else audioSource.PlayOneShot(PrefabManager.Instance.pewClip);
                         }
@@ -1434,9 +1434,9 @@ namespace Multiplayer.Entity.Client
                             noscope = !isAiming;
                         }
 
-                        KillMessage.Instance.AddKillMessage(Chat.Instance.GetPlayerNameNetwork(fromPlayer.playerState.Username,fromPlayer.playerState.SteamId,fromPlayer.DisplayTag)+ " " + fromPlayer.GetGroupName()
-                            ,Chat.Instance.GetPlayerNameNetwork(playerState.Username,playerState.SteamId,DisplayTag) + " " + GetGroupName(),weaponIndex,hitHead,wall, noscope);
-                    
+                        KillMessage.Instance.AddKillMessage(Chat.Instance.GetPlayerNameNetwork(fromPlayer.playerState.Username, fromPlayer.playerState.SteamId, fromPlayer.DisplayTag) + " " + fromPlayer.GetGroupName()
+                            , Chat.Instance.GetPlayerNameNetwork(playerState.Username, playerState.SteamId, DisplayTag) + " " + GetGroupName(), weaponIndex, hitHead, wall, noscope);
+
                         DemoManager.Instance.AddPlayerState(demoPlayer.Id, Dead, playerState.IsInfected, fromPlayer.demoPlayer.Id, weaponIndex);
                     }
 
@@ -1444,17 +1444,17 @@ namespace Multiplayer.Entity.Client
                 case ServerPlayer.DamageType.Enemy:
                     if (ClientEnemy.list.TryGetValue(fromClient, out var enemy))
                     {
-                        KillMessage.Instance.AddKillMessage(enemy.enemyState.enemyType.ToString(),Chat.Instance.GetPlayerNameNetwork(playerState.Username,playerState.SteamId,DisplayTag),40,false,false, false);
+                        KillMessage.Instance.AddKillMessage(enemy.enemyState.enemyType.ToString(), Chat.Instance.GetPlayerNameNetwork(playerState.Username, playerState.SteamId, DisplayTag), 40, false, false, false);
                         DemoManager.Instance.AddPlayerState(demoPlayer.Id, Dead, playerState.IsInfected, enemy.demoEnemy.Id, weaponIndex);
                     }
                     else
                     {
-                        KillMessage.Instance.AddKillMessage("ENEMY -" + fromClient,Chat.Instance.GetPlayerNameNetwork(playerState.Username,playerState.SteamId,DisplayTag),40,false,false, false);
+                        KillMessage.Instance.AddKillMessage("ENEMY -" + fromClient, Chat.Instance.GetPlayerNameNetwork(playerState.Username, playerState.SteamId, DisplayTag), 40, false, false, false);
                         DemoManager.Instance.AddPlayerState(demoPlayer.Id, Dead, playerState.IsInfected, -1, weaponIndex);
                     }
                     break;
                 case ServerPlayer.DamageType.Void:
-                    KillMessage.Instance.AddKillMessage("Void",Chat.Instance.GetPlayerNameNetwork(playerState.Username,playerState.SteamId,DisplayTag),40,false,false, false);
+                    KillMessage.Instance.AddKillMessage("Void", Chat.Instance.GetPlayerNameNetwork(playerState.Username, playerState.SteamId, DisplayTag), 40, false, false, false);
                     DemoManager.Instance.AddPlayerState(demoPlayer.Id, Dead, playerState.IsInfected, 3000, 0);
                     break;
             }
@@ -1467,13 +1467,13 @@ namespace Multiplayer.Entity.Client
                 {
                     if (_gameUi)
                     {
-                        _gameUi.DisplayPlayerDot(Id,false);
+                        _gameUi.DisplayPlayerDot(Id, false);
                     }
                 }
                 if (damageType == ServerPlayer.DamageType.Player && fromClient == NetworkManager.Instance.Client.Id)
                 {
                     #region Visual Effect
-                    
+
                     UpgradeInGameMenu.Instance.SetCoinText(list[fromClient].coins);
 
                     int score = 125;
@@ -1491,11 +1491,11 @@ namespace Multiplayer.Entity.Client
                     {
                         AchievementManager.Instance.SetAchievement(AchievementManager.EAchievements.BLOODDTHIRSTY);
                     }
-                    if (_weaponManager.CurrentWeapon&&_weaponManager.CurrentWeapon.gameObject.CompareTag("Sniper"))
+                    if (_weaponManager.CurrentWeapon && _weaponManager.CurrentWeapon.gameObject.CompareTag("Sniper"))
                     {
                         AchievementManager.Instance.SetStatsPlusOne(AchievementManager.EStats.SNIPER_SHOT);
                     }
-                    if (_weaponManager.CurrentWeapon&&_weaponManager.CurrentWeapon.gameObject.CompareTag("Banana"))
+                    if (_weaponManager.CurrentWeapon && _weaponManager.CurrentWeapon.gameObject.CompareTag("Banana"))
                     {
                         QuestManager.Instance.GetProgress(QuestType.BananaMan);
                         AchievementManager.Instance.SetStatsPlusOne(AchievementManager.EStats.BANANA_KILL);
@@ -1509,7 +1509,7 @@ namespace Multiplayer.Entity.Client
                     {
                         int[] gunKills = NetworkManager.Instance.game.gunKills;
 
-                        if(gunKills.Length>weaponIndex)
+                        if (gunKills.Length > weaponIndex)
                             gunKills[weaponIndex]++;
 
                         // The achievement is earned by getting a kill with every weapon
@@ -1544,7 +1544,7 @@ namespace Multiplayer.Entity.Client
                         ClientPlayer localPlayer = list[fromClient];
                         foreach (var clientPlayer in list.Values)
                         {
-                            if (clientPlayer != localPlayer )
+                            if (clientPlayer != localPlayer)
                             {
                                 if (clientPlayer.Kills != 0)
                                 {
@@ -1554,8 +1554,8 @@ namespace Multiplayer.Entity.Client
                             }
                         }
 
-                    
-                    
+
+
                         if (firstKill)
                         {
                             AchievementManager.Instance.SetAchievement(AchievementManager.EAchievements.BAD_GUY);
@@ -1566,7 +1566,7 @@ namespace Multiplayer.Entity.Client
                             }
                         }
 
-                        if (list.ContainsKey(fromClient)  && Vector3.Distance(list[fromClient].player.transform.position,player.transform.position)>100)
+                        if (list.ContainsKey(fromClient) && Vector3.Distance(list[fromClient].player.transform.position, player.transform.position) > 100)
                         {
                             AchievementManager.Instance.SetAchievement(AchievementManager.EAchievements.SKY_EYE);
                         }
@@ -1597,7 +1597,7 @@ namespace Multiplayer.Entity.Client
                             AchievementManager.Instance.SetStatsPlusOne(AchievementManager.EStats.KNIFE_KILL);
                             QuestManager.Instance.GetProgress(QuestType.KnifeMan);
                         }
-                        if (SteamFriends.HasFriend((CSteamID) playerState.SteamId, EFriendFlags.k_EFriendFlagAll))
+                        if (SteamFriends.HasFriend((CSteamID)playerState.SteamId, EFriendFlags.k_EFriendFlagAll))
                         {
                             if (SteamUserStats.RequestCurrentStats())
                             {
@@ -1631,21 +1631,21 @@ namespace Multiplayer.Entity.Client
                         }
                     }
 
-                    if (currentLifeKill >= 8 && Random.Range(0,100)<=20)
+                    if (currentLifeKill >= 8 && Random.Range(0, 100) <= 20)
                     {
                         //don’t kill too many my boy!
                         VoiceLine.Instance.PlayVoice(VoiceKey.kill_E_01);
                         VoiceLine.Instance.PlayVoice(VoiceKey.kill_E_02);
                     }
-                    else if (currentLifeKill >= 5&& Random.Range(0,100)<=20)
+                    else if (currentLifeKill >= 5 && Random.Range(0, 100) <= 20)
                     {
                         VoiceLine.Instance.PlayVoice(Random.Range(0, 10) <= 5 ? VoiceKey.kill_A : VoiceKey.kill_C);
                     }
-                    else if (tiedOrWin&& Random.Range(0,100)<=10)
+                    else if (tiedOrWin && Random.Range(0, 100) <= 10)
                     {
                         VoiceLine.Instance.PlayVoice(Random.Range(0, 2) < 1 ? VoiceKey.kill_G : VoiceKey.funny_A);
                     }
-                    else if (currentLifeKill == 1 && Random.Range(0,100)<=5)
+                    else if (currentLifeKill == 1 && Random.Range(0, 100) <= 5)
                     {
                         if (Random.Range(0, 10) < 5)
                         {
@@ -1656,9 +1656,9 @@ namespace Multiplayer.Entity.Client
                         {
                             //Banana banana banana
                             VoiceLine.Instance.PlayVoice(VoiceKey.funny_E);
-                        
+
                         }
-                    
+
                     }
                     else if (currentLifeKill == 0)
                     {
@@ -1668,18 +1668,18 @@ namespace Multiplayer.Entity.Client
                             VoiceLine.Instance.PlayVoice(VoiceKey.kill_D_01);
                             VoiceLine.Instance.PlayVoice(VoiceKey.kill_D_02);
                         }
-                        else if(a >= 7)
+                        else if (a >= 7)
                         {
                             VoiceLine.Instance.PlayVoice(VoiceKey.funny_C);
                         }
-                    
+
                     }
 
                     #endregion
 
                     #region Quest
 
-                    bool rifle = _weaponManager.CurrentWeapon&& _weaponManager.CurrentWeapon.CompareTag("AL48");
+                    bool rifle = _weaponManager.CurrentWeapon && _weaponManager.CurrentWeapon.CompareTag("AL48");
                     if (rifle)
                     {
                         QuestManager.Instance.GetProgress(QuestType.RifleMan);
@@ -1716,25 +1716,25 @@ namespace Multiplayer.Entity.Client
             }
             else
             {
-                DamageTracker.DamageTaken(fromClient,playerState.Health);
-                
+                DamageTracker.DamageTaken(fromClient, playerState.Health);
+
                 #region Input
 
                 PlayerMovement.DeInitialize();
-                
+
                 playerState.grappling.StopGrapple(new InputAction.CallbackContext());
 
                 #endregion
-                
+
                 #region Visual Effect
-                
+
                 PlayerMovement.gameObject.SetActive(false);
 
                 if (playerState.IsInfected && InfectedHand.Instance)
                 {
                     InfectedHand.Instance.clawKnife.gameObject.SetActive(false);
                 }
-            
+
                 PowerInGameMenu.Instance.ClearSpecialWeaponForLocal();
                 UpgradeInGameMenu.Instance.ClearDash();
                 UpgradeInGameMenu.Instance.ClearDoubleJump();
@@ -1744,31 +1744,31 @@ namespace Multiplayer.Entity.Client
                 UpgradeInGameMenu.Instance.DownHealth();
                 UpgradeInGameMenu.Instance.DownMovementSpeed();
                 _gameUi.healthSlider.maxValue = playerState.MaxHealth;
-            
+
                 switch (damageType)
                 {
                     case ServerPlayer.DamageType.Player:
                         if (list.ContainsKey(fromClient))
                         {
-                            Texture2D texture2D = weaponIndex<NetworkManager.Instance.weaponInfo.Count ? NetworkManager.Instance.weaponInfo[weaponIndex].texture : null;
+                            Texture2D texture2D = weaponIndex < NetworkManager.Instance.weaponInfo.Count ? NetworkManager.Instance.weaponInfo[weaponIndex].texture : null;
                             if (weaponIndex == 1003)
                             {
-                                texture2D= PrefabManager.Instance.throwObjTexture[3];
+                                texture2D = PrefabManager.Instance.throwObjTexture[3];
                             }
                             else if (weaponIndex == 1000)
                             {
-                                texture2D= PrefabManager.Instance.throwObjTexture[1];
+                                texture2D = PrefabManager.Instance.throwObjTexture[1];
                             }
                             else if (weaponIndex == 1002)
                             {
-                                texture2D= PrefabManager.Instance.throwObjTexture[0];
+                                texture2D = PrefabManager.Instance.throwObjTexture[0];
                             }
                             else if (weaponIndex == 1004)
                             {
-                                texture2D= PrefabManager.Instance.throwObjTexture[4];
+                                texture2D = PrefabManager.Instance.throwObjTexture[4];
                             }
-                            _gameUi.SetDeath(fromClient ,texture2D) ;
-                            DeadCamera.GetInstance().Dead(list[fromClient].head.position,Vector3.zero,list[fromClient].head);
+                            _gameUi.SetDeath(fromClient, texture2D);
+                            DeadCamera.GetInstance().Dead(list[fromClient].head.position, Vector3.zero, list[fromClient].head);
                             if (fromClient != Id)
                             {
                                 list[fromClient].OutlineDisplay(Color.red, 5f);
@@ -1776,20 +1776,20 @@ namespace Multiplayer.Entity.Client
                         }
                         break;
                     case ServerPlayer.DamageType.Enemy:
-                        if (ClientEnemy.list.TryGetValue(fromClient,out var enemy))
+                        if (ClientEnemy.list.TryGetValue(fromClient, out var enemy))
                         {
-                            _gameUi.SetDeath(fromClient,enemy.enemyState.enemyType.ToString(),PrefabManager.Instance.jackTexture,NetworkManager.Instance.GetWeaponTexture("Vector"));
+                            _gameUi.SetDeath(fromClient, enemy.enemyState.enemyType.ToString(), PrefabManager.Instance.jackTexture, NetworkManager.Instance.GetWeaponTexture("Vector"));
                             var transform1 = enemy.transform;
-                            DeadCamera.GetInstance().Dead(transform1.position,enemy.headOffset,transform1);
+                            DeadCamera.GetInstance().Dead(transform1.position, enemy.headOffset, transform1);
                         }
                         else
                         {
-                            _gameUi.SetDeath(fromClient,"Jack",PrefabManager.Instance.jackTexture,NetworkManager.Instance.GetWeaponTexture("Vector"));
+                            _gameUi.SetDeath(fromClient, "Jack", PrefabManager.Instance.jackTexture, NetworkManager.Instance.GetWeaponTexture("Vector"));
                         }
                         break;
                     case ServerPlayer.DamageType.Void:
-                        _gameUi.SetDeath(fromClient ,null) ;
-                        DeadCamera.GetInstance().Dead(Vector3.zero,Vector3.zero);
+                        _gameUi.SetDeath(fromClient, null);
+                        DeadCamera.GetInstance().Dead(Vector3.zero, Vector3.zero);
                         break;
                 }
 
@@ -1806,11 +1806,11 @@ namespace Multiplayer.Entity.Client
                 QuestManager.Instance.GetProgress(QuestType.Noob);
 
                 #endregion
-            
+
                 #region Other
-                
-                GameManager.lastDie =Deaths;
-                
+
+                GameManager.lastDie = Deaths;
+
                 #endregion
 
                 #region Sound
@@ -1823,7 +1823,7 @@ namespace Multiplayer.Entity.Client
                     VoiceLine.Instance.PlayVoice(VoiceKey.death_B_01);
                     VoiceLine.Instance.PlayVoice(VoiceKey.death_B_02);
                 }
-            
+
                 else if (GameManager.hitRecently)
                 {
                     if (Random.Range(0, 10) <= 5)
@@ -1836,14 +1836,14 @@ namespace Multiplayer.Entity.Client
                         //yes fight each other
                         VoiceLine.Instance.PlayVoice(VoiceKey.death_F);
                     }
-                
+
                 }
-                else if (currentLifeKill == 0&& Random.Range(0,100)<=20)
+                else if (currentLifeKill == 0 && Random.Range(0, 100) <= 20)
                 {
                     //no kill only death
                     VoiceLine.Instance.PlayVoice(VoiceKey.death_G);
                 }
-                else if (GameManager.Instance.knewDead&& Random.Range(0,100)<=20)
+                else if (GameManager.Instance.knewDead && Random.Range(0, 100) <= 20)
                 {
                     //haha I knew you will die
                     VoiceLine.Instance.PlayVoice(VoiceKey.death_E);
@@ -1863,46 +1863,46 @@ namespace Multiplayer.Entity.Client
 
                 #endregion
 
-                if(list.TryGetValue(fromClient,out var from))
-                    GameManager.Instance.ClientLocalPlayerDead?.Invoke(this,from);
+                if (list.TryGetValue(fromClient, out var from))
+                    GameManager.Instance.ClientLocalPlayerDead?.Invoke(this, from);
 
                 foreach (var otherPlayer in list.Values)
                 {
                     otherPlayer.DamageTracker.Clear();
                 }
             }
-            
+
             playerState.SpawnRagdoll(hitHead && list.ContainsKey(fromClient) && list[fromClient].currentLifeKill >= 3);
-            
+
             playerState.Health = 0;
             currentLifeKill = 0;
-            
-            if(playerState.IsLocal)
-                _gameUi.spectateCanvas.SetKd(Kills,Deaths);
+
+            if (playerState.IsLocal)
+                _gameUi.spectateCanvas.SetKd(Kills, Deaths);
         }
 
         void OutlineDisplay(Color color, float duration)
         {
-            playerState.OutlineDisplay(color,duration);
+            playerState.OutlineDisplay(color, duration);
         }
-        void OutlineDisplay(Color color,Outline.Mode mode = Outline.Mode.OutlineAll)
+        void OutlineDisplay(Color color, Outline.Mode mode = Outline.Mode.OutlineAll)
         {
-            playerState.OutlineDisplay(color,mode);
+            playerState.OutlineDisplay(color, mode);
         }
         public void ClearOutline()
         {
             playerState.ClearOutline();
         }
         public int coins;
-        
+
         void PlayerRespawn(Vector3 spawnPos)
         {
-            DemoManager.Instance.AddPlayerState(demoPlayer.Id, false, playerState.IsInfected, -1 , 0);
+            DemoManager.Instance.AddPlayerState(demoPlayer.Id, false, playerState.IsInfected, -1, 0);
             if (IsLocal)
             {
                 foreach (var c in list.Values)
                 {
-                    if(!c.IsLocal&& c.playerState.GetOutlineType() == OutlineType.Death)
+                    if (!c.IsLocal && c.playerState.GetOutlineType() == OutlineType.Death)
                         c.ClearOutline();
                 }
                 DeadCamera.GetInstance().Respawn();
@@ -1914,13 +1914,13 @@ namespace Multiplayer.Entity.Client
                 }
             }
 
-            if (_gameUi!=null)
+            if (_gameUi != null)
             {
                 if (NetworkManager.Instance.IsTeamMode(playerState))
                 {
-                    _gameUi.DisplayPlayerDot(Id,true);
+                    _gameUi.DisplayPlayerDot(Id, true);
                 }
-                if(_gameUi.PlayerList.TryGetValue(Id, out var item))
+                if (_gameUi.PlayerList.TryGetValue(Id, out var item))
                     item.SetState(PlayerListItem.PlayerItemState.Alive);
             }
 
@@ -1937,10 +1937,10 @@ namespace Multiplayer.Entity.Client
                 }
             }
 
-            player.velocity=Vector3.zero;
+            player.velocity = Vector3.zero;
             player.transform.position = spawnPos;
             desiredPos = spawnPos;
-            if(interpolator)interpolator.NewUpdate(NetworkManager.Instance.ServerTick,true,desiredPos);
+            if (interpolator) interpolator.NewUpdate(NetworkManager.Instance.ServerTick, true, desiredPos);
 
             Dead = false;
             if (specting)
@@ -1949,30 +1949,30 @@ namespace Multiplayer.Entity.Client
                 {
                     item.gameObject.SetActive(true);
                 }
-                if(IsLocal)
+                if (IsLocal)
                     SpectateMovement.Instance.StopSpect(true);
             }
             specting = false;
             playerState.Health = playerState.MaxHealth;
-        
+
             playerState.Respawn();
-            if(IsLocal)
+            if (IsLocal)
             {
                 if (_gameUi)
                 {
                     _gameUi.DeleteDeath();
                 }
-            
+
                 _weaponManager.throwableManager.TacticalThrowCount = 1;
-            
-                if(NetworkManager.ClientGameMode==GameMode.SpecialGameMode)
+
+                if (NetworkManager.ClientGameMode == GameMode.SpecialGameMode)
                     _gameUi.throwObjCount.SetText("∞");
                 else _gameUi.throwObjCount.SetText(_weaponManager.throwableManager.TacticalThrowCount.ToString());
             }
             if (!IsLocal)
             {
                 _playerAnimation.Reset();
-                head.localRotation = Quaternion.Euler(0f,0f,0f);
+                head.localRotation = Quaternion.Euler(0f, 0f, 0f);
             }
             player.gameObject.SetActive(true);
             SetInfect();
@@ -1980,13 +1980,13 @@ namespace Multiplayer.Entity.Client
 
         void SetWeapon(int weaponIndex)
         {
-            DemoManager.Instance.AddPlayerWeaponSwitched(demoPlayer.Id,weaponIndex);
-            
+            DemoManager.Instance.AddPlayerWeaponSwitched(demoPlayer.Id, weaponIndex);
+
             playerState.WeaponManager.SwitchWeapon(weaponIndex);
         }
 
-        
-        void SetWeapon(short[] weaponNames,int weaponIndex,ushort[] weaponIndexs,bool spawn=false)
+
+        void SetWeapon(short[] weaponNames, int weaponIndex, ushort[] weaponIndexs, bool spawn = false)
         {
             if (playerState.IsInfected) return;
 
@@ -1997,12 +1997,12 @@ namespace Multiplayer.Entity.Client
 
             if (!spawn)
             {
-                DemoManager.Instance.AddPlayerWeaponUpdated(demoPlayer.Id,weaponIndex,weaponNames,weaponIndexs);
+                DemoManager.Instance.AddPlayerWeaponUpdated(demoPlayer.Id, weaponIndex, weaponNames, weaponIndexs);
             }
-            
+
             playerState.WeaponManager.UpdateWeapons(weaponNames, weaponIndex, weaponIndexs);
         }
-        void PickupWeapon(string weaponNames,int weaponIndex,ushort[] weaponIndexs)
+        void PickupWeapon(string weaponNames, int weaponIndex, ushort[] weaponIndexs)
         {
             // if (IsLocal)
             // {
@@ -2088,7 +2088,7 @@ namespace Multiplayer.Entity.Client
             if (!IsLocal && !Dead)
             {
                 FootSteps();
-            }    
+            }
         }
 
         private bool setNameCorrectly = false;
@@ -2098,12 +2098,12 @@ namespace Multiplayer.Entity.Client
         {
             if (!IsLocal && !Dead)
             {
-                player.transform.rotation = Quaternion.Lerp(player.transform.rotation,desiredRot, Time.deltaTime*15f);
-                
+                player.transform.rotation = Quaternion.Lerp(player.transform.rotation, desiredRot, Time.deltaTime * 15f);
+
                 _playerAnimation.Update();
-                
+
                 // var position = head.position;
-                nameTrans.position = head.position + Vector3.up*.5f;
+                nameTrans.position = head.position + Vector3.up * .5f;
                 // aimTarget.position = Vector3.Lerp(aimTarget.position, head.forward * 5f+position+Vector3.down*0.5f, Time.deltaTime * 15f);
 
                 Vector3 seePos = Vector3.zero;
@@ -2116,13 +2116,13 @@ namespace Multiplayer.Entity.Client
                         float d = Vector3.Distance(player.head.position, this.head.position);
                         if (d < dis)
                         {
-                            dis =d;
+                            dis = d;
                             seePos = player.head.position;
                         }
                     }
-               
+
                 }
-                if (seePos == Vector3.zero || dis>15f || Vector3.Dot(player.transform.forward,seePos-player.transform.position)<0f)
+                if (seePos == Vector3.zero || dis > 15f || Vector3.Dot(player.transform.forward, seePos - player.transform.position) < 0f)
                 {
                     for (int i = 0; i < eyes.Count; i++)
                     {
@@ -2133,7 +2133,7 @@ namespace Multiplayer.Entity.Client
                 {
                     for (int i = 0; i < eyes.Count; i++)
                     {
-                        eyes[i].rotation = Quaternion.LookRotation(seePos-eyes[i].position);
+                        eyes[i].rotation = Quaternion.LookRotation(seePos - eyes[i].position);
                     }
                 }
 
@@ -2151,7 +2151,7 @@ namespace Multiplayer.Entity.Client
 
         public void SendMovement(float xRot)
         {
-            Message message = Message.Create(MessageSendMode.Unreliable, (ushort) ClientToServerId.PlayerMovement);
+            Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ClientToServerId.PlayerMovement);
             message.Add(PlayerMovement.transform.position);
             message.Add(PlayerMovement.desiredX);
             message.Add(player.velocity);
@@ -2174,14 +2174,14 @@ namespace Multiplayer.Entity.Client
 
         public void SendStartCrouch()
         {
-            Message message= Message.Create(MessageSendMode.Unreliable,(ushort)ClientToServerId.PlayerStartCrouch);
+            Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ClientToServerId.PlayerStartCrouch);
             NetworkManager.Instance.SendByte += message.WrittenLength;
             NetworkManager.Instance.Client.Send(message);
         }
-    
+
         public void SendStopCrouch()
         {
-            Message message= Message.Create(MessageSendMode.Unreliable,(ushort)ClientToServerId.PlayerStopCrouch);
+            Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ClientToServerId.PlayerStopCrouch);
             NetworkManager.Instance.SendByte += message.WrittenLength;
             NetworkManager.Instance.Client.Send(message);
         }
@@ -2190,7 +2190,7 @@ namespace Multiplayer.Entity.Client
         private float distance;
         private void FootSteps()
         {
-            if (!Crouch  && Grounded )
+            if (!Crouch && Grounded)
             {
                 float num = 1.2f;
                 float num2 = player.velocity.magnitude;
@@ -2203,15 +2203,16 @@ namespace Multiplayer.Entity.Client
                 {
                     int range = Random.Range(0, PrefabManager.Instance.walksSound.Length - 1);
                     audioSource.PlayOneShot(PrefabManager.Instance.walksSound[range]);
-                    if (Physics.Raycast(player.position, Vector3.down, out var hit, 1000,GameManager.Instance.whatIsGround))
+                    if (Physics.Raycast(player.position, Vector3.down, out var hit, 1000, GameManager.Instance.whatIsGround))
                     {
-                        if(GameManager.Instance.setting.spawnParticle){
+                        if (GameManager.Instance.setting.spawnParticle)
+                        {
                             ObjectPooler.Instance.SpawnFromPool("PlayerWalkSmokeFx", hit.point,
                                 Quaternion.Euler(-90, 0, 0));
                         }
                     }
-                
-                
+
+
                     distance = 0f;
                     if (!moved) moved = true;
                 }

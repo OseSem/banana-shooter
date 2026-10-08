@@ -33,22 +33,22 @@ namespace Menu
                 DontDestroyOnLoad(gameObject);
                 foreach (var data in datas)
                 {
-                    lines.Add(data.key,data);
+                    lines.Add(data.key, data);
                 }
 
                 source = gameObject.AddComponent<AudioSource>();
 
                 source.outputAudioMixerGroup = mixerGroup;
-                
-                
+
+
             }
-            else if(Instance!=this)
+            else if (Instance != this)
             {
                 Destroy(gameObject);
             }
 
-        
-        
+
+
         }
 
         private IEnumerator Start()
@@ -87,7 +87,7 @@ namespace Menu
         {
             yield return null;
             var sizeDelta = textTransform.sizeDelta;
-            backGround.sizeDelta = new Vector2(sizeDelta.x+30,40);
+            backGround.sizeDelta = new Vector2(sizeDelta.x + 30, 40);
         }
 
         private void Update()
@@ -107,11 +107,11 @@ namespace Menu
 
                     Locale locale = LocalizationSettings.Instance.GetSelectedLocale();
 
-                    if (locale == _locales[3] && lineData.russianAudio!=null)
+                    if (locale == _locales[3] && lineData.russianAudio != null)
                     {
                         audioClip = lineData.russianAudio;
                     }
-                
+
 
                     source.PlayOneShot(audioClip);
 
@@ -132,11 +132,12 @@ namespace Menu
 
         private AudioSource source;
 
-        public RectTransform backGround,textTransform;
-        
+        public RectTransform backGround, textTransform;
+
         public VoiceStoreData data = new VoiceStoreData();
-        public void StoreData(){
-            SaveSystem.SaveToJSON(data,"voice_data.json");
+        public void StoreData()
+        {
+            SaveSystem.SaveToJSON(data, "voice_data.json");
         }
     }
 
@@ -144,7 +145,7 @@ namespace Menu
     public class VoiceLineData
     {
         public VoiceKey key;
-        public AudioClip audio,russianAudio;
+        public AudioClip audio, russianAudio;
     }
     public enum VoiceKey
     {
@@ -193,37 +194,37 @@ namespace Menu
         ///  Welcome to endless, stand in the while line area to start the game
         /// </summary>
         gm_endless_start_A,
-    
+
         /// <summary>
         /// Oh you come back to this gamemode ha, so hilarious ive never thought someone wil play this gamemode twice again
         /// </summary>
         gm_endless_start_B,
-    
+
         /// <summary>
         /// Wait did you just come back again? anyway stand in the white line area then ill let my bois to fight with you
         /// </summary>
-        gm_endless_start_C, 
-    
+        gm_endless_start_C,
+
         /// <summary>
         /// Hah, you seems a true banana man since this is the fourth time you open this gamemode, Go ahead let start the game
         /// </summary>
-        gm_endless_start_D, 
-    
+        gm_endless_start_D,
+
         /// <summary>
         /// Stand in the white line area*3
         /// </summary>
         gm_endless_start_E,
-    
+
         /// <summary>
         /// Lets try this, just a few robots
         /// </summary>
         gm_endless_spawn_A,
-    
+
         /// <summary>
         /// Come on, there is more robots here, but keep in mind they are kindness\
         /// </summary>
         gm_endless_spawn_B,
-    
+
         /// <summary>
         /// Wow such a genius you have already killed so many my bois
         /// </summary>
@@ -232,27 +233,27 @@ namespace Menu
         /// But who would guess, i have more ROBOTS(reach 120s)
         /// </summary>
         gm_endless_spawn_C_02,
-    
+
         /// <summary>
         /// Haha i dont believe you can handle this (spawn 5 enemies)
         /// </summary>
         gm_endless_spawn_D,
-    
+
         /// <summary>
         ///  i wont give up (reach 180s)
         /// </summary>
-        gm_endless_spawn_E, 
-    
+        gm_endless_spawn_E,
+
         /// <summary>
         /// Ok im speechless
         /// </summary>
         gm_endless_spawn_F,
-        
+
         /// <summary>
         /// Enemy will have a red dot on their head, use your weapon to shoot them
         /// </summary>
         gm_endless_start_F,
-        
+
         /// <summary>
         /// Wait you actually start a fight
         /// </summary>
@@ -269,7 +270,7 @@ namespace Menu
         public int endlessPlayAmount = 0;
 
     }
-    
-    
+
+
 }
 

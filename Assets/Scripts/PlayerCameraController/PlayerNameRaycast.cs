@@ -10,11 +10,11 @@ namespace PlayerCameraController
     public class PlayerNameRaycast : MonoBehaviour
     {
         public static PlayerNameRaycast Instance { private set; get; }
-        
+
         [SerializeField] public PlayerState localPlayer;
-        
-        [SerializeField] private LayerMask groundPlayerLayer,playerLayer;
-        
+
+        [SerializeField] private LayerMask groundPlayerLayer, playerLayer;
+
         // The text to show the player name
         private TextMeshProUGUI _hitPlayerUI;
 
@@ -35,7 +35,7 @@ namespace PlayerCameraController
         private List<PlayerState> CurrentCastedPlayers { get; } = new();
         private List<PlayerState> CastedPlayers { get; } = new();
         private RaycastHit[] _castedHit = new RaycastHit[10];
-        
+
         private void LateUpdate()
         {
             if (!GameUIManager.Instance) return;
@@ -43,7 +43,7 @@ namespace PlayerCameraController
             {
                 if (hit.transform.root.TryGetComponent(out PlayerState player))
                 {
-                    if(NetworkManager.Instance.IsTeamMode())
+                    if (NetworkManager.Instance.IsTeamMode())
                         _hitPlayerUI.color = player.Team == localPlayer.Team ? Color.cyan : Color.red;
                     else
                     {
@@ -60,10 +60,10 @@ namespace PlayerCameraController
             {
                 _hitPlayerUI.text = "";
             }
-            
+
             //Display the 3d canvas name
-            
-            int cnt  = Physics.SphereCastNonAlloc(_transform.position, 2f, _transform.forward,_castedHit, 100f, playerLayer);
+
+            int cnt = Physics.SphereCastNonAlloc(_transform.position, 2f, _transform.forward, _castedHit, 100f, playerLayer);
             if (cnt > 0)
             {
                 CurrentCastedPlayers.Clear();
@@ -91,9 +91,9 @@ namespace PlayerCameraController
                         }
                     }
                 }
-            
+
             }
-            else if(CastedPlayers.Count>0)
+            else if (CastedPlayers.Count > 0)
             {
                 foreach (var clientPlayer in CastedPlayers)
                 {

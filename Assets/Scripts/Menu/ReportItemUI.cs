@@ -12,12 +12,13 @@ namespace Menu
     public class ReportItemUI : MonoBehaviour
     {
         private ReportPannel _pannel;
-        
+
         CheatingReportItem _report;
 
         [SerializeField] private LocalizeStringEvent reasonText;
 
-        [SerializeField] private TextMeshProUGUI reportIdText,
+        [SerializeField]
+        private TextMeshProUGUI reportIdText,
             steamIdText,
             steamIdReporterText,
             heuristicText,
@@ -26,26 +27,26 @@ namespace Menu
             timeText,
             reportTimesText;
 
-        public void SetValue(CheatingReportItem reportMessage,ReportPannel pannel)
+        public void SetValue(CheatingReportItem reportMessage, ReportPannel pannel)
         {
             _pannel = pannel;
             _report = reportMessage;
-            
+
             reportIdText.SetText(reportMessage.ReportId.ToString());
             steamIdText.SetText(reportMessage.SteamId.ToString());
             steamIdReporterText.SetText(reportMessage.SteamIdReporter.ToString());
             heuristicText.SetText(reportMessage.Heuristic ? "True" : "False");
             detectionText.SetText(reportMessage.Detection ? "True" : "False");
-            if(reportMessage.Detection)
+            if (reportMessage.Detection)
                 detectionText.color = Color.red;
-            if(reportMessage.Heuristic)
+            if (reportMessage.Heuristic)
                 detectionText.color = Color.yellow;
-            if(reportMessage.PlayerReport)
+            if (reportMessage.PlayerReport)
                 detectionText.color = Color.cyan;
             playerReportText.SetText(reportMessage.PlayerReport ? "True" : "False");
             timeText.SetText(GameManager.JavaTimeStampToDateTime(reportMessage.TimeReport).ToString(CultureInfo.InvariantCulture));
             reasonText.SetEntry($"rs_{(ReportMenu.ReportReasonType)(reportMessage.AppData)}");
-            
+
             GetComponent<Button>().onClick.AddListener(DisplayInfo);
 
             int reportAmount = 0;
@@ -59,7 +60,7 @@ namespace Menu
                     }
                 }
             }
-            
+
             reportTimesText.SetText(reportAmount.ToString());
 
             if (reportAmount > 5)
@@ -85,7 +86,7 @@ namespace Menu
         //     // confirmBtn.interactable = false;
         //     _pannel.ManagePlayer(this);
         // }
-        
-        
+
+
     }
 }

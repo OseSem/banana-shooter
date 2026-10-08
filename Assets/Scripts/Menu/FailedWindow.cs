@@ -13,18 +13,18 @@ public class FailedWindow : MonoBehaviour
     public void SetReason(string reason) => this.reason.SetText(reason);
 
     public float removeTime = 2;
-    
+
     void Start()
     {
         transform.localScale = Vector3.zero;
-        desiredSize=Vector3.one;
-        Invoke("Clear",2f);
+        desiredSize = Vector3.one;
+        Invoke("Clear", 2f);
     }
 
     // Update is called once per frame
     void Update()
     {
-        transform.localScale=Vector3.Lerp(transform.localScale,desiredSize,Time.unscaledDeltaTime*30f);
+        transform.localScale = Vector3.Lerp(transform.localScale, desiredSize, Time.unscaledDeltaTime * 30f);
         if (cleared)
         {
             if (Vector3.Distance(transform.localScale, desiredSize) < 0.1f)
@@ -34,12 +34,12 @@ public class FailedWindow : MonoBehaviour
         }
     }
 
-    private bool cleared=false;
-    
+    private bool cleared = false;
+
     public void Clear()
     {
-        desiredSize=Vector3.zero;
+        desiredSize = Vector3.zero;
         cleared = true;
     }
-    
+
 }

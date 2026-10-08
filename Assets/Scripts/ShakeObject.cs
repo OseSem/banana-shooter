@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 
 public class ShakeObject : MonoBehaviour
 {
-    public float magnitude=.1f;
+    public float magnitude = .1f;
     private Vector3 originalPos;
 
     private void Start()
@@ -19,7 +19,7 @@ public class ShakeObject : MonoBehaviour
 
     private void Update()
     {
-        transform.localPosition = Vector3.Lerp(transform.localPosition,desiredPos,Time.deltaTime*20f);
+        transform.localPosition = Vector3.Lerp(transform.localPosition, desiredPos, Time.deltaTime * 20f);
         while (true)
         {
             float x = Random.Range(-1f, 1f) * magnitude;
@@ -33,7 +33,7 @@ public class ShakeObject : MonoBehaviour
                 break;
             }
         }
-        
-        
+
+
     }
 }

@@ -10,22 +10,22 @@ namespace Demo.Entity
     public abstract class DemoEntity : MonoBehaviour, ITarget
     {
         public int Id { get; private set; }
-        
+
         public bool IsDestroyed { get; protected set; }
-        
+
         [SerializeField] protected Rigidbody rb;
         [SerializeField] protected Transform selfTrans;
         [SerializeField] protected Transform orientation;
-        
+
         [SerializeField] private Transform[] bones;
-        
+
         Transform[] ITarget.Bones
         {
             get => bones;
             set => bones = value;
         }
 
-        public virtual void Spawn(int id,params object[] obj)
+        public virtual void Spawn(int id, params object[] obj)
         {
             Id = id;
         }
@@ -34,7 +34,7 @@ namespace Demo.Entity
         {
             if (IsEnemy())
             {
-                DemoManager.Instance.DestroyEnemy(Id,((DemoEnemy)this).attackerId);
+                DemoManager.Instance.DestroyEnemy(Id, ((DemoEnemy)this).attackerId);
             }
             else
             {
@@ -46,12 +46,12 @@ namespace Demo.Entity
         {
             return false;
         }
-        
+
         public virtual bool IsEnemy()
         {
             return false;
         }
-        
+
         public virtual bool IsThrowable()
         {
             return false;
@@ -102,6 +102,6 @@ namespace Demo.Entity
             return orientation.rotation.ToMyQuaternion();
         }
 
-        
+
     }
 }

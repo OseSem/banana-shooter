@@ -24,13 +24,13 @@ namespace Menu
             {
                 string n = NetworkManager.Instance.weaponInfo[NetworkManager.Instance.Weapons[i]].weaponName;
                 weaponUI[i].text.SetText(n);
-                weaponUI[i].weaponImage.texture =NetworkManager.Instance. GetWeaponTexture(n);
+                weaponUI[i].weaponImage.texture = NetworkManager.Instance.GetWeaponTexture(n);
             }
         }
 
         public Camera weaponCam;
         public int selectWeaponIndex = 0;
-        
+
         public void SetWeaponIndex(int index)
         {
             AudioManager.Instance.PlayButton();
@@ -54,11 +54,11 @@ namespace Menu
 
         }
 
-        public string currentWeaponName="";
+        public string currentWeaponName = "";
         public List<UIManager.WeaponUI> weaponUI = new List<UIManager.WeaponUI>();
         public MeshRenderer meshRenderer;
         public MeshFilter meshFilter;
-        
+
         public void SelectWeapon(string weaponName)
         {
             // inspect.SetActive(true);
@@ -79,7 +79,7 @@ namespace Menu
             //         break;
             //     }
             // }
-        
+
             ApplyWeapon();
         }
 
@@ -91,7 +91,7 @@ namespace Menu
             for (short i = 0; i < NetworkManager.Instance.weaponInfo.Count; i++)
             {
                 if (i == 6) continue;
-                
+
                 var weapon = NetworkManager.Instance.weaponInfo[i];
 
                 if (weapon.name == currentWeaponName)
@@ -107,7 +107,7 @@ namespace Menu
             SaveSystem.SaveData("weapons", NetworkManager.Instance.Weapons);
 
             if (NetworkManager.ClientGameMode == GameMode.Randomizer ||
-                NetworkManager.ClientGameMode == GameMode.GunGame || 
+                NetworkManager.ClientGameMode == GameMode.GunGame ||
                 NetworkManager.ClientGameMode == GameMode.RocketMode) return;
             if (NetworkManager.Instance.Client.IsConnected && ClientPlayer.list.TryGetValue(NetworkManager.Instance.Client.Id, out var value))
             {

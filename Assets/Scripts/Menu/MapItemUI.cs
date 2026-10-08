@@ -11,7 +11,7 @@ using UnityEngine.UI;
 
 namespace Menu
 {
-    public class MapItemUI : MonoBehaviour,IPointerClickHandler
+    public class MapItemUI : MonoBehaviour, IPointerClickHandler
     {
         [SerializeField] private TextMeshProUGUI nameText;
 
@@ -31,21 +31,21 @@ namespace Menu
             if (MapSaver.EditingMapMetadatas.TryGetValue(File, out var md))
             {
                 Metadata = md;
-                
+
                 nameText.SetText(Metadata.Name);
                 isPublished.SetEntry(Metadata.IsPublished ? "Published" : "Local");
-                
+
                 if (Metadata.IsPublished)
                 {
                     _queryResult = CallResult<SteamUGCQueryCompleted_t>.Create(OnUGCQueryCompleted);
-                
-                    var queryHandle = SteamUGC.CreateQueryUGCDetailsRequest(new []{Metadata.FileId},1);
-            
+
+                    var queryHandle = SteamUGC.CreateQueryUGCDetailsRequest(new[] { Metadata.FileId }, 1);
+
                     var call = SteamUGC.SendQueryUGCRequest(queryHandle);
                     _queryResult.Set(call);
                 }
             }
-            
+
 
             editBtn.onClick.AddListener(delegate { Select(false); });
             editBtn.onClick.AddListener(Edit);
@@ -53,10 +53,10 @@ namespace Menu
         }
 
         public uint per = 0;
-        
+
         private void OnUGCQueryCompleted(SteamUGCQueryCompleted_t result, bool ioFailure)
         {
-            if (ioFailure || result.m_unNumResultsReturned == 0 || result.m_eResult!=EResult.k_EResultOK)
+            if (ioFailure || result.m_unNumResultsReturned == 0 || result.m_eResult != EResult.k_EResultOK)
             {
                 // Failed to retrieve workshop item info
                 Debug.Log("Failed to retrieve workshop item info");
@@ -77,16 +77,16 @@ namespace Menu
             uint voteDown = itemDetails.m_unVotesDown;
 
             if (voteUp + voteDown < 10) per = 0;
-            else per = (uint) (voteUp / (float) (voteUp + voteDown) * 5);
+            else per = (uint)(voteUp / (float)(voteUp + voteDown) * 5);
 
-            
+
             SteamUGC.ReleaseQueryUGCRequest(result.m_handle);
         }
         private void OnDisable()
         {
-            if(editBtn!=null)
+            if (editBtn != null)
                 editBtn.onClick.RemoveAllListeners();
-            
+
         }
 
         void Edit()
@@ -99,14 +99,14 @@ namespace Menu
         public void OnPointerClick(PointerEventData eventData)
         {
             bool flag = eventData.clickCount > 1;
-            
+
             Select(flag);
         }
 
         void Select(bool flag)
         {
-            MapEditorMainMenu.Instance.SelectMap(File,Metadata,gameObject,flag,per);
-            
+            MapEditorMainMenu.Instance.SelectMap(File, Metadata, gameObject, flag, per);
+
             AudioManager.Instance.PlayButton();
         }
     }

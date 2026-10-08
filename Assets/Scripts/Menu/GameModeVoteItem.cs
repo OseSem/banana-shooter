@@ -10,7 +10,7 @@ namespace Menu
     public class GameModeVoteItem : MonoBehaviour
     {
         [SerializeField] public Toggle toggle;
-        
+
         [SerializeField] private LocalizeStringEvent text;
 
         [SerializeField] private TextMeshProUGUI amountText;
@@ -18,23 +18,23 @@ namespace Menu
         [SerializeField] private RawImage icon;
 
         [SerializeField] private CanvasGroup voteAnimation;
-        
-        public void Initialize(GameMode gameMode,ToggleGroup group)
+
+        public void Initialize(GameMode gameMode, ToggleGroup group)
         {
             text.SetEntry(gameMode.ToString());
-            
+
             amountText.SetText("0");
 
             icon.texture = PrefabManager.Instance.GetTexture2D($"gm_{gameMode.ToString().ToLower()}");
 
             toggle.group = group;
         }
-        
+
         public void SetCount(ushort count)
         {
             amountText.SetText(count.ToString());
         }
-        
+
         public void Animate()
         {
             voteAnimation.alpha = 1f;

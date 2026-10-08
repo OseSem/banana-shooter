@@ -6,11 +6,11 @@ namespace Manager
 {
     public class ShowcaseManager : MonoBehaviour
     {
-        
+
         [SerializeField] private MeshFilter meshFilter;
         [SerializeField] private MeshRenderer meshRenderer;
         [SerializeField] private Transform itemTransform;
-        
+
         Vector3 _defaultPos = Vector3.zero;
 
         private CosmeticItem _lastShowcaseItem;
@@ -18,7 +18,7 @@ namespace Manager
         public void Showcase(CosmeticItem item)
         {
             _lastShowcaseItem = item;
-             
+
             meshFilter.mesh = item.mesh;
 
             meshRenderer.materials = item.materials;

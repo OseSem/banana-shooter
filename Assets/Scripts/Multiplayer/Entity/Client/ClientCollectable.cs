@@ -15,11 +15,11 @@ namespace Multiplayer.Client
 
         public ushort Id { get; private set; }
         public ServerCollectable.CollectableType Type { get; private set; } = ServerCollectable.CollectableType.None;
-    
-        public ushort deadPlayerId,killPlayerId;
+
+        public ushort deadPlayerId, killPlayerId;
 
         public Outline outline;
-        void InitializeKillConfirm(ushort id,ushort dead,ushort kill)
+        void InitializeKillConfirm(ushort id, ushort dead, ushort kill)
         {
             Id = id;
 
@@ -37,15 +37,15 @@ namespace Multiplayer.Client
             {
                 outline.OutlineColor = Color.red;
             }
-        
-            Invoke(nameof(OutlineOpen),0.2f);
+
+            Invoke(nameof(OutlineOpen), 0.2f);
 
             if (list.TryGetValue(id, out var confirm))
             {
                 Destroy(confirm.gameObject);
                 list.Remove(id);
             }
-            list.Add(id,this);
+            list.Add(id, this);
         }
 
         void OutlineOpen()
@@ -53,36 +53,36 @@ namespace Multiplayer.Client
             outline.enabled = true;
         }
 
-        [MessageHandler((ushort) ServerToClientId.CollectableInit, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.CollectableInit, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void KillConfirmInit(Message message)
         {
             ushort id = message.GetUShort();
-            ServerCollectable.CollectableType type = (ServerCollectable.CollectableType) message.GetUShort();
+            ServerCollectable.CollectableType type = (ServerCollectable.CollectableType)message.GetUShort();
             Vector3 pos = message.GetVector3();
 
             switch (type)
             {
                 case ServerCollectable.CollectableType.KillConfirm:
-                    
+
                     ushort dead = message.GetUShort();
                     ushort kill = message.GetUShort();
 
                     ClientCollectable item =
                         Instantiate(PrefabManager.Instance.GetPrefab("ClientKillConfirmItem"), pos, Quaternion.identity)
                             .GetComponent<ClientCollectable>();
-                    item.InitializeKillConfirm(id,dead,kill);
+                    item.InitializeKillConfirm(id, dead, kill);
                     break;
             }
         }
 
-        [MessageHandler((ushort) ServerToClientId.GetConfirm, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.GetConfirm, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void GetConfirm(Message message)
         {
             ushort id = message.GetUShort();
 
             ushort playerId = message.GetUShort();
 
-            if (list.TryGetValue(id,out var killConfirm))
+            if (list.TryGetValue(id, out var killConfirm))
             {
                 if (playerId == 41)
                 {
@@ -99,10 +99,10 @@ namespace Multiplayer.Client
             {
                 if (playerId == NetworkManager.Instance.Client.Id)
                 {
-                    JuicyScore.Instance.UpdateScore(25,JuicyScore.ScoreType.Xp);
+                    JuicyScore.Instance.UpdateScore(25, JuicyScore.ScoreType.Xp);
                     AudioManager.Instance.Play("ShootingTargetSuccess");
                 }
-            
+
                 Instantiate(PrefabManager.Instance.GetPrefab("FX_Fireworks_Blue_Small"), transform.position,
                     Quaternion.identity);
             }
@@ -113,10 +113,10 @@ namespace Multiplayer.Client
                 if (Mathf.Abs(ClientPlayer.list[killPlayerId].coins - ClientPlayer.list[killPlayerId].lastCoin) > 1) return;
                 ClientPlayer.list[killPlayerId].lastCoin = ClientPlayer.list[killPlayerId].coins;
                 ClientPlayer.list[killPlayerId].coins++;
-                if(ClientPlayer.list[killPlayerId].IsLocal)
+                if (ClientPlayer.list[killPlayerId].IsLocal)
                     UpgradeInGameMenu.Instance.AutoUpgrade();
                 ClientPlayer.list[killPlayerId].currentLifeKill++;
-                
+
                 if (GameUIManager.Instance)
                 {
                     if (GameUIManager.Instance.PlayerList.ContainsKey(deadPlayerId))
@@ -131,15 +131,15 @@ namespace Multiplayer.Client
 
                 if (playerId == NetworkManager.Instance.Client.Id)
                 {
-                    JuicyScore.Instance.UpdateScore(25,JuicyScore.ScoreType.Xp);
+                    JuicyScore.Instance.UpdateScore(25, JuicyScore.ScoreType.Xp);
                     AudioManager.Instance.Play("ShootingTargetSuccess");
                 }
                 Instantiate(PrefabManager.Instance.GetPrefab("FX_Fireworks_Red_Small"), transform.position,
                     Quaternion.identity);
-            
+
                 PowerInGameMenu.Instance.fillProgress += 0.1f;
             }
-        
+
             Destroy(gameObject);
         }
         private void OnDestroy()
@@ -153,7 +153,7 @@ namespace Multiplayer.Client
         {
             float z = Mathf.PingPong(Time.time, 1f);
             Vector3 axis = new Vector3(0, z, 0);
-            transform.Rotate(axis,1f);
+            transform.Rotate(axis, 1f);
         }
     }
 }

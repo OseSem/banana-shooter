@@ -1701,7 +1701,7 @@ namespace CodingDaniel.MapEditor.MECommon
             }
             return null;
         }
-        
+
 
         #region Obsolete
 

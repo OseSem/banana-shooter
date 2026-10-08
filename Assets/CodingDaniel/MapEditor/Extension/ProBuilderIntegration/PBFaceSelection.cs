@@ -42,7 +42,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         private Color _color = Color.yellow;
         [SerializeField]
         private Color edgeColor = new Color(0.33f, 0.33f, 0.33f);
-        private Material _material,edgeMaterial;
+        private Material _material, edgeMaterial;
 
         private Vector3 _lastPosition;
         public Vector3 LastPosition
@@ -82,7 +82,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public IEnumerable<ProBuilderMesh> Meshes
         {
             get { return _meshToFaces.Keys; }
-        } 
+        }
 
         public IEnumerable<PBMesh> PBMeshes
         {
@@ -109,14 +109,14 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             _editor = GetComponent<PBBaseEditor>();
 
             MeshFilter meshFilter = gameObject.GetComponent<MeshFilter>();
-            if(meshFilter == null)
+            if (meshFilter == null)
             {
                 meshFilter = gameObject.AddComponent<MeshFilter>();
             }
             meshFilter.sharedMesh = new Mesh();
 
             _renderer = gameObject.GetComponent<MeshRenderer>();
-            if(_renderer == null)
+            if (_renderer == null)
             {
                 _renderer = gameObject.AddComponent<MeshRenderer>();
             }
@@ -130,8 +130,8 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
             gameObject.AddComponent<PBMesh>();
             gameObject.layer = _editor.GraphicsLayer;
-            _selectionMesh = GetComponent<ProBuilderMesh>();   
-            
+            _selectionMesh = GetComponent<ProBuilderMesh>();
+
             edgeMaterial = new Material(PBBuiltinMaterials.LinesMaterial);
             edgeMaterial.SetColor("_Color", Color.white);
             edgeMaterial.SetInt("_HandleZTest", (int)_zTest);
@@ -140,7 +140,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         private void OnDestroy()
         {
-            if(_material != null)
+            if (_material != null)
             {
                 Destroy(_material);
             }
@@ -151,7 +151,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public bool IsSelected(ProBuilderMesh mesh, int face)
         {
             Dictionary<int, Face> faceToSelection;
-            if(!_faceToSelectionFace.TryGetValue(mesh, out faceToSelection))
+            if (!_faceToSelectionFace.TryGetValue(mesh, out faceToSelection))
             {
                 return false;
             }
@@ -166,7 +166,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public void EndChange()
         {
-            if(_isChanging)
+            if (_isChanging)
             {
                 RebuildSelectionMesh();
                 _isChanging = false;
@@ -190,10 +190,10 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 faceToSelection = new Dictionary<int, Face>();
                 _faceToSelectionFace.Add(mesh, faceToSelection);
             }
-            
+
 
             int[] indices = new int[face.indexes.Count];
-            for(int i = 0; i < indices.Length; ++i)
+            for (int i = 0; i < indices.Length; ++i)
             {
                 indices[i] = _selectionVertices.Count + i;
             }
@@ -205,25 +205,25 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
             IList<int> indexes = face.indexes;
             Vertex[] vertices = mesh.GetVertices(indexes);
-            for(int i = 0; i < vertices.Length; ++i)
+            for (int i = 0; i < vertices.Length; ++i)
             {
                 _selectionVertices.Add(transform.InverseTransformPoint(mesh.transform.TransformPoint(vertices[i].position)));
             }
 
             _selectionFaces.Add(selectionFace);
-            if(!_isChanging)
+            if (!_isChanging)
             {
                 RebuildSelectionMesh();
             }
-            
+
             FaceList faceList;
-            if(!_meshToFaces.TryGetValue(mesh, out faceList))
+            if (!_meshToFaces.TryGetValue(mesh, out faceList))
             {
                 faceList = new FaceList();
                 _meshToFaces.Add(mesh, faceList);
 
                 PBMesh pbMesh = mesh.GetComponent<PBMesh>();
-                if(pbMesh != null)
+                if (pbMesh != null)
                 {
                     pbMesh.RaiseSelected(false);
                 }
@@ -267,7 +267,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         void EdgeVisualization(ProBuilderMesh mesh)
         {
             MeshFilter edgesSelection;
-            
+
             if (!_meshToSelection.TryGetValue(mesh, out edgesSelection))
             {
                 edgesSelection = CreateEdgesGameObject(mesh);
@@ -285,7 +285,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public void Remove(ProBuilderMesh mesh, int faceIndex)
         {
             // _meshToSelection.Clear();
-            
+
             Face selectionFace;
             Dictionary<int, Face> faceToSelection;
             if (_faceToSelectionFace.TryGetValue(mesh, out faceToSelection))
@@ -303,7 +303,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             Face face = mesh.faces[faceIndex];
 
             faceToSelection.Remove(faceIndex);
-            if(faceToSelection.Count == 0)
+            if (faceToSelection.Count == 0)
             {
                 _faceToSelectionFace.Remove(mesh);
             }
@@ -325,13 +325,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 }
             }
 
-            
+
             int flidx = faceList.Faces.IndexOf(faceIndex);
             faceList.Faces.RemoveAt(flidx);
             faceList.FaceIndexes.RemoveAt(flidx);
             faceList.SelectionFaces.Remove(selectionFace);
-            
-            if(faceList.Faces.Count == 0)
+
+            if (faceList.Faces.Count == 0)
             {
                 if (_meshToSelection.TryGetValue(mesh, out var filter))
                 {
@@ -341,17 +341,17 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 _meshToFaces.Remove(mesh);
 
                 PBMesh pbMesh = mesh.GetComponent<PBMesh>();
-                if(pbMesh != null)
+                if (pbMesh != null)
                 {
                     pbMesh.RaiseUnselected();
                 }
-                
+
                 _pbMeshes.Remove(pbMesh);
             }
 
             Vector3 removedFaceCenterOfMass = GetCenterOfMass(selectionFace);
             int[] indices = selectionFace.distinctIndexes.OrderByDescending(i => i).ToArray();
-            for(int i = 0; i < indices.Length; ++i)
+            for (int i = 0; i < indices.Length; ++i)
             {
                 _selectionVertices.RemoveAt(indices[i]);
             }
@@ -360,17 +360,17 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             int count = selectionFace.indexes.Count;
 
             _selectionFaces.RemoveAt(selectionFaceIndex);
-            for(int i = selectionFaceIndex; i < _selectionFaces.Count; ++i)
+            for (int i = selectionFaceIndex; i < _selectionFaces.Count; ++i)
             {
                 _selectionFaces[i].ShiftIndexes(-count);
             }
 
-            if(!_isChanging)
+            if (!_isChanging)
             {
                 RebuildSelectionMesh();
             }
 
-            if(_selectionFaces.Count == 0)
+            if (_selectionFaces.Count == 0)
             {
                 _centerOfMass = Vector3.zero;
                 _lastPosition = Vector3.zero;
@@ -396,21 +396,21 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public void Clear()
         {
-            for(int i = 0; i < _pbMeshes.Count; ++i)
+            for (int i = 0; i < _pbMeshes.Count; ++i)
             {
                 PBMesh pbMesh = _pbMeshes[i];
-                
+
                 ProBuilderMesh mesh = pbMesh.GetComponent<ProBuilderMesh>();
                 if (mesh == null) continue;
                 if (_meshToSelection.TryGetValue(mesh, out var filter))
                 {
-                    if(filter != null)
+                    if (filter != null)
                     {
                         Destroy(filter.gameObject);
                     }
                 }
-                
-                if(pbMesh != null)
+
+                if (pbMesh != null)
                 {
                     pbMesh.RaiseUnselected();
                 }
@@ -429,7 +429,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public Vector3 GetCenterOfMass()
         {
             Vector3 centerOfMass = GetCenterOfMass(_selectionFaces[0]);
-            for(int i = 1; i < _selectionFaces.Count; ++i)
+            for (int i = 1; i < _selectionFaces.Count; ++i)
             {
                 Face face = _selectionFaces[i];
                 centerOfMass += GetCenterOfMass(face);
@@ -442,7 +442,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             IList<int> indexes = face.indexes;
             Vector3 result = _selectionVertices[indexes[0]];
-            for(int i = 1; i < indexes.Count; ++i)
+            for (int i = 1; i < indexes.Count; ++i)
             {
                 result += _selectionVertices[indexes[i]];
             }
@@ -463,7 +463,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public IList<int> GetFaces(ProBuilderMesh mesh)
         {
             FaceList faces;
-            if(_meshToFaces.TryGetValue(mesh, out faces))
+            if (_meshToFaces.TryGetValue(mesh, out faces))
             {
                 return faces.Faces;
             }
@@ -517,7 +517,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         private void RebuildSelectionMesh()
         {
-            if(_selectionMesh == null)
+            if (_selectionMesh == null)
             {
                 return;
             }
@@ -525,7 +525,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             _selectionMesh.ToMesh();
             _selectionMesh.Refresh();
         }
-        
+
         private MeshFilter CreateEdgesGameObject(ProBuilderMesh mesh)
         {
             GameObject edgesSelection = new GameObject("Edges");
@@ -550,7 +550,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             // CopyTransform(mesh.transform, meshFilter.transform);
             return meshFilter;
         }
-        
+
         void FindCoincidentEdges(ProBuilderMesh mesh)
         {
             if (_coincidentEdges.Count != 0)
@@ -591,7 +591,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 }
             }
         }
-        
+
         private void BuildEdgeMesh(ProBuilderMesh mesh, Mesh target, bool positionsOnly)
         {
             IList<Vector3> positions = mesh.positions;
@@ -609,7 +609,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
             int[] tris;
             Vector3[] vertices;
-            if(positionsOnly)
+            if (positionsOnly)
             {
                 vertices = target.vertices;
                 tris = null;
@@ -629,21 +629,21 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                     int positionIndex = edgeIndex * 2;
 
-                    if(vertices.Length > positionIndex)
+                    if (vertices.Length > positionIndex)
                     {
                         vertices[positionIndex + 0] = positions[edge.a];
                     }
-                    
-                    if(vertices.Length > positionIndex + 1)
+
+                    if (vertices.Length > positionIndex + 1)
                     {
                         vertices[positionIndex + 1] = positions[edge.b];
                     }
 
-                    if(!positionsOnly)
+                    if (!positionsOnly)
                     {
                         tris[positionIndex + 0] = positionIndex + 0;
                         tris[positionIndex + 1] = positionIndex + 1;
-                        
+
                         // List<int> list;
                         // if (!_edgeToSelection.TryGetValue(edge, out list))
                         // {
@@ -653,12 +653,12 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                         // list.Add(positionIndex + 0);
                         // list.Add(positionIndex + 1);
                     }
-                 
+
                     edgeIndex++;
                 }
             }
-            
-            if(!positionsOnly)
+
+            if (!positionsOnly)
             {
                 target.Clear();
                 target.name = "EdgeMesh" + target.GetInstanceID();
@@ -675,7 +675,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             else
             {
                 target.vertices = vertices.ToArray();
-            }  
+            }
         }
     }
 }

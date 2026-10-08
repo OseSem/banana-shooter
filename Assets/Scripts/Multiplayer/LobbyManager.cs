@@ -32,7 +32,7 @@ namespace Multiplayer
                 }
             }
         }
-    
+
         protected Callback<LobbyCreated_t> lobbyCreated;
         protected Callback<GameLobbyJoinRequested_t> gameLobbyJoinRequested;
         protected Callback<LobbyEnter_t> lobbyEnter;
@@ -41,7 +41,7 @@ namespace Multiplayer
         protected Callback<LobbyChatUpdate_t> lobbyChatUpdate;
 
         public List<CSteamID> lobbyIds = new List<CSteamID>();
-    
+
         private const string HostAddressKey = "HostAddress";
         internal CSteamID lobbyId;
 
@@ -49,7 +49,7 @@ namespace Multiplayer
         public static StringBuilder ServerTournamentName;
         public static StringBuilder ServerTournamentDesc;
         public static List<int> ServerTournamentPrizes = new List<int>();
-    
+
         public static bool ClientTournamentStarted = false;
         public static StringBuilder ClientTournamentName;
         public static StringBuilder ClientTournamentDesc;
@@ -60,7 +60,7 @@ namespace Multiplayer
         {
             Instance = this;
         }
-    
+
         private void Start()
         {
             if (!SteamManager.Initialized)
@@ -76,19 +76,19 @@ namespace Multiplayer
             lobbyDataUpdated = Callback<LobbyDataUpdate_t>.Create(OnGetLobbyData);
             lobbyChatUpdate = Callback<LobbyChatUpdate_t>.Create(PlayerJoinOrLeave);
 
-        
+
             int bandwidth = 750000;
-            GCHandle receivedData = GCHandle.Alloc(bandwidth,GCHandleType.Pinned);
+            GCHandle receivedData = GCHandle.Alloc(bandwidth, GCHandleType.Pinned);
             IntPtr pointer = receivedData.AddrOfPinnedObject();
             SteamNetworkingUtils.SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_SendRateMin,
                 ESteamNetworkingConfigScope.k_ESteamNetworkingConfig_Global, IntPtr.Zero,
                 ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32, pointer);
-        
-        
+
+
             SteamNetworkingUtils.SetConfigValue(ESteamNetworkingConfigValue.k_ESteamNetworkingConfig_SendRateMax,
                 ESteamNetworkingConfigScope.k_ESteamNetworkingConfig_Global, IntPtr.Zero,
                 ESteamNetworkingConfigDataType.k_ESteamNetworkingConfig_Int32, pointer);
-            
+
             SteamNetworkingUtils.InitRelayNetworkAccess();
         }
 
@@ -98,28 +98,28 @@ namespace Multiplayer
 
             if (!NetworkServerManager.Instance.Server.IsRunning)
             {
-                if (owner == (CSteamID) param.m_ulSteamIDUserChanged &&
-                    ((EChatMemberStateChange) param.m_rgfChatMemberStateChange ==
-                     EChatMemberStateChange.k_EChatMemberStateChangeDisconnected || 
-                     (EChatMemberStateChange) param.m_rgfChatMemberStateChange ==
+                if (owner == (CSteamID)param.m_ulSteamIDUserChanged &&
+                    ((EChatMemberStateChange)param.m_rgfChatMemberStateChange ==
+                     EChatMemberStateChange.k_EChatMemberStateChangeDisconnected ||
+                     (EChatMemberStateChange)param.m_rgfChatMemberStateChange ==
                      EChatMemberStateChange.k_EChatMemberStateChangeLeft))
                 {
                     foreach (ClientPlayer player in ClientPlayer.list.Values)
                         Destroy(player.gameObject);
 
                     ClientPlayer.list.Clear();
-                    if (LoadingManager.Instance.menuType == LoadingManager.MenuType.None)LoadingManager.Instance.menuType= LoadingManager.MenuType.HostQuit;
+                    if (LoadingManager.Instance.menuType == LoadingManager.MenuType.None) LoadingManager.Instance.menuType = LoadingManager.MenuType.HostQuit;
                     LeaveLobby();
                 }
                 return;
             }
             string state =
-                ((EChatMemberStateChange) (param.m_rgfChatMemberStateChange)) ==
+                ((EChatMemberStateChange)(param.m_rgfChatMemberStateChange)) ==
                 EChatMemberStateChange.k_EChatMemberStateChangeEntered
                     ? "join server"
                     : "left server";
-            string content = $"Server : {SteamFriends.GetFriendPersonaName((CSteamID) param.m_ulSteamIDUserChanged)} {state}";
-            Chat.Instance.AddMessage(content,Color.yellow);
+            string content = $"Server : {SteamFriends.GetFriendPersonaName((CSteamID)param.m_ulSteamIDUserChanged)} {state}";
+            Chat.Instance.AddMessage(content, Color.yellow);
         }
 
         public void CreateLobby()
@@ -135,7 +135,7 @@ namespace Multiplayer
                         : CreateServerMenu.Instance.lobbyType;
                     break;
             }
-        
+
             SteamMatchmaking.CreateLobby(lobbyType, CreateServerMenu.Instance.maxPlayer);
         }
 
@@ -150,22 +150,22 @@ namespace Multiplayer
                 window.SetReason(callback.m_eResult.ToString());
                 return;
             }
-            
+
             lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
             SteamMatchmaking.SetLobbyData(lobbyId, HostAddressKey, SteamUser.GetSteamID().ToString());
             string serverName = string.IsNullOrEmpty(CreateServerMenu.Instance.serverName)
                 ? NetworkManager.Instance.PersonalName + "'s Banana Lobby"
                 : Chat.Instance.SwearCheck(CreateServerMenu.Instance.serverName);
-            SteamMatchmaking.SetLobbyData(lobbyId,"ashdaghj",serverName);
-            SteamMatchmaking.SetLobbyData(lobbyId,"Version",Application.version);
+            SteamMatchmaking.SetLobbyData(lobbyId, "ashdaghj", serverName);
+            SteamMatchmaking.SetLobbyData(lobbyId, "Version", Application.version);
             owner = SteamMatchmaking.GetLobbyOwner(lobbyId);
-            SteamMatchmaking.SetLobbyData(lobbyId,"LobbyOwner",owner.ToString());
-        
-            SteamMatchmaking.SetLobbyData(lobbyId,"ServerType", ((int) NetworkServerManager.ServerType).ToString());
+            SteamMatchmaking.SetLobbyData(lobbyId, "LobbyOwner", owner.ToString());
+
+            SteamMatchmaking.SetLobbyData(lobbyId, "ServerType", ((int)NetworkServerManager.ServerType).ToString());
 
             #region Workshop
 
-            SteamMatchmaking.SetLobbyData(lobbyId,"WorkshopEnable", NetworkServerManager.ServerEnableWorkshop ? "1" : "0");
+            SteamMatchmaking.SetLobbyData(lobbyId, "WorkshopEnable", NetworkServerManager.ServerEnableWorkshop ? "1" : "0");
 
             // if (NetworkServerManager.ServerEnableWorkshop)
             // { 
@@ -181,11 +181,11 @@ namespace Multiplayer
             // }
 
             SteamNetworkingUtils.GetLocalPingLocation(out var result);
-            SteamNetworkingUtils.ConvertPingLocationToString(ref result,out var buf, 1024);
-            SteamMatchmaking.SetLobbyData(lobbyId, "ping",buf);
+            SteamNetworkingUtils.ConvertPingLocationToString(ref result, out var buf, 1024);
+            SteamMatchmaking.SetLobbyData(lobbyId, "ping", buf);
             #endregion
-            
-            
+
+
 
             // string weaponSetting = "";
             // foreach (var allowedWeapon in NetworkManager.AllowedWeapon.Values)
@@ -200,11 +200,11 @@ namespace Multiplayer
             NetworkServerManager.ClientData.Clear();
             NetworkServerManager.SetIsPlaying(false);
             NetworkServerManager.Instance.SetCheatsEnabled(false);
-            NetworkServerManager.Instance.Server.Start(0, (ushort) CreateServerMenu.Instance.maxPlayer, NetworkManager.PlayerHostedDemoMessageHandlerGroupId);
-            
+            NetworkServerManager.Instance.Server.Start(0, (ushort)CreateServerMenu.Instance.maxPlayer, NetworkManager.PlayerHostedDemoMessageHandlerGroupId);
+
             // NetworkManager.Instance.Client.ChangeTransport(new SteamClient(NetworkServerManager.Instance.CashedSteamServer));
-            NetworkManager.Instance.Client.Connect("127.0.0.1", 5,NetworkManager.PlayerHostedDemoMessageHandlerGroupId);
-            
+            NetworkManager.Instance.Client.Connect("127.0.0.1", 5, NetworkManager.PlayerHostedDemoMessageHandlerGroupId);
+
             NetworkServerManager.SetWorkshopMapVote();
         }
 
@@ -212,7 +212,7 @@ namespace Multiplayer
         {
             SteamMatchmaking.JoinLobby((CSteamID)lobbyId);
         }
-    
+
         private void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t callback)
         {
             UIManager.Instance.StartConnecting();
@@ -244,13 +244,13 @@ namespace Multiplayer
                     window.SetTitle("Join Failed");
                     window.SetReason("Incorrect version");
                 }
-            
+
                 return;
             }
             string own = SteamMatchmaking.GetLobbyData(lobbyId, "LobbyOwner");
             if (ulong.TryParse(own, out var checkOwner))
             {
-            
+
                 if (owner.m_SteamID != checkOwner)
                 {
                     LeaveLobby();
@@ -262,7 +262,7 @@ namespace Multiplayer
                         window.SetTitle("Join Failed");
                         window.SetReason("Room doesnt exist anymore");
                     }
-            
+
                     return;
                 }
             }
@@ -277,7 +277,7 @@ namespace Multiplayer
                     window.SetTitle("Join Failed");
                     window.SetReason("Room doesnt exist anymore");
                 }
-            
+
                 return;
             }
             SteamFriends.SetRichPresence("server", lobbyId.ToString());
@@ -291,7 +291,7 @@ namespace Multiplayer
 
             NetworkManager.Instance.connecting = true;
             // NetworkManager.Instance.Client.ChangeTransport(new SteamClient(NetworkServerManager.Instance.CashedSteamServer));
-            NetworkManager.Instance.Client.Connect(hostAddress, 5,NetworkManager.PlayerHostedDemoMessageHandlerGroupId);
+            NetworkManager.Instance.Client.Connect(hostAddress, 5, NetworkManager.PlayerHostedDemoMessageHandlerGroupId);
         }
 
         [HideInInspector]
@@ -303,7 +303,7 @@ namespace Multiplayer
             NetworkManager.Instance.DisconnectClient();
             NetworkServerManager.Instance.StopServer();
             NetworkManager.Instance.StopServer();
-            owner=CSteamID.Nil;
+            owner = CSteamID.Nil;
             lobbyId = CSteamID.Nil;
         }
 
@@ -322,7 +322,7 @@ namespace Multiplayer
         }
         void OnGetLobbyList(LobbyMatchList_t result)
         {
-            for (int i = 0; i < result.m_nLobbiesMatching;i++)
+            for (int i = 0; i < result.m_nLobbiesMatching; i++)
             {
                 CSteamID id = SteamMatchmaking.GetLobbyByIndex(i);
                 lobbyIds.Add(id);
@@ -332,7 +332,7 @@ namespace Multiplayer
 
         void OnGetLobbyData(LobbyDataUpdate_t result)
         {
-            BrowseServerMenu.Instance.DisplayLobbiesP2P(lobbyIds,result);
+            BrowseServerMenu.Instance.DisplayLobbiesP2P(lobbyIds, result);
         }
 
         public void SetLobbyGameMode()
@@ -345,7 +345,7 @@ namespace Multiplayer
 
         public void SetLobbyType(ELobbyType type)
         {
-            if(SteamMatchmaking.SetLobbyType(lobbyId, type))
+            if (SteamMatchmaking.SetLobbyType(lobbyId, type))
                 Debug.Log($"Change lobby type to {type} successfully");
         }
     }

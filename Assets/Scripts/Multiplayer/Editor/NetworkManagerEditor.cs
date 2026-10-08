@@ -29,7 +29,7 @@ namespace Multiplayer.Editor
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(_network.localPlayerPrefab)), new GUIContent("Local Player", "The local player prefab"));
             EditorGUILayout.HelpBox("Make sure there are only one Local Player in the scene", UnityEditor.MessageType.Info);
             GUILayout.EndVertical();
-            
+
             GUILayout.Space(space);
 
             EditorGUI.indentLevel = 0;
@@ -40,7 +40,7 @@ namespace Multiplayer.Editor
             GUILayout.EndVertical();
 
             GUILayout.Space(space);
-            
+
             EditorGUI.indentLevel = 0;
             GUILayout.BeginVertical("Box");
             EditorGUILayout.LabelField("Custom", EditorStyles.boldLabel);

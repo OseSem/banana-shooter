@@ -15,19 +15,19 @@ namespace Mode
                 enabled = false;
                 return;
             }
-    
+
             string sceneName = SceneManager.GetActiveScene().name;
-            if (sceneName == "CustomMap" && MapSaver.CurrentMap!=null) sceneName = MapSaver.CurrentMap.name;
+            if (sceneName == "CustomMap" && MapSaver.CurrentMap != null) sceneName = MapSaver.CurrentMap.name;
             NetworkManager.Instance.SetRichPreference(GameMode.Brawl.ToString(), sceneName);
             LobbyManager.Instance.SetLobbyGameMode();
-            Invoke(nameof(Voice),1.5f);
+            Invoke(nameof(Voice), 1.5f);
         }
 
         void Voice()
         {
             VoiceLine.Instance.PlayVoice(VoiceKey.brawl);
             VoiceLine.Instance.PlayVoice(VoiceKey.brawl_description);
-        } 
+        }
 
     }
 }

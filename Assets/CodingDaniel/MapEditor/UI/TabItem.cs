@@ -7,11 +7,11 @@ using UnityEngine.UI;
 
 namespace CodingDaniel.MapEditor.UI
 {
-    public class TabItem : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler,IPointerDownHandler
+    public class TabItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler, IPointerDownHandler
     {
         [SerializeField] private RawImage image;
         [SerializeField] private TextMeshProUGUI text;
-        private Color _desiredColor,_desiredTextColor;
+        private Color _desiredColor, _desiredTextColor;
 
         private Color _defaultColor;
 
@@ -35,7 +35,7 @@ namespace CodingDaniel.MapEditor.UI
             {
                 TabList.Instance.ClearSelection();
                 Click();
-                
+
             }
             _desiredColor = _defaultColor;
             _desiredColor.a = 0.8f;
@@ -74,14 +74,14 @@ namespace CodingDaniel.MapEditor.UI
             TabList.Instance.DestroyDropList();
             _isSelect = true;
             TabList.Instance.isSelected = true;
-            TabList.Instance.SpawnList(_transform,items);
+            TabList.Instance.SpawnList(_transform, items);
         }
         public void ClearSelect()
         {
             _isSelect = false;
             _desiredColor = _defaultColor;
             _desiredColor.a = 0;
-            
+
             _desiredTextColor = Color.white;
         }
     }

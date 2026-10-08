@@ -39,19 +39,19 @@ namespace CodingDaniel.MapEditor.MEEditor
         public static event ExposeToEditorEvent Disabled;
 
         public Collider[] Colliders { get; set; }
-        
+
         private MeshFilter _filter;
         public MeshFilter MeshFilter
         {
             get { return _filter; }
         }
-        
+
         private SkinnedMeshRenderer _skinned;
         public SkinnedMeshRenderer SkinnedMeshRenderer
         {
             get { return _skinned; }
         }
-        
+
         private static readonly Bounds _none = new Bounds();
         public ExposeToEditorUnityEvent selected;
         public ExposeToEditorUnityEvent unselected;
@@ -62,15 +62,15 @@ namespace CodingDaniel.MapEditor.MEEditor
         private bool _markAsDestroyed;
         public bool MarkAsDestroyed
         {
-            get 
+            get
             {
-                if(_markAsDestroyed)
+                if (_markAsDestroyed)
                 {
                     return true;
                 }
 
                 return false;
-            
+
             }
             set
             {
@@ -99,7 +99,7 @@ namespace CodingDaniel.MapEditor.MEEditor
         {
             get { return _effectiveBoundsType; }
         }
-        
+
         public Bounds Bounds
         {
             get
@@ -114,7 +114,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                     {
                         return _skinned.sharedMesh.bounds;
                     }
-                    else if(boundsObject != null && boundsObject.transform is RectTransform)
+                    else if (boundsObject != null && boundsObject.transform is RectTransform)
                     {
                         return boundsObject.transform.CalculateRelativeRectTransformBounds();
                     }
@@ -143,7 +143,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                         return _spriteRenderer.sprite.bounds;
                     }
                 }
-                else if(_effectiveBoundsType == BoundsType.RectTransform)
+                else if (_effectiveBoundsType == BoundsType.RectTransform)
                 {
                     if (boundsObject != null && boundsObject.transform is RectTransform)
                     {
@@ -157,7 +157,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 return _none;
             }
         }
-        
+
         public Vector3 LocalPosition
         {
             get { return transform.localPosition; }
@@ -196,15 +196,15 @@ namespace CodingDaniel.MapEditor.MEEditor
             }
 
         }
-        
+
         public bool ActiveInHierarchy => gameObject.activeInHierarchy;
-        
+
         public bool ActiveSelf
         {
             get => gameObject.activeSelf;
             set
             {
-                if(ActiveSelf != value)
+                if (ActiveSelf != value)
                 {
                     gameObject.SetActive(value);
                     RaisePropertyChanged(nameof(ActiveSelf));
@@ -212,19 +212,19 @@ namespace CodingDaniel.MapEditor.MEEditor
                 }
             }
         }
-        
+
         private event PropertyChangedEventHandler _propertyChanged;
         event PropertyChangedEventHandler INotifyPropertyChanged.PropertyChanged
         {
             add { _propertyChanged += value; }
             remove { _propertyChanged -= value; }
         }
-        
+
         void RaisePropertyChanged(string name)
         {
             _propertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
-        
+
         public bool IsAwaked
         {
             get;
@@ -257,7 +257,7 @@ namespace CodingDaniel.MapEditor.MEEditor
             _effectiveBoundsType = boundsType;
             _filter = boundsObject.GetComponent<MeshFilter>();
             _skinned = boundsObject.GetComponent<SkinnedMeshRenderer>();
-            
+
             if (_filter == null && _skinned == null)
             {
                 _spriteRenderer = boundsObject.GetComponent<SpriteRenderer>();
@@ -279,7 +279,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 Awaked?.Invoke(this);
             }
         }
-        
+
         private void Start()
         {
             if ((hideFlags & HideFlags.HideInHierarchy) == 0)
@@ -287,7 +287,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 Started?.Invoke(this);
             }
         }
-        
+
         private void OnEnable()
         {
             if ((hideFlags & HideFlags.HideInHierarchy) == 0)
@@ -306,7 +306,7 @@ namespace CodingDaniel.MapEditor.MEEditor
 
         private void OnDestroy()
         {
-            
+
             if ((hideFlags & HideFlags.HideInHierarchy) == 0)
             {
                 Destroying?.Invoke(this);
@@ -317,7 +317,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 Destroyed?.Invoke(this);
             }
         }
-        
+
         private void Update()
         {
             if (TransformChanged != null)
@@ -348,6 +348,6 @@ namespace CodingDaniel.MapEditor.MEEditor
             }
             return null;
         }
-        
+
     }
 }

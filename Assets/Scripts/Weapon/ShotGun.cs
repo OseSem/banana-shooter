@@ -8,7 +8,7 @@ public class ShotGun : Firearms
 {
     protected override void Shoot()
     {
-        WeaponManager.Instance.CurrentPlayer.rb.AddForce(-PlayerCam.transform.forward.normalized*1000,ForceMode.Acceleration);
+        WeaponManager.Instance.CurrentPlayer.rb.AddForce(-PlayerCam.transform.forward.normalized * 1000, ForceMode.Acceleration);
     }
 
     protected override void Reload()
@@ -20,7 +20,7 @@ public class ShotGun : Firearms
 
     protected override void Aim()
     {
-        
+
     }
 
     IEnumerator ReloadSound()
@@ -35,7 +35,7 @@ public class ShotGun : Firearms
 
         for (int i = 0; i < spinAmount; i++)
         {
-            AudioManager.Instance.PlayGunReload(reload,Mathf.Abs(reloadMultiplier - 1f) > 0.1f ? 1.6f : 1f);
+            AudioManager.Instance.PlayGunReload(reload, Mathf.Abs(reloadMultiplier - 1f) > 0.1f ? 1.6f : 1f);
             yield return new WaitForSeconds(shellInterval);
         }
     }

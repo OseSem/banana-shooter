@@ -15,7 +15,7 @@ namespace Demo.Entity
     public class DemoPlayer : DemoEntity
     {
         // public PlayerWeaponManager PlayerWeapon;
-        
+
         private PlayerAnimation _playerAnimation;
 
         public PlayerAnimation PlayerAnimation => _playerAnimation;
@@ -33,7 +33,7 @@ namespace Demo.Entity
         [SerializeField] private Transform head, spine;
         bool Grounded { get; set; }
         public bool Crouch { get; set; }
-        
+
         public bool Dead { get; private set; }
 
         private InventoryManager.CosmeticIndex _cosmeticIndex;
@@ -55,7 +55,7 @@ namespace Demo.Entity
 
         private void Start()
         {
-            
+
             _playerAnimation = new PlayerAnimation(animator, spine);
         }
 
@@ -64,9 +64,9 @@ namespace Demo.Entity
             if (DemoManager.Replaying)
             {
                 float lerp = Time.deltaTime / (0.02f / Time.timeScale);
-                
+
                 // lerp = Mathf.Max(0.02f, lerp);
-                
+
                 InterpolatePosition(lerp);
                 InterpolateRotation(lerp);
 
@@ -74,9 +74,9 @@ namespace Demo.Entity
 
                 _groundCheck = selfTrans.position + new Vector3(0, -_playerHeight / 2f, 0);
                 Grounded = Physics.CheckSphere(_groundCheck, .5f, whatIsGround);
-                
+
                 playerState.Grounded = Grounded;
-                
+
                 _playerAnimation.SetGround(Grounded);
 
                 _playerAnimation.Update();
@@ -138,11 +138,11 @@ namespace Demo.Entity
                 nameText.SetText(username);
 
                 playerState.SetValues(false, steamId, username, Team.Rebel, true);
-                
+
                 playerState.SetPlayerCosmetics(cosmeticIndex);
-                
-                playerState.InitializeWeaponManager( audioSource);
-                
+
+                playerState.InitializeWeaponManager(audioSource);
+
                 // PlayerWeapon = new PlayerWeaponManager(false, weapons, leftHandTarget, rightHandTarget, iks, playerState, clawKnifeAnim, audioSource, playerState.weaponHolder, head);
                 playerState.WeaponManager.UpdateWeapons(weaponIndexes, currentWeaponIndex, weaponSkinIndex);
 
@@ -212,15 +212,15 @@ namespace Demo.Entity
             float deltaX = AngleUtils.WrapAngle(rot) - AngleUtils.WrapAngle(selfTrans.localEulerAngles.y);
 
             float deltaThreshold = 3.5f * Time.timeScale;
-            
-            deltaY = Mathf.Clamp(deltaY * 0.1f,-deltaThreshold, deltaThreshold);
-            deltaX = Mathf.Clamp(deltaX * 0.1f,-deltaThreshold, deltaThreshold);
+
+            deltaY = Mathf.Clamp(deltaY * 0.1f, -deltaThreshold, deltaThreshold);
+            deltaX = Mathf.Clamp(deltaX * 0.1f, -deltaThreshold, deltaThreshold);
 
             _desiredRot = Quaternion.Euler(0, rot, 0);
 
             _desiredHeadRot = Quaternion.Euler(headRot, 0, 0);
-            
-            playerState.SetDelta(deltaX,deltaY);
+
+            playerState.SetDelta(deltaX, deltaY);
 
             _playerAnimation.SetXRotation(headRot);
         }
@@ -228,7 +228,7 @@ namespace Demo.Entity
         public void NewVelocity(Vector3 velocity)
         {
             // GetRb().velocity = velocity;
-            
+
             playerState.SetVelocity(velocity);
         }
 
@@ -246,7 +246,7 @@ namespace Demo.Entity
             {
                 AudioManager.Instance.SoundEffect3D("start_slide", selfTrans.position, 0.8f);
             }
-            
+
             _playerAnimation.SetCrouch(crouch);
         }
 
@@ -257,15 +257,15 @@ namespace Demo.Entity
         public void NewCrouch(bool crouch)
         {
             Crouch = crouch;
-            
-            DemoManager.Instance.AddPlayerCrouch(Id,crouch);
+
+            DemoManager.Instance.AddPlayerCrouch(Id, crouch);
         }
 
         public override bool IsPlayer()
         {
             return true;
         }
-        
+
         public float GetHeadRotation()
         {
             return AngleUtils.WrapAngle(head.localEulerAngles.x);
@@ -279,7 +279,7 @@ namespace Demo.Entity
             playerState.Health = playerState.MaxHealth;
             playerState.Respawn();
             playerState.SetInfect();
-            playerState.WeaponManager.UpdateWeapons(playerState.WeaponManager.WeaponIndexes,playerState.WeaponManager.CurrentWeaponIndex,playerState.WeaponManager.WeaponSkinIndexes);
+            playerState.WeaponManager.UpdateWeapons(playerState.WeaponManager.WeaponIndexes, playerState.WeaponManager.CurrentWeaponIndex, playerState.WeaponManager.WeaponSkinIndexes);
             _playerAnimation.Reset();
         }
 
@@ -290,7 +290,7 @@ namespace Demo.Entity
             selfTrans.gameObject.SetActive(false);
             // playerState.SetHealth(0, playerState.Health, false, selfTrans.position, Vector3.up, true, false);
             bool attackerIsLocal = playerData.id != stateData.attackerId;
-            if (DemoManager.Instance.TryGetEntity(stateData.attackerId,out var entity) && entity.IsPlayer())
+            if (DemoManager.Instance.TryGetEntity(stateData.attackerId, out var entity) && entity.IsPlayer())
             {
                 attackerIsLocal &= ((DemoPlayer)entity).playerState.IsLocal;
             }
@@ -298,7 +298,7 @@ namespace Demo.Entity
             {
                 attackerIsLocal = false;
             }
-            playerState.Dead(stateData.headShot,stateData.wallbang,stateData.weaponIndex,attackerIsLocal);
+            playerState.Dead(stateData.headShot, stateData.wallbang, stateData.weaponIndex, attackerIsLocal);
             playerState.SpawnRagdoll(false);
         }
     }

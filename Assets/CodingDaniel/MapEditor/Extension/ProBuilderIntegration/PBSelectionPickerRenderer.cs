@@ -30,7 +30,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             int renderTextureWidth = -1,
             int renderTextureHeight = -1);
     }
-    public class PBSelectionPickerRenderer:IPBSelectionPickerRenderer
+    public class PBSelectionPickerRenderer : IPBSelectionPickerRenderer
     {
         const string FacePickerOcclusionTintUniform = "_Tint";
         static readonly Color Blackf = new Color(0f, 0f, 0f, 1f);
@@ -246,7 +246,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             return go;
         }
 
-        protected virtual Texture2D RenderFacesWithRepacementShader( 
+        protected virtual Texture2D RenderFacesWithRepacementShader(
             Camera camera,
             Shader shader,
             string tag,
@@ -293,7 +293,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             Camera renderCam = go.AddComponent<Camera>();
             renderCam.CopyFrom(camera);
             renderCam.cullingMask = int.MaxValue;
-         
+
             renderCam.renderingPath = RenderingPath.Forward;
             renderCam.enabled = false;
             renderCam.clearFlags = CameraClearFlags.SolidColor;
@@ -363,7 +363,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
             RenderTexture.active = prev;
             RenderTexture.ReleaseTemporary(rt);
-            
+
             UObject.DestroyImmediate(go);
 
             return img;

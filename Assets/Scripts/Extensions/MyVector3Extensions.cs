@@ -17,7 +17,7 @@ namespace Extensions
 
             return newList;
         }
-        
+
         public static List<Vector3> ToVector3List(this List<MyVector3> list)
         {
             List<Vector3> newList = new List<Vector3>();

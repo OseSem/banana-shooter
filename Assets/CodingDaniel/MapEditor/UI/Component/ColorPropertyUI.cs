@@ -11,12 +11,12 @@ namespace CodingDaniel.MapEditor.UI.Component
 
         public override void UpdateValue(object o)
         {
-            img.color = (Color) o;
+            img.color = (Color)o;
         }
 
-        public override void Init(string n, object o,bool c)
+        public override void Init(string n, object o, bool c)
         {
-            base.Init(n, o,c);
+            base.Init(n, o, c);
             btn.onClick.AddListener(OpenColorPanel);
 
             btn.interactable = c;
@@ -28,7 +28,7 @@ namespace CodingDaniel.MapEditor.UI.Component
             ColorPickerControl.Instance.OnColorChanged += (color =>
             {
                 img.color = color;
-                
+
                 SetValue(color);
             });
         }

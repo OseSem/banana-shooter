@@ -22,7 +22,7 @@ namespace CodingDaniel.MapEditor.Utils
 
         public static Rect BoundsToScreenRect(Camera cam, Bounds[] bounds, bool isInFrustumCheck)
         {
-            if(!isInFrustumCheck)
+            if (!isInFrustumCheck)
             {
                 return BoundsToScreenRect(cam, bounds);
             }
@@ -30,9 +30,9 @@ namespace CodingDaniel.MapEditor.Utils
             Plane[] planes = GeometryUtility.CalculateFrustumPlanes(cam);
             Vector2 min = Vector2.zero;
             Vector2 max = Vector2.zero;
-            
+
             int i;
-            for(i = 0; i < bounds.Length; ++i)
+            for (i = 0; i < bounds.Length; ++i)
             {
                 if (GeometryUtility.TestPlanesAABB(planes, bounds[i]))
                 {
@@ -62,7 +62,7 @@ namespace CodingDaniel.MapEditor.Utils
 
         public static Rect BoundsToScreenRect(Camera cam, Bounds[] bounds)
         {
-            if(bounds.Length == 0)
+            if (bounds.Length == 0)
             {
                 return Rect.zero;
             }

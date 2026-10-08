@@ -11,7 +11,7 @@ using Random = UnityEngine.Random;
 
 public class Enemy : MonoBehaviour
 {
-    public int hp=100;
+    public int hp = 100;
     private RigidEnemy ikController;
     Vector3 target;
 
@@ -22,11 +22,11 @@ public class Enemy : MonoBehaviour
 
     private void Start()
     {
-        if(PlayerMovement.Instance)
-            target = PlayerMovement.Instance.playerCam.position-PlayerMovement.Instance.GetVelocity().normalized;
+        if (PlayerMovement.Instance)
+            target = PlayerMovement.Instance.playerCam.position - PlayerMovement.Instance.GetVelocity().normalized;
     }
 
-    public float minDistance=15;
+    public float minDistance = 15;
     public FastIKFabric handIk;
     public NavMeshAgent agent;
 
@@ -42,8 +42,8 @@ public class Enemy : MonoBehaviour
                 agent.path = path;
             }
         }
-        
-            
+
+
 
         Vector3 pos = agent.steeringTarget;
 
@@ -53,12 +53,12 @@ public class Enemy : MonoBehaviour
     }
     private void FixedUpdate()
     {
-        
+
         if (ikController.root.transform.position.y < -50f)
         {
             TakeDamage(2000);
         }
-        if (hp < 1 || ikController.state!= RigidEnemy.EnemyState.Active)
+        if (hp < 1 || ikController.state != RigidEnemy.EnemyState.Active)
         {
             if (handIk.enabled) handIk.enabled = false;
             return;
@@ -72,10 +72,10 @@ public class Enemy : MonoBehaviour
         Vector3 normalized = (target - position).normalized;
         Vector3 pos = GetNavMeshPos();
         float num = Vector3.Distance(target, position);
-        Debug.DrawRay(position,(pos- position).normalized,Color.red);
+        Debug.DrawRay(position, (pos - position).normalized, Color.red);
         MoveLogic((pos - position).normalized, num);
         ikController.RotateBody(normalized);
-        handIk.enabled =Mathf.Abs( num - minDistance) < 5f || num<minDistance;
+        handIk.enabled = Mathf.Abs(num - minDistance) < 5f || num < minDistance;
         if (handIk.enabled)
         {
             handIk.Target.position = target;
@@ -95,7 +95,7 @@ public class Enemy : MonoBehaviour
             ikController.UpdateState(RigidEnemy.EnemyState.Dead);
             AudioManager.Instance.Play("KillSecured");
         }
-        JuicyScore.Instance.UpdateScore(score,JuicyScore.ScoreType.None);
+        JuicyScore.Instance.UpdateScore(score, JuicyScore.ScoreType.None);
     }
     private void MoveLogic(Vector3 moveDir, float distanceFromTarget)
     {
@@ -122,13 +122,13 @@ public class Enemy : MonoBehaviour
             particleSystem.Play();
             float off = 0.05f;
             Invoke("GetReadyToAttack", UnityEngine.Random.Range(0.7f, 1f));
-            Vector3 offset = new Vector3(Random.Range(-off,off), Random.Range(-off, off), 0);
+            Vector3 offset = new Vector3(Random.Range(-off, off), Random.Range(-off, off), 0);
             dir += offset;
             Bullet bullet = ObjectPooler.Instance.SpawnFromPool("Bullet", tip.position,
                 Quaternion.LookRotation(dir)).GetComponent<Bullet>();
 
-            bullet.Initialization(dir,200f,damage,LayerMask.NameToLayer("EnemyBullet"),false,false);
-            ikController.rb.AddForce(-dir*recoilRange,ForceMode.Impulse);
+            bullet.Initialization(dir, 200f, damage, LayerMask.NameToLayer("EnemyBullet"), false, false);
+            ikController.rb.AddForce(-dir * recoilRange, ForceMode.Impulse);
         }
     }
     private void GetReadyToAttack()

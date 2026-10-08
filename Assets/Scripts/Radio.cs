@@ -20,8 +20,8 @@ public class Radio : MonoBehaviour
         @group = GetComponentInChildren<CanvasGroup>();
         source = GetComponent<AudioSource>();
 
-        playingText.StringReference.Arguments = new List<object>(){"None"};
-        
+        playingText.StringReference.Arguments = new List<object>() { "None" };
+
         PlayMusic();
     }
 
@@ -41,12 +41,12 @@ public class Radio : MonoBehaviour
     {
         CancelInvoke(nameof(Close));
         desiredAlpha = 1f;
-        Invoke(nameof(Close),0.3f);
+        Invoke(nameof(Close), 0.3f);
     }
 
     public void ChangePlayState()
     {
-        if(source.isPlaying) source.Pause();
+        if (source.isPlaying) source.Pause();
         else source.Play();
 
         playingText.SetEntry(source.isPlaying ? "playing" : "pausing");
@@ -56,7 +56,7 @@ public class Radio : MonoBehaviour
     [SerializeField] private AssetReference[] musicAssets;
 
     private AssetReference _loadedAsset;
-    
+
     private int _currentIndex = 0;
 
     public void NextSong(int index)
@@ -74,24 +74,24 @@ public class Radio : MonoBehaviour
         _loadedAsset = musicAssets[_currentIndex];
 
         var asyncOperation = _loadedAsset.LoadAssetAsync<AudioClip>();
-        
+
         asyncOperation.Completed += (handle) =>
         {
             if (handle.Status == AsyncOperationStatus.Succeeded)
             {
                 var clip = handle.Result;
                 source.clip = clip;
-                
+
                 playingText.SetEntry("playing");
                 playingText.StringReference.Arguments[0] = clip.name;
                 playingText.RefreshString();
-                
+
                 source.Play();
 
             }
         };
 
-        
+
     }
 
     void Release()
@@ -101,7 +101,7 @@ public class Radio : MonoBehaviour
             _loadedAsset.ReleaseAsset();
         }
     }
-    
+
     void Close()
     {
         desiredAlpha = 0f;

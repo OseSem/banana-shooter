@@ -19,9 +19,9 @@ namespace Manager
     public class AnticheatManager : MonoBehaviour
     {
         public static AnticheatManager Instance { get; private set; }
-        
+
         public List<ulong> BannedPlayer = new List<ulong>();
-        
+
         enum WatchdogIntent : uint
         {
             watchdog_intent_disabled = 0u,
@@ -33,7 +33,7 @@ namespace Manager
         }
 
         public Dictionary<ushort, float> Heartbeats = new();
-        
+
         private static readonly uint CE1 = FnvConstants.CreateHash("watchdog_cheatengine_1");
         private static readonly uint CE2 = FnvConstants.CreateHash("watchdog_cheatengine_2");
         private static readonly uint DLL1 = FnvConstants.CreateHash("watchdog_unsigneddll_1");
@@ -46,28 +46,28 @@ namespace Manager
 #else
         const WatchdogIntent intent = WatchdogIntent.watchdog_intent_production;
 #endif
-        
+
 #if UNITY_EDITOR
         const string CLIENT_DLL = "watchdog.client.stub.dll";
 #else
         const string CLIENT_DLL = "watchdog.client.dll";
 #endif
-        
+
         [DllImport(CLIENT_DLL)]
         static extern bool watchdog_client_initialize(WatchdogIntent intent);
 
         [DllImport(CLIENT_DLL)]
         static extern void watchdog_client_deinitialize();
-        
+
         [DllImport(CLIENT_DLL)]
-        static extern void watchdog_client_set_url( [MarshalAs(UnmanagedType.LPUTF8Str)] string lpString );
+        static extern void watchdog_client_set_url([MarshalAs(UnmanagedType.LPUTF8Str)] string lpString);
 
         [DllImport(CLIENT_DLL)]
         static extern void watchdog_client_tick();
-        
+
         [DllImport(CLIENT_DLL)]
-        static extern void watchdog_client_set_auth( [MarshalAs(UnmanagedType.LPUTF8Str)] string lpString , int stringLength );
-        
+        static extern void watchdog_client_set_auth([MarshalAs(UnmanagedType.LPUTF8Str)] string lpString, int stringLength);
+
         [DllImport(CLIENT_DLL)]
         static extern bool watchdog_client_peek_message([In, Out][MarshalAs(UnmanagedType.LPArray)] byte[] outBuffer, int length);
 
@@ -83,7 +83,7 @@ namespace Manager
             return;
             try
             {
-                if ( !watchdog_client_initialize( intent ) )
+                if (!watchdog_client_initialize(intent))
                 {
                     Debug.LogError("Anticheat initialize failed");
 #if UNITY_EDITOR
@@ -101,10 +101,10 @@ namespace Manager
                 watchdog_client_set_url(EndPoint.AntiCheatDetection);
 
                 SteamUser.GetAuthTicketForWebApi("anticheat");
-                
+
                 OnWebApiTicketResponse = Callback<GetTicketForWebApiResponse_t>.Create(OnWebApiTicketRespond);
             }
-            catch ( DllNotFoundException )
+            catch (DllNotFoundException)
             {
                 Debug.LogError("Anticheat initialize failed");
 #if UNITY_EDITOR
@@ -114,7 +114,7 @@ namespace Manager
 #endif
                 return;
             }
-            
+
         }
 
         private void OnWebApiTicketRespond(GetTicketForWebApiResponse_t param)
@@ -127,9 +127,9 @@ namespace Manager
             if (param.m_rgubTicket != null)
             {
                 string ticket = BitConverter.ToString(param.m_rgubTicket).Replace("-", String.Empty) + " ";
-                
+
                 Debug.Log($"Set auth, ticket size = {ticket.Length}");
-                
+
                 watchdog_client_set_auth(ticket, ticket.Length - 1);
             }
         }
@@ -138,30 +138,30 @@ namespace Manager
         {
             return;
             watchdog_client_tick();
-            
+
             if (NetworkManager.Instance.Client.IsConnected)
             {
                 byte[] data = new byte[1024];
-                if ( watchdog_client_peek_message( data, data.Length ) )
+                if (watchdog_client_peek_message(data, data.Length))
                 {
                     // Debug.Log("Anticheat Message Found");
-                    Message message = Message.Create(MessageSendMode.Reliable, (ushort) ClientToServerId.AntiCheatData) ;
-            
+                    Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.AntiCheatData);
+
                     message.Add(data);
-            
-                    NetworkManager.Instance.Client.Send(message); 
+
+                    NetworkManager.Instance.Client.Send(message);
                 }
             }
-            
+
 
 #if !UNITY_EDITOR
-            if ( NetworkServerManager.Instance.Server.IsRunning )
+            if (NetworkServerManager.Instance.Server.IsRunning)
             {
-                foreach ( var client in NetworkServerManager.Instance.Server.Clients )
+                foreach (var client in NetworkServerManager.Instance.Server.Clients)
                 {
                     if (Heartbeats.TryGetValue(client.Id, out var t))
                     {
-                        if ( Time.time - t > 30 )
+                        if (Time.time - t > 30)
                         {
                             Debug.Log($"{client.Id} stop heartbeating, kicking now...");
                             //NetworkServerManager.Instance.Server.DisconnectClient(client.Id);
@@ -170,17 +170,17 @@ namespace Manager
                 }
             }
 #endif
-            
-            
-            
+
+
+
         }
 
         [MessageHandler((ushort)ClientToServerId.AntiCheatData,
             NetworkServerManager.PlayerHostedDemoMessageHandlerGroupId)]
-        private static void CheckAntiCheatData(ushort fromClient,Message message)
+        private static void CheckAntiCheatData(ushort fromClient, Message message)
         {
             byte[] bytes = message.GetBytes();
-            
+
             string result = System.Text.Encoding.UTF8.GetString(bytes);
 
             AnticheatReport obj = JsonConvert.DeserializeObject<AnticheatReport>(result);
@@ -191,22 +191,22 @@ namespace Manager
                 {
                     case var value when value == CE1:
                         NetworkServerManager.Instance.Server.DisconnectClient(fromClient);
-                        
+
                         Debug.Log($"{fromClient} is using ce 1, kicking it now...");
                         return;
                     case var value when value == CE2:
                         NetworkServerManager.Instance.Server.DisconnectClient(fromClient);
-                        
+
                         Debug.Log($"{fromClient} is using ce 2, kicking it now...");
                         return;
                     case var value when value == DLL1:
                         // NetworkServerManager.Instance.Server.DisconnectClient(fromClient);
-                        
+
                         Debug.Log($"{fromClient} is using dll 1, stop kicking it now...");
                         return;
                     case var value when value == HANDLE1:
                         // NetworkServerManager.Instance.Server.DisconnectClient(fromClient);
-                        
+
                         Debug.Log($"{fromClient} is using handle 1, kicking it now...");
                         return;
                     case var value when value == HEARTBEAT:
@@ -222,7 +222,7 @@ namespace Manager
             //watchdog_client_deinitialize();
         }
     }
-    
+
     [Serializable]
     public class AnticheatReport
     {

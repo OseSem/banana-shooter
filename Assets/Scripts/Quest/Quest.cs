@@ -11,16 +11,16 @@ namespace Quest
     public class Quest
     {
         public int Id;
-        public Action<int,int> ProgressChanged;
+        public Action<int, int> ProgressChanged;
         public Action<int> OnClaim;
-        
-        public bool IsClaim=false;
+
+        public bool IsClaim = false;
 
         public int Progress = 0;
-        
+
         public QuestObject QuestObj;
 
-        public Quest(int id,bool isAchieve, int progress, QuestObject questObj)
+        public Quest(int id, bool isAchieve, int progress, QuestObject questObj)
         {
             Id = id;
             IsClaim = isAchieve;
@@ -38,7 +38,7 @@ namespace Quest
             if (QuestObj.questType == q)
             {
                 ++Progress;
-                ProgressChanged?.Invoke(Id,Progress);
+                ProgressChanged?.Invoke(Id, Progress);
             }
         }
 
@@ -59,10 +59,10 @@ namespace Quest
                             // InventoryManager.Instance.HandleQueue.Enqueue(InventoryManager.InventoryHandleType.ItemDrop);
                             // SteamInventory.TriggerItemDrop(out InventoryManager.Instance.inventoryHandle,(SteamItemDef_t)181);
                             break;
-                        
+
                     }
                 }
-                
+
                 OnClaim?.Invoke(Id);
 
                 int type = 0;

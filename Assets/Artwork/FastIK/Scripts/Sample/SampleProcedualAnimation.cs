@@ -1,8 +1,8 @@
-﻿using UnityEngine;
+using UnityEngine;
 
 namespace DitzelGames.FastIK
 {
-    class SampleProcedualAnimation :  MonoBehaviour
+    class SampleProcedualAnimation : MonoBehaviour
     {
         public Transform[] FootTarget;
         public Transform LookTarget;
@@ -22,12 +22,12 @@ namespace DitzelGames.FastIK
                 Attraction.position = Attraction.position + Vector3.forward * -2f;
 
             //footsteps
-            for(int i = 0; i < FootTarget.Length; i++)
+            for (int i = 0; i < FootTarget.Length; i++)
             {
                 var foot = FootTarget[i];
                 var ray = new Ray(foot.transform.position + Vector3.up * 0.5f, Vector3.down);
                 var hitInfo = new RaycastHit();
-                if(Physics.SphereCast(ray, 0.05f, out hitInfo, 0.50f))
+                if (Physics.SphereCast(ray, 0.05f, out hitInfo, 0.50f))
                     foot.position = hitInfo.point + Vector3.up * 0.05f;
             }
 

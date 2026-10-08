@@ -16,11 +16,11 @@ namespace Manager
         public static InventoryManager Instance;
 
         public static Action OnGetInventory;
-        
+
         public static Action NewItemAdded;
 
         public CosmeticIndex cosmeticIndex = new CosmeticIndex();
-    
+
         public enum InventoryHandleType
         {
             None,
@@ -38,21 +38,21 @@ namespace Manager
         [Serializable]
         public class CosmeticIndex
         {
-            public int hatIndex=-1,faceIndex=-1,shoesIndex=-1,hairIndex=-1,clothesIndex=-1,pantIndex=-1;
-            public int hatParticle=-1,faceParticle=-1,shoesParticle=-1,hairParticle=-1,clothesParticle=-1,pantParticle = -1;
-            public Color hatColor=Color.clear, faceColor=Color.clear, shoesColor=Color.clear, hairColor=Color.clear, clothesColor=Color.clear ,pantColor = Color.clear;
-            public float hatShiny = 0, faceShiny=0,shoesShiny=0,hairShiny=0,clothesShiny=0,pantShiny = 0;
+            public int hatIndex = -1, faceIndex = -1, shoesIndex = -1, hairIndex = -1, clothesIndex = -1, pantIndex = -1;
+            public int hatParticle = -1, faceParticle = -1, shoesParticle = -1, hairParticle = -1, clothesParticle = -1, pantParticle = -1;
+            public Color hatColor = Color.clear, faceColor = Color.clear, shoesColor = Color.clear, hairColor = Color.clear, clothesColor = Color.clear, pantColor = Color.clear;
+            public float hatShiny = 0, faceShiny = 0, shoesShiny = 0, hairShiny = 0, clothesShiny = 0, pantShiny = 0;
             public int musicBoxIndex = 0;
             public int menuSceneIndex = 0;
             public ulong[] ids = new ulong[8];
-        
+
             public ulong[] weaponIds = new ulong[30];
             public ushort[] weaponIndex = new ushort[30];
 
-            public CosmeticIndex(int hatIndex, int faceIndex, int shoesIndex, int hairIndex, int clothesIndex,int pantIndex,
-                Color hatColor, Color faceColor, Color shoesColor, Color hairColor, Color clothesColor,Color pantColor,
-                float hatShiny,float faceShiny,float shoesShiny,float hairShiny,float clothesShiny,float pantShiny,
-                int hatParticle,int faceParticle,int shoesParticle,int hairParticle,int clothesParticle,int pantParticle,
+            public CosmeticIndex(int hatIndex, int faceIndex, int shoesIndex, int hairIndex, int clothesIndex, int pantIndex,
+                Color hatColor, Color faceColor, Color shoesColor, Color hairColor, Color clothesColor, Color pantColor,
+                float hatShiny, float faceShiny, float shoesShiny, float hairShiny, float clothesShiny, float pantShiny,
+                int hatParticle, int faceParticle, int shoesParticle, int hairParticle, int clothesParticle, int pantParticle,
                 ushort[] weaponIndex)
             {
                 this.hatIndex = hatIndex;
@@ -80,12 +80,12 @@ namespace Manager
                 this.hairParticle = hairParticle;
                 this.clothesParticle = clothesParticle;
                 this.pantParticle = pantParticle;
-                
+
             }
 
             public CosmeticIndex()
             {
-                
+
             }
         }
 
@@ -105,7 +105,7 @@ namespace Manager
 
                 foreach (var itemsPrefab in itemsPrefabs)
                 {
-                    prefabs.Add(itemsPrefab.name,itemsPrefab);
+                    prefabs.Add(itemsPrefab.name, itemsPrefab);
                 }
             }
         }
@@ -116,10 +116,10 @@ namespace Manager
             {
                 foreach (var cosmetic in cosmeticItems)
                 {
-                    if ( cosmetic != null )
-                        CosmeticManager.ItemIdToItem.TryAdd( cosmetic.itemdefid, cosmetic );
+                    if (cosmetic != null)
+                        CosmeticManager.ItemIdToItem.TryAdd(cosmetic.itemdefid, cosmetic);
                 }
-                
+
             }
         }
 
@@ -128,7 +128,7 @@ namespace Manager
             if (SteamApps.BIsDlcInstalled(new AppId_t(2238100)))
             {
                 HandleQueue.Enqueue(InventoryHandleType.ItemDrop);
-                SteamInventory.AddPromoItem(out inventoryHandle, (SteamItemDef_t) 223);
+                SteamInventory.AddPromoItem(out inventoryHandle, (SteamItemDef_t)223);
             }
         }
 
@@ -136,25 +136,25 @@ namespace Manager
         {
             List<SteamItemInstanceID_t> ids = new List<SteamItemInstanceID_t>();
 
-            for (int i = 0; i < cosmeticIndex.ids.Length+cosmeticIndex.weaponIds.Length; i++)
+            for (int i = 0; i < cosmeticIndex.ids.Length + cosmeticIndex.weaponIds.Length; i++)
             {
                 if (i < cosmeticIndex.ids.Length)
                 {
-                    if(cosmeticIndex.ids[i]!=0)
+                    if (cosmeticIndex.ids[i] != 0)
                         ids.Add(new SteamItemInstanceID_t(cosmeticIndex.ids[i]));
                 }
                 else
                 {
                     if (cosmeticIndex.weaponIds[i - cosmeticIndex.ids.Length] != 0)
                     {
-                        ids.Add(new SteamItemInstanceID_t(cosmeticIndex.weaponIds[i-cosmeticIndex.ids.Length]));
+                        ids.Add(new SteamItemInstanceID_t(cosmeticIndex.weaponIds[i - cosmeticIndex.ids.Length]));
                     }
                 }
             }
             EquippedItems.Clear();
 
             HandleQueue.Enqueue(InventoryHandleType.SerializeInventory);
-            if (SteamInventory.GetItemsByID(out inventoryHandle,ids.ToArray(), (uint)ids.Count))
+            if (SteamInventory.GetItemsByID(out inventoryHandle, ids.ToArray(), (uint)ids.Count))
             {
                 Debug.Log("Try to serialize inventory...");
             }
@@ -167,7 +167,7 @@ namespace Manager
             result = Callback<SteamInventoryResultReady_t>.Create(OnResultLoaded);
         }
 
-        void SetTags(SteamItemStored steamItemStored,CosmeticItem cosmeticItem, string[] tags)
+        void SetTags(SteamItemStored steamItemStored, CosmeticItem cosmeticItem, string[] tags)
         {
             steamItemStored.properties.Add("rarity", cosmeticItem.rarity.ToString());
             if (tags != null)
@@ -178,13 +178,13 @@ namespace Manager
                     {
                         string color = t.Remove(0, 6);
                         steamItemStored.properties.Add("color", color);
-                                
+
                     }
                     else if (t.Contains("shiny"))
                     {
                         string shiny = t.Remove(0, 6);
                         steamItemStored.properties.Add("shiny", shiny);
-                                
+
                     }
                     else if (t.Contains("particle"))
                     {
@@ -197,12 +197,12 @@ namespace Manager
 
         public Queue<SteamItemStored> UpComingItems = new();
 
-        public Action<CosmeticItem,SteamItemStored> OnGetBox;
+        public Action<CosmeticItem, SteamItemStored> OnGetBox;
 
         public static List<CosmeticItem> EquippedItems = new();
         private void OnResultLoaded(SteamInventoryResultReady_t resultT)
         {
-            var handleType = HandleQueue.Count > 0 ?  HandleQueue.Dequeue() : InventoryHandleType.None;
+            var handleType = HandleQueue.Count > 0 ? HandleQueue.Dequeue() : InventoryHandleType.None;
             Debug.Log(handleType);
             // if (handleType == InventoryHandleType.None)
             // {
@@ -220,7 +220,7 @@ namespace Manager
 
             uint nItems;
             SteamItemDetails_t[] resultItems;
-             if (handleType == InventoryHandleType.DeserializeInventory || handleType == InventoryHandleType.DeserializeNewItem)
+            if (handleType == InventoryHandleType.DeserializeInventory || handleType == InventoryHandleType.DeserializeNewItem)
             {
                 foreach (var clientData in PendingUserSteamIds)
                 {
@@ -230,32 +230,32 @@ namespace Manager
                         Debug.Log($"{steamId} Inventory Result Got loaded");
 
                         CosmeticIndex authorizedCosmetic = handleType == InventoryHandleType.DeserializeNewItem ? clientData.CosmeticIndex : new CosmeticIndex();
-                        
+
                         //Get the inventory of the player
-                        
+
                         nItems = MaxItems;
                         resultItems = new SteamItemDetails_t[nItems];
                         SteamInventory.GetResultItems(resultT.m_handle, resultItems, ref nItems);
 
-                        CosmeticItem cosmeticItem=null;
+                        CosmeticItem cosmeticItem = null;
 
-                        Color color=Color.clear;
+                        Color color = Color.clear;
 
-                        float shiny=0;
+                        float shiny = 0;
 
-                        int particle=-1;
+                        int particle = -1;
 
                         for (int i = 0; i < nItems; i++)
                         {
                             int itemdefid = resultItems[i].m_iDefinition.m_SteamItemDef;
-                            if (!CosmeticManager.ItemIdToItem.TryGetValue(itemdefid,out cosmeticItem))
+                            if (!CosmeticManager.ItemIdToItem.TryGetValue(itemdefid, out cosmeticItem))
                             {
                                 Debug.Log($"Collection doesnt contain {itemdefid}");
                                 continue;
                             }
-                            
+
                             propertyValueBuffer = PropertyValueStringLengthMax;
-                            SteamInventory.GetResultItemProperty(resultT.m_handle, (uint) i, "tags", out var tags,
+                            SteamInventory.GetResultItemProperty(resultT.m_handle, (uint)i, "tags", out var tags,
                                 ref propertyValueBuffer);
 
                             int itemIndex = cosmeticItem.index;
@@ -340,10 +340,10 @@ namespace Manager
                                     }
                                     break;
                                 case CosmeticItem.InventoryType.Weapon:
-                                    int offset = (int) cosmeticItem.type - CosmeticMenu.CosmeticOffset;
+                                    int offset = (int)cosmeticItem.type - CosmeticMenu.CosmeticOffset;
 
-                                    authorizedCosmetic.weaponIndex[offset] = (ushort) cosmeticItem.index;
-                                    
+                                    authorizedCosmetic.weaponIndex[offset] = (ushort)cosmeticItem.index;
+
                                     break;
                             }
                         }
@@ -351,24 +351,24 @@ namespace Manager
                         if (handleType == InventoryHandleType.DeserializeInventory)
                         {
                             clientData.InitializeCosmetics(authorizedCosmetic);
-                        
-                            NetworkServerManager.Iinstance.SendClientInitialized(clientData.Id); 
+
+                            NetworkServerManager.Iinstance.SendClientInitialized(clientData.Id);
                         }
                         else
                         {
                             if (cosmeticItem != null)
                             {
-                                Message msg = Message.Create(MessageSendMode.Reliable,(ushort)ServerToClientId.ChangeCosmetic);
+                                Message msg = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.ChangeCosmetic);
                                 msg.Add(clientData.Id);
-                                msg.Add((ushort) cosmeticItem.type);
+                                msg.Add((ushort)cosmeticItem.type);
                                 msg.Add(cosmeticItem.index);
                                 msg.Add(color);
                                 msg.Add(shiny);
                                 msg.Add(particle);
                                 NetworkServerManager.Instance.Server.SendToAll(msg);
-                                
+
                             }
-                            
+
                         }
 
                         PendingUserSteamIds.Remove(clientData);
@@ -389,7 +389,7 @@ namespace Manager
                 Debug.LogError("Tried to get an inventory that does not belong to self");
                 return;
             }
-            
+
             nItems = MaxItems;
             resultItems = new SteamItemDetails_t[nItems];
             SteamInventory.GetResultItems(inventoryHandle, resultItems, ref nItems);
@@ -397,10 +397,10 @@ namespace Manager
             if (handleType == InventoryHandleType.GetInventory)
             {
                 InventoryItems = new Dictionary<ulong, SteamItemStored>();
-                
-                Invoke(nameof(Test),1.5f);
+
+                Invoke(nameof(Test), 1.5f);
             }
-            
+
             for (uint i = 0; i < nItems; i++)
             {
                 ulong uid = resultItems[i].m_itemId.m_SteamItemInstanceID;
@@ -412,25 +412,25 @@ namespace Manager
                 }
 
                 propertyValueBuffer = PropertyValueStringLengthMax;
-                SteamInventory.GetResultItemProperty(inventoryHandle,  i, "tags", out var tags,
+                SteamInventory.GetResultItemProperty(inventoryHandle, i, "tags", out var tags,
                     ref propertyValueBuffer);
 
                 CosmeticItem cosmeticItem = CosmeticManager.ItemIdToItem[itemdefid];
-                
+
                 int amount = resultItems[i].m_unQuantity;
                 SteamItemStored steamItemStored;
 
                 switch (handleType)
                 {
                     case InventoryHandleType.GetInventory:
-                        steamItemStored = new SteamItemStored(resultItems[i],InventoryItems.Count - 1,false);
+                        steamItemStored = new SteamItemStored(resultItems[i], InventoryItems.Count - 1, false);
 
                         steamItemStored.amountGained = amount;
 
                         SetTags(steamItemStored, cosmeticItem, tags?.Split(';'));
-                        
+
                         InventoryItems.Add(uid, steamItemStored);
-                        
+
                         break;
                     case InventoryHandleType.Exchange:
                         if (InventoryItems.TryGetValue(uid, out steamItemStored))
@@ -438,7 +438,7 @@ namespace Manager
                             if (amount >= 1 && resultItems[i].m_unFlags != 1 << 8)
                             {
                                 steamItemStored.amountGained = amount;
-                                
+
                                 // if (UIManager.Instance)
                                 // {
                                 //     string nameText = cosmeticItem.name + " (" + cosmeticItem.GetRarity() + ")\n";
@@ -476,22 +476,22 @@ namespace Manager
                                 if (InventoryItems.ContainsKey(uid))
                                     InventoryItems.Remove(uid);
                             }
-                            
-                        }
-                        else if(amount >= 1 && resultItems[i].m_unFlags != 1 << 8)
-                        {
-                            steamItemStored = new SteamItemStored(resultItems[i],InventoryItems.Count - 1,true);
 
-                            if(tags!=null)
+                        }
+                        else if (amount >= 1 && resultItems[i].m_unFlags != 1 << 8)
+                        {
+                            steamItemStored = new SteamItemStored(resultItems[i], InventoryItems.Count - 1, true);
+
+                            if (tags != null)
                                 SetTags(steamItemStored, cosmeticItem, tags.Split(';'));
-                            
+
                             InventoryItems.Add(uid, steamItemStored);
-                            
+
                             UpComingItems.Enqueue(steamItemStored);
                             StartCoroutine(NewTagDisappear(steamItemStored));
 
                             CheckBulkOpen();
-                            CosmeticItem fromItem =  CosmeticManager.ItemIdToItem[resultItems[0].m_iDefinition.m_SteamItemDef];
+                            CosmeticItem fromItem = CosmeticManager.ItemIdToItem[resultItems[0].m_iDefinition.m_SteamItemDef];
                             if (fromItem.type == CosmeticItem.Type.Box)
                             {
                                 if (!firstCrate)
@@ -499,9 +499,9 @@ namespace Manager
                                     firstCrate = true;
                                     AchievementManager.Instance.SetAchievement(AchievementManager.EAchievements.BEING_EXPERT);
                                 }
-                        
+
                                 QuestManager.Instance.GetProgress(QuestType.OpenBox);
-                                OnGetBox?.Invoke(cosmeticItem,steamItemStored);
+                                OnGetBox?.Invoke(cosmeticItem, steamItemStored);
                             }
                             // else if (UIManager.Instance)
                             // {
@@ -525,7 +525,7 @@ namespace Manager
                             //     UIManager.Instance.NewItemImage.texture = cosmeticItem.icon;
                             // }
                         }
-                        
+
                         NewItemAdded?.Invoke();
                         break;
                     // case InventoryHandleType.ItemDrop:
@@ -580,36 +580,36 @@ namespace Manager
                             if (amount >= 1 && resultItems[i].m_unFlags != 1 << 8)
                             {
                                 steamItemStored.amountGained = amount;
-                            } 
+                            }
                             else
                             {
                                 if (InventoryItems.ContainsKey(uid))
                                     InventoryItems.Remove(uid);
                             }
                         }
-                        else if(amount >= 1 && resultItems[i].m_unFlags != 1 << 8)
+                        else if (amount >= 1 && resultItems[i].m_unFlags != 1 << 8)
                         {
-                            steamItemStored = new SteamItemStored(resultItems[i],InventoryItems.Count - 1,true);
+                            steamItemStored = new SteamItemStored(resultItems[i], InventoryItems.Count - 1, true);
 
-                            if(tags!=null)
+                            if (tags != null)
                                 SetTags(steamItemStored, cosmeticItem, tags.Split(';'));
 
                             UpComingItems.Enqueue(steamItemStored);
                             InventoryItems.Add(uid, steamItemStored);
                             CheckBulkOpen();
-                            
+
                             StartCoroutine(NewTagDisappear(steamItemStored));
                         }
                         NewItemAdded?.Invoke();
 
                         if (handleType == InventoryHandleType.ItemDrop)
                         {
-                            if (cosmeticItem.type == CosmeticItem.Type.Box )
+                            if (cosmeticItem.type == CosmeticItem.Type.Box)
                             {
                                 GameManager.getBox = true;
                                 if (NetworkManager.Instance.Client.IsConnected)
                                 {
-                                    Message message = Message.Create(MessageSendMode.Reliable, (ushort) ClientToServerId.GetOneBox);
+                                    Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.GetOneBox);
                                     message.Add(cosmeticItem.itemdefid);
                                     NetworkManager.Instance.SendByte += message.WrittenLength;
                                     NetworkManager.Instance.Client.Send(message);
@@ -646,27 +646,27 @@ namespace Manager
             }
 
             var item = CrateOpenQueue.Dequeue();
-            
-            UInt32[] outCount = {1};
-            UInt32[] inputCount = {1};
-                            
-            SteamItemDef_t[] outItemDefTs = {GetCrateDef(item.itemDetails.m_iDefinition.m_SteamItemDef)};
+
+            UInt32[] outCount = { 1 };
+            UInt32[] inputCount = { 1 };
+
+            SteamItemDef_t[] outItemDefTs = { GetCrateDef(item.itemDetails.m_iDefinition.m_SteamItemDef) };
             HandleQueue.Enqueue(CrateOpenAnimationEnable ? InventoryHandleType.Exchange : InventoryHandleType.None);
-                            
-            SteamInventory.ExchangeItems(out inventoryHandle, outItemDefTs, outCount, 1, new []{item.itemDetails.m_itemId},
+
+            SteamInventory.ExchangeItems(out inventoryHandle, outItemDefTs, outCount, 1, new[] { item.itemDetails.m_itemId },
                 inputCount, 1);
         }
 
         IEnumerator NewTagDisappear(SteamItemStored steamItemStored)
         {
             int seconds = 60 * 10;
-            while (seconds>0)
+            while (seconds > 0)
             {
                 yield return new WaitForSeconds(1f);
                 seconds--;
             }
-            
-            if(steamItemStored!=null)
+
+            if (steamItemStored != null)
                 steamItemStored.SetNewToFalse();
         }
 
@@ -676,31 +676,31 @@ namespace Manager
             switch (itemdefid)
             {
                 case 136:
-                    defT = (SteamItemDef_t) 137;
+                    defT = (SteamItemDef_t)137;
                     break;
                 case 148:
-                    defT = (SteamItemDef_t) 2000;
+                    defT = (SteamItemDef_t)2000;
                     break;
                 case 155:
-                    defT = (SteamItemDef_t) 156;
+                    defT = (SteamItemDef_t)156;
                     break;
                 case 158:
-                    defT = (SteamItemDef_t) 178;
+                    defT = (SteamItemDef_t)178;
                     break;
                 case 168:
-                    defT = (SteamItemDef_t) 179;
+                    defT = (SteamItemDef_t)179;
                     break;
                 case 193:
-                    defT = (SteamItemDef_t) 211;
+                    defT = (SteamItemDef_t)211;
                     break;
                 default:
-                    defT = (SteamItemDef_t) 100;
+                    defT = (SteamItemDef_t)100;
                     break;
             }
 
             return defT;
         }
-        public static Color GetItemColor(CosmeticItem cosmeticItem,string colorStr)
+        public static Color GetItemColor(CosmeticItem cosmeticItem, string colorStr)
         {
             Color color = CosmeticManager.GetColor(colorStr);
 
@@ -715,7 +715,7 @@ namespace Manager
 
             return color;
         }
-        
+
         static float GetShiny(string shinyStr)
         {
             float shiny = 0;
@@ -734,16 +734,16 @@ namespace Manager
                     shiny = 1.8f;
                     break;
                 case "0.8":
-                    shiny =2f;
+                    shiny = 2f;
                     break;
                 case "0.9":
-                    shiny =2.2f;
+                    shiny = 2.2f;
                     break;
             }
 
             return shiny;
         }
-        
+
         static int GetParticleItemdefid(string particleStr)
         {
             foreach (var c in CosmeticManager.ItemIdToItem.Values)
@@ -766,14 +766,14 @@ namespace Manager
             //     if(pBuffer[i] != SerializeInventory[i])
             //         Debug.Log($"{i - 1024} {pBuffer[i]} {SerializeInventory[i]}");
             // }
-            
+
             HandleQueue.Enqueue(InventoryHandleType.DeserializeInventory);
             if (SteamInventory.DeserializeResult(out inventoryHandle, pBuffer, (uint)pBuffer.Length))
             {
                 PendingUserSteamIds.Add(user);
 
                 CheckUserInventoryDeserializationFailed(user);
-                
+
                 Debug.Log($"Trying to Deserialize {user.Name}'s Inventory, Size: {pBuffer.Length}");
             }
             else
@@ -781,7 +781,7 @@ namespace Manager
                 UserInventoryDeserializationFailed(user);
             }
         }
-        
+
         public void DeserializeNewItem(byte[] pBuffer, ClientData user)
         {
             // for (int i = 0; i < pBuffer.Length; i++)
@@ -800,15 +800,15 @@ namespace Manager
         async void CheckUserInventoryDeserializationFailed(ClientData user)
         {
             await Task.Delay(5000);
-            
-            if(PendingUserSteamIds.Contains(user))
+
+            if (PendingUserSteamIds.Contains(user))
                 UserInventoryDeserializationFailed(user);
         }
-        
+
         void UserInventoryDeserializationFailed(ClientData user)
         {
             NetworkServerManager.Instance.Server.DisconnectClient(user.Id);
-            
+
             Debug.Log($"Failed To Load {user.Name}'s Inventory, kicking {user.Name} Now...");
         }
 
@@ -816,21 +816,21 @@ namespace Manager
         public static Dictionary<ulong, SteamItemStored> InventoryItems = new Dictionary<ulong, SteamItemStored>();
         // 
         private Callback<SteamInventoryResultReady_t> result;
-        public static byte[] SerializeInventory {private set; get; }
-        
+        public static byte[] SerializeInventory { private set; get; }
+
         public static bool Initialized = false;
 
         public void TryToSerializeNewItem(ulong id)
         {
             HandleQueue.Enqueue(InventoryHandleType.SerializeNewItem);
-            var ids = new SteamItemInstanceID_t[]{new(id)};
-            
-            if (SteamInventory.GetItemsByID(out inventoryHandle,ids, (uint)ids.Length))
+            var ids = new SteamItemInstanceID_t[] { new(id) };
+
+            if (SteamInventory.GetItemsByID(out inventoryHandle, ids, (uint)ids.Length))
             {
                 Debug.Log($"Try to serialize new item {id}...");
             }
         }
-        
+
         void SerializeNewItemResult(SteamInventoryResultReady_t resultT)
         {
             uint punOutBufferSize = 0;
@@ -839,15 +839,15 @@ namespace Manager
                 var newItem = new byte[punOutBufferSize];
 
                 SteamInventory.SerializeResult(resultT.m_handle, newItem, out punOutBufferSize);
-                
+
                 Debug.Log($"Serialize New Item Success, Size: {punOutBufferSize}");
-                
-                Message message = Message.Create(MessageSendMode.Reliable,(ushort) ClientToServerId.ChangeCosmetic);
+
+                Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.ChangeCosmetic);
 
                 message.Add(true);
 
                 message.Add(newItem);
-                
+
                 NetworkManager.Instance.Client.Send(message);
             }
         }
@@ -860,10 +860,10 @@ namespace Manager
                 SerializeInventory = new byte[punOutBufferSize];
 
                 SteamInventory.SerializeResult(resultT.m_handle, SerializeInventory, out punOutBufferSize);
-                
+
                 Debug.Log($"Serialize Inventory Success, Size: {punOutBufferSize}");
-                
-                if(!Initialized)
+
+                if (!Initialized)
                     GetItem();
             }
         }
@@ -876,7 +876,7 @@ namespace Manager
         public void GetBox()
         {
             HandleQueue.Enqueue(InventoryHandleType.ItemDrop);
-            SteamInventory.TriggerItemDrop(out inventoryHandle,(SteamItemDef_t)11);
+            SteamInventory.TriggerItemDrop(out inventoryHandle, (SteamItemDef_t)11);
             // Debug.Log("get Box  ");
         }
 
@@ -891,7 +891,7 @@ namespace Manager
         public void GetLevelUpReward()
         {
             HandleQueue.Enqueue(InventoryHandleType.ItemDrop);
-            SteamInventory.AddPromoItem(out inventoryHandle, (SteamItemDef_t) 1112);
+            SteamInventory.AddPromoItem(out inventoryHandle, (SteamItemDef_t)1112);
         }
 
         [Serializable]
@@ -900,7 +900,7 @@ namespace Manager
             public string name;
             public GameObject prefab;
             public CosmeticItem cosmeticItem;
-            public Vector3 cosmeticMenuSize,inGameSize;
+            public Vector3 cosmeticMenuSize, inGameSize;
         }
         [SerializeField] public ParticleItem[] itemsPrefabs;
         private Dictionary<string, ParticleItem> prefabs = new Dictionary<string, ParticleItem>();
@@ -930,7 +930,7 @@ namespace Manager
             if (time < 0) time = 0;
             Time = (uint)time;
             New = @new;
-            
+
             this.amountGained = amountGained;
         }
 
@@ -938,7 +938,7 @@ namespace Manager
         {
             New = false;
         }
-    
+
         public int GetRarityScore()
         {
             int score = 0;
@@ -951,7 +951,7 @@ namespace Manager
         }
         public int CompareTo(object obj)
         {
-            int otherItemScore = ((SteamItemStored) obj).GetRarityScore();
+            int otherItemScore = ((SteamItemStored)obj).GetRarityScore();
             int myRarityScore = GetRarityScore();
             if (myRarityScore > otherItemScore) return -1;
             if (myRarityScore == otherItemScore) return 0;
@@ -961,7 +961,7 @@ namespace Manager
         public Color GetColor()
         {
             return InventoryManager.GetItemColor(CosmeticManager.ItemIdToItem[itemDetails.m_iDefinition.m_SteamItemDef],
-                properties.TryGetValue("color",out var color) ? color : String.Empty);
+                properties.TryGetValue("color", out var color) ? color : String.Empty);
         }
 
         public float GetShiny()
@@ -984,10 +984,10 @@ namespace Manager
                         shiny = 1.8f;
                         break;
                     case "0.8":
-                        shiny =2f;
+                        shiny = 2f;
                         break;
                     case "0.9":
-                        shiny =2.2f;
+                        shiny = 2.2f;
                         break;
                 }
             }
@@ -1000,7 +1000,7 @@ namespace Manager
             if (!properties.ContainsKey("color"))
                 return "";
             string color = properties["color"];
-            
+
             switch (properties["color"])
             {
                 case "light blue":
@@ -1012,7 +1012,8 @@ namespace Manager
                 case "green":
                     color = "#00ff00";
                     break;
-                case "orange":;
+                case "orange":
+                    ;
                     color = "#ffa500";
                     break;
                 case "brown":
@@ -1144,7 +1145,7 @@ namespace Manager
                     break;
                 case "brown":
                     score = 2;
-                   
+
                     break;
                 case "golden":
                     score = 8;

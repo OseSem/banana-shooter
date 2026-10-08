@@ -18,11 +18,11 @@ namespace CodingDaniel.MapEditor.UI
         }
 
         public GameObject panel;
-        
+
         public TextMeshProUGUI nameText;
 
         public Material selectMaterial;
-        
+
         [SerializeField] private Button baseTextureBtn, heightTextureBtn, normalTextureBtn;
         [SerializeField] private RawImage baseTextureImg, heightTextureImg, normalTextureImg;
         private Texture2D baseTexture, heightTexture, normalTexture;
@@ -35,15 +35,15 @@ namespace CodingDaniel.MapEditor.UI
 
         [SerializeField] private Slider normalScaleSlider;
         [SerializeField] private TextMeshProUGUI normalScaleText;
-        
+
         [SerializeField] private Slider heightSlider;
         [SerializeField] private TextMeshProUGUI heightText;
         private void Start()
         {
-            baseTextureBtn.onClick.AddListener(delegate { SelectTexture(baseTextureImg,baseTexture,0); });
-            heightTextureBtn.onClick.AddListener(delegate { SelectTexture(heightTextureImg,heightTexture,1); });
-            normalTextureBtn.onClick.AddListener(delegate { SelectTexture(normalTextureImg,normalTexture,2); });
-            
+            baseTextureBtn.onClick.AddListener(delegate { SelectTexture(baseTextureImg, baseTexture, 0); });
+            heightTextureBtn.onClick.AddListener(delegate { SelectTexture(heightTextureImg, heightTexture, 1); });
+            normalTextureBtn.onClick.AddListener(delegate { SelectTexture(normalTextureImg, normalTexture, 2); });
+
             smoothnessSlider.onValueChanged.AddListener(SetSmoothness);
             metallicSlider.onValueChanged.AddListener(SetMetallic);
             normalScaleSlider.onValueChanged.AddListener(SetNormalScale);
@@ -52,10 +52,10 @@ namespace CodingDaniel.MapEditor.UI
 
         private void OnDestroy()
         {
-            baseTextureBtn.onClick.RemoveListener(delegate { SelectTexture(baseTextureImg,baseTexture,0); });
-            heightTextureBtn.onClick.RemoveListener(delegate { SelectTexture(heightTextureImg,heightTexture,1); });
-            normalTextureBtn.onClick.RemoveListener(delegate { SelectTexture(normalTextureImg,normalTexture,2); });
-            
+            baseTextureBtn.onClick.RemoveListener(delegate { SelectTexture(baseTextureImg, baseTexture, 0); });
+            heightTextureBtn.onClick.RemoveListener(delegate { SelectTexture(heightTextureImg, heightTexture, 1); });
+            normalTextureBtn.onClick.RemoveListener(delegate { SelectTexture(normalTextureImg, normalTexture, 2); });
+
             smoothnessSlider.onValueChanged.RemoveListener(SetSmoothness);
             metallicSlider.onValueChanged.RemoveListener(SetMetallic);
             normalScaleSlider.onValueChanged.RemoveListener(SetNormalScale);
@@ -67,54 +67,54 @@ namespace CodingDaniel.MapEditor.UI
 
             if (selectMaterial)
             {
-                selectMaterial.SetFloat(MapSaver.Smoothness,value);
+                selectMaterial.SetFloat(MapSaver.Smoothness, value);
             }
         }
         void SetMetallic(float value)
         {
             metallicText.SetText(value.ToString("F2"));
-            
+
             if (selectMaterial)
             {
-                selectMaterial.SetFloat(MapSaver.Metallic,value);
+                selectMaterial.SetFloat(MapSaver.Metallic, value);
             }
         }
-        
+
         void SetNormalScale(float value)
         {
             normalScaleText.SetText(value.ToString("F2"));
-            
+
             if (selectMaterial)
             {
-                selectMaterial.SetFloat(MapSaver.BumpScale,value);
+                selectMaterial.SetFloat(MapSaver.BumpScale, value);
             }
         }
-        
+
         void SetHeight(float value)
         {
             heightText.SetText(value.ToString("F2"));
-            
+
             if (selectMaterial)
             {
-                selectMaterial.SetFloat(MapSaver.Parallax,value);
+                selectMaterial.SetFloat(MapSaver.Parallax, value);
             }
         }
-        void SelectTexture(RawImage img, Texture2D texture,int key)
+        void SelectTexture(RawImage img, Texture2D texture, int key)
         {
             string path = FileIOUtil.OpenFileDialog(FileType.Texture);
-            if(!string.IsNullOrEmpty(path))
-                LoadImage(path,img,texture,key);
+            if (!string.IsNullOrEmpty(path))
+                LoadImage(path, img, texture, key);
         }
-        async void LoadImage(string path,RawImage img, Texture2D texture,int key)
+        async void LoadImage(string path, RawImage img, Texture2D texture, int key)
         {
             byte[] data = await SaveSystem.ReadByteFromFileAsync(path);
-            
+
             texture.LoadImage(data);
 
             img.texture = texture;
             img.gameObject.SetActive(true);
 
-            if (selectMaterial!=null)
+            if (selectMaterial != null)
             {
                 switch (key)
                 {
@@ -122,22 +122,22 @@ namespace CodingDaniel.MapEditor.UI
                         selectMaterial.mainTexture = texture;
                         break;
                     case 1:
-                        selectMaterial.SetTexture(MapSaver.ParallaxMap,texture);
+                        selectMaterial.SetTexture(MapSaver.ParallaxMap, texture);
                         break;
                     case 2:
-                        selectMaterial.SetTexture(MapSaver.BumpMap,texture);
+                        selectMaterial.SetTexture(MapSaver.BumpMap, texture);
                         break;
                 }
             }
-            
+
         }
 
         public void OpenPanel(Material material)
         {
             selectMaterial = material;
-            
+
             panel.SetActive(true);
-            
+
             nameText.SetText(material.name);
 
             float smoothness = material.GetFloat(MapSaver.Smoothness);
@@ -166,7 +166,7 @@ namespace CodingDaniel.MapEditor.UI
             {
                 heightTextureImg.gameObject.SetActive(true);
                 heightTextureImg.texture = heightTexture;
-                
+
                 float parallax = material.GetFloat(MapSaver.Parallax);
                 heightSlider.SetValueWithoutNotify(parallax);
                 heightText.SetText(parallax.ToString("F2"));
@@ -176,7 +176,7 @@ namespace CodingDaniel.MapEditor.UI
                 heightTexture = new Texture2D(512, 512, TextureFormat.RGB24, false);
                 heightTextureImg.gameObject.SetActive(false);
             }
-            
+
             normalTexture = (Texture2D)material.GetTexture(MapSaver.BumpMap);
 
             if (normalTexture != null)

@@ -20,7 +20,7 @@ namespace CodingDaniel.MapEditor.Handle
         private Vector3 _scale;
         private Vector3[] _refScales;
         private float _screenScale;
- 
+
         public override bool SnapToGrid
         {
             get { return AbsoluteGrid; }
@@ -46,7 +46,7 @@ namespace CodingDaniel.MapEditor.Handle
         protected override void Awake()
         {
             base.Awake();
-        
+
             _scale = Vector3.one;
             _roundedScale = _scale;
         }
@@ -58,16 +58,16 @@ namespace CodingDaniel.MapEditor.Handle
         }
         protected override bool OnBeginDrag()
         {
-            if(!base.OnBeginDrag())
+            if (!base.OnBeginDrag())
             {
                 return false;
             }
 
-            if(SelectedAxis == HandleAxis.Free)
+            if (SelectedAxis == HandleAxis.Free)
             {
                 DragPlane = GetDragPlane(Vector3.zero);
             }
-            else if(SelectedAxis == HandleAxis.None)
+            else if (SelectedAxis == HandleAxis.None)
             {
                 return false;
             }
@@ -95,7 +95,7 @@ namespace CodingDaniel.MapEditor.Handle
 
             DragPlane = GetDragPlane(axis);
             bool result = GetPointOnDragPlane(Editor.Pointer, out _prevPoint);
-            if(!result)
+            if (!result)
             {
                 SelectedAxis = HandleAxis.None;
             }
@@ -123,24 +123,24 @@ namespace CodingDaniel.MapEditor.Handle
                 else if (SelectedAxis == HandleAxis.Y)
                 {
                     offset.x = offset.z = 0.0f;
-                    if(SharedLockObject == null || !SharedLockObject.ScaleY)
+                    if (SharedLockObject == null || !SharedLockObject.ScaleY)
                     {
                         _scale.y += Mathf.Sign(offset.y) * mag;
                     }
                 }
-                else if(SelectedAxis == HandleAxis.Z)
+                else if (SelectedAxis == HandleAxis.Z)
                 {
                     offset.x = offset.y = 0.0f;
-                    if(SharedLockObject == null || !SharedLockObject.ScaleZ)
+                    if (SharedLockObject == null || !SharedLockObject.ScaleZ)
                     {
                         _scale.z += Mathf.Sign(offset.z) * mag;
                     }
                 }
-                if(SelectedAxis == HandleAxis.Free)
+                if (SelectedAxis == HandleAxis.Free)
                 {
                     float sign = Mathf.Sign(offset.x + offset.y);
 
-                    if(SharedLockObject != null)
+                    if (SharedLockObject != null)
                     {
                         if (!SharedLockObject.ScaleX)
                         {
@@ -165,7 +165,7 @@ namespace CodingDaniel.MapEditor.Handle
                     }
                 }
 
-                if(SnapToGrid)
+                if (SnapToGrid)
                 {
                     for (int i = 0; i < _refScales.Length; ++i)
                     {
@@ -207,14 +207,14 @@ namespace CodingDaniel.MapEditor.Handle
                         Quaternion rotation = PivotRotation == MEPivotRotation.Global ? Targets[i].rotation : Quaternion.identity;
 
                         Vector3 scale = Quaternion.Inverse(rotation) * Vector3.Scale(_refScales[i], _roundedScale);
-                        
+
                         scale.x = Mathf.Max(MinScale.x, scale.x);
                         scale.y = Mathf.Max(MinScale.y, scale.y);
                         scale.z = Mathf.Max(MinScale.z, scale.z);
                         ActiveTargets[i].localScale = scale;
                     }
                 }
-               
+
                 _prevPoint = point;
             }
         }

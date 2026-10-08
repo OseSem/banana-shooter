@@ -22,7 +22,7 @@ public abstract class GameModes : MonoBehaviour
     private bool _init = false;
 
     private bool _winMusic = false;
-    
+
     public uint StartTick { get; private set; } = 0;
     public uint EndTick { get; private set; } = 0;
 
@@ -60,11 +60,11 @@ public abstract class GameModes : MonoBehaviour
     private void StartGameServer()
     {
         started = true;
-        
+
         Init();
-        
+
         gameStart?.Invoke();
-        
+
         NetworkServerManager.Instance.StartRound();
         NetworkServerManager.Instance.SetGameState(GameState.MidMatch);
     }
@@ -72,31 +72,31 @@ public abstract class GameModes : MonoBehaviour
     public void StartGameClient(uint endTick)
     {
         started = true;
-        
+
         EndTick = endTick;
-        
+
         GameStart.Instance.SetValues();
         QuestManager.Instance.GetProgress(QuestType.Match);
     }
 
-    protected virtual void Init(){}
+    protected virtual void Init() { }
 
     public void StopGameServer()
     {
         stopped = true;
 
         //TODO: Fix the tdm knockout code and infection code
-        
-        Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.StopRound);
+
+        Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.StopRound);
         message.Add((ushort)NetworkServerManager.ServerType);
-        message.Add((ushort) NetworkServerManager.ServerGameMode);
-        
+        message.Add((ushort)NetworkServerManager.ServerGameMode);
+
         List<IPlayerServer> winnerPlayers = new List<IPlayerServer>();
         IPlayerServer[] availablePlayers = GetAvailablePlayers();
         List<ushort> ids = new List<ushort>();
-        
+
         int count = availablePlayers.Length;
-        
+
         if (NetworkServerManager.ServerType == ServerType.KnockoutRound)
         {
             int eliminatedIndex = 0;
@@ -155,7 +155,7 @@ public abstract class GameModes : MonoBehaviour
         {
             winnerPlayers.Add(availablePlayers[i]);
         }
-        
+
         foreach (var client in NetworkServerManager.Instance.Server.Clients)
         {
             if (ServerPlayer.list.TryGetValue(client.Id, out var value))
@@ -176,7 +176,7 @@ public abstract class GameModes : MonoBehaviour
                     }
                 }
             }
-            
+
         }
 
         message.Add(winnerPlayers.Count);
@@ -188,9 +188,9 @@ public abstract class GameModes : MonoBehaviour
             message.Add(p.Description);
         }
         message.Add(ids.ToArray());
-        
+
         NetworkServerManager.Instance.Server.SendToAll(message);
-        
+
         NetworkManager.Instance.GameModeChanged?.Invoke(NetworkServerManager.ServerGameMode);
 
         if (NetworkServerManager.GetAvailableClientCount() <= 1)
@@ -201,7 +201,7 @@ public abstract class GameModes : MonoBehaviour
                 clientData.SendEliminated();
             }
         }
-        
+
     }
 
     IPlayerServer[] GetAvailablePlayers()
@@ -211,7 +211,7 @@ public abstract class GameModes : MonoBehaviour
         switch (NetworkServerManager.ServerGameMode)
         {
             case GameMode.Infected:
-                
+
                 bool infectedWin = true;
                 foreach (var serverPlayer in ServerPlayer.list.Values)
                 {
@@ -226,7 +226,7 @@ public abstract class GameModes : MonoBehaviour
                 {
                     players = ServerPlayer.list.Values.Where(e => !e.Eliminated && e.IsInfected)
                         .OrderByDescending(e => e.Kills).ToList();
-                    
+
                     players.AddRange(ServerPlayer.list.Values.Where(e => !e.Eliminated && !e.IsInfected)
                         .OrderByDescending(e => e.Kills).ToList());
                 }
@@ -234,7 +234,7 @@ public abstract class GameModes : MonoBehaviour
                 {
                     players = ServerPlayer.list.Values.Where(e => !e.Eliminated && !e.IsInfected)
                         .OrderByDescending(e => e.Kills).ToList();
-                    
+
                     players.AddRange(ServerPlayer.list.Values.Where(e => !e.Eliminated && e.IsInfected)
                         .OrderByDescending(e => e.Kills).ToList());
                 }
@@ -258,7 +258,7 @@ public abstract class GameModes : MonoBehaviour
                 {
                     players = ServerPlayer.list.Values.Where(e => !e.Eliminated && e.Team == Team.Rebel)
                         .OrderByDescending(e => e.Kills).ToList();
-                    
+
                     players.AddRange(ServerPlayer.list.Values.Where(e => !e.Eliminated && e.Team == Team.Alliance)
                         .OrderByDescending(e => e.Kills).ToList());
                 }
@@ -266,7 +266,7 @@ public abstract class GameModes : MonoBehaviour
                 {
                     players = ServerPlayer.list.Values.Where(e => !e.Eliminated && e.Team == Team.Alliance)
                         .OrderByDescending(e => e.Kills).ToList();
-                    
+
                     players.AddRange(ServerPlayer.list.Values.Where(e => !e.Eliminated && e.Team == Team.Rebel)
                         .OrderByDescending(e => e.Kills).ToList());
                 }
@@ -274,16 +274,16 @@ public abstract class GameModes : MonoBehaviour
                 availablePlayers = players.ToArray();
                 break;
             case GameMode.KingOfTheHill:
-                
+
                 availablePlayers = ServerPlayer.list.Values.Where(e => !e.Eliminated)
                     .OrderByDescending(e => e.StayTime).ToArray();
-                
+
                 break;
             case GameMode.CatchTheBanana:
-                
+
                 availablePlayers = ServerPlayer.list.Values.Where(e => !e.Eliminated)
                     .OrderByDescending(e => e.StayTime).ToArray();
-                
+
                 break;
             default:
                 availablePlayers = ServerPlayer.list.Values.Where(e => !e.Eliminated)
@@ -319,15 +319,15 @@ public abstract class GameModes : MonoBehaviour
                 AchievementManager.Instance.SetAchievement(AchievementManager.EAchievements.ZOMBIE_SLAYER);
             }
         }
-        
 
-        if(NetworkManager.ClientServerType == ServerType.OneVsOne)
+
+        if (NetworkManager.ClientServerType == ServerType.OneVsOne)
             QuestManager.Instance.GetProgress(QuestType.OneVsOne);
-        
-        if(GameUIManager.Instance)GameUIManager.Instance.EndRound();
+
+        if (GameUIManager.Instance) GameUIManager.Instance.EndRound();
     }
 
-    [SerializeField]public float leftTime = 300f;
+    [SerializeField] public float leftTime = 300f;
 
     protected virtual void FixedUpdate()
     {
@@ -338,38 +338,38 @@ public abstract class GameModes : MonoBehaviour
         if (EndTick - tick <= MusicManager.Instance.TicksToPlayWin && !_winMusic)
         {
             _winMusic = true;
-            
+
             MusicManager.Instance.ChangeMusic(MusicManager.MusicType.WinningMusic);
         }
-        
+
         if (tick > EndTick)
         {
-            while ( NetworkManager.Instance.boxes.Count>0)
+            while (NetworkManager.Instance.boxes.Count > 0)
             {
                 NetworkManager.BoxListItem box = NetworkManager.Instance.boxes.Dequeue();
-                
-                ReceiveBoxItem item= Instantiate(PrefabManager.Instance.GetPrefab("ReceiveBox"), GameUIManager.Instance.receiveContent).GetComponent<ReceiveBoxItem>();
-                
+
+                ReceiveBoxItem item = Instantiate(PrefabManager.Instance.GetPrefab("ReceiveBox"), GameUIManager.Instance.receiveContent).GetComponent<ReceiveBoxItem>();
+
                 if (ClientPlayer.list.TryGetValue(box.playerId, out var player))
                 {
                     item.SetValue(
-                        Chat.Instance.GetPlayerNameNetwork( player.playerState.Username, player.playerState.SteamId,
-                            player.DisplayTag ), box.itemdefid );
+                        Chat.Instance.GetPlayerNameNetwork(player.playerState.Username, player.playerState.SteamId,
+                            player.DisplayTag), box.itemdefid);
                 }
             }
 
             return;
         }
-        
+
         int time = 0;
-        
+
         bool isWaiting = true;
 
         uint currentTick = NetworkManager.Instance.ServerTick;
 
         if (currentTick <= StartTick)
         {
-            
+
             time = (int)math.ceil((StartTick - currentTick) * 0.02f);
             isWaiting = false;
         }
@@ -386,9 +386,9 @@ public abstract class GameModes : MonoBehaviour
 
             string m = min < 10 ? $"0{min}" : min.ToString();
             string s = seconds < 10 ? $"0{seconds}" : seconds.ToString();
-        
+
             GameUIManager.Instance.leftTime.SetText(time.ToString());
-        
+
             GameUIManager.Instance.scoreBoardLeftTime.SetText($"{m}:{s}");
         }
         else
@@ -402,9 +402,9 @@ public abstract class GameModes : MonoBehaviour
     {
         if (!_init)
             return;
-        
+
         uint currentTick = NetworkServerManager.Instance.CurrentTick;
-        
+
         if (started && !stopped && currentTick > EndTick)
         {
             NetworkServerManager.Instance.StopGame();
@@ -418,17 +418,17 @@ public abstract class GameModes : MonoBehaviour
     public int[] gunKills = new int[30];
     public bool complete = false;
 
-    [MessageHandler((ushort) ServerToClientId.BeforeGameStart, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+    [MessageHandler((ushort)ServerToClientId.BeforeGameStart, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
     private static void BeforeGameStart(Message message)
     {
         uint startTick = message.GetUInt();
         uint endTick = message.GetUInt();
-        
+
         if (NetworkManager.ClientServerType == ServerType.KnockoutRound)
         {
             bool finalRound = message.GetBool();
             int round = message.GetInt();
-                        
+
             if (GameUIManager.Instance)
             {
                 if (finalRound)
@@ -439,14 +439,14 @@ public abstract class GameModes : MonoBehaviour
                 else
                 {
                     GameUIManager.Instance.message.SetEntry("Round X");
-                    GameUIManager.Instance.message.StringReference.Arguments = new List<object>() {round};
+                    GameUIManager.Instance.message.StringReference.Arguments = new List<object>() { round };
                 }
             }
-                        
+
             NetworkManager.Instance.DisplayMessage(0.5f, 3f);
         }
-        
-        if(NetworkManager.Instance.game!=null)
+
+        if (NetworkManager.Instance.game != null)
             NetworkManager.Instance.game.BeforeGameStart(startTick, endTick);
     }
 
@@ -454,9 +454,9 @@ public abstract class GameModes : MonoBehaviour
     {
         StartTick = startTick;
         EndTick = endTick;
-        InvokeRepeating(nameof(Sound),2f,1f);
-        Invoke(nameof(DisableSound),5f);
-        Invoke(nameof(PlayGameStartAudio),4.2f);
+        InvokeRepeating(nameof(Sound), 2f, 1f);
+        Invoke(nameof(DisableSound), 5f);
+        Invoke(nameof(PlayGameStartAudio), 4.2f);
     }
-    
+
 }

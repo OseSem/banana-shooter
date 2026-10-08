@@ -10,7 +10,7 @@ namespace Menu
         [SerializeField] private TextMeshProUGUI keyText;
         [SerializeField] private GameObject obj;
         [SerializeField] private Transform item;
-        
+
         private Camera camera;
         private Transform cameraTransform;
         private bool _init = false;
@@ -20,8 +20,8 @@ namespace Menu
         {
             Instance = this;
             canvasRect = GetComponent<RectTransform>();
-            
-            keyText.SetText(GameManager.GetBindingName("Interact",0));
+
+            keyText.SetText(GameManager.GetBindingName("Interact", 0));
         }
         private void OnEnable()
         {
@@ -58,7 +58,7 @@ namespace Menu
             obj.SetActive(false);
             _enable = false;
         }
-        
+
         private RectTransform canvasRect;
         Vector2 localPoint;
         float multiplier = 0.85f;
@@ -66,8 +66,8 @@ namespace Menu
         private Vector3 desiredPos;
         private void Update()
         {
-            if (!_enable||!_init) return;
-            Vector3 targetPos = VectorExtension.CalculateWorldPosition(desiredPos,cameraTransform);
+            if (!_enable || !_init) return;
+            Vector3 targetPos = VectorExtension.CalculateWorldPosition(desiredPos, cameraTransform);
             Vector2 screenPoint = camera.WorldToScreenPoint(targetPos);
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, null, out localPoint);
 
@@ -75,9 +75,9 @@ namespace Menu
 
             Vector2 max = new Vector2(sizeDelta.x / 2f, sizeDelta.y / 2f) * multiplier;
             Vector2 min = new Vector2(-sizeDelta.x / 2f, -sizeDelta.y / 2f) * multiplier;
-        
-        
-        
+
+
+
             if (localPoint.x > max.x)
             {
                 localPoint.x = max.x;

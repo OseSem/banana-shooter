@@ -11,13 +11,13 @@ namespace SteamWorkshop.UI
 {
     public class NeedToDownloadItemUI : MonoBehaviour
     {
-        [SerializeField] private RawImage img,previewImg;
+        [SerializeField] private RawImage img, previewImg;
 
         [SerializeField] private GameObject downloaded, downloading, notInstalled;
 
-        [SerializeField] private Color downloadedColor=Color.green, downloadingColor = Color.grey, notInstalledColor = Color.red,needsUpdatedColor = Color.yellow;
+        [SerializeField] private Color downloadedColor = Color.green, downloadingColor = Color.grey, notInstalledColor = Color.red, needsUpdatedColor = Color.yellow;
 
-        [SerializeField] private TextMeshProUGUI text,progressText;
+        [SerializeField] private TextMeshProUGUI text, progressText;
 
         [SerializeField] private Slider progressSlider;
 
@@ -37,14 +37,14 @@ namespace SteamWorkshop.UI
         {
             _canvas = gameObject.AddComponent<CanvasGroup>();
             _canvas.alpha = 0f;
-            
+
             this.fileId = fileIdT;
 
             InitState((EItemState)SteamUGC.GetItemState(fileId));
-            
+
             _queryResult = CallResult<SteamUGCQueryCompleted_t>.Create(OnUGCQueryCompleted);
-            
-            _queryHandle = SteamUGC.CreateQueryUGCDetailsRequest(new[]{fileIdT},1);
+
+            _queryHandle = SteamUGC.CreateQueryUGCDetailsRequest(new[] { fileIdT }, 1);
 
             var call = SteamUGC.SendQueryUGCRequest(_queryHandle);
             _queryResult.Set(call);
@@ -65,7 +65,7 @@ namespace SteamWorkshop.UI
                 Debug.Log("Failed to retrieve workshop item info");
                 return;
             }
-            
+
             SteamUGCDetails_t itemDetails;
             if (!SteamUGC.GetQueryUGCResult(_queryHandle, 0, out itemDetails))
             {
@@ -73,7 +73,7 @@ namespace SteamWorkshop.UI
                 Debug.Log("Failed to get item details");
                 return;
             }
-            
+
             text.SetText(itemDetails.m_rgchTitle);
 
             if (SteamUGC.GetQueryUGCPreviewURL(result.m_handle, 0, out var url, 1024))
@@ -118,14 +118,14 @@ namespace SteamWorkshop.UI
                 downloaded.SetActive(true);
                 desiredProgress = 1f;
             }
-            else if ((state & EItemState.k_EItemStateDownloading) == EItemState.k_EItemStateDownloading || 
+            else if ((state & EItemState.k_EItemStateDownloading) == EItemState.k_EItemStateDownloading ||
                      (state & EItemState.k_EItemStateDownloadPending) == EItemState.k_EItemStateDownloadPending)
             {
                 img.color = downloadingColor;
                 notInstalled.SetActive(false);
                 downloading.SetActive(true);
                 downloaded.SetActive(false);
-                
+
             }
             else
             {
@@ -133,7 +133,7 @@ namespace SteamWorkshop.UI
                 notInstalled.SetActive(true);
                 downloading.SetActive(false);
                 downloaded.SetActive(false);
-                
+
             }
         }
 
@@ -154,21 +154,21 @@ namespace SteamWorkshop.UI
                 {
                     if (total > 0)
                     {
-                        desiredProgress = down / (float) total;
-                        
-                        DownloadItemMenu.Instance.AddBytes(fileId,down,total);
-                    
-                        progressText.SetText((desiredProgress*100f).ToString("F0" )+ "%");
+                        desiredProgress = down / (float)total;
+
+                        DownloadItemMenu.Instance.AddBytes(fileId, down, total);
+
+                        progressText.SetText((desiredProgress * 100f).ToString("F0") + "%");
                     }
                 }
             }
 
-            while (itemState==EItemState.k_EItemStateDownloading)
+            while (itemState == EItemState.k_EItemStateDownloading)
             {
                 yield return new WaitForSeconds(1f);
                 GetDownloadProgress();
             }
         }
-        
+
     }
 }

@@ -22,12 +22,12 @@ namespace Menu
 
         public int cost = 1;
 
-        
+
         private void Start()
         {
             colorImage = GetComponent<RawImage>();
             normalColor = colorImage.color;
-            greyColor = new Color(Color.grey.r,Color.grey.g,Color.grey.b,normalColor.a);
+            greyColor = new Color(Color.grey.r, Color.grey.g, Color.grey.b, normalColor.a);
             Setup();
         }
 
@@ -43,7 +43,7 @@ namespace Menu
                 case "health":
                     if (UpgradeInGameMenu.Instance)
                     {
-                        success=UpgradeInGameMenu.Instance.UpHealth(this);
+                        success = UpgradeInGameMenu.Instance.UpHealth(this);
                     }
 
                     i = 0;
@@ -51,37 +51,37 @@ namespace Menu
                 case "dash":
                     if (UpgradeInGameMenu.Instance)
                     {
-                        success=UpgradeInGameMenu.Instance.Dash(this);
+                        success = UpgradeInGameMenu.Instance.Dash(this);
                     }
-                
+
                     i = 1;
                     break;
                 case "doubleJump":
                     if (UpgradeInGameMenu.Instance)
                     {
-                        success=UpgradeInGameMenu.Instance.DoubleJump(this);
+                        success = UpgradeInGameMenu.Instance.DoubleJump(this);
                     }
-                
+
                     i = 2;
                     break;
                 case "moveSpeed":
                     if (UpgradeInGameMenu.Instance)
                     {
-                        success=UpgradeInGameMenu.Instance.UpMovementSpeed(this);
+                        success = UpgradeInGameMenu.Instance.UpMovementSpeed(this);
                     }
-                
+
                     i = 3;
                     break;
             }
 
             UpgradeInGameMenu.Instance.UpgradeBuffer[
                 NetworkManager.Instance.InterpolationTick % UpgradeInGameMenu.MaxStoredTick] = success;
-            
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort)ClientToServerId.Upgrade);
+
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.Upgrade);
 
             message.Add(NetworkManager.Instance.ServerTick);
             message.Add(i);
-            
+
             NetworkManager.Instance.SendByte += message.WrittenLength;
             NetworkManager.Instance.Client.Send(message);
         }
@@ -100,17 +100,17 @@ namespace Menu
         }
 
         public int maxIndex;
-        public int currentIndex=0;
+        public int currentIndex = 0;
 
         public void Setup()
         {
             string upgradeKey = GameManager.Instance.upgrades[index];
             upgradeImage.texture = GameManager.Instance.GetUpgradeDetailedTexture2D(upgradeKey);
-            maxIndex = GameManager.Instance.GetUpgradeDetailedLength(upgradeKey );
-            cost = GameManager.Instance.GetUpgradeDetailedCost(upgradeKey );
+            maxIndex = GameManager.Instance.GetUpgradeDetailedLength(upgradeKey);
+            cost = GameManager.Instance.GetUpgradeDetailedCost(upgradeKey);
             for (int i = 0; i < images.Length; i++)
             {
-                images[i].gameObject.SetActive(i<maxIndex);
+                images[i].gameObject.SetActive(i < maxIndex);
             }
 
             switch (index)
@@ -126,7 +126,7 @@ namespace Menu
                     break;
             }
 
-        
+
             SetColor();
         }
 
@@ -141,11 +141,11 @@ namespace Menu
         }
         public void SetColor(int coin)
         {
-        
-            colorImage.color = coin<cost ? greyColor : normalColor;
+
+            colorImage.color = coin < cost ? greyColor : normalColor;
         }
         private RawImage colorImage;
 
-        private Color normalColor,greyColor;
+        private Color normalColor, greyColor;
     }
 }

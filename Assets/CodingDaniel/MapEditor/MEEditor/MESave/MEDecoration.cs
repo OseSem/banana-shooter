@@ -2,12 +2,12 @@ using UnityEngine;
 
 namespace CodingDaniel.MapEditor.MEEditor.MESave
 {
-    
+
     public class MEDecoration : MonoBehaviour
     {
         public enum EDecorationType
         {
-            None=0,
+            None = 0,
             Obstacle,
             Water,
             GrapplePoint,
@@ -15,7 +15,7 @@ namespace CodingDaniel.MapEditor.MEEditor.MESave
         }
 
         public EDecorationType type = EDecorationType.Obstacle;
-        public bool enableCollision=true;
-        
+        public bool enableCollision = true;
+
     }
 }

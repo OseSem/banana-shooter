@@ -28,19 +28,19 @@ namespace CodingDaniel.MapEditor.UI
             SteamWorkshopManager.Instance.OnUploadFinish += OnUploadFinish;
         }
 
-        private void OnUploadFinish(bool obj,EResult result)
+        private void OnUploadFinish(bool obj, EResult result)
         {
-            progressBar.value = obj? 1:0;
+            progressBar.value = obj ? 1 : 0;
             progressText.SetText(obj ? "100%" : "--%");
-            progressStatusText.SetEntry(obj?"Done" : "Failed");
-            progressStatusText.StringReference.Arguments = !obj ? new List<object>() {result} : null;
+            progressStatusText.SetEntry(obj ? "Done" : "Failed");
+            progressStatusText.StringReference.Arguments = !obj ? new List<object>() { result } : null;
             progressStatusText.RefreshString();
         }
 
         private void OnGetProgress(float arg1, EItemUpdateStatus arg2)
         {
             progressBar.value = arg1;
-            progressText.SetText((arg1 * 100f).ToString("F2")+"%");
+            progressText.SetText((arg1 * 100f).ToString("F2") + "%");
             progressStatusText.SetEntry(arg2.ToString());
             progressStatusText.RefreshString();
         }
@@ -55,11 +55,11 @@ namespace CodingDaniel.MapEditor.UI
         [SerializeField] private TextMeshProUGUI progressText;
         [SerializeField] private LocalizeStringEvent progressStatusText;
 
-        public TMP_InputField descriptionInput, nameInput,updateNoteInput;
+        public TMP_InputField descriptionInput, nameInput, updateNoteInput;
 
-        [SerializeField] private GameObject panel,window,processPanel;
+        [SerializeField] private GameObject panel, window, processPanel;
 
-        
+
         public void TryToPublish()
         {
             panel.SetActive(true);
@@ -67,18 +67,18 @@ namespace CodingDaniel.MapEditor.UI
             processPanel.SetActive(false);
         }
 
-        
+
         public void Publish()
         {
             window.SetActive(false);
             processPanel.SetActive(true);
 
             progressBar.value = 0;
-            progressText.SetText("--%" );
+            progressText.SetText("--%");
             progressStatusText.SetEntry("EItemUpdateStatusPreparingConfig");
-            progressStatusText.StringReference.Arguments =  null;
+            progressStatusText.StringReference.Arguments = null;
             progressStatusText.RefreshString();
-            
+
             //Get the destinationPath
             string destinationPath = MapSaver.SteamTemp;
             //Create the directory if there isnt 
@@ -86,17 +86,17 @@ namespace CodingDaniel.MapEditor.UI
             {
                 Directory.CreateDirectory(destinationPath);
             }
-            
-            
+
+
 
             MapSaver.CurrentMap.description = descriptionInput.text;
-            
+
             TabHolder.Instance.mapDescriptionInput.SetTextWithoutNotify(descriptionInput.text);
-            
-            SteamWorkshopManager.Instance.CreateOrUpdateWorkshopItem(MapSaver.CurrentMap.fileId,WorkshopItemType.Map,updateNoteInput.text);
+
+            SteamWorkshopManager.Instance.CreateOrUpdateWorkshopItem(MapSaver.CurrentMap.fileId, WorkshopItemType.Map, updateNoteInput.text);
         }
 
-        
+
         public void ReadMore()
         {
             SteamWorkshopManager.Instance.ReadMore();

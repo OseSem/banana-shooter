@@ -14,8 +14,8 @@ namespace Manager
         private void Start()
         {
             if (!SteamManager.Initialized) return;
-            
-            Invoke(nameof(CheckCommandLineArgs),2f);
+
+            Invoke(nameof(CheckCommandLineArgs), 2f);
         }
 
         void CheckCommandLineArgs()
@@ -33,9 +33,9 @@ namespace Manager
                 if (key.StartsWith(HasArgPrefix))
                 {
                     key = key.Substring(1, key.Length - 1);
-                    
+
                     //Get the arg
-                    for (int j = i+1; j < arguments.Length; j++)
+                    for (int j = i + 1; j < arguments.Length; j++)
                     {
                         if (string.IsNullOrWhiteSpace(arguments[j]))
                             continue;
@@ -48,8 +48,8 @@ namespace Manager
                         sb.Append(value);
                         sb.Append(" ");
                     }
-                    
-                    ParseArgument(key,sb.Length==0 ? String.Empty : sb.ToString().Trim());
+
+                    ParseArgument(key, sb.Length == 0 ? String.Empty : sb.ToString().Trim());
                 }
             }
         }

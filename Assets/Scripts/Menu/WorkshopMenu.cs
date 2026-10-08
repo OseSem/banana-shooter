@@ -15,44 +15,44 @@ namespace Menu
         [Header("Prefab")]
         [SerializeField] private WorkshopItemUI prefab;
         [SerializeField] private Transform content;
-        
+
         private List<List<Toggle>> _types = new();
-        
-        [Header("Subscribed")] 
+
+        [Header("Subscribed")]
         [SerializeField] private Toggle subscribedToggle;
         [SerializeField] private Toggle[] subscribedTypes = Array.Empty<Toggle>();
         [Space]
-        [Header("Recent Popular")] 
+        [Header("Recent Popular")]
         [SerializeField] private Toggle popularToggle;
         [SerializeField] private Toggle[] popularTypes = Array.Empty<Toggle>();
-        
+
         [Space]
-        [Header("Most Popular")] 
+        [Header("Most Popular")]
         [SerializeField] private Toggle mostPopularToggle;
         [SerializeField] private Toggle[] mostPopularTypes = Array.Empty<Toggle>();
-        
+
         [Space]
-        [Header("Latest")] 
+        [Header("Latest")]
         [SerializeField] private Toggle latestToggle;
         [SerializeField] private Toggle[] latestTypes = Array.Empty<Toggle>();
-        
+
         [Space]
-        [Header("Followed")] 
+        [Header("Followed")]
         [SerializeField] private Toggle followedToggle;
         [SerializeField] private Toggle[] followedTypes = Array.Empty<Toggle>();
-        
+
         [Space]
-        [Header("Favourite")] 
+        [Header("Favourite")]
         [SerializeField] private Toggle favouriteToggle;
         [SerializeField] private Toggle[] favouriteTypes = Array.Empty<Toggle>();
-        
+
         [Space]
-        [Header("Friends")] 
+        [Header("Friends")]
         [SerializeField] private Toggle friendsToggle;
         [SerializeField] private Toggle[] friendsTypes = Array.Empty<Toggle>();
-        
+
         [Space]
-        [Header("my")] 
+        [Header("my")]
         [SerializeField] private Toggle myToggle;
         [SerializeField] private Toggle[] myTypes = Array.Empty<Toggle>();
 
@@ -78,13 +78,13 @@ namespace Menu
             Friends,
             My
         }
-        
+
         public enum ItemType
         {
             All,
             Map,
         }
-        
+
         [Space]
         public ItemType itemType = ItemType.All;
         public SearchType searchType = SearchType.Subscribed;
@@ -92,7 +92,7 @@ namespace Menu
         private WorkshopItemUI[] _items = new WorkshopItemUI[24];
 
         private UGCQueryHandle_t _queryHandleT;
-        
+
         private CallResult<SteamUGCQueryCompleted_t> _queryResult;
 
         private Dictionary<uint, List<WorkshopItem>> _pages = new();
@@ -109,7 +109,7 @@ namespace Menu
         private void Start()
         {
             _queryResult = CallResult<SteamUGCQueryCompleted_t>.Create(OnUGCQueryCompleted);
-            
+
             _types.Add(subscribedTypes.ToList());
             _types.Add(popularTypes.ToList());
             _types.Add(mostPopularTypes.ToList());
@@ -118,27 +118,27 @@ namespace Menu
             _types.Add(favouriteTypes.ToList());
             _types.Add(friendsTypes.ToList());
             _types.Add(myTypes.ToList());
-            
-            subscribedToggle.onValueChanged.AddListener(delegate(bool arg0) { Search(arg0,SearchType.Subscribed); });
-            popularToggle.onValueChanged.AddListener(delegate(bool arg0) { Search(arg0,SearchType.Popular); });
-            mostPopularToggle.onValueChanged.AddListener(delegate(bool arg0) { Search(arg0,SearchType.MostPopular); });
-            latestToggle.onValueChanged.AddListener(delegate(bool arg0) { Search(arg0,SearchType.Latest); });
-            favouriteToggle.onValueChanged.AddListener(delegate(bool arg0) { Search(arg0,SearchType.Favourite); });
-            followedToggle.onValueChanged.AddListener(delegate(bool arg0) { Search(arg0,SearchType.Followed); });
-            friendsToggle.onValueChanged.AddListener(delegate(bool arg0) { Search(arg0,SearchType.Friends); });
-            myToggle.onValueChanged.AddListener(delegate(bool arg0) { Search(arg0,SearchType.My); });
+
+            subscribedToggle.onValueChanged.AddListener(delegate (bool arg0) { Search(arg0, SearchType.Subscribed); });
+            popularToggle.onValueChanged.AddListener(delegate (bool arg0) { Search(arg0, SearchType.Popular); });
+            mostPopularToggle.onValueChanged.AddListener(delegate (bool arg0) { Search(arg0, SearchType.MostPopular); });
+            latestToggle.onValueChanged.AddListener(delegate (bool arg0) { Search(arg0, SearchType.Latest); });
+            favouriteToggle.onValueChanged.AddListener(delegate (bool arg0) { Search(arg0, SearchType.Favourite); });
+            followedToggle.onValueChanged.AddListener(delegate (bool arg0) { Search(arg0, SearchType.Followed); });
+            friendsToggle.onValueChanged.AddListener(delegate (bool arg0) { Search(arg0, SearchType.Friends); });
+            myToggle.onValueChanged.AddListener(delegate (bool arg0) { Search(arg0, SearchType.My); });
 
             for (int i = 0; i < 24; i++)
             {
                 _items[i] = Instantiate(prefab, content);
-                
+
                 _items[i].gameObject.SetActive(false);
             }
-            
+
             nextPage.onClick.AddListener(delegate { NextPage(1); });
             previousPage.onClick.AddListener(delegate { NextPage(-1); });
         }
-        void Search(bool flag,SearchType type)
+        void Search(bool flag, SearchType type)
         {
             if (flag)
             {
@@ -161,12 +161,12 @@ namespace Menu
             }
         }
 
-        
+
         public void OpenMenu()
         {
             subscribedToggle.isOn = true;
-            
-            Search(true,SearchType.Subscribed);
+
+            Search(true, SearchType.Subscribed);
         }
 
         void Refresh(uint page)
@@ -232,9 +232,9 @@ namespace Menu
 
             _queryResult.Set(call);
         }
-        void NextPage(int offset,int overridePage = -1)
+        void NextPage(int offset, int overridePage = -1)
         {
-            _pageIndex = (uint)(_pageIndex+offset);
+            _pageIndex = (uint)(_pageIndex + offset);
 
             if (overridePage != -1)
             {
@@ -247,7 +247,7 @@ namespace Menu
                 return;
             }
 
-            if(_pageIndex > _maxPageIndex)
+            if (_pageIndex > _maxPageIndex)
             {
                 _pageIndex = _maxPageIndex;
                 return;
@@ -255,7 +255,7 @@ namespace Menu
 
             if (_pageIndex <= _pageToggles.Count)
             {
-                _pageToggles[(int)((_pageIndex - 1)%24)].SetIsOnWithoutNotify(true);
+                _pageToggles[(int)((_pageIndex - 1) % 24)].SetIsOnWithoutNotify(true);
             }
 
             pageText.SetText(_pageIndex.ToString());
@@ -268,7 +268,7 @@ namespace Menu
             }
             if (_pages.TryGetValue(_pageIndex, out var list))
             {
-                if (list.Count >= MaxPageAmount || count>=_maxResult)
+                if (list.Count >= MaxPageAmount || count >= _maxResult)
                 {
                     foreach (var item in _items)
                     {
@@ -279,9 +279,9 @@ namespace Menu
                         var detail = list[i];
 
                         WorkshopItemUI item = _items[i];
-                
+
                         item.gameObject.SetActive(true);
-                
+
                         item.Initialize(detail);
                     }
                 }
@@ -294,23 +294,23 @@ namespace Menu
             {
                 Refresh((uint)(count / MaxPageAmount));
             }
-            
-            
+
+
         }
 
-        void SetPage(bool flag,int page)
+        void SetPage(bool flag, int page)
         {
-            if(flag)
-                NextPage(0,page);
+            if (flag)
+                NextPage(0, page);
         }
-        
+
         private void OnUGCQueryCompleted(SteamUGCQueryCompleted_t result, bool biofailure)
         {
             _maxResult = result.m_unTotalMatchingResults;
             _maxPageIndex = result.m_unTotalMatchingResults / MaxPageAmount + (uint)(result.m_unTotalMatchingResults % 24 == 0 ? 0 : 1);
 
             _pageToggles.Clear();
-            
+
             for (int i = 0; i < pageContent.childCount; i++)
             {
                 Destroy(pageContent.GetChild(i).gameObject);
@@ -325,11 +325,11 @@ namespace Menu
                 toggle.isOn = i == _pageIndex;
 
                 var i1 = i;
-                toggle.onValueChanged.AddListener(delegate(bool arg0) { SetPage(arg0, i1); });
-                
+                toggle.onValueChanged.AddListener(delegate (bool arg0) { SetPage(arg0, i1); });
+
                 _pageToggles.Add(toggle);
             }
-            
+
             if (biofailure || result.m_unNumResultsReturned == 0)
             {
                 loading.SetActive(false);
@@ -343,7 +343,7 @@ namespace Menu
             }
 
             uint offset = 0;
-            
+
             for (uint i = 0; i < result.m_unNumResultsReturned; i++)
             {
                 SteamUGCDetails_t itemDetails;
@@ -366,16 +366,16 @@ namespace Menu
                         else
                         {
                             list = new List<WorkshopItem>();
-                            _pages.Add(_pageIndex + offset,list);
+                            _pages.Add(_pageIndex + offset, list);
                         }
                     }
                 }
                 else
                 {
                     list = new List<WorkshopItem>();
-                    _pages.Add(_pageIndex + offset,list);
+                    _pages.Add(_pageIndex + offset, list);
                 }
-                
+
                 string url = String.Empty;
 
                 if (SteamUGC.GetQueryUGCPreviewURL(_queryHandleT, i, out var pchURL, 1024))
@@ -383,7 +383,7 @@ namespace Menu
                     url = pchURL;
                 }
 
-                WorkshopItem item = new WorkshopItem(itemDetails.m_nPublishedFileId,(EItemState)SteamUGC.GetItemState(itemDetails.m_nPublishedFileId))
+                WorkshopItem item = new WorkshopItem(itemDetails.m_nPublishedFileId, (EItemState)SteamUGC.GetItemState(itemDetails.m_nPublishedFileId))
                 {
                     Details = itemDetails,
                     previewUrl = url
@@ -398,9 +398,9 @@ namespace Menu
                 var detail = _pages[_pageIndex][i];
 
                 WorkshopItemUI item = _items[i];
-                
+
                 item.gameObject.SetActive(true);
-                
+
                 item.Initialize(detail);
             }
             if (SteamUGC.ReleaseQueryUGCRequest(_queryHandleT))
@@ -409,10 +409,10 @@ namespace Menu
             }
         }
 
-        
+
         public void ActivateWorkshop(bool flag)
         {
-            if(flag)
+            if (flag)
                 SteamFriends.ActivateGameOverlayToWebPage("https://steamcommunity.com/app/1949740/workshop/");
         }
     }

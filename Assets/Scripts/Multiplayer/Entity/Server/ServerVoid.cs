@@ -6,7 +6,7 @@ namespace Multiplayer.Entity.Server
     public class ServerVoid : IEntity
     {
         public ushort Id { get; } = Entity.MaxEntityAmount;
-        
+
         public void Destroy()
         {
             Debug.LogError("You cant destroy void");

@@ -24,16 +24,16 @@ namespace Menu
             int i = 0;
             foreach (var item in items)
             {
-                int index = (int) PerkManager.Instance.perks[i] - 1;
+                int index = (int)PerkManager.Instance.perks[i] - 1;
                 PerkManager.PerkItem perkItem = PerkManager.Instance.perkItems[index];
                 item.icon.texture = perkItem.texture2D;
                 item.text.SetEntry(perkItem.key);
                 item.bg.color = perkItem.GetRarityColor();
                 i++;
             }
-            
-            Invoke(nameof(Display),1f);
-            Invoke(nameof(Clear),4.2f);
+
+            Invoke(nameof(Display), 1f);
+            Invoke(nameof(Clear), 4.2f);
         }
         void Display()
         {

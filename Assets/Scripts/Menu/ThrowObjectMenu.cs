@@ -11,7 +11,7 @@ namespace Menu
 {
     public class ThrowObjectMenu : MonoBehaviour
     {
-    
+
         public enum ThrowObjectType
         {
             Grenade = 0,
@@ -21,22 +21,22 @@ namespace Menu
             JumpPad,
         }
 
-        private int propIndex=0;
+        private int propIndex = 0;
 
         public GameObject selectMenu;
 
         public Button tacticalBtn;
         public TextMeshProUGUI tacticalText;
         public RawImage tacticalImage;
-    
+
         private void Start()
         {
-            
+
             tacticalBtn.onClick.AddListener(delegate { SetPropIndex(0); });
-        
+
             tacticalText.SetText(GameManager.Instance.tacticalProp.ToString());
-            tacticalImage.texture = PrefabManager.Instance.throwObjTexture[(int) GameManager.Instance.tacticalProp];
-        
+            tacticalImage.texture = PrefabManager.Instance.throwObjTexture[(int)GameManager.Instance.tacticalProp];
+
             selectMenu.SetActive(false);
         }
 
@@ -46,11 +46,11 @@ namespace Menu
             selectMenu.SetActive(true);
         }
 
-        
+
         public void SelectProp(int type)
         {
             selectMenu.SetActive(false);
-            ThrowObjectType objectType = (ThrowObjectType) type;
+            ThrowObjectType objectType = (ThrowObjectType)type;
             switch (propIndex)
             {
                 case 0:
@@ -58,11 +58,11 @@ namespace Menu
                     GameManager.throwableChanged = true;
                     break;
             }
-            
+
             tacticalText.SetText(GameManager.Instance.tacticalProp.ToString());
-        
-            tacticalImage.texture = PrefabManager.Instance.throwObjTexture[(int) GameManager.Instance.tacticalProp];
-        
+
+            tacticalImage.texture = PrefabManager.Instance.throwObjTexture[(int)GameManager.Instance.tacticalProp];
+
             AudioManager.Instance.PlayButton();
 
             if (GameUIManager.Instance && WeaponManager.Instance)
@@ -70,7 +70,7 @@ namespace Menu
                 GameUIManager.Instance.throwObjCount.SetText(NetworkManager.ClientGameMode == GameMode.SpecialGameMode
                     ? "∞"
                     : WeaponManager.Instance.throwableManager.TacticalThrowCount.ToString());
-                GameUIManager.Instance.throwObjImage.texture=!InfectedHand.Instance.isInfected ? PrefabManager.Instance.throwObjTexture[(int) GameManager.Instance.tacticalProp] : PrefabManager.Instance.throwObjTexture[1] ;
+                GameUIManager.Instance.throwObjImage.texture = !InfectedHand.Instance.isInfected ? PrefabManager.Instance.throwObjTexture[(int)GameManager.Instance.tacticalProp] : PrefabManager.Instance.throwObjTexture[1];
             }
         }
     }

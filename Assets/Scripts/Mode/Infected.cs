@@ -20,7 +20,7 @@ namespace Mode
     {
         public static Infected Instance;
 
-    
+
         private void Awake()
         {
             if (NetworkManager.ClientGameMode != GameMode.Infected)
@@ -29,12 +29,12 @@ namespace Mode
                 return;
             }
             Instance = this;
-        
-            if(NetworkServerManager.Instance.Server.IsRunning)
+
+            if (NetworkServerManager.Instance.Server.IsRunning)
                 leftTime = Mathf.Max(100, 15 * NetworkServerManager.Instance.GetAvailablePlayerCount());
-        
+
             string sceneName = SceneManager.GetActiveScene().name;
-            if (sceneName == "CustomMap" && MapSaver.CurrentMap!=null) sceneName = MapSaver.CurrentMap.name;
+            if (sceneName == "CustomMap" && MapSaver.CurrentMap != null) sceneName = MapSaver.CurrentMap.name;
             NetworkManager.Instance.SetRichPreference(GameMode.Infected.ToString(), sceneName);
             LobbyManager.Instance.SetLobbyGameMode();
 
@@ -43,8 +43,9 @@ namespace Mode
             Tutorial.Instance.SetText("InfectedTip");
         }
 
-        void StartInfected(){
-            if(NetworkServerManager.Instance.Server.IsRunning)
+        void StartInfected()
+        {
+            if (NetworkServerManager.Instance.Server.IsRunning)
                 StartCoroutine(FirstInfect());
         }
 
@@ -57,13 +58,13 @@ namespace Mode
         IEnumerator FirstInfect()
         {
             ushort time = 15;
-            while (time>0)
+            while (time > 0)
             {
-                Message message = Message.Create(MessageSendMode.Unreliable,(ushort)ServerToClientId.Message);
+                Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ServerToClientId.Message);
 
                 message.Add((ushort)MessageType.Infect);
                 message.Add(time);
-            
+
                 NetworkServerManager.Instance.Server.SendToAll(message);
                 time--;
                 yield return new WaitForSeconds(1f);
@@ -86,23 +87,23 @@ namespace Mode
             {
                 len = 6;
             }
-            
-            if (count<= 1)
+
+            if (count <= 1)
             {
-                infected=true;
+                infected = true;
                 yield break;
             }
-            
+
             while (ids.Count < len)
             {
-                ushort id = players[Random.Range(0,count)].Id;
-                if(!ids.Contains(id))
+                ushort id = players[Random.Range(0, count)].Id;
+                if (!ids.Contains(id))
                     ids.Add(id);
             }
 
             foreach (var id in ids)
             {
-                if(ServerPlayer.list.ContainsKey(id) && NetworkServerManager.Instance.SetInfectedPlayer(id,id))
+                if (ServerPlayer.list.ContainsKey(id) && NetworkServerManager.Instance.SetInfectedPlayer(id, id))
                     Debug.Log($"Player {id} gets infect");
                 else
                     Debug.Log($"Player {id} infect failed");

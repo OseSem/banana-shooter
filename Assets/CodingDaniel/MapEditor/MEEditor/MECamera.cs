@@ -40,7 +40,7 @@ namespace CodingDaniel.MapEditor.MEEditor
         void RefreshCommandBuffer();
         void Destroy();
     }
-    public class MECamera : MonoBehaviour,IMECamera
+    public class MECamera : MonoBehaviour, IMECamera
     {
         public event Action<IMECamera> CommandBufferRefresh;
         private Camera _camera;
@@ -49,7 +49,7 @@ namespace CodingDaniel.MapEditor.MEEditor
         private CommandBuffer _commandBuffer;
         public CommandBuffer CommandBuffer
         {
-            get { return _commandBufferOverride != null ? _commandBufferOverride :  _commandBuffer; }
+            get { return _commandBufferOverride != null ? _commandBufferOverride : _commandBuffer; }
         }
 
         private CommandBuffer _commandBufferOverride;
@@ -59,7 +59,7 @@ namespace CodingDaniel.MapEditor.MEEditor
             set
             {
                 _commandBufferOverride = value;
-                if(_commandBufferOverride != null)
+                if (_commandBufferOverride != null)
                 {
                     RemoveCommandBuffer();
                 }
@@ -74,10 +74,10 @@ namespace CodingDaniel.MapEditor.MEEditor
         public IMeshesCache MeshesCache
         {
             get { return _meshesCache; }
-            set 
+            set
             {
                 DestroyMeshesCache();
-                _meshesCache = value; 
+                _meshesCache = value;
             }
         }
         private void DestroyMeshesCache()
@@ -94,14 +94,14 @@ namespace CodingDaniel.MapEditor.MEEditor
 
         private IRenderersCache _renderersCache;
         private bool _destroyRenderersCache;
-        
+
         public IRenderersCache RenderersCache
         {
             get { return _renderersCache; }
-            set 
+            set
             {
                 DestroyRenderersCache();
-                _renderersCache = value; 
+                _renderersCache = value;
             }
         }
 
@@ -112,7 +112,7 @@ namespace CodingDaniel.MapEditor.MEEditor
             {
                 _cameraEvent = value;
 
-                if(_commandBufferOverride == null)
+                if (_commandBufferOverride == null)
                 {
                     RemoveCommandBuffer();
                     CreateCommandBuffer();
@@ -134,7 +134,7 @@ namespace CodingDaniel.MapEditor.MEEditor
             {
                 _renderersCache.Refreshed += OnRefresh;
             }
-            
+
             if (_meshesCache != null)
             {
                 _meshesCache.Refreshing += OnRefresh;
@@ -166,10 +166,11 @@ namespace CodingDaniel.MapEditor.MEEditor
         private void OnDestroy()
         {
             if (_renderersCache != null)
-            {    
+            {
                 _renderersCache.Refreshed -= OnRefresh;
                 DestroyRenderersCache();
-            }if (_meshesCache != null)
+            }
+            if (_meshesCache != null)
             {
                 _meshesCache.Refreshing -= OnRefresh;
             }
@@ -204,16 +205,16 @@ namespace CodingDaniel.MapEditor.MEEditor
             _camera.RemoveCommandBuffer(_cameraEvent, _commandBuffer);
             _commandBuffer = null;
         }
-        
+
         public void RefreshCommandBuffer()
         {
-            if(Camera == null)
+            if (Camera == null)
             {
                 return;
             }
 
             CommandBuffer commandBuffer;
-            if(_commandBufferOverride == null)
+            if (_commandBufferOverride == null)
             {
                 if (_commandBuffer == null)
                 {
@@ -232,8 +233,8 @@ namespace CodingDaniel.MapEditor.MEEditor
             {
                 commandBuffer = _commandBufferOverride;
             }
-            
-            if(_meshesCache != null)
+
+            if (_meshesCache != null)
             {
                 IList<RenderMeshesBatch> batches = _meshesCache.Batches;
                 for (int i = 0; i < batches.Count; ++i)
@@ -243,7 +244,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                     {
                         continue;
                     }
-            
+
                     if (batch.Material.enableInstancing)
                     {
                         for (int j = 0; j < batch.Mesh.subMeshCount; ++j)
@@ -270,22 +271,22 @@ namespace CodingDaniel.MapEditor.MEEditor
                     }
                 }
             }
-            
-            
+
+
             if (_renderersCache != null)
             {
                 IList<Renderer> renderers = _renderersCache.Renderers;
                 for (int i = 0; i < renderers.Count; ++i)
                 {
                     Renderer renderer = renderers[i];
-                    if(renderer == null)
+                    if (renderer == null)
                     {
                         continue;
                     }
                     Material[] materials = renderer.sharedMaterials;
                     for (int j = 0; j < materials.Length; ++j)
                     {
-                        if(_renderersCache.MaterialOverride != null)
+                        if (_renderersCache.MaterialOverride != null)
                         {
                             commandBuffer.DrawRenderer(renderer, _renderersCache.MaterialOverride, j, -1);
                         }
@@ -303,7 +304,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 CommandBufferRefresh(this);
             }
         }
-        
+
         public void CreateRenderersCache()
         {
             DestroyRenderersCache();

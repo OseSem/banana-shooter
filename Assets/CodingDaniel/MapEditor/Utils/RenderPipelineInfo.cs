@@ -216,7 +216,7 @@ namespace CodingDaniel.MapEditor.Utils
 
         public static void XRFix(Camera camera)
         {
-            if (Type == RPType.Standard )
+            if (Type == RPType.Standard)
             {
                 if (camera.allowMSAA || camera.allowHDR)
                 {

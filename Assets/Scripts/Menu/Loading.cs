@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System.Collections;
 using UnityEngine.UI;
 
@@ -37,7 +37,7 @@ public class Loading : MonoBehaviour
         else if (currentSize >= .3f && up)
         {
             // imageComp.fillClockwise = false;
-            
+
             up = false;
         }
         else if (currentSize >= .02f && !up)

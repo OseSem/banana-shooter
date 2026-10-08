@@ -11,10 +11,11 @@ public class ReBindUI : MonoBehaviour
 {
     [SerializeField] private InputActionReference inputActionReference;
     [SerializeField] private bool includeMouse;
-    [Range(0, 10)] [SerializeField] private int selectBinding;
+    [Range(0, 10)][SerializeField] private int selectBinding;
     [SerializeField] private InputBinding.DisplayStringOptions displayStringOptions;
 
-    [Header("Binding Info -- DO NOT EDIt")] [SerializeField]
+    [Header("Binding Info -- DO NOT EDIt")]
+    [SerializeField]
     private InputBinding inputBinding;
 
     private int bindingIndex;
@@ -23,13 +24,13 @@ public class ReBindUI : MonoBehaviour
 
     public Button rebindBtn;
 
-    [Header("UI")] [SerializeField] private TextMeshProUGUI text;
+    [Header("UI")][SerializeField] private TextMeshProUGUI text;
 
     private void OnEnable()
     {
         rebindBtn.onClick.AddListener(DoReBind);
-        
-        
+
+
         if (inputActionReference != null)
         {
             GetBindingInfo();
@@ -75,7 +76,7 @@ public class ReBindUI : MonoBehaviour
             }
         }
 
-        
+
     }
 
     void UpdateUI()
@@ -84,18 +85,18 @@ public class ReBindUI : MonoBehaviour
         {
             if (Application.isPlaying)
             {
-                text.SetText(GameManager.GetBindingName(actionName,bindingIndex));
+                text.SetText(GameManager.GetBindingName(actionName, bindingIndex));
             }
             else
             {
                 text.SetText(inputActionReference.action.GetBindingDisplayString(bindingIndex));
             }
         }
-        
+
     }
 
     void DoReBind()
     {
-        GameManager.StartRebind(actionName,bindingIndex,text);
+        GameManager.StartRebind(actionName, bindingIndex, text);
     }
 }

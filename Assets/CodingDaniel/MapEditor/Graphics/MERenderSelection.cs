@@ -381,7 +381,7 @@ namespace CodingDaniel.MapEditor.Graphics
         }
 
         private MERenderSelectionPass _scriptablePass;
-        
+
         public override void Create()
         {
             _scriptablePass = new MERenderSelectionPass();

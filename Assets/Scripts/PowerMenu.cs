@@ -35,7 +35,7 @@ public class PowerMenu : MonoBehaviour
         }
     }
 
-    
+
     public void SetPower(int index)
     {
         GameManager.Instance.power = (GameManager.PowerType)index;
@@ -51,7 +51,7 @@ public class PowerMenu : MonoBehaviour
             if (PowerInGameMenu.Instance)
                 PowerInGameMenu.Instance.texture.texture = detail.texture2D;
         }
-        
+
         powerScroll.SetActive(false);
 
         SaveSystem.SaveData("power", GameManager.Instance.power);

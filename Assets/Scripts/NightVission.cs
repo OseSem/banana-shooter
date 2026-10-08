@@ -13,7 +13,7 @@ public class NightVission : MonoBehaviour
     private void Awake()
     {
         volume = GetComponent<Volume>();
-        _adjustments = (ColorAdjustments) volume.profile.components[0];
+        _adjustments = (ColorAdjustments)volume.profile.components[0];
     }
 
 
@@ -24,6 +24,6 @@ public class NightVission : MonoBehaviour
 
     private void Update()
     {
-        _adjustments.postExposure.value = Mathf.Lerp(_adjustments.postExposure.value,  (GameManager.Instance.desiredExposure - 0.1f > 0) ? GameManager.Instance.desiredExposure : 2, Time.deltaTime * 2f);
+        _adjustments.postExposure.value = Mathf.Lerp(_adjustments.postExposure.value, (GameManager.Instance.desiredExposure - 0.1f > 0) ? GameManager.Instance.desiredExposure : 2, Time.deltaTime * 2f);
     }
 }

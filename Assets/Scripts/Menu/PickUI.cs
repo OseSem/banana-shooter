@@ -55,19 +55,19 @@ namespace Menu
             pickObj.SetActive(true);
             _enable = true;
 
-            switch (pickable.pickableType )
+            switch (pickable.pickableType)
             {
                 case PickableType.Weapon:
-                   WeaponStat weaponTexture = NetworkManager.Instance.weaponInfo[pickable.ObjectIndex];
+                    WeaponStat weaponTexture = NetworkManager.Instance.weaponInfo[pickable.ObjectIndex];
                     icon.texture = weaponTexture.texture;
-                    
-                    nameText.SetEntry("wt_"+ weaponTexture.weaponType);
-                    nameText.StringReference.Arguments = new List<object>() {weaponTexture.name};
+
+                    nameText.SetEntry("wt_" + weaponTexture.weaponType);
+                    nameText.StringReference.Arguments = new List<object>() { weaponTexture.name };
                     nameText.RefreshString();
                     break;
             }
 
-           typeText.SetEntry("pt_" + pickable.pickableType);
+            typeText.SetEntry("pt_" + pickable.pickableType);
         }
 
         public void DisablePickObj()
@@ -87,7 +87,7 @@ namespace Menu
         {
             if (!_enable || !_init) return;
             Vector3 desiredPos = _pickable.transform.position;
-            Vector3 targetPos = VectorExtension.CalculateWorldPosition(desiredPos,cameraTransform);
+            Vector3 targetPos = VectorExtension.CalculateWorldPosition(desiredPos, cameraTransform);
             Vector2 screenPoint = camera.WorldToScreenPoint(targetPos);
             RectTransformUtility.ScreenPointToLocalPointInRectangle(canvasRect, screenPoint, null, out localPoint);
 
@@ -95,9 +95,9 @@ namespace Menu
 
             Vector2 max = new Vector2(sizeDelta.x / 2f, sizeDelta.y / 2f) * multiplier;
             Vector2 min = new Vector2(-sizeDelta.x / 2f, -sizeDelta.y / 2f) * multiplier;
-        
-        
-        
+
+
+
             if (localPoint.x > max.x)
             {
                 localPoint.x = max.x;

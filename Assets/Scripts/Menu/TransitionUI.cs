@@ -7,7 +7,7 @@ namespace Menu
     public class TransitionUI : MonoBehaviour
     {
         public static TransitionUI Instance { private set; get; }
-        
+
         [SerializeField] private CanvasGroup canvas;
 
         private float _desiredAlpha = 0f;
@@ -37,7 +37,7 @@ namespace Menu
             _desiredAlpha = 0f;
             canvas.blocksRaycasts = false;
         }
-        
+
         public void StartTransition()
         {
             _desiredAlpha = 1f;

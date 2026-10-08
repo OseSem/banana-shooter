@@ -13,10 +13,10 @@ namespace CodingDaniel.MapEditor.UI.Component
             toggle.SetIsOnWithoutNotify((bool)o);
         }
 
-        public override void Init(string n, object o,bool c)
+        public override void Init(string n, object o, bool c)
         {
-            base.Init(n, o,c);
-            toggle.onValueChanged.AddListener(delegate(bool arg0) { SetValue(arg0); });
+            base.Init(n, o, c);
+            toggle.onValueChanged.AddListener(delegate (bool arg0) { SetValue(arg0); });
             toggle.interactable = c;
         }
     }

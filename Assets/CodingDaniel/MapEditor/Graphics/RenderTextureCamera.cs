@@ -110,7 +110,7 @@ namespace CodingDaniel.MapEditor.Graphics
             get { return _skipFrames; }
             set { _skipFrames = value; }
         }
-        
+
         private void Awake()
         {
             _camera = GetComponent<Camera>();
@@ -163,7 +163,7 @@ namespace CodingDaniel.MapEditor.Graphics
         {
             if (_texture != null)
             {
-                if(_camera.targetTexture == _texture)
+                if (_camera.targetTexture == _texture)
                 {
                     _camera.targetTexture = null;
                 }
@@ -192,7 +192,7 @@ namespace CodingDaniel.MapEditor.Graphics
                 return false;
             }
 
-            if(_output == null)
+            if (_output == null)
             {
                 return false;
             }
@@ -234,7 +234,7 @@ namespace CodingDaniel.MapEditor.Graphics
             }
             else
             {
-                if(_output != null)
+                if (_output != null)
                 {
                     Rect rect = _output.rectTransform.rect;
 
@@ -299,7 +299,7 @@ namespace CodingDaniel.MapEditor.Graphics
                     _output.rectTransform.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical, Mathf.Abs(p1.y - p0.y));
                 }
             }
-           
+
             _position = _output.rectTransform.position;
         }
     }

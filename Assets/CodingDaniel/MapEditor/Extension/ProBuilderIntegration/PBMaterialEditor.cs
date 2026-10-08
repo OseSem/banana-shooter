@@ -38,11 +38,11 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public bool Erase(object oldReference, object newReference)
         {
-            foreach(object[] materials in Materials.Values)
+            foreach (object[] materials in Materials.Values)
             {
-                for(int i = 0; i < materials.Length; ++i)
+                for (int i = 0; i < materials.Length; ++i)
                 {
-                    if(materials[i] == oldReference)
+                    if (materials[i] == oldReference)
                     {
                         materials[i] = newReference;
                     }
@@ -51,7 +51,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             return false;
         }
     }
-    
+
     public class ApplyMaterialResult
     {
         public MeshMaterialsState OldState;
@@ -78,13 +78,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         ApplyMaterialResult ApplyMaterial(Material material, GameObject gameObject, int submeshIndex);
         void ApplyMaterials(MeshMaterialsState state);
     }
-    public class PBMaterialEditor : MonoBehaviour,IMaterialEditor
+    public class PBMaterialEditor : MonoBehaviour, IMaterialEditor
     {
-         public event Action MaterialsApplied;
+        public event Action MaterialsApplied;
 
         public ApplyMaterialResult ApplyMaterial(Material material, MeshSelection selection)
         {
-            if(selection == null)
+            if (selection == null)
             {
                 return null;
             }
@@ -104,7 +104,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                 faces.Clear();
                 mesh.GetFaces(kvp.Value, faces);
-                
+
                 mesh.SetMaterial(faces, material);
                 mesh.Refresh();
                 mesh.ToMesh();
@@ -157,7 +157,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public ApplyMaterialResult ApplyMaterial(Material material, MeshSelection selection, Camera camera, Vector3 mousePosition)
         {
             MeshAndFace meshAndFace = PBUtility.PickFace(camera, mousePosition);
-            if(meshAndFace.mesh != null && meshAndFace.face != null)
+            if (meshAndFace.mesh != null && meshAndFace.face != null)
             {
                 MeshMaterialsState oldState = new MeshMaterialsState();
                 MeshMaterialsState newState = new MeshMaterialsState();
@@ -165,9 +165,9 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 int faceIndex = meshAndFace.mesh.faces.IndexOf(meshAndFace.face);
 
                 IList<int> faceIndexes;
-                if(selection != null && selection.SelectedFaces.TryGetValue(meshAndFace.mesh.gameObject, out faceIndexes))
+                if (selection != null && selection.SelectedFaces.TryGetValue(meshAndFace.mesh.gameObject, out faceIndexes))
                 {
-                    if(faceIndexes.Contains(faceIndex))
+                    if (faceIndexes.Contains(faceIndex))
                     {
                         return ApplyMaterial(material, selection);
                     }
@@ -176,7 +176,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 AddAllFacesToState(oldState, meshAndFace.mesh);
                 AddMaterialsToState(oldState, meshAndFace.mesh);
 
-                meshAndFace.mesh.SetMaterial(new[] { meshAndFace.face }, material);                
+                meshAndFace.mesh.SetMaterial(new[] { meshAndFace.face }, material);
                 meshAndFace.mesh.Refresh();
                 meshAndFace.mesh.ToMesh();
 
@@ -203,13 +203,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             MeshMaterialsState oldState = new MeshMaterialsState();
             MeshMaterialsState newState = new MeshMaterialsState();
             ProBuilderMesh[] meshes = gameObject.GetComponentsInChildren<ProBuilderMesh>(true);
-            for(int i = 0; i < meshes.Length; ++i)
+            for (int i = 0; i < meshes.Length; ++i)
             {
                 ProBuilderMesh mesh = meshes[i];
                 AddAllFacesToState(oldState, mesh);
                 AddMaterialsToState(oldState, mesh);
 
-                if(submeshIndex < 0)
+                if (submeshIndex < 0)
                 {
                     mesh.SetMaterial(mesh.faces, material);
                 }
@@ -217,7 +217,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 {
                     mesh.SetMaterial(mesh.faces.Where(f => f.submeshIndex == submeshIndex), material);
                 }
-                
+
                 mesh.Refresh();
                 mesh.ToMesh();
 
@@ -253,16 +253,16 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public void ApplyMaterials(MeshMaterialsState state)
         {
-            foreach(KeyValuePair<ProBuilderMesh, object[]> kvp in state.Materials)
+            foreach (KeyValuePair<ProBuilderMesh, object[]> kvp in state.Materials)
             {
                 ProBuilderMesh mesh = kvp.Key;
                 Renderer renderer = mesh.GetComponent<Renderer>();
-                if(renderer != null)
+                if (renderer != null)
                 {
                     Material[] materials = new Material[kvp.Value.Length];
-                    for(int i = 0; i < materials.Length; ++i)
+                    for (int i = 0; i < materials.Length; ++i)
                     {
-                        if(kvp.Value[i] is Material)
+                        if (kvp.Value[i] is Material)
                         {
                             materials[i] = (Material)kvp.Value[i];
                         }
@@ -275,26 +275,26 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             IList<FaceToSubmeshIndex> faceToSubmeshIndexes = state.FaceToSubmeshIndex;
             Dictionary<ProBuilderMesh, Renderer> meshToRenderer = new Dictionary<ProBuilderMesh, Renderer>();
             Dictionary<ProBuilderMesh, Dictionary<int, List<Face>>> meshToFaces = new Dictionary<ProBuilderMesh, Dictionary<int, List<Face>>>();
-            for(int i = 0; i < faceToSubmeshIndexes.Count; ++i)
+            for (int i = 0; i < faceToSubmeshIndexes.Count; ++i)
             {
                 FaceToSubmeshIndex faceToSubmeshIndex = faceToSubmeshIndexes[i];
                 ProBuilderMesh mesh = faceToSubmeshIndex.Mesh;
-                
-                if(!meshToRenderer.ContainsKey(mesh))
+
+                if (!meshToRenderer.ContainsKey(mesh))
                 {
                     Renderer renderer = mesh.GetComponent<Renderer>();
                     meshToRenderer.Add(mesh, renderer);
                 }
 
                 Dictionary<int, List<Face>> indexToFaces;
-                if(!meshToFaces.TryGetValue(mesh, out indexToFaces))
+                if (!meshToFaces.TryGetValue(mesh, out indexToFaces))
                 {
                     indexToFaces = new Dictionary<int, List<Face>>();
                     meshToFaces.Add(mesh, indexToFaces);
                 }
 
                 List<Face> faceList;
-                if(!indexToFaces.TryGetValue(faceToSubmeshIndex.SubmeshIndex, out faceList))
+                if (!indexToFaces.TryGetValue(faceToSubmeshIndex.SubmeshIndex, out faceList))
                 {
                     faceList = new List<Face>();
                     indexToFaces.Add(faceToSubmeshIndex.SubmeshIndex, faceList);
@@ -304,13 +304,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 faceList.Add(face);
             }
 
-            foreach(KeyValuePair<ProBuilderMesh, Dictionary<int, List<Face>>> meshToFace in meshToFaces)
+            foreach (KeyValuePair<ProBuilderMesh, Dictionary<int, List<Face>>> meshToFace in meshToFaces)
             {
                 ProBuilderMesh mesh = meshToFace.Key;
                 Dictionary<int, List<Face>> indexToFaces = meshToFace.Value;
                 Renderer renderer = meshToRenderer[mesh];
 
-                foreach(KeyValuePair<int, List<Face>> kvp in indexToFaces)
+                foreach (KeyValuePair<int, List<Face>> kvp in indexToFaces)
                 {
                     int submeshIndex = kvp.Key;
                     List<Face> faceList = kvp.Value;
@@ -335,23 +335,23 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             List<Material> materials = renderer.sharedMaterials.ToList();
             HashSet<int> submeshIndices = new HashSet<int>();
             IList<Face> faces = mesh.faces;
-            for(int i = 0; i < faces.Count; ++i)
+            for (int i = 0; i < faces.Count; ++i)
             {
                 Face face = faces[i];
-                if(!submeshIndices.Contains(face.submeshIndex))
+                if (!submeshIndices.Contains(face.submeshIndex))
                 {
                     submeshIndices.Add(face.submeshIndex);
                 }
             }
 
-            for(int i = materials.Count - 1; i >= 0; --i)
+            for (int i = materials.Count - 1; i >= 0; --i)
             {
-                if(!submeshIndices.Contains(i))
+                if (!submeshIndices.Contains(i))
                 {
                     materials.RemoveAt(i);
-                    for(int f = 0; f < faces.Count; ++f)
+                    for (int f = 0; f < faces.Count; ++f)
                     {
-                        if(faces[f].submeshIndex > i)
+                        if (faces[f].submeshIndex > i)
                         {
                             faces[f].submeshIndex--;
                         }

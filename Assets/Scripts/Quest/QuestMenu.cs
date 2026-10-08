@@ -9,9 +9,9 @@ namespace Quest
 {
     public class QuestMenu : MonoBehaviour
     {
-       
+
         public static QuestMenu Instance { get; private set; }
-        
+
         [SerializeField] private List<QuestItemUI> items = new List<QuestItemUI>();
         [SerializeField] private List<QuestItemUI> bonusItems = new List<QuestItemUI>();
 
@@ -58,15 +58,15 @@ namespace Quest
                 for (int i = 0; i < bonusItems.Count; i++)
                 {
                     QuestItemUI itemUI = bonusItems[i];
-                    Quest quest = QuestManager.Instance._currentQuest[i+3];
+                    Quest quest = QuestManager.Instance._currentQuest[i + 3];
                     itemUI.SetValue(quest);
                 }
             }
-            
+
 
             timer = (float)(QuestManager.delay - (DateTime.Now - QuestManager.Instance.LastRecordTime).TotalSeconds);
             TimeSpan sp = TimeSpan.FromSeconds(timer);
-            refreshTimer.StringReference.Arguments = new List<object>() {$"{(int) sp.TotalHours}:{sp.Minutes:00}:{sp.Seconds:00}"};
+            refreshTimer.StringReference.Arguments = new List<object>() { $"{(int)sp.TotalHours}:{sp.Minutes:00}:{sp.Seconds:00}" };
             refreshTimer.RefreshString();
         }
 
@@ -74,7 +74,7 @@ namespace Quest
         {
             timer -= Time.deltaTime;
             TimeSpan sp = TimeSpan.FromSeconds(timer);
-            refreshTimer.StringReference.Arguments[0] = $"{(int) sp.TotalHours}:{sp.Minutes:00}:{sp.Seconds:00}";
+            refreshTimer.StringReference.Arguments[0] = $"{(int)sp.TotalHours}:{sp.Minutes:00}:{sp.Seconds:00}";
             refreshTimer.RefreshString();
         }
 
@@ -88,8 +88,8 @@ namespace Quest
 
         [SerializeField] private GameObject quest;
 
-        [SerializeField] private GameObject bonusBg, bonusObj,bonusUI;
-        
+        [SerializeField] private GameObject bonusBg, bonusObj, bonusUI;
+
         public void DisplayQuest()
         {
             _displayQuest = !_displayQuest;
@@ -109,7 +109,7 @@ namespace Quest
                 item.gameObject.SetActive(_displayQuest);
             }
         }
-        
+
         public void DisplayBonusQuest()
         {
             _displayBonusQuest = !_displayBonusQuest;

@@ -10,7 +10,7 @@ namespace CodingDaniel.MapEditor.UI
 {
     public class UVEditorUI : MonoBehaviour
     {
-        public static  UVEditorUI Instance { private set; get;}
+        public static UVEditorUI Instance { private set; get; }
         [SerializeField] private RectTransform ui;
         private Vector2 _desiredPos;
         public bool DisplayingUI { private set; get; }
@@ -32,25 +32,25 @@ namespace CodingDaniel.MapEditor.UI
 
             offsetX.onEndEdit.AddListener(OffsetXChanged);
             offsetY.onEndEdit.AddListener(OffsetYChanged);
-            
+
             tilingY.onEndEdit.AddListener(TilingYChanged);
             tilingX.onEndEdit.AddListener(TilingXChanged);
 
             rotationSlider.minValue = 0;
             rotationSlider.maxValue = 360;
-            
+
             rotationSlider.onValueChanged.AddListener(RotationChanged);
 
             worldSpaceToggle.onValueChanged.AddListener(SetWorldSpace);
             flipUToggle.onValueChanged.AddListener(SetFlipU);
             flipVToggle.onValueChanged.AddListener(SetFlipV);
             swapUVToggle.onValueChanged.AddListener(SetSwapUV);
-            
+
             groupFaceBtn.onClick.AddListener(OnGroupFace);
             unGroupFaceBtn.onClick.AddListener(OnUngroupFace);
             selectFaceGroupBtn.onClick.AddListener(OnSelectFaceGroup);
             resetUVBtn.onClick.AddListener(OnResetUV);
-            
+
             fillDropDown.onValueChanged.AddListener(SetFill);
             anchorDropDown.onValueChanged.AddListener(SetAnchor);
         }
@@ -65,7 +65,7 @@ namespace CodingDaniel.MapEditor.UI
         {
             offsetX.onEndEdit.RemoveListener(OffsetXChanged);
             offsetY.onEndEdit.RemoveListener(OffsetYChanged);
-            
+
             tilingY.onEndEdit.RemoveListener(TilingYChanged);
             tilingX.onEndEdit.RemoveListener(TilingXChanged);
 
@@ -77,14 +77,14 @@ namespace CodingDaniel.MapEditor.UI
             swapUVToggle.onValueChanged.RemoveListener(SetSwapUV);
             _tool.SelectionChanged -= OnToolSelectionChanged;
             MEBase.Instance.Selection.SelectionChanged -= OnSelectionChanged;
-            
-            
+
+
             groupFaceBtn.onClick.RemoveListener(OnGroupFace);
             unGroupFaceBtn.onClick.RemoveListener(OnUngroupFace);
             selectFaceGroupBtn.onClick.RemoveListener(OnSelectFaceGroup);
-            resetUVBtn.onClick.RemoveListener(OnResetUV);           
+            resetUVBtn.onClick.RemoveListener(OnResetUV);
             fillDropDown.onValueChanged.RemoveListener(SetFill);
-            
+
             anchorDropDown.onValueChanged.RemoveListener(SetAnchor);
 
         }
@@ -102,7 +102,7 @@ namespace CodingDaniel.MapEditor.UI
             {
                 autoUVPanel.SetActive(false);
                 notSelectedFaces.SetActive(true);
-                
+
             }
         }
 
@@ -118,9 +118,9 @@ namespace CodingDaniel.MapEditor.UI
             {
                 SetDisplayUI(!DisplayingUI);
             }
-            
-            _desiredPos = DisplayingUI ? new Vector2(0, 0) : new Vector2(300f,0f);
-            ui.anchoredPosition = Vector2.Lerp(ui.anchoredPosition,_desiredPos,Time.deltaTime*15f);
+
+            _desiredPos = DisplayingUI ? new Vector2(0, 0) : new Vector2(300f, 0f);
+            ui.anchoredPosition = Vector2.Lerp(ui.anchoredPosition, _desiredPos, Time.deltaTime * 15f);
         }
         void OnToolSelectionChanged()
         {
@@ -192,7 +192,7 @@ namespace CodingDaniel.MapEditor.UI
         [SerializeField] private Slider rotationSlider;
         [SerializeField] private TextMeshProUGUI rotationText;
 
-        private bool _changedRotation=false;
+        private bool _changedRotation = false;
         void UpdateRotation()
         {
             if (_changedRotation) return;
@@ -208,9 +208,9 @@ namespace CodingDaniel.MapEditor.UI
             _changedRotation = true;
             _tool.UV.rotation = value;
             rotationText.SetText(value.ToString("F0"));
-            Invoke(nameof(RotationFinishChanged),0.1f);
+            Invoke(nameof(RotationFinishChanged), 0.1f);
         }
-        
+
         [SerializeField] private TMP_InputField tilingX, tilingY;
 
         private bool _changedTiling;
@@ -230,9 +230,9 @@ namespace CodingDaniel.MapEditor.UI
             if (float.TryParse(str, out var value))
             {
                 _changedTiling = true;
-                _tool.UV.scale = new Vector2(value,_tool.UV.scale.y);
-            
-                Invoke(nameof(TilingFinishChanged),0.1f);
+                _tool.UV.scale = new Vector2(value, _tool.UV.scale.y);
+
+                Invoke(nameof(TilingFinishChanged), 0.1f);
             }
             else
             {
@@ -251,7 +251,7 @@ namespace CodingDaniel.MapEditor.UI
             else
             {
                 UpdateTiling();
-                
+
             }
         }
 
@@ -278,11 +278,11 @@ namespace CodingDaniel.MapEditor.UI
         {
             _changedWorldSpace = true;
             _tool.UV.useWorldSpace = value;
-            
+
             Invoke(nameof(ResetWorldSpace), 0.1f);
         }
 
-        
+
 
         #endregion
 
@@ -306,7 +306,7 @@ namespace CodingDaniel.MapEditor.UI
         {
             _changedFlipU = true;
             _tool.UV.flipU = value;
-            
+
             Invoke(nameof(ResetFlipU), 0.1f);
         }
 
@@ -332,7 +332,7 @@ namespace CodingDaniel.MapEditor.UI
         {
             _changedFlipV = true;
             _tool.UV.flipV = value;
-            
+
             Invoke(nameof(ResetFlipV), 0.1f);
         }
 
@@ -358,7 +358,7 @@ namespace CodingDaniel.MapEditor.UI
         {
             _changedSwapUV = true;
             _tool.UV.swapUV = value;
-            
+
             Invoke(nameof(ResetSwapUV), 0.1f);
         }
 
@@ -373,7 +373,7 @@ namespace CodingDaniel.MapEditor.UI
         }
 
         #endregion
-        
+
         #region Ungroup Face
 
         [SerializeField] private Button unGroupFaceBtn;
@@ -383,7 +383,7 @@ namespace CodingDaniel.MapEditor.UI
         }
 
         #endregion
-        
+
         #region Select Face Group
 
         [SerializeField] private Button selectFaceGroupBtn;
@@ -407,22 +407,22 @@ namespace CodingDaniel.MapEditor.UI
 
         #region Fill
 
-        [SerializeField]private TMP_Dropdown fillDropDown;
+        [SerializeField] private TMP_Dropdown fillDropDown;
 
         private bool _changedFill;
         void UpdateFill()
         {
             if (_changedFill) return;
-            fillDropDown.SetValueWithoutNotify((int) _tool.UV.fill);
+            fillDropDown.SetValueWithoutNotify((int)_tool.UV.fill);
         }
 
         void SetFill(int value)
         {
             _changedFill = true;
 
-            _tool.UV.fill = (PBAutoUnwrapSettings.Fill) value;
-            
-            Invoke(nameof(ResetFillChanged),0.1f);
+            _tool.UV.fill = (PBAutoUnwrapSettings.Fill)value;
+
+            Invoke(nameof(ResetFillChanged), 0.1f);
         }
 
         void ResetFillChanged()
@@ -431,25 +431,25 @@ namespace CodingDaniel.MapEditor.UI
         }
 
         #endregion
-        
+
         #region Anchor
 
-        [SerializeField]private TMP_Dropdown anchorDropDown;
+        [SerializeField] private TMP_Dropdown anchorDropDown;
 
         private bool _changedAnchor;
         void UpdateAnchor()
         {
             if (_changedAnchor) return;
-            anchorDropDown.SetValueWithoutNotify((int) _tool.UV.anchor);
+            anchorDropDown.SetValueWithoutNotify((int)_tool.UV.anchor);
         }
 
         void SetAnchor(int value)
         {
             _changedAnchor = true;
 
-            _tool.UV.anchor = (PBAutoUnwrapSettings.Anchor) value;
-            
-            Invoke(nameof(ResetAnchorChanged),0.1f);
+            _tool.UV.anchor = (PBAutoUnwrapSettings.Anchor)value;
+
+            Invoke(nameof(ResetAnchorChanged), 0.1f);
         }
 
         void ResetAnchorChanged()

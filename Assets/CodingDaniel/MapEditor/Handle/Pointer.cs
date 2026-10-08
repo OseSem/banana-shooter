@@ -20,7 +20,7 @@ namespace CodingDaniel.MapEditor.Handle
             get
             {
                 Vector2 screenPoint = ScreenPoint;
-                if(_clampToCameraPixelRect)
+                if (_clampToCameraPixelRect)
                 {
                     Rect pixelRect = _editor.Camera.pixelRect;
                     if (!pixelRect.Contains(screenPoint))
@@ -68,7 +68,7 @@ namespace CodingDaniel.MapEditor.Handle
             Vector2 viewPoint;
             RectTransformUtility.ScreenPointToLocalPointInRectangle(_renderTextureCamera.RectTransform, screenPoint, _renderTextureCamera.Canvas.worldCamera, out viewPoint);
 
-            if(_canvasScaler != null)
+            if (_canvasScaler != null)
             {
                 if (_canvasScaler.uiScaleMode == CanvasScaler.ScaleMode.ScaleWithScreenSize)
                 {
@@ -79,7 +79,7 @@ namespace CodingDaniel.MapEditor.Handle
                     viewPoint *= _canvasScaler.scaleFactor;
                 }
             }
-            
+
             return viewPoint;
         }
 

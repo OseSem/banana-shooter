@@ -6,13 +6,13 @@ namespace Multiplayer.Entity.Client
     public class PlayerAnimation
     {
         private Animator _animator;
-        
-        private Vector3 _input,_inputInterpolate;
-        
-        private float _xRotation,_desiredXRotation;
+
+        private Vector3 _input, _inputInterpolate;
+
+        private float _xRotation, _desiredXRotation;
 
         private Transform _spine;
-        
+
         private bool Grounded { get; set; }
         private bool Crouch { get; set; }
 
@@ -29,11 +29,11 @@ namespace Multiplayer.Entity.Client
 
         public void Reset()
         {
-            _animator.SetFloat(X,0);
-            _animator.SetFloat(Y,0);
-            _animator.SetBool(Jump,false);
-            _animator.SetBool(Crouch1,false);
-            if(_animator.isActiveAndEnabled)
+            _animator.SetFloat(X, 0);
+            _animator.SetFloat(Y, 0);
+            _animator.SetBool(Jump, false);
+            _animator.SetBool(Crouch1, false);
+            if (_animator.isActiveAndEnabled)
                 _animator.Play("Blend Tree");
         }
 
@@ -41,11 +41,11 @@ namespace Multiplayer.Entity.Client
         {
             _inputInterpolate = Vector3.Slerp(_inputInterpolate, _input, Time.deltaTime * 15f);
             _desiredXRotation = Mathf.Lerp(_desiredXRotation, _xRotation, Time.deltaTime * 20f);
-            
-            _animator.SetFloat(X,_inputInterpolate.x);
-            _animator.SetFloat(Y,_inputInterpolate.z);
-            _animator.SetBool(Jump,!Grounded);
-            _animator.SetBool(Crouch1,Crouch);
+
+            _animator.SetFloat(X, _inputInterpolate.x);
+            _animator.SetFloat(Y, _inputInterpolate.z);
+            _animator.SetBool(Jump, !Grounded);
+            _animator.SetBool(Crouch1, Crouch);
 
             if (DemoManager.Replaying && _animator.isActiveAndEnabled)
             {

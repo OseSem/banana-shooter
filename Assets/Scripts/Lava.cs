@@ -13,7 +13,7 @@ public class Lava : MonoBehaviour
         if (other.gameObject.layer == LayerMask.NameToLayer("ServerPlayer"))
         {
             ServerPlayer player = other.transform.root.GetComponent<ServerPlayer>();
-            player.TakeDamage(200,42,NetworkServerManager.Instance.CurrentTick,false,false,1004);
+            player.TakeDamage(200, 42, NetworkServerManager.Instance.CurrentTick, false, false, 1004);
         }
     }
 }

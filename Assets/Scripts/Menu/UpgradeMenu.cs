@@ -17,7 +17,7 @@ namespace Menu
         public List<Button> btns = new List<Button>();
 
         public GameObject list;
-    
+
         [Serializable]
         public class UpgradeItemUI
         {
@@ -44,11 +44,11 @@ namespace Menu
                     upgradeIndex[i].text.RefreshString();
                 }
             }
-        
+
             for (int i = 0; i < upgradeIndex.Length; i++)
             {
                 var i1 = i;
-                if(upgradeIndex[i].btn!=null)
+                if (upgradeIndex[i].btn != null)
                     upgradeIndex[i].btn.onClick.AddListener(delegate { SelectIndex(i1); });
             }
             for (int i = 0; i < GameManager.Instance.upgradeDetaileds.Count; i++)
@@ -56,7 +56,7 @@ namespace Menu
                 var i1 = i;
                 btns[i].onClick.AddListener(delegate { SelectUpgrade(GameManager.Instance.upgradeDetaileds[i1].name); });
             }
-        }   
+        }
 
         private string currentUpgradeKey;
         private int currentUpgradeIndex = 0;
@@ -103,9 +103,9 @@ namespace Menu
                         UpgradeInGameMenu.Instance.ClearDoubleJump();
                         break;
                 }
-            
+
             }
-        
+
             GameManager.Instance.upgrades[currentUpgradeIndex] = currentUpgradeKey;
 
             Texture2D texture2D = GameManager.Instance.GetUpgradeDetailedTexture2D(currentUpgradeKey);
@@ -119,9 +119,9 @@ namespace Menu
             upgradeIndex[currentUpgradeIndex].text.SetEntry(detailed.name);
             upgradeIndex[currentUpgradeIndex].text.RefreshString();
             SaveSystem.SaveData("upgrades", GameManager.Instance.upgrades);
-        
-            if(UpgradeInGameMenu.Instance)UpgradeInGameMenu.Instance.upgradeItems[currentUpgradeIndex].Setup();
-        
+
+            if (UpgradeInGameMenu.Instance) UpgradeInGameMenu.Instance.upgradeItems[currentUpgradeIndex].Setup();
+
         }
     }
 }

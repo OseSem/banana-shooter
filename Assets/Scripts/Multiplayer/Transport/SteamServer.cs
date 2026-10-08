@@ -1,4 +1,4 @@
-﻿// This file is provided under The MIT License as part of RiptideSteamTransport.
+// This file is provided under The MIT License as part of RiptideSteamTransport.
 // Copyright (c) Tom Weiland
 // For additional information please see the included LICENSE.md file or view it on GitHub:
 // https://github.com/tom-weiland/RiptideSteamTransport/blob/main/LICENSE.md
@@ -28,18 +28,18 @@ namespace Riptide.Transports.Steam
 
             connectionStatusChanged = Callback<SteamNetConnectionStatusChangedCallback_t>.Create(OnConnectionStatusChanged);
 
-//             try
-//             {
-// #if UNITY_SERVER
-//                 SteamGameServerNetworkingUtils.InitRelayNetworkAccess();
-// #else
-//                 SteamNetworkingUtils.InitRelayNetworkAccess();
-// #endif
-//             }
-//             catch (Exception ex)
-//             {
-//                 Debug.LogException(ex);
-//             }
+            //             try
+            //             {
+            // #if UNITY_SERVER
+            //                 SteamGameServerNetworkingUtils.InitRelayNetworkAccess();
+            // #else
+            //                 SteamNetworkingUtils.InitRelayNetworkAccess();
+            // #endif
+            //             }
+            //             catch (Exception ex)
+            //             {
+            //                 Debug.LogException(ex);
+            //             }
             SteamNetworkingConfigValue_t[] options = new SteamNetworkingConfigValue_t[] { };
             listenSocket = SteamNetworkingSockets.CreateListenSocketP2P(port, options.Length, options);
         }

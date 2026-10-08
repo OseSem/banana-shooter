@@ -22,7 +22,7 @@ namespace CodingDaniel.MapEditor.Handle
 
         public virtual void Add(BaseHandle handle)
         {
-            if(!_handles.Contains(handle))
+            if (!_handles.Contains(handle))
             {
                 _handles.Add(handle);
             }
@@ -35,18 +35,18 @@ namespace CodingDaniel.MapEditor.Handle
 
         public virtual HandleAxis GetSelectedAxis(BaseHandle handle)
         {
-            if(_selectedHandle == null)
+            if (_selectedHandle == null)
             {
                 return HandleAxis.None;
             }
 
-            if(_selectedHandle != handle)
+            if (_selectedHandle != handle)
             {
                 return HandleAxis.None;
             }
 
             return _selectedAxis;
-            
+
         }
 
         protected virtual void Update()

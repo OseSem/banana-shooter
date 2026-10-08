@@ -6,7 +6,7 @@ namespace Manager
 {
     public class LightManager : MonoBehaviour
     {
-        public float maxDistance=50;
+        public float maxDistance = 50;
 
         public List<GameObject> lights = new List<GameObject>();
 
@@ -15,7 +15,7 @@ namespace Manager
             if (!PlayerMovement.Instance) return;
             foreach (var light in lights)
             {
-                float dis = Vector3.Distance(light.transform.position,PlayerMovement.Instance.GetRb().position);
+                float dis = Vector3.Distance(light.transform.position, PlayerMovement.Instance.GetRb().position);
 
                 if (dis > maxDistance)
                 {
@@ -26,7 +26,7 @@ namespace Manager
                 }
                 else
                 {
-                    if(!light.activeSelf)light.SetActive(true);
+                    if (!light.activeSelf) light.SetActive(true);
                 }
             }
         }

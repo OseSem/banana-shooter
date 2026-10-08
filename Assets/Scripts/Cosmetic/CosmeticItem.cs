@@ -10,7 +10,7 @@ namespace Cosmetic
     [CreateAssetMenu(fileName = "New CosmeticItem", menuName = "Banana Shooter/CosmeticItem")]
     public class CosmeticItem : ScriptableObject
     {
-        
+
         public enum Type
         {
             None = 0,
@@ -18,39 +18,39 @@ namespace Cosmetic
             Hair = 2,
             Hat = 3,
             Face = 4,
-            Shoes= 5,
-            Clothes=6,
-            Pant=7,
-            Rag=8,
+            Shoes = 5,
+            Clothes = 6,
+            Pant = 7,
+            Rag = 8,
             Particle,
-            ShotGun=10,
-            Al48=11,
-            BWP=12,
-            Knife=13,
-            BananaKnife=14,
-            BananaGun=15,
-            DesertEagle=16,
-            TaserGun=17,
-            Broadsword=18,
-            Vector=19,
-            Boomer=20,
-            Pistol=21,
-            M4Carbine=22,
-            DoubleBarrel=23,
-            P90=24,
-            BarrettM82=25,
-            RocketLauncher=26,
-            Bac20=27,
-            Mp40=28,
-            MDR=29,
-            WRD4=30,
-            Badge=31,
+            ShotGun = 10,
+            Al48 = 11,
+            BWP = 12,
+            Knife = 13,
+            BananaKnife = 14,
+            BananaGun = 15,
+            DesertEagle = 16,
+            TaserGun = 17,
+            Broadsword = 18,
+            Vector = 19,
+            Boomer = 20,
+            Pistol = 21,
+            M4Carbine = 22,
+            DoubleBarrel = 23,
+            P90 = 24,
+            BarrettM82 = 25,
+            RocketLauncher = 26,
+            Bac20 = 27,
+            Mp40 = 28,
+            MDR = 29,
+            WRD4 = 30,
+            Badge = 31,
             MusicBox = 32,
             MenuScene = 33,
-            Other=34,
+            Other = 34,
         }
 
-        
+
         public enum InventoryType
         {
             Cosmetics = 0,
@@ -58,7 +58,7 @@ namespace Cosmetic
         }
 
 
-        
+
         public enum Rarity
         {
             Common,
@@ -176,7 +176,7 @@ namespace Cosmetic
             return color;
         }
 
-        public Vector3 size, offset=Vector3.zero, defaultRotation = new Vector3(-90, 0, 0);
+        public Vector3 size, offset = Vector3.zero, defaultRotation = new Vector3(-90, 0, 0);
         public float sizeMultiplier = 1f;
 
         public Vector3 GetSize()
@@ -186,15 +186,15 @@ namespace Cosmetic
 
         public List<CosmeticItem> relatedItem = new List<CosmeticItem>();
 
-        public bool canApplyParticle=true;
+        public bool canApplyParticle = true;
 
         private void OnValidate()
         {
             if (SceneManager.GetActiveScene().name == "ItemShowcase")
             {
                 ShowcaseManager showcaseManager = FindObjectOfType<ShowcaseManager>();
-                
-                if(showcaseManager && showcaseManager.IsThisItem(this))
+
+                if (showcaseManager && showcaseManager.IsThisItem(this))
                     showcaseManager.Showcase(this);
             }
         }

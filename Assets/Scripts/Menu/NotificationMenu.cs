@@ -48,12 +48,12 @@ namespace Menu
             int count = content.childCount;
             if (count >= 2)
             {
-                for (int i = 0; i < count-1; i++)
+                for (int i = 0; i < count - 1; i++)
                 {
                     Destroy(content.GetChild(i).gameObject);
                 }
             }
-            
+
             NotificationItemUI item = Instantiate(prefab, content);
             item.SetValue(titleKey, infoKey);
         }

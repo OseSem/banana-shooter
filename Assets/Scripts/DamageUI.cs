@@ -19,7 +19,7 @@ public class DamageUI : MonoBehaviour
     {
         desiredAlpha = 1f;
         speed = 40f;
-        Invoke(nameof(Clear),0.07f);
+        Invoke(nameof(Clear), 0.07f);
     }
 
     void Clear()

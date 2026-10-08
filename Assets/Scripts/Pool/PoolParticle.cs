@@ -4,14 +4,14 @@ using UnityEngine.VFX;
 
 namespace Pool
 {
-    public class PoolParticle : MonoBehaviour,IPooledObject
+    public class PoolParticle : MonoBehaviour, IPooledObject
     {
         [SerializeField] private bool isVFX = false;
         private ParticleSystem _particle;
         private VisualEffect _visualEffect;
         public void OnObjectSpawn()
         {
-            if(isVFX)
+            if (isVFX)
                 _visualEffect.Play();
             else _particle.Play();
         }

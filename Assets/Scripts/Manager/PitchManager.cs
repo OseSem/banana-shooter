@@ -7,7 +7,7 @@ namespace Manager
     public class PitchManager : MonoBehaviour
     {
         public static PitchManager Instance { private set; get; }
-        
+
         [SerializeField] AudioMixer mixer;
 
         private float _currentPitch = 1f;

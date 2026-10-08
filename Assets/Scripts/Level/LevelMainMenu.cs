@@ -19,9 +19,9 @@ namespace Level
 
             LevelManager.Instance.StoreExp();
         }
-        
+
         public TextMeshProUGUI levelText;
-    
+
         private void SetLevelNumber(int levelNumber)
         {
             levelText.text = levelNumber.ToString();

@@ -43,7 +43,7 @@ public class CrazyPlayer : MonoBehaviour
                 avatar.texture = player.playerState.AvatarImage;
                 desiredPos = inScreenPos;
             }
-            Invoke(nameof(Clear),5f);
+            Invoke(nameof(Clear), 5f);
         }
     }
 
@@ -72,12 +72,12 @@ public class CrazyPlayer : MonoBehaviour
         desiredPos = outScreenPos;
     }
 
-    [MessageHandler((ushort) ServerToClientId.CrazyPlayer, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+    [MessageHandler((ushort)ServerToClientId.CrazyPlayer, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
     private static void CrazyPlayerSet(Message message)
     {
         string title = message.GetString();
         ushort id = message.GetUShort();
-        
-        Instance.SetTitle(title,id);
+
+        Instance.SetTitle(title, id);
     }
 }

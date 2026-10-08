@@ -14,13 +14,13 @@ namespace Multiplayer.Entity.Client.Enemy.Animation
         public override void Update()
         {
             base.Update();
-            
-            Animator.SetFloat(Y,Mathf.Abs(InputInterpolate.z+InputInterpolate.x));
+
+            Animator.SetFloat(Y, Mathf.Abs(InputInterpolate.z + InputInterpolate.x));
         }
 
         public void SetDoor(bool flag)
         {
-            Animator.SetBool(Open,flag);
+            Animator.SetBool(Open, flag);
         }
     }
 }

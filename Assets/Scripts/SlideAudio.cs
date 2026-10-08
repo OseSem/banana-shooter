@@ -8,11 +8,11 @@ public class SlideAudio : MonoBehaviour
 {
     public static SlideAudio Instance { private set; get; }
     private static bool _initialized = false;
-    
+
     private PlayerState _currentPlayer;
 
     private AudioSource _sfx;
-    
+
     private void Awake()
     {
         Instance = this;

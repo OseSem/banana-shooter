@@ -5,7 +5,7 @@ namespace Manager
 {
     public class PlayerDisplay : PlayerRender
     {
-        public static PlayerDisplay Instance{ get;private set; }
+        public static PlayerDisplay Instance { get; private set; }
 
         private void Awake()
         {
@@ -14,7 +14,7 @@ namespace Manager
                 Instance = this;
                 DontDestroyOnLoad(gameObject);
             }
-            else if(Instance!=this)
+            else if (Instance != this)
             {
                 Destroy(gameObject);
             }

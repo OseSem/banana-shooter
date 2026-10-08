@@ -15,15 +15,15 @@ namespace CodingDaniel.MapEditor.MEEditor
         {
             _editor = MEBase.Instance;
         }
-        
+
         private void Start()
         {
             _editor.Tools.Current = EditorTool.Move;
         }
-        
+
         private void LateUpdate()
         {
-            if(_editor.Tools.ActiveTool != null)
+            if (_editor.Tools.ActiveTool != null)
             {
                 return;
             }
@@ -57,14 +57,14 @@ namespace CodingDaniel.MapEditor.MEEditor
                 {
                     _editor.Tools.Current = EditorTool.Scale;
                 }
-                else if(RectToolAction())
+                else if (RectToolAction())
                 {
                     _editor.Tools.Current = EditorTool.Rect;
                 }
 
                 if (PivotRotationAction())
                 {
-                    if (_editor.Tools.PivotRotation ==MEPivotRotation.Local)
+                    if (_editor.Tools.PivotRotation == MEPivotRotation.Local)
                     {
                         _editor.Tools.PivotRotation = MEPivotRotation.Global;
                     }

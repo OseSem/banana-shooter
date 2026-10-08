@@ -16,7 +16,7 @@ namespace CodingDaniel.MapEditor.Graphics
 
         public event Action<SpriteGizmo> ComponentDestroyed;
         public Component Component;
-        
+
         [SerializeField]
         [FormerlySerializedAs("m_scale")]
         private float _scale = 1.0f;
@@ -25,14 +25,14 @@ namespace CodingDaniel.MapEditor.Graphics
             get { return _scale; }
             set
             {
-                if(_scale != value)
+                if (_scale != value)
                 {
                     _scale = value;
                     UpdateCollider();
                 }
             }
         }
-        
+
         private void OnEnable()
         {
             _collider = GetComponent<SphereCollider>();
@@ -58,7 +58,7 @@ namespace CodingDaniel.MapEditor.Graphics
 
         private void OnDisable()
         {
-            if(_collider != null)
+            if (_collider != null)
             {
                 Destroy(_collider);
                 _destroyedCollider = _collider;
@@ -68,7 +68,7 @@ namespace CodingDaniel.MapEditor.Graphics
 
         private void UpdateCollider()
         {
-            if(_collider != null)
+            if (_collider != null)
             {
                 _collider.radius = 0.25f * _scale;
             }
@@ -76,13 +76,13 @@ namespace CodingDaniel.MapEditor.Graphics
 
         private void Update()
         {
-            if(Component == null)
+            if (Component == null)
             {
-                if(ComponentDestroyed != null)
+                if (ComponentDestroyed != null)
                 {
                     ComponentDestroyed(this);
                 }
-                
+
                 enabled = false;
             }
         }

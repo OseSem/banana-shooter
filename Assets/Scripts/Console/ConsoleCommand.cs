@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Console
 {
-    public abstract class ConsoleCommand : ScriptableObject,IConsoleCommand
+    public abstract class ConsoleCommand : ScriptableObject, IConsoleCommand
     {
         [SerializeField] string commandWord = String.Empty;
         [SerializeField] string description = String.Empty;

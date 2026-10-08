@@ -10,7 +10,7 @@ using UnityEngine;
 
 namespace Console.CommandScript
 {
-    [CreateAssetMenu(fileName = "Spawn Command",menuName = "Utilities/DeveloperConsole/Commands/Spawn Command")]
+    [CreateAssetMenu(fileName = "Spawn Command", menuName = "Utilities/DeveloperConsole/Commands/Spawn Command")]
     public class SpawnCommand : ConsoleCommand
     {
         public override bool Process(string[] args)
@@ -27,7 +27,7 @@ namespace Console.CommandScript
             }
 
             int spawnType = 0;
-            if (args.Length!=0&&args.Length <= 2)
+            if (args.Length != 0 && args.Length <= 2)
             {
                 int type = (int)ServerEnemy.EnemyType.Jack;
                 switch (args[0])
@@ -57,16 +57,16 @@ namespace Console.CommandScript
                 Vector3 spawnPos;
 
                 var transform = MoveCamera.Instance.transform;
-                Vector3 ogPos = transform.position,dir = transform.forward;
-                if (Physics.Raycast(ogPos,dir , out var hit))
+                Vector3 ogPos = transform.position, dir = transform.forward;
+                if (Physics.Raycast(ogPos, dir, out var hit))
                 {
-                    spawnPos = hit.point+Vector3.up*2f;
+                    spawnPos = hit.point + Vector3.up * 2f;
                 }
                 else
                 {
                     if (Physics.Raycast(ogPos + dir * 30f, Vector3.down, out hit))
                     {
-                        spawnPos = hit.point+Vector3.up*2f;
+                        spawnPos = hit.point + Vector3.up * 2f;
                     }
                     else
                     {
@@ -77,56 +77,56 @@ namespace Console.CommandScript
 
                 if (args.Length == 2)
                 {
-                    
+
                     if (int.TryParse(args[1], out int times))
                     {
                         switch (spawnType)
                         {
                             case 0:
-                                NetworkManager.Instance.StartCoroutine(Spawn(times, (ushort) type, spawnPos));
+                                NetworkManager.Instance.StartCoroutine(Spawn(times, (ushort)type, spawnPos));
                                 break;
                             case 1:
-                                message = Message.Create(MessageSendMode.Unreliable,(ushort) ClientToServerId.RequestSpawnObj);
-                                message.Add( type);
+                                message = Message.Create(MessageSendMode.Unreliable, (ushort)ClientToServerId.RequestSpawnObj);
+                                message.Add(type);
                                 message.Add(spawnPos);
                                 message.Add(times);
 
-                                if ((ObjectType) type == ObjectType.SodaCan)
+                                if ((ObjectType)type == ObjectType.SodaCan)
                                 {
                                     message.Add(Vector3.up);
                                 }
-                
+
                                 NetworkManager.Instance.SendByte += message.WrittenLength;
                                 NetworkManager.Instance.Client.Send(message);
                                 break;
                         }
-                        
+
                     }
                     return true;
-                
+
                 }
                 else
                 {
                     switch (spawnType)
                     {
                         case 0:
-                            message = Message.Create(MessageSendMode.Unreliable,(ushort) ClientToServerId.SpawnEnemy);
-                            message.Add((ushort) type);
+                            message = Message.Create(MessageSendMode.Unreliable, (ushort)ClientToServerId.SpawnEnemy);
+                            message.Add((ushort)type);
                             message.Add(spawnPos);
 
                             NetworkManager.Instance.SendByte += message.WrittenLength;
                             NetworkManager.Instance.Client.Send(message);
                             break;
                         case 1:
-                            message = Message.Create(MessageSendMode.Unreliable,(ushort) ClientToServerId.RequestSpawnObj);
-                            message.Add( type);
+                            message = Message.Create(MessageSendMode.Unreliable, (ushort)ClientToServerId.RequestSpawnObj);
+                            message.Add(type);
                             message.Add(spawnPos);
                             message.Add(1);
-                            if ((ObjectType) type == ObjectType.SodaCan)
+                            if ((ObjectType)type == ObjectType.SodaCan)
                             {
                                 message.Add(Vector3.up);
                             }
-                
+
                             NetworkManager.Instance.SendByte += message.WrittenLength;
                             NetworkManager.Instance.Client.Send(message);
                             break;
@@ -138,16 +138,16 @@ namespace Console.CommandScript
             return false;
         }
 
-        IEnumerator Spawn(int times,ushort type,Vector3 spawnPos)
+        IEnumerator Spawn(int times, ushort type, Vector3 spawnPos)
         {
             for (int i = 0; i < times; i++)
             {
-                Message message = Message.Create(MessageSendMode.Unreliable,(ushort) ClientToServerId.SpawnEnemy);
-                message.Add( type);
+                Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ClientToServerId.SpawnEnemy);
+                message.Add(type);
                 message.Add(spawnPos);
 
-                spawnPos += Vector3.up*2f;
-                
+                spawnPos += Vector3.up * 2f;
+
                 NetworkManager.Instance.SendByte += message.WrittenLength;
                 NetworkManager.Instance.Client.Send(message);
                 yield return new WaitForSeconds(0.05f);

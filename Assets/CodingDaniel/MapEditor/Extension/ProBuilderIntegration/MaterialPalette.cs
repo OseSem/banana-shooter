@@ -10,15 +10,15 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public Material GetMaterialWithTexture(Texture2D texture)//texutre)
         {
-            if(Materials == null)
+            if (Materials == null)
             {
                 return null;
             }
 
-            for(int i = 0; i < Materials.Count; ++i)
+            for (int i = 0; i < Materials.Count; ++i)
             {
                 Material material = Materials[i];
-                if(material != null && material.MainTexture() == texture)
+                if (material != null && material.MainTexture() == texture)
                 {
                     return material;
                 }

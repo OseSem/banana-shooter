@@ -125,10 +125,10 @@ namespace CodingDaniel.MapEditor.MEEditor
         }
     }
     [DefaultExecutionOrder(-91)]
-    public class MEBase : MonoBehaviour,IME
+    public class MEBase : MonoBehaviour, IME
     {
         public static IME Instance { private set; get; }
-        
+
         private void Awake()
         {
             Instance = this;
@@ -144,9 +144,9 @@ namespace CodingDaniel.MapEditor.MEEditor
 
             _selection = new MESelection(this);
             _object = gameObject.AddComponent<MEObjects>();
-            
+
             _camera = Camera.main;
-            
+
             QualitySettings.SetQualityLevel(3);
 
             _editedObject = new GameObject("Edit Object Root");
@@ -157,26 +157,26 @@ namespace CodingDaniel.MapEditor.MEEditor
 
         IEnumerator Load()
         {
-            while (MapSettingMenu.Instance==null ||TabHolder.Instance==null  )
+            while (MapSettingMenu.Instance == null || TabHolder.Instance == null)
             {
                 yield return null;
             }
             yield return MapSaver.Instance.LoadEditorMap();
         }
         public EditorToolState Tools { get; } = new EditorToolState();
-        
+
         private IMESelection _selection;
         private IMEObjects _object;
         private Camera _camera;
         [SerializeField] private Pointer pointer;
-        
+
         public Camera Camera => _camera;
         private IRuntimeUndo _undo;
         public virtual IMESelection Selection
         {
             get { return _selection; }
         }
-        
+
         public virtual IMEObjects Object
         {
             get { return _object; }
@@ -264,7 +264,7 @@ namespace CodingDaniel.MapEditor.MEEditor
         {
             get => _editedObject;
         }
-        
+
         public GameObject PlayModeObject
         {
             get => _playModeObject;

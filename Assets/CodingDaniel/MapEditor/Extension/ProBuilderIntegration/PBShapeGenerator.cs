@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.ProBuilder;
 namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 {

@@ -7,12 +7,12 @@ namespace Multiplayer.Entity
     public class Entity
     {
         public const ushort MaxEntityAmount = 3000;
-        
+
         public readonly Dictionary<ushort, IEntity> Entities = new();
 
         public Entity()
         {
-            Entities.Add(MaxEntityAmount,new ServerVoid());
+            Entities.Add(MaxEntityAmount, new ServerVoid());
         }
 
         public Dictionary<ushort, IEntity> GetAll()

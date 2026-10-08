@@ -10,7 +10,7 @@ namespace Multiplayer.Entity.Client.Enemy.State
     public class KatState : EnemyState
     {
         public ServerKat.EKatState state = ServerKat.EKatState.Nonawake;
-        
+
         [SerializeField] private Transform headTarget;
         private Vector3 _targetDesiredPos;
         [SerializeField] private Vector3 nonAwakePos;
@@ -20,9 +20,9 @@ namespace Multiplayer.Entity.Client.Enemy.State
         [SerializeField] public TwoBoneIKConstraint hand;
         [SerializeField] public Transform tip;
         [SerializeField] private AudioClip shootSound;
-        
+
         [SerializeField] ParticleSystem muzzle;
-        private bool _readyToShoot=false;
+        private bool _readyToShoot = false;
 
         protected override void Update()
         {
@@ -33,9 +33,9 @@ namespace Multiplayer.Entity.Client.Enemy.State
             }
             else
             {
-                headTarget.position = Vector3.Lerp(headTarget.position,_targetDesiredPos,Time.deltaTime*15f);
-                Vector3 rot = Quaternion.LookRotation(_targetDesiredPos-selfTransform.position).eulerAngles;
-                headTarget.rotation = Quaternion.Euler(rot.x+95,rot.y,rot.z);
+                headTarget.position = Vector3.Lerp(headTarget.position, _targetDesiredPos, Time.deltaTime * 15f);
+                Vector3 rot = Quaternion.LookRotation(_targetDesiredPos - selfTransform.position).eulerAngles;
+                headTarget.rotation = Quaternion.Euler(rot.x + 95, rot.y, rot.z);
             }
         }
 
@@ -45,7 +45,7 @@ namespace Multiplayer.Entity.Client.Enemy.State
             {
                 case ServerKat.EKatState.Nonawake:
                     _targetDesiredPos = nonAwakePos;
-                
+
                     break;
                 case ServerKat.EKatState.Chasing:
                     if (playerTarget != null)
@@ -57,11 +57,11 @@ namespace Multiplayer.Entity.Client.Enemy.State
                     if (playerTarget != null)
                     {
                         _targetDesiredPos = playerTarget.position;
-                        desiredRot = Quaternion.Euler(0,Quaternion.LookRotation(_targetDesiredPos-selfTransform.position).eulerAngles.y,0);
+                        desiredRot = Quaternion.Euler(0, Quaternion.LookRotation(_targetDesiredPos - selfTransform.position).eulerAngles.y, 0);
                         if (_readyToShoot)
                         {
                             _readyToShoot = false;
-                            Invoke(nameof(ReadyToShoot),1f / 3);
+                            Invoke(nameof(ReadyToShoot), 1f / 3);
                             Shoot();
 
                             Vector3 tipPos = tip.position;
@@ -73,26 +73,26 @@ namespace Multiplayer.Entity.Client.Enemy.State
                             bullet.Initialization(dir, 800f, 0, LayerMask.NameToLayer("Bullet"), false, false);
                         }
                     }
-                
+
                     break;
                 case ServerKat.EKatState.Missile:
                     if (playerTarget != null)
                     {
                         _targetDesiredPos = playerTarget.position;
-                        desiredRot = Quaternion.Euler(0,Quaternion.LookRotation(_targetDesiredPos-selfTransform.position).eulerAngles.y,0);
+                        desiredRot = Quaternion.Euler(0, Quaternion.LookRotation(_targetDesiredPos - selfTransform.position).eulerAngles.y, 0);
                     }
 
                     break;
             }
         }
-        
+
         void Shoot()
         {
             source.PlayOneShot(shootSound);
-        
+
             muzzle.Play();
         }
-        
+
         public void ReadyToShoot()
         {
             _readyToShoot = true;
@@ -118,7 +118,7 @@ namespace Multiplayer.Entity.Client.Enemy.State
                 case ServerKat.EKatState.Shooting:
                     hand.weight = 1;
                     CancelInvoke(nameof(ReadyToShoot));
-                    Invoke(nameof(ReadyToShoot),1f);
+                    Invoke(nameof(ReadyToShoot), 1f);
                     break;
                 case ServerKat.EKatState.Missile:
                     hand.weight = 1;

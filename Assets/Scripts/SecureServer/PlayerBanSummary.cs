@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
 
@@ -6,19 +6,19 @@ namespace SecureServer
 {
     public class PlayerBanSummary
     {
-        public ulong SteamId=0;
-        public bool CommunityBanned=false;
-        public bool VacBanned=false;
-        public uint NumberOfVacBans=0;
-        public uint DaysSinceLastBan=0;
-        public uint NumberOfGameBans=0;
+        public ulong SteamId = 0;
+        public bool CommunityBanned = false;
+        public bool VacBanned = false;
+        public uint NumberOfVacBans = 0;
+        public uint DaysSinceLastBan = 0;
+        public uint NumberOfGameBans = 0;
 
         public List<GameBan> Bans = new List<GameBan>();
 
         public string EconomyBan = String.Empty;
-    
+
         [JsonConstructor]
-        public PlayerBanSummary(ulong steamId,bool communityBanned,bool vacBanned,uint numberOfGameBans,uint numberOfVacBans,uint daysSinceLastBan)
+        public PlayerBanSummary(ulong steamId, bool communityBanned, bool vacBanned, uint numberOfGameBans, uint numberOfVacBans, uint daysSinceLastBan)
         {
             SteamId = steamId;
             CommunityBanned = communityBanned;
@@ -30,7 +30,7 @@ namespace SecureServer
 
         public PlayerBanSummary()
         {
-            
+
         }
     }
 
@@ -54,7 +54,7 @@ namespace SecureServer
 
         public GameBan()
         {
-        
+
         }
     }
 }

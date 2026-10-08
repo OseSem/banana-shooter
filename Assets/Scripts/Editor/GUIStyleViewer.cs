@@ -29,16 +29,16 @@ namespace Editor
                     fontSize = 25
                 };
             }
-            
+
             GUILayout.BeginHorizontal("HelpBox");
-            GUILayout.Label("Results: ",_textStyle);
+            GUILayout.Label("Results: ", _textStyle);
             GUILayout.FlexibleSpace();
             GUILayout.Label("Search:");
             _search = EditorGUILayout.TextField(_search);
             GUILayout.EndHorizontal();
             GUILayout.BeginHorizontal("PopupCurveSwatchBackground");
-            GUILayout.Label("Showcase",_textStyle, GUILayout.Width(300));
-            GUILayout.Label("Name",_textStyle,GUILayout.Width(300));
+            GUILayout.Label("Showcase", _textStyle, GUILayout.Width(300));
+            GUILayout.Label("Name", _textStyle, GUILayout.Width(300));
             GUILayout.EndHorizontal();
 
             _scrollPos = GUILayout.BeginScrollView(_scrollPos);
@@ -54,11 +54,11 @@ namespace Editor
                         EditorGUIUtility.systemCopyBuffer = style.name;
                         Debug.Log($"Copied {style.name} To System Buffer");
                     }
-                    EditorGUILayout.SelectableLabel(style.name,GUILayout.Width(300));
+                    EditorGUILayout.SelectableLabel(style.name, GUILayout.Width(300));
                     GUILayout.EndHorizontal();
                 }
             }
-            
+
             GUILayout.EndScrollView();
         }
     }

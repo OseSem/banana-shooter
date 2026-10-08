@@ -15,9 +15,9 @@ namespace Mode
                 enabled = false;
                 return;
             }
-    
+
             string sceneName = SceneManager.GetActiveScene().name;
-            if (sceneName == "CustomMap" && MapSaver.CurrentMap!=null) sceneName = MapSaver.CurrentMap.name;
+            if (sceneName == "CustomMap" && MapSaver.CurrentMap != null) sceneName = MapSaver.CurrentMap.name;
             NetworkManager.Instance.SetRichPreference(GameMode.OneShotOneKill.ToString(), sceneName);
             LobbyManager.Instance.SetLobbyGameMode();
         }

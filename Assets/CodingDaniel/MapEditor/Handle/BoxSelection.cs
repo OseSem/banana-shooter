@@ -60,7 +60,7 @@ namespace CodingDaniel.MapEditor.Handle
     {
         public GameObject[] GameObjects;
     }
-    
+
 
     public interface IBoxSelection
     {
@@ -93,12 +93,12 @@ namespace CodingDaniel.MapEditor.Handle
             set;
         }
     }
-    public class BoxSelection : MonoBehaviour,IBoxSelection
+    public class BoxSelection : MonoBehaviour, IBoxSelection
     {
         public static BoxSelection Instance { private set; get; }
         private IME _editor;
         public IME Editor => _editor;
-        
+
         public Sprite Graphics;
         protected Image _image;
         protected RectTransform _rectTransform;
@@ -124,7 +124,7 @@ namespace CodingDaniel.MapEditor.Handle
         {
             get
             {
-                if(_methodOverride != BoxSelectionMethod.Default)
+                if (_methodOverride != BoxSelectionMethod.Default)
                 {
                     return _methodOverride;
                 }
@@ -155,7 +155,7 @@ namespace CodingDaniel.MapEditor.Handle
         public bool IsDragging
         {
             get { return _isDragging; }
-        }       
+        }
 
         public Canvas Canvas
         {
@@ -199,9 +199,9 @@ namespace CodingDaniel.MapEditor.Handle
                 scaler = _canvas.gameObject.AddComponent<CanvasScaler>();
             }
             scaler.referencePixelsPerUnit = 1;
-            
 
-            if(!GetComponent<BoxSelectionInput>())
+
+            if (!GetComponent<BoxSelectionInput>())
             {
                 gameObject.AddComponent<BoxSelectionInput>();
             }
@@ -233,7 +233,7 @@ namespace CodingDaniel.MapEditor.Handle
         }
         void OnDestroy()
         {
-            if ( MEBase.Instance.Tools != null && MEBase.Instance.Tools.ActiveTool == this)
+            if (MEBase.Instance.Tools != null && MEBase.Instance.Tools.ActiveTool == this)
             {
                 if (MEBase.Instance.Tools.ActiveTool == this)
                 {
@@ -241,20 +241,20 @@ namespace CodingDaniel.MapEditor.Handle
                 }
             }
         }
-        
+
         public void BeginSelect()
         {
             // Debug.Log(MEBase.Instance.Tools.ActiveTool);
-            if(MEBase.Instance.Tools.ActiveTool != null || _windowRectTransform == null)
+            if (MEBase.Instance.Tools.ActiveTool != null || _windowRectTransform == null)
             {
                 return;
             }
 
-            if(Begin != null)
+            if (Begin != null)
             {
                 BeginBoxSelectionArgs args = new BeginBoxSelectionArgs();
                 Begin(this, args);
-                if(args.Cancel)
+                if (args.Cancel)
                 {
                     return;
                 }
@@ -273,7 +273,7 @@ namespace CodingDaniel.MapEditor.Handle
         {
             if (_isDragging)
             {
-                
+
                 _isDragging = false;
 
                 HitTest();
@@ -300,11 +300,11 @@ namespace CodingDaniel.MapEditor.Handle
 
             if (_editor.Tools.IsViewing || /*_editor.Tools.Current == RuntimeTool.None ||*/ !_editor.Tools.IsBoxSelectionEnabled)
             {
-                if(_editor.Tools.ActiveTool == this)
+                if (_editor.Tools.ActiveTool == this)
                 {
                     _editor.Tools.ActiveTool = null;
                 }
-                
+
                 _isDragging = false;
                 _rectTransform.sizeDelta = new Vector2(0, 0);
                 return;
@@ -354,7 +354,7 @@ namespace CodingDaniel.MapEditor.Handle
                 TrySelect(ref selectionBounds, selection, filteringArgs, ref bounds, go, frustumPlanes);
             }
 
-            if(Selection != null)
+            if (Selection != null)
             {
                 Selection(this, new BoxSelectionArgs { GameObjects = selection.ToArray() });
             }
@@ -400,9 +400,9 @@ namespace CodingDaniel.MapEditor.Handle
             bool select;
             if (MethodOverride == BoxSelectionMethod.LooseFitting)
             {
-                select = LooseFitting(ref selectionBounds, ref bounds);              
+                select = LooseFitting(ref selectionBounds, ref bounds);
             }
-            else if(MethodOverride == BoxSelectionMethod.Vertex)
+            else if (MethodOverride == BoxSelectionMethod.Vertex)
             {
                 select = LooseFitting(ref selectionBounds, ref bounds);
                 if (select && !selection.Contains(go))
@@ -428,14 +428,14 @@ namespace CodingDaniel.MapEditor.Handle
                     else
                     {
                         SkinnedMeshRenderer smr = go.GetComponent<SkinnedMeshRenderer>();
-                        
+
                         if (smr != null && smr.sharedMesh != null)
                         {
                             Mesh bakedMesh = new Mesh();
                             smr.BakeMesh(bakedMesh);
 
                             Matrix4x4 m = Matrix4x4.TRS(go.transform.localPosition, go.transform.localRotation, Vector3.one);
-                            if(smr.transform.parent != null)
+                            if (smr.transform.parent != null)
                             {
                                 m = m * smr.transform.parent.localToWorldMatrix;
                             }
@@ -457,7 +457,7 @@ namespace CodingDaniel.MapEditor.Handle
                             Destroy(bakedMesh);
                         }
                     }
-                    
+
                 }
             }
             else if (MethodOverride == BoxSelectionMethod.BoundsCenter)
@@ -544,7 +544,7 @@ namespace CodingDaniel.MapEditor.Handle
         private bool GetPoint(out Vector2 localPoint)
         {
             Camera cam = null;
-            if(_canvas.renderMode != RenderMode.ScreenSpaceOverlay)
+            if (_canvas.renderMode != RenderMode.ScreenSpaceOverlay)
             {
                 cam = _canvas.worldCamera;
             }

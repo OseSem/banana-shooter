@@ -34,7 +34,7 @@ public class KickVote : MonoBehaviour
 
     private void Update()
     {
-        kickMessage.anchoredPosition = Vector3.Lerp(kickMessage.anchoredPosition,desiredPos,Time.deltaTime*15f);
+        kickMessage.anchoredPosition = Vector3.Lerp(kickMessage.anchoredPosition, desiredPos, Time.deltaTime * 15f);
 
         if (Input.GetKeyDown(KeyCode.F1))
         {
@@ -46,22 +46,22 @@ public class KickVote : MonoBehaviour
         }
     }
 
-    public string kickPlayerName,votePlayerName;
-    public void SetPlayerValues(string playerName,VoteKicking vote,string fromPlayer)
+    public string kickPlayerName, votePlayerName;
+    public void SetPlayerValues(string playerName, VoteKicking vote, string fromPlayer)
     {
         this.kickPlayerName = playerName;
         this.votePlayerName = fromPlayer;
 
-        kick.StringReference.Arguments = new List<object>() {kickPlayerName};
-        this.vote.StringReference.Arguments = new List<object> {votePlayerName};
+        kick.StringReference.Arguments = new List<object>() { kickPlayerName };
+        this.vote.StringReference.Arguments = new List<object> { votePlayerName };
 
         kick.RefreshString();
         this.vote.RefreshString();
-        
+
         desiredPos = showPos;
 
         VoteKicking = vote;
-        
+
         agreeCountText.SetText(vote.agreeCount.ToString());
         disAgreeCountText.SetText(vote.disAgreeCount.ToString());
 
@@ -75,8 +75,8 @@ public class KickVote : MonoBehaviour
     public Button agreeBtn, disAgreeBtn;
     void Agree()
     {
-        if (VoteKicking == null|| !agreeBtn.interactable) return;
-        Message message = Message.Create(MessageSendMode.Reliable,(ushort)ClientToServerId.AgreeKicking);
+        if (VoteKicking == null || !agreeBtn.interactable) return;
+        Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.AgreeKicking);
         message.Add(VoteKicking.PlayerId);
         NetworkManager.Instance.SendByte += message.WrittenLength;
         NetworkManager.Instance.Client.Send(message);
@@ -87,7 +87,7 @@ public class KickVote : MonoBehaviour
     void DisAgree()
     {
         if (VoteKicking == null || !disAgreeBtn.interactable) return;
-        Message message = Message.Create(MessageSendMode.Reliable,(ushort)ClientToServerId.DisAgreeKicking);
+        Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.DisAgreeKicking);
         message.Add(VoteKicking.PlayerId);
         NetworkManager.Instance.SendByte += message.WrittenLength;
         NetworkManager.Instance.Client.Send(message);
@@ -104,16 +104,16 @@ public class KickVote : MonoBehaviour
 [Serializable]
 public class VoteKicking
 {
-    internal ushort PlayerId,FromClient;
+    internal ushort PlayerId, FromClient;
     public ushort agreeCount, disAgreeCount;
     public Dictionary<ushort, bool> Players = new Dictionary<ushort, bool>();
 
-    public VoteKicking(ushort playerId,ushort fromClient)
+    public VoteKicking(ushort playerId, ushort fromClient)
     {
         FromClient = fromClient;
         PlayerId = playerId;
         agreeCount = 1;
         disAgreeCount = 1;
     }
-    
+
 }

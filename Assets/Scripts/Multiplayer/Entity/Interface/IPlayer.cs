@@ -7,28 +7,28 @@ using Weapon;
 
 namespace Multiplayer.Entity.Interface
 {
-    public interface IPlayer : IEntity,IDamageable,IStats
+    public interface IPlayer : IEntity, IDamageable, IStats
     {
         #region Basic
 
         //PLayer's Steam Id
         ulong SteamId { get; set; }
-        
+
         //Player's Name
         string Username { get; set; }
 
         //Is the player got eliminated (use for battle royale gamemode)
         bool Eliminated { set; get; }
-        
+
         //
-        bool DisplayTag { get;set; }
-        
+        bool DisplayTag { get; set; }
+
         List<Perk> Perks { get; set; }
-        
+
         #endregion
 
         #region Statics
-        
+
         //Player's current cash use for economy gamemode
         int Cash { get; set; }
 
@@ -38,15 +38,15 @@ namespace Multiplayer.Entity.Interface
         #endregion
 
         #region State
-        
+
         public Vector3 Velocity { set; get; }
 
         //Is the player spectating
         bool Specting { set; get; }
-        
+
         //Use for checking player's infected state
         bool IsInfected { set; get; }
-        
+
         //Use for checking player's infected state
         bool IsAiming { get; set; }
 
@@ -74,7 +74,7 @@ namespace Multiplayer.Entity.Interface
         bool IsGrappling { get; set; }
 
         #endregion
-        
+
         bool HasPerk(Perk perk);
         Vector3 Position();
         string Nick();

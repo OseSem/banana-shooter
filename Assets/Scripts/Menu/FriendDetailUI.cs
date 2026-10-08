@@ -18,10 +18,10 @@ namespace Menu
 
         private Button _btn;
 
-        public void Initialize(Friend friend,bool enableInvite=false)
+        public void Initialize(Friend friend, bool enableInvite = false)
         {
             nameText.SetText(friend.Name);
-            string key = (int) friend.PersonalState <= 5 ? friend.PersonalState.ToString() : "k_EPersonaStateOffline";
+            string key = (int)friend.PersonalState <= 5 ? friend.PersonalState.ToString() : "k_EPersonaStateOffline";
             stateText.SetEntry(key);
 
             avatar.texture = friend.Avatar;
@@ -29,7 +29,7 @@ namespace Menu
             _btn = GetComponent<Button>();
 
             _btn.interactable = friend.PersonalState == EPersonaState.k_EPersonaStateOnline;
-            
+
             inviteBtn.gameObject.SetActive(enableInvite);
         }
     }

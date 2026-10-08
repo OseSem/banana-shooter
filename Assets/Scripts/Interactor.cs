@@ -12,7 +12,7 @@ public class Interactor : MonoBehaviour
     public static Interactor Instance;
 
     private static bool _initialized = false;
-    
+
     public LayerMask interactableLayer = 19;
     public Interactable interactable = null;
     RaycastHit hit;
@@ -20,7 +20,7 @@ public class Interactor : MonoBehaviour
 
     private float lastTime = -30;
     private PlayerState _player;
-    
+
     private void Awake()
     {
         Instance = this;
@@ -52,7 +52,7 @@ public class Interactor : MonoBehaviour
         if (!_initialized) return;
         if (interactable == null || _player.Health <= 0) return;
         if (GameUIManager.Instance.pause || NetworkManager.Instance.CheckMultiplayerGameModeStarted() || NetworkManager.Instance.CantPlay()) return;
-        
+
         interactable.interactEvent?.Invoke();
     }
 
@@ -61,7 +61,7 @@ public class Interactor : MonoBehaviour
         if (!_initialized) return;
         if (_player.Health <= 0) return;
         Ray ray = new Ray(_transform.position, _transform.forward);
-        if (Physics.SphereCast(ray,1f, out hit, 3f, interactableLayer)||
+        if (Physics.SphereCast(ray, 1f, out hit, 3f, interactableLayer) ||
             Physics.Raycast(ray, out hit, 3f, interactableLayer))
         {
             Interactable inter = hit.collider.GetComponent<Interactable>();
@@ -97,7 +97,7 @@ public class Interactor : MonoBehaviour
             }
         }
     }
-    
+
     public bool HasInteractable()
     {
         return interactable != null;

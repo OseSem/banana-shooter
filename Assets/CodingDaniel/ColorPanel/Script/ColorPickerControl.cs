@@ -23,7 +23,7 @@ namespace CodingDaniel.ColorPanel.Script
         [SerializeField] private TMP_InputField hexInputField;
 
         private Texture2D hueTexture, svTexture, outputTexture;
-        
+
         // [SerializeField] MeshRenderer changeThis
 
         private void Awake()
@@ -37,7 +37,7 @@ namespace CodingDaniel.ColorPanel.Script
             CreateSvImage();
             CreateOutputImage();
             UpdateOutputImage();
-            
+
             hexInputField.onEndEdit.AddListener(OnTextInput);
         }
 
@@ -54,7 +54,7 @@ namespace CodingDaniel.ColorPanel.Script
 
             for (int i = 0; i < hueTexture.width; i++)
             {
-                hueTexture.SetPixel(i,0,Color.HSVToRGB((float)i/hueTexture.width,1,0.95f));
+                hueTexture.SetPixel(i, 0, Color.HSVToRGB((float)i / hueTexture.width, 1, 0.95f));
             }
             hueTexture.Apply();
 
@@ -73,10 +73,10 @@ namespace CodingDaniel.ColorPanel.Script
             {
                 for (int j = 0; j < svTexture.height; j++)
                 {
-                    svTexture.SetPixel(i,j,Color.HSVToRGB(currentHue,(float)i / svTexture.height, (float)j / svTexture.width));
+                    svTexture.SetPixel(i, j, Color.HSVToRGB(currentHue, (float)i / svTexture.height, (float)j / svTexture.width));
                 }
             }
-            
+
             svTexture.Apply();
             currentSat = 0;
             currentVal = 0;
@@ -93,9 +93,9 @@ namespace CodingDaniel.ColorPanel.Script
 
             for (int i = 0; i < outputTexture.height; i++)
             {
-                outputTexture.SetPixel(0,i,currentColor);
+                outputTexture.SetPixel(0, i, currentColor);
             }
-            
+
             outputTexture.Apply();
 
             outputImage.texture = outputTexture;
@@ -107,13 +107,13 @@ namespace CodingDaniel.ColorPanel.Script
 
             for (int i = 0; i < outputTexture.height; i++)
             {
-                outputTexture.SetPixel(0,i,currentColor);
+                outputTexture.SetPixel(0, i, currentColor);
             }
-            
+
             outputTexture.Apply();
-            
+
             hexInputField.SetTextWithoutNotify(ColorUtility.ToHtmlStringRGB(currentColor));
-            
+
             OnColorChanged?.Invoke(currentColor);
         }
 
@@ -125,7 +125,7 @@ namespace CodingDaniel.ColorPanel.Script
             UpdateOutputImage();
         }
 
-        
+
         public void UpdateSvImage()
         {
             currentHue = hueSlider.value;
@@ -133,12 +133,12 @@ namespace CodingDaniel.ColorPanel.Script
             {
                 for (int j = 0; j < svTexture.height; j++)
                 {
-                    svTexture.SetPixel(i,j,Color.HSVToRGB(currentHue,(float)i / svTexture.height, (float)j / svTexture.width));
+                    svTexture.SetPixel(i, j, Color.HSVToRGB(currentHue, (float)i / svTexture.height, (float)j / svTexture.width));
                 }
             }
 
             svTexture.Apply();
-            
+
             UpdateOutputImage();
         }
 
@@ -154,16 +154,16 @@ namespace CodingDaniel.ColorPanel.Script
 
             if (ColorUtility.TryParseHtmlString("#" + str, out var newColor))
             {
-                Color.RGBToHSV(newColor,out currentHue,out currentSat,out currentVal);
+                Color.RGBToHSV(newColor, out currentHue, out currentSat, out currentVal);
             }
-            
+
             hueSlider.SetValueWithoutNotify(currentHue);
-            
+
             control.UpdatePicker();
             UpdateOutputImage();
         }
 
-        
+
         public void Close()
         {
             OnColorChanged = null;

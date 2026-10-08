@@ -37,14 +37,14 @@ namespace SteamWorkshop
         public WorkshopItem(PublishedFileId_t fileId, EItemState state)
         {
             this.fileId = fileId;
-            this.state = state; 
+            this.state = state;
         }
     }
     [DefaultExecutionOrder(1)]
     public class SteamWorkshopManager : MonoBehaviour
     {
         public static SteamWorkshopManager Instance { private set; get; }
-        
+
         public static bool Initialized { private set; get; } = false;
 
         public static Action OnQueryLoaded;
@@ -57,7 +57,7 @@ namespace SteamWorkshop
             new Dictionary<PublishedFileId_t, WorkshopItem>();
 
         public Action<float, EItemUpdateStatus> OnGetProgress;
-        public Action<bool,EResult> OnUploadFinish;
+        public Action<bool, EResult> OnUploadFinish;
 
         public static Action<WorkshopItem> OnWorkshopItemInstalled;
         public static Action<PublishedFileId_t> OnUnSubscribeItem;
@@ -69,7 +69,7 @@ namespace SteamWorkshop
 
         private string _updateNote;
         public static AppId_t _appId;
-        
+
         private CallResult<SteamUGCQueryCompleted_t> _queryResult;
         private UGCQueryHandle_t _queryHandle;
 
@@ -80,20 +80,20 @@ namespace SteamWorkshop
         private void Awake()
         {
             Instance = this;
-            
+
             if (!SteamManager.Initialized) return;
             _appId = SteamUtils.GetAppID();
             // Debug.Log(_appId);
-            
+
             _queryResult = CallResult<SteamUGCQueryCompleted_t>.Create(OnUGCQueryCompleted);
-            
+
             ItemInstalled = Callback<ItemInstalled_t>.Create(OnItemInstalled);
             FileSubscribed = Callback<RemoteStoragePublishedFileSubscribed_t>.Create(OnFileSubscribed);
             FileUnSubscribed = Callback<RemoteStoragePublishedFileUnsubscribed_t>.Create(OnFileUnSubscribed);
             DownloadItemResult = Callback<DownloadItemResult_t>.Create(OnDownloadItemResult);
         }
 
-        
+
         void Start()
         {
             if (!SteamManager.Initialized)
@@ -102,13 +102,13 @@ namespace SteamWorkshop
                 return;
             }
             uint maxLen = SteamUGC.GetNumSubscribedItems();
-            
+
             Preload.IncreaseTotalStep((int)maxLen);
 
             SubscribedItems = new PublishedFileId_t[maxLen];
             WorkshopItems.Clear();
 
-            uint length= SteamUGC.GetSubscribedItems(SubscribedItems, maxLen);
+            uint length = SteamUGC.GetSubscribedItems(SubscribedItems, maxLen);
 
             for (int i = 0; i < length; i++)
             {
@@ -116,7 +116,7 @@ namespace SteamWorkshop
                 EItemState state = (EItemState)SteamUGC.GetItemState(fileId);
 
                 WorkshopItem workshopItem = new WorkshopItem(fileId, state);
-                
+
                 if (SteamUGC.GetItemInstallInfo(fileId, out var size, out var path, 256, out var timeStamp))
                 {
                     DateTime date = DateTimeOffset.FromUnixTimeSeconds(timeStamp).LocalDateTime;
@@ -128,13 +128,13 @@ namespace SteamWorkshop
                     // {
                     //     NetworkServerManager.EnabledWorkshopMaps.Add(fileId);
                     // }
-                    
-                    MapSaver.Instance.LoadWorkshopMap(path,fileId);
-                    
+
+                    MapSaver.Instance.LoadWorkshopMap(path, fileId);
+
                     Preload.Instance.NextStep();
                 }
-                
-                WorkshopItems.Add(fileId,workshopItem);
+
+                WorkshopItems.Add(fileId, workshopItem);
             }
 
             _queryHandle = SteamUGC.CreateQueryUGCDetailsRequest(SubscribedItems, maxLen);
@@ -154,18 +154,18 @@ namespace SteamWorkshop
 
             NetworkServerManager.EnabledWorkshopMaps.Remove(param.m_nPublishedFileId);
             NetworkServerManager.OnEnabledMapsChanged?.Invoke();
-            
+
             if (SubscribedItems != null)
             {
-                var subscribedItems=SubscribedItems.ToList();
+                var subscribedItems = SubscribedItems.ToList();
                 subscribedItems.Remove(param.m_nPublishedFileId);
 
                 SubscribedItems = subscribedItems.ToArray();
 
                 WorkshopItems.Remove(param.m_nPublishedFileId);
-                
+
                 OnUnSubscribeItem?.Invoke(param.m_nPublishedFileId);
-                
+
                 Debug.Log($"UnSubscribe item: {param.m_nPublishedFileId}");
             }
         }
@@ -177,26 +177,26 @@ namespace SteamWorkshop
                 Debug.LogError("App id isnt correct");
                 return;
             }
-            
+
             if (SubscribedItems != null)
             {
-                var subscribedItems= SubscribedItems.ToList();
+                var subscribedItems = SubscribedItems.ToList();
                 subscribedItems.Add(param.m_nPublishedFileId);
 
                 SubscribedItems = subscribedItems.ToArray();
-                
+
                 PublishedFileId_t fileId = param.m_nPublishedFileId;
                 EItemState state = (EItemState)SteamUGC.GetItemState(fileId);
 
                 WorkshopItem workshopItem = new WorkshopItem(fileId, state);
 
-                WorkshopItems.TryAdd(fileId,workshopItem);
+                WorkshopItems.TryAdd(fileId, workshopItem);
                 OnSubscribeItem?.Invoke(param.m_nPublishedFileId);
                 Debug.Log($"Subscribe item: {param.m_nPublishedFileId}");
 
                 if ((EItemState.k_EItemStateInstalled | EItemState.k_EItemStateSubscribed) == state)
                 {
-                    _queryHandle = SteamUGC.CreateQueryUGCDetailsRequest(new[] {param.m_nPublishedFileId}, 1);
+                    _queryHandle = SteamUGC.CreateQueryUGCDetailsRequest(new[] { param.m_nPublishedFileId }, 1);
 
                     var call = SteamUGC.SendQueryUGCRequest(_queryHandle);
                     _queryResult.Set(call);
@@ -227,18 +227,18 @@ namespace SteamWorkshop
                 item.PostDate = date;
                 item.path = path;
                 item.size = size;
-                    
-                MapSaver.Instance.LoadWorkshopMap(path,param.m_nPublishedFileId);
+
+                MapSaver.Instance.LoadWorkshopMap(path, param.m_nPublishedFileId);
             }
-                
-            _queryHandle = SteamUGC.CreateQueryUGCDetailsRequest(new[] {param.m_nPublishedFileId}, 1);
+
+            _queryHandle = SteamUGC.CreateQueryUGCDetailsRequest(new[] { param.m_nPublishedFileId }, 1);
 
             var call = SteamUGC.SendQueryUGCRequest(_queryHandle);
             _queryResult.Set(call);
-            
+
             Debug.Log(param.m_nPublishedFileId + " New item installed");
         }
-        public void CreateOrUpdateWorkshopItem(PublishedFileId_t id,WorkshopItemType type,string updateNote)
+        public void CreateOrUpdateWorkshopItem(PublishedFileId_t id, WorkshopItemType type, string updateNote)
         {
             Type = type;
             _updateNote = updateNote;
@@ -268,7 +268,7 @@ namespace SteamWorkshop
                 return;
             }
 
-            WorkshopItem item=null;
+            WorkshopItem item = null;
             for (uint i = 0; i < result.m_unNumResultsReturned; i++)
             {
                 SteamUGCDetails_t itemDetails;
@@ -288,7 +288,7 @@ namespace SteamWorkshop
                         // StartCoroutine(LoadTextureToItem(url, item));
                     }
                 }
-                
+
             }
 
             if (!QueryLoaded)
@@ -329,11 +329,11 @@ namespace SteamWorkshop
                     MapSaver.CurrentMap.isPublished = true;
                     MapSaver.CurrentMap.fileId = _publishedFileId;
                 }
-                        
+
                 MapSaver.Instance.SaveBsmFileOnly();
                 TryStartItemUpdate();
-                
-                
+
+
             }
             else
             {
@@ -349,7 +349,7 @@ namespace SteamWorkshop
                 Debug.LogError("Failed to start item update");
                 return;
             }
-            
+
             Debug.Log($"Start Updating Item Status... ({_publishedFileId.m_PublishedFileId})");
 
 
@@ -357,9 +357,9 @@ namespace SteamWorkshop
             {
                 case WorkshopItemType.Map:
                     Debug.Log("Cleaning up the steam temp folder");
-            
+
                     string destinationPath = MapSaver.SteamTemp;
-            
+
                     foreach (var filePath in Directory.GetFiles(destinationPath))
                     {
                         File.Delete(filePath);
@@ -369,13 +369,13 @@ namespace SteamWorkshop
                     {
                         Directory.Delete(subdirectoryPath, true);
                     }
-            
-            
+
+
                     Debug.Log("Copying files to steam temp folder");
                     MapData data = MapSaver.CurrentMap;
 
                     string basePath = MapSaver.path;
-            
+
                     //Get the source files
                     List<string> files = new List<string>
                     {
@@ -410,7 +410,7 @@ namespace SteamWorkshop
                     {
                         Debug.LogError("Failed to set item title");
                     }
-                    
+
                     if (!SteamUGC.SetItemDescription(updateHandle, data.description))
                     {
                         Debug.LogError("Failed to set item description");
@@ -421,29 +421,29 @@ namespace SteamWorkshop
                     }
 
                     string previewPath = MapSaver.path + data.GetNameString() + ".jpg";
-                    if (!SteamUGC.SetItemPreview(updateHandle,previewPath))
+                    if (!SteamUGC.SetItemPreview(updateHandle, previewPath))
                     {
                         Debug.LogError("Failed to set item preview image");
                     }
-                    
-                    if (!SteamUGC.SetItemTags(updateHandle,ParseTags("Map")))
+
+                    if (!SteamUGC.SetItemTags(updateHandle, ParseTags("Map")))
                     {
                         Debug.LogError("Failed to set item tags");
                     }
-                    if (!SteamUGC.SetItemContent(updateHandle,MapSaver.SteamTemp))
+                    if (!SteamUGC.SetItemContent(updateHandle, MapSaver.SteamTemp))
                     {
                         Debug.LogError("Failed to set item content");
                     }
 
-                    var submitItemUpdateCall = SteamUGC.SubmitItemUpdate(updateHandle,_updateNote);
+                    var submitItemUpdateCall = SteamUGC.SubmitItemUpdate(updateHandle, _updateNote);
                     var submitItemUpdateResult = CallResult<SubmitItemUpdateResult_t>.Create(OnSubmitItemUpdateComplete);
                     submitItemUpdateResult.Set(submitItemUpdateCall);
                     break;
-                    
+
             }
-            
-            
-            StartCoroutine(GetUpdateProgress(8,updateHandle));
+
+
+            StartCoroutine(GetUpdateProgress(8, updateHandle));
         }
 
         private void OnSubmitItemUpdateComplete(SubmitItemUpdateResult_t param, bool biofailure)
@@ -452,9 +452,9 @@ namespace SteamWorkshop
             if (!biofailure && param.m_eResult == EResult.k_EResultOK)
             {
                 Debug.Log($"Submit item ({param.m_nPublishedFileId.m_PublishedFileId}) update successfully");
-                
+
                 SteamFriends.ActivateGameOverlayToWebPage("steam://url/CommunityFilePage/" + param.m_nPublishedFileId.m_PublishedFileId);
-                
+
                 switch (Type)
                 {
                     case WorkshopItemType.Map:
@@ -462,18 +462,18 @@ namespace SteamWorkshop
 
                         break;
                 }
-                OnUploadFinish?.Invoke(true,param.m_eResult);
+                OnUploadFinish?.Invoke(true, param.m_eResult);
             }
             else
             {
-                OnUploadFinish?.Invoke(false,param.m_eResult);
+                OnUploadFinish?.Invoke(false, param.m_eResult);
                 Debug.LogError("Failed to submit item update");
             }
-            
+
             StopAllCoroutines();
         }
 
-        IEnumerator GetUpdateProgress(int times,UGCUpdateHandle_t handle)
+        IEnumerator GetUpdateProgress(int times, UGCUpdateHandle_t handle)
         {
             for (int i = 0; i < times; i++)
             {
@@ -484,11 +484,11 @@ namespace SteamWorkshop
         void GetUpdateProgress(UGCUpdateHandle_t handle)
         {
             EItemUpdateStatus updateStatus = SteamUGC.GetItemUpdateProgress(handle, out var processed, out var total);
-            
-            if(total!=0)
-                OnGetProgress?.Invoke((float)processed / total,updateStatus);
+
+            if (total != 0)
+                OnGetProgress?.Invoke((float)processed / total, updateStatus);
         }
-        
+
         List<string> ParseTags(string tagsString)
         {
             var tags = new List<string>();

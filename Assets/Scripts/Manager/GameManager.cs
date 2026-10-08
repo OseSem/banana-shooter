@@ -35,26 +35,26 @@ namespace Manager
         public static bool Initialized { private set; get; } = false;
 
         public static bool SettingsLoaded = false;
-        public static Action<Setting> OnSettingLoaded; 
-    
+        public static Action<Setting> OnSettingLoaded;
+
         [NonSerialized]
         public Setting setting;
 
         public string[] upgrades = new string[3];
-        
+
         public int introTheme = 4;
-        public ThrowObjectMenu.ThrowObjectType tacticalProp=ThrowObjectMenu.ThrowObjectType.Grenade;
-        public static int lastKill =0,lastDie = 0;
+        public ThrowObjectMenu.ThrowObjectType tacticalProp = ThrowObjectMenu.ThrowObjectType.Grenade;
+        public static int lastKill = 0, lastDie = 0;
         public static bool getBox = false, win = false, hitRecently = false, survive = false, finalRound = false;
 
-        public static bool hostGameDontShowMeThisAgain=false;
-        
+        public static bool hostGameDontShowMeThisAgain = false;
+
         //Command line prefix
         private const string HasArgPrefix = "+", HasNoArgPrefix = "-";
 
         protected Callback<PersonaStateChange_t> PersonaStateCallback;
 
-        
+
         public enum PowerType
         {
             Boomer,
@@ -63,27 +63,27 @@ namespace Manager
         }
 
         public PowerType power = PowerType.Boomer;
-    
+
         [Serializable]
         public class UpgradeDetailed
         {
             public string name;
             public Texture2D texture2D;
-            public int maxIndex = 1,cost=1;
+            public int maxIndex = 1, cost = 1;
         }
 
-        public List<UpgradeDetailed> upgradeDetaileds  = new List<UpgradeDetailed>();
+        public List<UpgradeDetailed> upgradeDetaileds = new List<UpgradeDetailed>();
 
         public static InputManager InputManager;
-        public static Dictionary<string,Tuple<string,string,InputAction>> CustomInputActions = new();
+        public static Dictionary<string, Tuple<string, string, InputAction>> CustomInputActions = new();
 
         public static event Action RebindComplete;
         public static event Action RebindCanceled;
-        public static event Action<InputAction,int> RebindStarted;
+        public static event Action<InputAction, int> RebindStarted;
 
         public static int RagdollLimited => GameManager.Instance.setting.keepRagdoll ? 50 : 10;
 
-        public LayerMask whatIsGround,lagCompensationHitboxLayer;
+        public LayerMask whatIsGround, lagCompensationHitboxLayer;
 
         [SerializeField] public VolumeProfile volume;
 
@@ -112,7 +112,7 @@ namespace Manager
                 InputManager ??= new InputManager();
                 InputManager.Enable();
             }
-            
+
             setting = new Setting();
             _adjustments = (ColorAdjustments)volume.components[3];
             _bloom = (Bloom)volume.components[0];
@@ -122,11 +122,11 @@ namespace Manager
             hostGameDontShowMeThisAgain = PlayerPrefs.GetInt("hostGameDontShowMeThisAgain", 0) == 1;
         }
 
-        
+
         private IEnumerator Start()
         {
             PersonaStateCallback = Callback<PersonaStateChange_t>.Create(OnPersonaStateChangedCall);
-            
+
             CheckCommandLineArgs();
             earRinging = gameObject.AddComponent<AudioSource>();
 
@@ -135,7 +135,7 @@ namespace Manager
             earRinging.loop = true;
             earRinging.volume = 0f;
             earRinging.clip = earRingingClip;
-        
+
             earRinging.Play();
 
             introTheme = PlayerPrefs.GetInt("intro_theme", 4);
@@ -147,7 +147,7 @@ namespace Manager
             {
                 //Read the perks
                 cd = new CoroutineWithData(this, SaveSystem.ReadFileAsyncThread(SaveSystem.GetPath("Perks.json")));
-        
+
                 yield return cd.coroutine;
 
                 try
@@ -172,23 +172,23 @@ namespace Manager
                     // Code to execute if deserialization fails
                     Debug.LogError("Error while deserializing perks JSON: " + e.Message);
                 }
-                
+
 
             }
 
             Preload.Instance.NextStep();
 
             //Read the throwable's type
-            ThrowObjectMenu.ThrowObjectType type = (ThrowObjectMenu.ThrowObjectType) PlayerPrefs.GetInt("throwObjects", 0);
+            ThrowObjectMenu.ThrowObjectType type = (ThrowObjectMenu.ThrowObjectType)PlayerPrefs.GetInt("throwObjects", 0);
             tacticalProp = (int)type > 4 ? ThrowObjectMenu.ThrowObjectType.Grenade : type;
 
             if (File.Exists(SaveSystem.GetPath("map_travel")))
             {
                 //Read the map travel amount
                 cd = new CoroutineWithData(this, SaveSystem.LoadBinaryDataAsync("map_travel"));
-            
+
                 yield return cd.coroutine;
-                
+
                 if (cd.result is List<bool> data)
                 {
                     for (int i = 0; i < maps.Count; i++)
@@ -196,14 +196,14 @@ namespace Manager
                         bool flag = false;
                         if (i < data.Count)
                             flag = data[i];
-                        mapPlayed.Add(maps[i],flag);
+                        mapPlayed.Add(maps[i], flag);
                     }
                 }
                 else
                 {
                     foreach (var t in maps)
                     {
-                        mapPlayed.Add(t,false);
+                        mapPlayed.Add(t, false);
                     }
                 }
             }
@@ -211,7 +211,7 @@ namespace Manager
             {
                 foreach (var t in maps)
                 {
-                    mapPlayed.Add(t,false);
+                    mapPlayed.Add(t, false);
                 }
             }
 
@@ -220,20 +220,20 @@ namespace Manager
 
             //Read the settings
             yield return LoadSetting();
-            
+
             Preload.Instance.NextStep();
 
             if (File.Exists(SaveSystem.GetPath("upgrades")))
             {
                 //Read the upgrades
                 cd = new CoroutineWithData(this, SaveSystem.LoadBinaryDataAsync("upgrades"));
-            
+
                 yield return cd.coroutine;
-                
+
                 if (cd.result is string[] up)
                     upgrades = up;
             }
-            
+
             Preload.Instance.NextStep();
 
             if (File.Exists(SaveSystem.GetPath("weapons")))
@@ -247,7 +247,7 @@ namespace Manager
                     for (int i = 0; i < 3; i++)
                     {
                         if (wea[i] == 6) wea[i] = 1;
-                        
+
                         NetworkManager.Instance.Weapons[i] = wea[i];
                     }
                 }
@@ -261,18 +261,18 @@ namespace Manager
                 //Read the Power
                 cd = new CoroutineWithData(this, SaveSystem.LoadBinaryDataAsync("power"));
                 yield return cd.coroutine;
-                
+
                 if (cd.result is PowerType p)
                     power = p;
             }
-            
+
             Preload.Instance.NextStep();
-        
+
 
             if (File.Exists(SaveSystem.GetPath("group.json")))
             {
                 cd = new CoroutineWithData(this, SaveSystem.ReadFileAsyncThread(SaveSystem.GetPath("group.json")));
-        
+
                 yield return cd.coroutine;
 
                 try
@@ -291,7 +291,7 @@ namespace Manager
             Preload.Instance.NextStep();
 
             yield return LoadInventory();
-            
+
             Preload.Instance.NextStep();
 
             Initialized = true;
@@ -307,7 +307,7 @@ namespace Manager
             CustomInputActions.Clear();
         }
 
-        public void AddCustomBinding(string n,string command,string key,InputAction action,bool save=false)
+        public void AddCustomBinding(string n, string command, string key, InputAction action, bool save = false)
         {
             if (string.IsNullOrEmpty(n))
             {
@@ -323,9 +323,9 @@ namespace Manager
                 Debug.LogError($"{n} Already Exist In Binding List");
                 return;
             }
-            CustomInputActions.Add(n,new Tuple<string,string, InputAction>(command,key,action));
-            
-            if(save)
+            CustomInputActions.Add(n, new Tuple<string, string, InputAction>(command, key, action));
+
+            if (save)
                 SaveCustomBindings();
         }
 
@@ -336,7 +336,7 @@ namespace Manager
                 tuple.Item3.Disable();
                 tuple.Item3.Dispose();
                 CustomInputActions.Remove(bindingName);
-                
+
                 SaveCustomBindings();
             }
             else
@@ -355,7 +355,7 @@ namespace Manager
             {
                 sb.Append($"{pair.Key} {pair.Value.Item2} {pair.Value.Item1}\n");
             }
-            
+
             var stream = File.Open(bindingPath, FileMode.Create, FileAccess.Write);
 
             using (StreamWriter streamWriter = new StreamWriter(stream))
@@ -390,28 +390,28 @@ namespace Manager
                             for (int i = 2; i < args.Length; i++)
                             {
                                 string a = args[i];
-                                if(i + 1 < args.Length) a+= " ";
+                                if (i + 1 < args.Length) a += " ";
                                 command += a;
                             }
-                            
+
                             var customAction = new InputAction(args[0], InputActionType.Button, $"<keyboard>/{args[1]}");
 
                             customAction.performed += _ =>
                             {
-                                if(!FunctionUtils.IsBlocked())
+                                if (!FunctionUtils.IsBlocked())
                                     DeveloperConsoleUI.Instance.DeveloperConsole.ProcessCommand(command);
                             };
-                
+
                             customAction.Enable();
-                            
-                            AddCustomBinding(n,command,key,customAction);
+
+                            AddCustomBinding(n, command, key, customAction);
                         }
                         else
                         {
                             Debug.LogError($"Failed to load custom bindings: {line}");
                         }
                     }
-                    
+
                     streamReader.Dispose();
                 }
             }
@@ -432,7 +432,7 @@ namespace Manager
                         break;
                 }
             }
-            OnPersonaStateChanged?.Invoke((CSteamID)param.m_ulSteamID,param.m_nChangeFlags);
+            OnPersonaStateChanged?.Invoke((CSteamID)param.m_ulSteamID, param.m_nChangeFlags);
         }
 
         public Bloom GetBloom()
@@ -452,7 +452,7 @@ namespace Manager
         {
             hitRecently = true;
             CancelInvoke(nameof(ClearHit));
-            Invoke(nameof(ClearHit),1f);
+            Invoke(nameof(ClearHit), 1f);
         }
 
         void ClearHit()
@@ -510,14 +510,14 @@ namespace Manager
         }
         void SaveInventory()
         {
-            SaveSystem.SaveToJSON(InventoryManager.Instance.cosmeticIndex,"inventory.json");
+            SaveSystem.SaveToJSON(InventoryManager.Instance.cosmeticIndex, "inventory.json");
         }
         IEnumerator LoadInventory()
         {
             if (File.Exists(SaveSystem.GetPath("inventory.json")))
             {
                 CoroutineWithData cd = new CoroutineWithData(this, SaveSystem.ReadFileAsyncThread(SaveSystem.GetPath("inventory.json")));
-        
+
                 yield return cd.coroutine;
                 InventoryManager.CosmeticIndex c;
                 try
@@ -532,34 +532,34 @@ namespace Manager
                     Debug.LogError("Error while deserializing inventory JSON: " + e.Message);
                     NetworkManager.Instance.currentGroup = CSteamID.Nil;
                 }
-                
+
                 if (c != null)
                 {
                     if (c.ids.Length < 8)
                     {
                         c.ids = new ulong[8];
-                
+
                         c.hatColor = Color.clear;
                         c.faceColor = Color.clear;
                         c.clothesColor = Color.clear;
                         c.hairColor = Color.clear;
                         c.shoesColor = Color.clear;
                         c.pantColor = Color.clear;
-                
+
                         c.hatIndex = -1;
                         c.faceIndex = -1;
                         c.clothesIndex = -1;
                         c.hairIndex = -1;
                         c.shoesIndex = -1;
                         c.pantIndex = -1;
-                
+
                         c.hatShiny = 0;
                         c.faceShiny = 0;
                         c.clothesShiny = 0;
                         c.hairShiny = 0;
                         c.shoesShiny = 0;
                         c.pantShiny = 0;
-                    
+
                         c.hatParticle = 0;
                         c.faceParticle = 0;
                         c.clothesParticle = 0;
@@ -574,10 +574,10 @@ namespace Manager
                     if (c.weaponIds.Length != 30) c.weaponIds = new ulong[30];
                     if (c.weaponIndex.Length != 30) c.weaponIndex = new ushort[30];
                     InventoryManager.Instance.cosmeticIndex = c;
-                
+
                 }
             }
-            
+
             InventoryManager.Instance.TryToSerializeItem();
         }
         void SaveSetting()
@@ -585,14 +585,15 @@ namespace Manager
             // Record the version so a migrated setting is not upgraded again on the next launch,
             // which would override a windowed mode the player has chosen since.
             setting.settingsVersion = Setting.CurrentSettingsVersion;
-            SaveSystem.SaveToJSON(setting,"setting.json");
+            SaveSystem.SaveToJSON(setting, "setting.json");
         }
-        
+
         private SettingMenu _settingMenu;
         private static bool loaded = false;
         public IEnumerator LoadSetting()
         {
-            if(File.Exists(SaveSystem.GetPath("setting.json"))){
+            if (File.Exists(SaveSystem.GetPath("setting.json")))
+            {
                 CoroutineWithData cd = new CoroutineWithData(this,
                     SaveSystem.ReadFileAsyncThread(SaveSystem.GetPath("setting.json")));
 
@@ -613,7 +614,7 @@ namespace Manager
                     Debug.LogError("Error while deserializing inventory JSON: " + e.Message);
                 }
             }
-            
+
             // Upgrades a setting.json written by a build that still defaulted to a bordered,
             // non-maximised window, and persists the upgrade so it only happens once.
             if (setting.Migrate())
@@ -646,8 +647,8 @@ namespace Manager
             _bloom.active = setting.bloom;
 
             MusicManager.Instance.volumeMultiplier = setting.musicVolume;
-            
-            QualitySettings.SetQualityLevel(setting.quality,true);
+
+            QualitySettings.SetQualityLevel(setting.quality, true);
             UniversalRenderPipelineAsset urp = (UniversalRenderPipelineAsset)GraphicsSettings.currentRenderPipeline;
             QualitySettings.antiAliasing = setting.antiAliasing * 2;
             urp.shadowCascadeCount = setting.shadowCascades;
@@ -662,22 +663,22 @@ namespace Manager
             // to only look up an index without ever calling SetResolution, so the native
             // resolution was never applied on a first run.
             setting.ApplyDisplay();
-            
+
             QualitySettings.vSyncCount = setting.vSync;
             Application.targetFrameRate = (int)setting.maxFps;
-            QualitySettings.masterTextureLimit = 3-setting.textureIndex;
-            
+            QualitySettings.masterTextureLimit = 3 - setting.textureIndex;
+
             AudioManager.Instance.SetMasterVolume(setting.volume);
             AudioManager.Instance.SetSoundEffectVolume(setting.soundEffectVolume);
             AudioManager.Instance.SetAmbienceVolume(setting.ambienceVolume);
             AudioManager.Instance.SetUIVolume(setting.uiVolume);
         }
 
-        public bool knewDead=false;
+        public bool knewDead = false;
         public void Dead()
         {
             knewDead = true;
-            Invoke(nameof(ClearDead),3f);
+            Invoke(nameof(ClearDead), 3f);
         }
 
         void ClearDead()
@@ -693,20 +694,20 @@ namespace Manager
             if (action.bindings[bindingIndex].isComposite)
             {
                 var firstPartIndex = bindingIndex + 1;
-                if(firstPartIndex < action.bindings.Count && action.bindings[firstPartIndex].isComposite)
-                    Rebind(action,bindingIndex,text,true);
+                if (firstPartIndex < action.bindings.Count && action.bindings[firstPartIndex].isComposite)
+                    Rebind(action, bindingIndex, text, true);
             }
-            else Rebind(action,bindingIndex,text,false);
+            else Rebind(action, bindingIndex, text, false);
         }
 
-        private static void Rebind(InputAction action,int bindingIndex,TextMeshProUGUI text,bool allCompositeParts)
+        private static void Rebind(InputAction action, int bindingIndex, TextMeshProUGUI text, bool allCompositeParts)
         {
             if (action == null || bindingIndex < 0) return;
             string t = UIManager.IsItChinese()
                 ? $"按下一个 {action.expectedControlType}"
                 : $"Press a Key";
             text.SetText(t);
-        
+
             action.Disable();
 
             var rebind = action.PerformInteractiveRebinding(bindingIndex);
@@ -721,14 +722,14 @@ namespace Manager
                     var nextBindingIndex = bindingIndex + 1;
                     if (nextBindingIndex < action.bindings.Count && action.bindings[nextBindingIndex].isComposite)
                     {
-                        Rebind(action,nextBindingIndex,text,true);
+                        Rebind(action, nextBindingIndex, text, true);
                     }
                 }
-            
+
                 SaveBindingOverride(action);
                 RebindComplete?.Invoke();
             });
-        
+
             rebind.OnCancel(operation =>
             {
                 action.Enable();
@@ -738,7 +739,7 @@ namespace Manager
 
             rebind.WithCancelingThrough("<keyboard>/escape");
 
-            RebindStarted?.Invoke(action,bindingIndex);
+            RebindStarted?.Invoke(action, bindingIndex);
             rebind.Start();
         }
 
@@ -754,7 +755,7 @@ namespace Manager
         {
             for (int i = 0; i < action.bindings.Count; i++)
             {
-                PlayerPrefs.SetString(action.actionMap + action.name + i,action.bindings[i].overridePath);
+                PlayerPrefs.SetString(action.actionMap + action.name + i, action.bindings[i].overridePath);
             }
         }
 
@@ -767,8 +768,8 @@ namespace Manager
             for (int i = 0; i < action.bindings.Count; i++)
             {
                 string path = PlayerPrefs.GetString(action.actionMap + action.name + i);
-                if(!string.IsNullOrEmpty(path))
-                    action.ApplyBindingOverride(i,path);
+                if (!string.IsNullOrEmpty(path))
+                    action.ApplyBindingOverride(i, path);
             }
         }
 
@@ -781,7 +782,7 @@ namespace Manager
         {
 
             desiredEarVolume = 1f;
-        
+
             StopAllCoroutines();
             if (GameUIManager.Instance)
             {
@@ -792,7 +793,7 @@ namespace Manager
             }
         }
 
-        public LayerMask serverPlayer,flashBangHitLayer;
+        public LayerMask serverPlayer, flashBangHitLayer;
         IEnumerator GoBlind(float a)
         {
             yield return new WaitForEndOfFrame();
@@ -800,13 +801,13 @@ namespace Manager
             int width = Screen.width;
             int height = Screen.height;
             Texture2D tex = new Texture2D(width, height, TextureFormat.RGB24, false);
-            tex.ReadPixels(new Rect(0,0,width,height),0,0);
+            tex.ReadPixels(new Rect(0, 0, width, height), 0, 0);
             tex.Apply();
             GameUIManager.Instance.afterImage.texture = tex;
 
-        
-            GameUIManager.Instance.afterImage.color = new Color(1f,1f,1f,0f);
-        
+
+            GameUIManager.Instance.afterImage.color = new Color(1f, 1f, 1f, 0f);
+
             GameUIManager.Instance.desiredFlashAlpha = 0f;
             _adjustments.postExposure.value = a;
             desiredExposure = a;
@@ -814,21 +815,21 @@ namespace Manager
             yield return new WaitForSeconds(0.65f);
 
             desiredExposure = 0;
-            desiredEarVolume = 0f; 
-            while (_adjustments.postExposure.value>4f)
+            desiredEarVolume = 0f;
+            while (_adjustments.postExposure.value > 4f)
             {
                 yield return null;
             }
-        
-            GameUIManager.Instance.afterImage.color = new Color(1f,1f,1f,0.2f);
-            if(!GameUIManager.Instance.controlByConsole)
+
+            GameUIManager.Instance.afterImage.color = new Color(1f, 1f, 1f, 0.2f);
+            if (!GameUIManager.Instance.controlByConsole)
                 GameUIManager.Instance.desiredGameAlpha = 1f;
         }
 
-        internal  float desiredExposure = 0f;
+        internal float desiredExposure = 0f;
 
         private static readonly float baseDis = 10f;
-        public void CameraShake3D(float mag,float rough,float fadeIn,float fadeOut,Vector3 pos)
+        public void CameraShake3D(float mag, float rough, float fadeIn, float fadeOut, Vector3 pos)
         {
             if (CameraShaker.Instance)
             {
@@ -836,7 +837,7 @@ namespace Manager
                 CameraShaker.Instance.ShakeOnce(mag * p, rough * p, fadeIn, fadeOut);
             }
         }
-        
+
         private void Update()
         {
             if (_adjustments != null)
@@ -846,41 +847,41 @@ namespace Manager
             }
             else
             {
-            
+
                 _adjustments = (ColorAdjustments)volume.components[4];
             }
 
             if (earRinging)
             {
-                earRinging.volume = Mathf.Lerp(earRinging.volume, desiredEarVolume, Time.deltaTime );
+                earRinging.volume = Mathf.Lerp(earRinging.volume, desiredEarVolume, Time.deltaTime);
             }
         }
 
-        public static bool groupChanged=false, perkChanged=false, voiceLineChanged=false, throwableChanged=false,inventoryChanged=false,settingChanged=false;
+        public static bool groupChanged = false, perkChanged = false, voiceLineChanged = false, throwableChanged = false, inventoryChanged = false, settingChanged = false;
         private void OnApplicationQuit()
         {
             _adjustments.postExposure.value = 0;
-            if(settingChanged)
+            if (settingChanged)
                 SaveSetting();
-            if(inventoryChanged)
+            if (inventoryChanged)
                 SaveInventory();
-            if(perkChanged)
-                SaveSystem.SaveToJSON(PerkManager.Instance.perks,"Perks.json");
-            if(groupChanged)
-                SaveSystem.SaveToJSON(NetworkManager.Instance.currentGroup,"group.json");
-            if(voiceLineChanged)
+            if (perkChanged)
+                SaveSystem.SaveToJSON(PerkManager.Instance.perks, "Perks.json");
+            if (groupChanged)
+                SaveSystem.SaveToJSON(NetworkManager.Instance.currentGroup, "group.json");
+            if (voiceLineChanged)
                 VoiceLine.Instance.StoreData();
-            if(throwableChanged)
-                PlayerPrefs.SetInt("throwObjects",(int)tacticalProp);
-            if(throwableChanged)
+            if (throwableChanged)
+                PlayerPrefs.SetInt("throwObjects", (int)tacticalProp);
+            if (throwableChanged)
                 PlayerPrefs.Save();
         }
 
         private AudioSource earRinging;
-    
+
         [Serializable]
         public class PowerDetail
-        { 
+        {
             public PowerType type;
             public string key;
             public Texture2D texture2D;
@@ -906,7 +907,7 @@ namespace Manager
             StringBuilder afterFix = new StringBuilder();
 
             int times = 0;
-            while (length/1024>0)
+            while (length / 1024 > 0)
             {
                 length /= 1024;
                 times++;
@@ -939,15 +940,15 @@ namespace Manager
             CSteamID steamID = SteamUser.GetSteamID();
             return RolesManager.Instance.CheckIsAdmin(steamID.m_SteamID) || RolesManager.Instance.CheckIsHelper(steamID.m_SteamID);
         }
-        
-        public static DateTime JavaTimeStampToDateTime( uint javaTimeStamp )
+
+        public static DateTime JavaTimeStampToDateTime(uint javaTimeStamp)
         {
             // Java timestamp is milliseconds past epoch
             DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds( javaTimeStamp );
+            dateTime = dateTime.AddSeconds(javaTimeStamp);
             return dateTime;
         }
-        
+
         #region Command Line
 
         void CheckCommandLineArgs()
@@ -965,9 +966,9 @@ namespace Manager
                 if (key.StartsWith(HasArgPrefix))
                 {
                     key = key.Substring(1, key.Length - 1);
-                    
+
                     //Get the arg
-                    for (int j = i+1; j < arguments.Length; j++)
+                    for (int j = i + 1; j < arguments.Length; j++)
                     {
                         if (string.IsNullOrWhiteSpace(arguments[j]))
                             continue;
@@ -980,8 +981,8 @@ namespace Manager
                         sb.Append(value);
                         sb.Append(" ");
                     }
-                    
-                    ParseArgument(key,sb.Length==0 ? String.Empty : sb.ToString().Trim());
+
+                    ParseArgument(key, sb.Length == 0 ? String.Empty : sb.ToString().Trim());
                 }
             }
         }
@@ -1009,5 +1010,5 @@ namespace Manager
         }
         #endregion
     }
-    
+
 }

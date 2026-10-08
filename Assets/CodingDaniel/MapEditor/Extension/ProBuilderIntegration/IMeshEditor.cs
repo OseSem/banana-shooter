@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -28,7 +28,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             foreach (KeyValuePair<GameObject, MeshState> kvp in State)
             {
                 ProBuilderMesh mesh = kvp.Key.GetComponent<ProBuilderMesh>();
-                if(mesh == null)
+                if (mesh == null)
                 {
                     continue;
                 }
@@ -57,7 +57,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public static void GetFaces(this ProBuilderMesh mesh, IList<int> faceIndexes, IList<Face> faces)
         {
             IList<Face> allFaces = mesh.faces;
-            for(int i = 0; i < faceIndexes.Count; ++i)
+            for (int i = 0; i < faceIndexes.Count; ++i)
             {
                 Face face = allFaces[faceIndexes[i]];
                 faces.Add(face);
@@ -70,7 +70,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         /// <param name="mesh"></param>
         internal static void RefereshColliders(this ProBuilderMesh mesh)
         {
-            foreach(MeshCollider collider in mesh.GetComponents<MeshCollider>())
+            foreach (MeshCollider collider in mesh.GetComponents<MeshCollider>())
             {
                 collider.enabled = false;
                 collider.enabled = true;
@@ -79,7 +79,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         internal static void RefreshColliders(this IEnumerable<ProBuilderMesh> meshes)
         {
-            foreach(ProBuilderMesh mesh in meshes)
+            foreach (ProBuilderMesh mesh in meshes)
             {
                 mesh.RefereshColliders();
             }
@@ -232,7 +232,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             {
                 selection.FacesToVertices(invert);
             }
-            else if(selection.HasEdges)
+            else if (selection.HasEdges)
             {
                 selection.EdgesToVertices(invert);
             }
@@ -251,7 +251,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             SelectedIndices.Clear();
             UnselectedIndices.Clear();
 
-            foreach(KeyValuePair<GameObject, IList<int>> kvp in invert ? UnselectedFaces : SelectedFaces)
+            foreach (KeyValuePair<GameObject, IList<int>> kvp in invert ? UnselectedFaces : SelectedFaces)
             {
                 ProBuilderMesh mesh;
                 List<int> indices;
@@ -260,7 +260,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 SelectedIndices.Add(mesh.gameObject, indices);
             }
 
-            foreach(KeyValuePair<GameObject, IList<int>> kvp in invert ? SelectedFaces : UnselectedFaces)
+            foreach (KeyValuePair<GameObject, IList<int>> kvp in invert ? SelectedFaces : UnselectedFaces)
             {
                 ProBuilderMesh mesh;
                 List<int> indices;
@@ -458,7 +458,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     {
                         faces.Add(i);
                     }
-                }   
+                }
             }
 
             return faces;
@@ -472,7 +472,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             {
                 Face face = allFaces[i];
 
-                if(all)
+                if (all)
                 {
                     if (face.edges.All(edge => edgesHs.Contains(edge)))
                     {
@@ -486,7 +486,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                         faces.Add(i);
                     }
                 }
-                
+
             }
             return faces;
         }
@@ -499,12 +499,12 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             {
                 Face face = allFaces[i];
                 ReadOnlyCollection<Edge> edges = face.edges;
-                for(int e = 0; e < edges.Count; ++e)
+                for (int e = 0; e < edges.Count; ++e)
                 {
                     Edge edge = edges[e];
-                    if(!edgesHs.Contains(edge))
+                    if (!edgesHs.Contains(edge))
                     {
-                        if(all)
+                        if (all)
                         {
                             if (indicesHs.Contains(edge.a) && indicesHs.Contains(edge.b))
                             {
@@ -518,7 +518,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                                 edgesHs.Add(edge);
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -634,7 +634,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         void SetSelection(MeshSelection selection);
         MeshSelection GetSelection();
         MeshSelection ClearSelection();
-        
+
         MeshEditorState GetState(bool recordUV);
         void SetState(MeshEditorState state);
 

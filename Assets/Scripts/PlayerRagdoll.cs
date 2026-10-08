@@ -12,19 +12,19 @@ public class PlayerRagdoll : MonoBehaviour
     public List<Rigidbody> rbs = new List<Rigidbody>();
 
     public List<Transform> bones = new List<Transform>();
-    
+
     public List<GameObject> hatCosmetics = new List<GameObject>();
     public List<GameObject> faceCosmetics = new List<GameObject>();
     public List<GameObject> shoeLCosmetics = new List<GameObject>();
     public List<GameObject> shoeRCosmetics = new List<GameObject>();
-    public Renderer daveHair,clothe,pant;
+    public Renderer daveHair, clothe, pant;
     public List<GameObject> hairCosmetics = new List<GameObject>();
     public List<GameObject> clothesCosmetics = new List<GameObject>();
     public List<GameObject> pantCosmetics = new List<GameObject>();
-    
+
     public InventoryManager.CosmeticIndex cosmeticIndex;
     public SkinnedMeshRenderer[] models;
-    public bool isInfected=false;
+    public bool isInfected = false;
 
     private void Start()
     {
@@ -38,7 +38,7 @@ public class PlayerRagdoll : MonoBehaviour
             {
                 if (i != j)
                 {
-                    Physics.IgnoreCollision(colliders[i],colliders[j],true);
+                    Physics.IgnoreCollision(colliders[i], colliders[j], true);
                 }
             }
         }
@@ -46,33 +46,33 @@ public class PlayerRagdoll : MonoBehaviour
 
     public void SetCosmetic(InventoryManager.CosmeticIndex cosmeticItem)
     {
-        if(!ragdolls.Contains(this))
+        if (!ragdolls.Contains(this))
             ragdolls.Add(this);
 
         if (ragdolls.Count > GameManager.RagdollLimited)
         {
-            for (int i = 0; i < ragdolls.Count-GameManager.RagdollLimited; i++)
+            for (int i = 0; i < ragdolls.Count - GameManager.RagdollLimited; i++)
             {
                 Destroy(ragdolls[i].gameObject);
             }
         }
-        
+
         cosmeticIndex = cosmeticItem;
-        if (cosmeticIndex.hatIndex < hatCosmetics.Count && cosmeticIndex.hatIndex!=-1)
+        if (cosmeticIndex.hatIndex < hatCosmetics.Count && cosmeticIndex.hatIndex != -1)
         {
             Color color = cosmeticIndex.hatColor;
             float shiny = cosmeticIndex.hatShiny;
             int particle = cosmeticIndex.hatParticle;
             SetCosmetics(cosmeticIndex.hatIndex, color, shiny, particle, hatCosmetics, ref _hatParticle);
         }
-        if (cosmeticIndex.faceIndex < faceCosmetics.Count && cosmeticIndex.faceIndex!=-1)
+        if (cosmeticIndex.faceIndex < faceCosmetics.Count && cosmeticIndex.faceIndex != -1)
         {
             Color color = cosmeticIndex.faceColor;
             float shiny = cosmeticIndex.faceShiny;
             int particle = cosmeticIndex.faceParticle;
             SetCosmetics(cosmeticIndex.faceIndex, color, shiny, particle, faceCosmetics, ref _faceParticle);
         }
-        if (cosmeticIndex.shoesIndex < shoeLCosmetics.Count && cosmeticIndex.shoesIndex!=-1)
+        if (cosmeticIndex.shoesIndex < shoeLCosmetics.Count && cosmeticIndex.shoesIndex != -1)
         {
             Color color = cosmeticIndex.shoesColor;
             float shiny = cosmeticIndex.shoesShiny;
@@ -80,33 +80,33 @@ public class PlayerRagdoll : MonoBehaviour
             SetCosmetics(cosmeticIndex.shoesIndex, color, shiny, particle, shoeLCosmetics, ref _shoeLParticle);
             SetCosmetics(cosmeticIndex.shoesIndex, color, shiny, particle, shoeRCosmetics, ref _shoeRParticle);
         }
-        if (daveHair!=null &&cosmeticIndex.hairIndex < hairCosmetics.Count && cosmeticIndex.hairIndex!=-1)
+        if (daveHair != null && cosmeticIndex.hairIndex < hairCosmetics.Count && cosmeticIndex.hairIndex != -1)
         {
             Color color = cosmeticIndex.hairColor;
             float shiny = cosmeticIndex.hairShiny;
             int particle = cosmeticIndex.hairParticle;
-            SetCosmetics(cosmeticIndex.hairIndex, color, shiny, particle, hairCosmetics, ref _hairParticle,daveHair.gameObject);
-            
+            SetCosmetics(cosmeticIndex.hairIndex, color, shiny, particle, hairCosmetics, ref _hairParticle, daveHair.gameObject);
+
         }
         else if (cosmeticIndex.hairIndex == -1)
         {
-            if(daveHair)
+            if (daveHair)
                 daveHair.gameObject.SetActive(true);
         }
-        if (cosmeticIndex.clothesIndex < clothesCosmetics.Count && cosmeticIndex.clothesIndex!=-1)
+        if (cosmeticIndex.clothesIndex < clothesCosmetics.Count && cosmeticIndex.clothesIndex != -1)
         {
             Color color = cosmeticIndex.clothesColor;
             float shiny = cosmeticIndex.clothesShiny;
             int particle = cosmeticIndex.clothesParticle;
-            SetCosmetics(cosmeticIndex.clothesIndex, color, shiny, particle, clothesCosmetics, ref _clotheParticle,clothe.gameObject);
+            SetCosmetics(cosmeticIndex.clothesIndex, color, shiny, particle, clothesCosmetics, ref _clotheParticle, clothe.gameObject);
         }
-        
-        if (cosmeticIndex.pantIndex < pantCosmetics.Count && cosmeticIndex.pantIndex!=-1)
+
+        if (cosmeticIndex.pantIndex < pantCosmetics.Count && cosmeticIndex.pantIndex != -1)
         {
             Color color = cosmeticIndex.pantColor;
             float shiny = cosmeticIndex.pantShiny;
             int particle = cosmeticIndex.pantParticle;
-            SetCosmetics(cosmeticIndex.pantIndex, color, shiny, particle, pantCosmetics, ref _pantParticle,pant.gameObject);
+            SetCosmetics(cosmeticIndex.pantIndex, color, shiny, particle, pantCosmetics, ref _pantParticle, pant.gameObject);
         }
     }
     Transform _hatParticle;
@@ -125,9 +125,9 @@ public class PlayerRagdoll : MonoBehaviour
         {
             cosmetic.SetActive(false);
         }
-        if(particleTran)
+        if (particleTran)
             Destroy(particleTran.gameObject);
-        GameObject cos = cosmetics[index] ;
+        GameObject cos = cosmetics[index];
         if (cos != null)
         {
             if (alreadyHave)
@@ -140,9 +140,9 @@ public class PlayerRagdoll : MonoBehaviour
                 if (color != Color.clear)
                     ren.material.color = color;
                 if (shiny != 0)
-                { 
+                {
                     ren.material.EnableKeyword("_EMISSION");
-                    ren.material.SetColor(CosmeticMenu.EmissionColor,color*shiny);
+                    ren.material.SetColor(CosmeticMenu.EmissionColor, color * shiny);
                 }
                 else
                 {
@@ -153,17 +153,17 @@ public class PlayerRagdoll : MonoBehaviour
             {
                 InventoryManager.ParticleItem particleItem = InventoryManager.Instance.GetParticle(item.tag);
                 particleTran = Instantiate(particleItem.prefab).transform;
-                particleTran.position  = cosmetics[index].transform.position+new Vector3(0,0.0095f,0);
+                particleTran.position = cosmetics[index].transform.position + new Vector3(0, 0.0095f, 0);
 
                 particleTran.localScale = particleItem.inGameSize;
-                        
-                particleTran.gameObject.layer= _layerMask;
+
+                particleTran.gameObject.layer = _layerMask;
 
                 for (int i = 0; i < particleTran.childCount; i++)
                 {
-                    particleTran.GetChild(i).gameObject.layer =_layerMask;
+                    particleTran.GetChild(i).gameObject.layer = _layerMask;
                 }
-                
+
                 CosmeticVFX cosmeticVFX = particleTran.GetComponent<CosmeticVFX>();
 
                 if (cosmeticVFX != null)
@@ -174,7 +174,7 @@ public class PlayerRagdoll : MonoBehaviour
                         particleTran.parent = cos.transform;
                         var skin = cos.GetComponentInChildren<SkinnedMeshRenderer>();
                         cosmeticVFX.SetSkinnedMeshRenderer(skin);
-                        cosmeticVFX.SetTransform(skin.rootBone,true);
+                        cosmeticVFX.SetTransform(skin.rootBone, true);
                     }
                     else
                     {
@@ -191,14 +191,14 @@ public class PlayerRagdoll : MonoBehaviour
         }
         else
         {
-            if(alreadyHave)
+            if (alreadyHave)
                 alreadyHave.SetActive(true);
         }
     }
 
     private void OnDestroy()
     {
-        if(ragdolls.Contains(this))
+        if (ragdolls.Contains(this))
             ragdolls.Remove(this);
     }
 

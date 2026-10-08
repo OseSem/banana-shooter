@@ -30,7 +30,7 @@ using Weapon;
 
 namespace Menu
 {
-    public class GameUIManager : MonoBehaviour,IPointerDownHandler
+    public class GameUIManager : MonoBehaviour, IPointerDownHandler
     {
         public static GameUIManager Instance;
         public CanvasGroup gameGroup;
@@ -38,14 +38,14 @@ namespace Menu
         internal float desiredGameAlpha = 1f;
         public bool controlByConsole = false;
         internal float desiredFlashAlpha = 0f;
-    
-        public GameObject gameScene, gameSceneImportant,gameSceneMisc, menuScene,scoreBoard,scope,settingMenu,weapon,inventory,achievement,mainMenu,voteKickMenu,serverSetting,reportMenu;
+
+        public GameObject gameScene, gameSceneImportant, gameSceneMisc, menuScene, scoreBoard, scope, settingMenu, weapon, inventory, achievement, mainMenu, voteKickMenu, serverSetting, reportMenu;
 
         public SpectateCanvas spectateCanvas;
 
         public Image throwablesFilled;
 
-        public LocalizeStringEvent deathLocalizedText,damageGivenText,damageTakenText;
+        public LocalizeStringEvent deathLocalizedText, damageGivenText, damageTakenText;
 
 #if UNITY_EDITOR
         [MenuItem("Dev/ScreenShot")]
@@ -55,7 +55,7 @@ namespace Menu
             ScreenCapture.CaptureScreenshot(Application.persistentDataPath + "/" + SceneManager.GetActiveScene().name+ ".png");
         }
 #endif
-        
+
         [SerializeField] public LocalizeStringEvent gameModeMap;
 
         [SerializeField] public GameObject timeTextObj;
@@ -73,7 +73,7 @@ namespace Menu
             lobbyIdTextObj.SetActive(flag);
             if (flag)
                 lobbyIdText.text = LobbyManager.Instance.lobbyId.m_SteamID.ToString();
-        
+
             switch (NetworkManager.ClientGameMode)
             {
                 case GameMode.TeamDeathMatch:
@@ -185,17 +185,17 @@ namespace Menu
                     }
                     break;
             }
-        
+
             dir.SetActive(GameManager.Instance.setting.showDir);
-        
-            if(MusicManager.Instance.music == MusicManager.MusicType.WinningMusic)
-                Invoke(nameof(StopMusic),3.5f);
+
+            if (MusicManager.Instance.music == MusicManager.MusicType.WinningMusic)
+                Invoke(nameof(StopMusic), 3.5f);
             else
                 StopMusic();
 
             PlayerNameRaycast.Instance.SetValue(hitPlayer);
-            
-            WeaponManager.Instance.throwableManager.SetUIValues(throwObjImage,throwablesFilled,throwObjCount,throwKeyText);
+
+            WeaponManager.Instance.throwableManager.SetUIValues(throwObjImage, throwablesFilled, throwObjCount, throwKeyText);
         }
 
         void StopMusic()
@@ -204,9 +204,9 @@ namespace Menu
         }
         private void OnEnable()
         {
-            if(!DemoManager.Replaying)
+            if (!DemoManager.Replaying)
                 GameManager.InputManager.Player.Respawn.performed += Respawn;
-        
+
             throwKeyText.SetText(GameManager.GetBindingName("Throw", 0));
         }
         private void OnDisable()
@@ -222,9 +222,9 @@ namespace Menu
             ban.gameObject.SetActive(flag);
         }
 
-        public TextMeshProUGUI bulletText,healthText ,leftTime,scoreBoardLeftTime;
+        public TextMeshProUGUI bulletText, healthText, leftTime, scoreBoardLeftTime;
         public Slider healthSlider;
-        public RawImage healthImage,image;
+        public RawImage healthImage, image;
         public Gradient gradient;
         private void Update()
         {
@@ -232,14 +232,14 @@ namespace Menu
             {
                 SetPause();
             }
-            
+
             hurtCanvas.alpha = Mathf.Lerp(hurtCanvas.alpha, desiredAlpha, Time.deltaTime * speed);
             healthCanvas.alpha = Mathf.Lerp(healthCanvas.alpha, desiredAlphaHealth, Time.deltaTime * healthSpeed);
             invincibleCanvas.alpha = Mathf.Lerp(invincibleCanvas.alpha, desiredAlphaInvincibleCanvas, Time.deltaTime * 10);
             speedUpCanvas.alpha = Mathf.Lerp(speedUpCanvas.alpha, desiredAlphaSpeedUp, Time.deltaTime * 10);
-        
+
             killSecuredCanvas.alpha = Mathf.Lerp(killSecuredCanvas.alpha, killSecuredDesiredAlpha, Time.deltaTime * killSecuredSpeed);
-            killSecured.localScale = Vector3.Lerp(killSecured.localScale , desiredSize, Time.deltaTime * killSecuredSpeed);
+            killSecured.localScale = Vector3.Lerp(killSecured.localScale, desiredSize, Time.deltaTime * killSecuredSpeed);
             parkourTimeGroup.alpha = Mathf.Lerp(parkourTimeGroup.alpha, desiredAlphaParkourTime, Time.deltaTime * 10f);
             fireCanvas.alpha = Mathf.Lerp(fireCanvas.alpha, desiredFireAlpha, Time.deltaTime * 15f);
 
@@ -256,21 +256,21 @@ namespace Menu
                 CloseScoreBoard();
             }
 
-            if (!gameEnd&& scoreBoard.activeSelf && Input.GetMouseButtonDown(1))
+            if (!gameEnd && scoreBoard.activeSelf && Input.GetMouseButtonDown(1))
             {
                 Cursor.visible = true;
                 Cursor.lockState = CursorLockMode.None;
             }
 
             gameGroup.alpha = Mathf.Lerp(gameGroup.alpha, desiredGameAlpha, Time.deltaTime);
-        
+
             if (reloadProgressObj.activeSelf)
             {
                 currentProgress += Time.deltaTime;
                 reloadProgressBar.fillAmount = currentProgress / reloadProgress;
             }
 
-            if (leftTimeToRespawn>0)
+            if (leftTimeToRespawn > 0)
             {
                 if (leftTimeToRespawn < 4f)
                 {
@@ -284,7 +284,7 @@ namespace Menu
                         ? $"{leftTimeToRespawn:f1}s 后重生"
                         : $"{leftTimeToRespawn:f1}s to respawn");
                 }
-            
+
                 leftTimeToRespawn -= Time.deltaTime;
             }
 
@@ -306,20 +306,20 @@ namespace Menu
 
             if (gameEnd)
             {
-            
+
                 leftTimeText.SetText(leftTimeToLoad.ToString("F0"));
                 leftTimeToLoad -= Time.deltaTime;
                 if (leftTimeToLoad < 0)
                     leftTimeToLoad = 0;
             }
-        
-        
+
+
         }
 
         public GameObject scoreBoardList;
         // public RawImage scoreBoardPlayer;
 
-        
+
         public void PlayButton()
         {
             AudioManager.Instance.PlayButton();
@@ -327,7 +327,7 @@ namespace Menu
         private bool scoreBoardT;
         void OpenScoreBoard()
         {
-            if ( pause || gameEnd || DeveloperConsoleUI.Instance.uiCanvas.activeSelf ||ReportMenu.Instance.IsReporting()) return;
+            if (pause || gameEnd || DeveloperConsoleUI.Instance.uiCanvas.activeSelf || ReportMenu.Instance.IsReporting()) return;
             Chat.Instance.DisableBlockraycast();
             scoreBoard.SetActive(true);
             gameScene.SetActive(false);
@@ -354,19 +354,19 @@ namespace Menu
             Cursor.visible = false;
             Cursor.lockState = CursorLockMode.Locked;
         }
-        [SerializeField] public CanvasGroup hurtCanvas,healthCanvas,invincibleCanvas,speedUpCanvas,fireCanvas;
-        private float desiredAlpha = 0,speed=20f;
-        private float desiredAlphaHealth = 0,healthSpeed=40f;
-        private float desiredAlphaInvincibleCanvas=0;
-        private float desiredAlphaSpeedUp=0;
-        private float desiredFireAlpha=0;
+        [SerializeField] public CanvasGroup hurtCanvas, healthCanvas, invincibleCanvas, speedUpCanvas, fireCanvas;
+        private float desiredAlpha = 0, speed = 20f;
+        private float desiredAlphaHealth = 0, healthSpeed = 40f;
+        private float desiredAlphaInvincibleCanvas = 0;
+        private float desiredAlphaSpeedUp = 0;
+        private float desiredFireAlpha = 0;
 
         public void SetFire(float a)
         {
             desiredFireAlpha = a;
         }
 
-        public void Hurt(int health,int maxhealth)
+        public void Hurt(int health, int maxhealth)
         {
             if (health == 0)
             {
@@ -389,7 +389,7 @@ namespace Menu
         {
             desiredAlpha = 0;
         }
-    
+
         public void Health()
         {
             desiredAlphaHealth = 1;
@@ -411,12 +411,12 @@ namespace Menu
         public void SpeedUp()
         {
             desiredAlphaSpeedUp = 1f;
-            Invoke(nameof(SpeedUpSecond),0.3f);
+            Invoke(nameof(SpeedUpSecond), 0.3f);
         }
         void SpeedUpSecond()
         {
             desiredAlphaSpeedUp = 0.5f;
-            Invoke(nameof(SpeedUp),0.3f);
+            Invoke(nameof(SpeedUp), 0.3f);
         }
         public void ClearSpeedUp()
         {
@@ -443,13 +443,13 @@ namespace Menu
         public void Invincible()
         {
             desiredAlphaInvincibleCanvas = 1;
-            Invoke(nameof(InvincibleSecond),0.3f);
+            Invoke(nameof(InvincibleSecond), 0.3f);
         }
 
         void InvincibleSecond()
         {
             desiredAlphaInvincibleCanvas = 0.5f;
-            Invoke(nameof(Invincible),0.3f);
+            Invoke(nameof(Invincible), 0.3f);
         }
         public void ClearInvincible()
         {
@@ -460,11 +460,11 @@ namespace Menu
         }
 
         #endregion
-    
+
         public bool pause;
 
         private WeaponMenu _weaponMenu;
-        
+
         public void SetPause()
         {
             if (gameEnd) return;
@@ -486,8 +486,8 @@ namespace Menu
             CosmeticMenu.Instance.DisableItemCam();
             if (_weaponMenu == null)
                 _weaponMenu = WeaponMenu.Instance;
-            if(_weaponMenu.weaponCam!=null)_weaponMenu.weaponCam.enabled = false;
-        
+            if (_weaponMenu.weaponCam != null) _weaponMenu.weaponCam.enabled = false;
+
             gameScene.SetActive(!pause && !gameEnd && (!WeaponManager.Instance.CurrentPlayer || WeaponManager.Instance.CurrentPlayer.Health > 0));
             menuScene.SetActive(pause);
             mainMenu.SetActive(pause);
@@ -501,14 +501,14 @@ namespace Menu
             voteKickMenu.SetActive(false);
             serverManage.gameObject.SetActive(false);
             serverSetting.SetActive(false);
-            
+
             DemoCanvas.Instance.canvas.SetActive(DemoManager.Replaying && !pause && DemoCanvas.UIEnabled);
 
             Cursor.visible = pause;
             Cursor.lockState = pause ? CursorLockMode.None : CursorLockMode.Locked;
         }
 
-        
+
         public void OpenSetting()
         {
             settingMenu.SetActive(true);
@@ -521,7 +521,7 @@ namespace Menu
             menuScene.SetActive(false);
             serverSetting.SetActive(false);
         }
-        
+
         public void Achievement()
         {
             settingMenu.SetActive(false);
@@ -533,9 +533,9 @@ namespace Menu
             serverManage.gameObject.SetActive(false);
             menuScene.SetActive(false);
             serverSetting.SetActive(false);
-        
+
         }
-        
+
         public void OpenInventory()
         {
             settingMenu.SetActive(false);
@@ -548,7 +548,7 @@ namespace Menu
             menuScene.SetActive(false);
             serverSetting.SetActive(false);
         }
-        
+
         public void ServerSetting()
         {
             settingMenu.SetActive(false);
@@ -561,7 +561,7 @@ namespace Menu
             menuScene.SetActive(false);
             serverSetting.SetActive(true);
         }
-        
+
         public void Libary()
         {
             settingMenu.SetActive(false);
@@ -574,7 +574,7 @@ namespace Menu
             menuScene.SetActive(false);
             serverSetting.SetActive(false);
         }
-        
+
         public void Menu()
         {
             weapon.SetActive(false);
@@ -585,7 +585,7 @@ namespace Menu
             LoadingManager.Instance.menuType = LoadingManager.MenuType.Normal;
             if (NetworkManager.Instance.Client.IsConnected)
             {
-            
+
                 LobbyManager.Instance.LeaveLobby();
             }
             else
@@ -601,7 +601,7 @@ namespace Menu
 
         public Transform voteKickPlayerContent;
         public ToggleGroup voteKickPlayerGroup;
-        
+
         public void VoteKickMenu()
         {
             for (int i = 0; i < voteKickPlayerContent.childCount; i++)
@@ -615,19 +615,19 @@ namespace Menu
                 VoteKickPlayerItem item =
                     Instantiate(PrefabManager.Instance.GetPrefab("VoteKickPlayer"), voteKickPlayerContent)
                         .GetComponent<VoteKickPlayerItem>();
-            
-                item.SetPlayerValues(client.playerState.Username,client.Id,client.playerState.SteamId,client.playerState.AvatarImage);
+
+                item.SetPlayerValues(client.playerState.Username, client.Id, client.playerState.SteamId, client.playerState.AvatarImage);
 
                 item.transform.GetChild(3).GetComponent<Toggle>().group = voteKickPlayerGroup;
                 item.transform.GetChild(3).GetComponent<Toggle>().onValueChanged.AddListener(delegate
                 {
                     SelectVotePlayer(client.Id);
                 });
-                if(index==0) item.transform.GetChild(3).GetComponent<Toggle>().onValueChanged.Invoke(false);
+                if (index == 0) item.transform.GetChild(3).GetComponent<Toggle>().onValueChanged.Invoke(false);
                 index++;
             }
             settingMenu.SetActive(false);
-            scoreBoard.SetActive(false); 
+            scoreBoard.SetActive(false);
             weapon.SetActive(false);
             inventory.SetActive(false);
             achievement.SetActive(false);
@@ -646,7 +646,7 @@ namespace Menu
                 PlayerList[vote.FromClient].playerName);
 
             Tutorial.Instance.SetText("VoteTip");
-        
+
             // KeyTip.Instance.SetText("F1",t);
             // KeyTip.Instance.SetText("F2",t);
         }
@@ -668,14 +668,14 @@ namespace Menu
         public void ClearKick()
         {
             if (KickVote.VoteKicking == null) return;
-            if (ClientPlayer.list.ContainsKey(KickVote.VoteKicking.FromClient)&&ClientPlayer.list.ContainsKey(KickVote.VoteKicking.PlayerId))
+            if (ClientPlayer.list.ContainsKey(KickVote.VoteKicking.FromClient) && ClientPlayer.list.ContainsKey(KickVote.VoteKicking.PlayerId))
             {
                 Chat.Instance.AddMessage(
                     $"{PlayerList[KickVote.VoteKicking.FromClient].playerName} Kick {PlayerList[KickVote.VoteKicking.PlayerId].playerName} Failed",
                     Color.yellow);
             }
-        
-        
+
+
             KickVote.Instance.Clear();
         }
         public void KickFinish()
@@ -683,11 +683,11 @@ namespace Menu
             Chat.Instance.AddMessage(
                 $"{PlayerList[KickVote.VoteKicking.FromClient].playerName} Kick {PlayerList[KickVote.VoteKicking.PlayerId].playerName} Finish",
                 Color.yellow);
-        
+
             KickVote.Instance.Clear();
         }
 
-        
+
         public void VoteKick()
         {
             if (KickVote.VoteKicking != null)
@@ -722,17 +722,17 @@ namespace Menu
                 window.SetReason(UIManager.IsItChinese() ? "你不能踢自己" : "You cant kick youself");
                 return;
             }
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort)ClientToServerId.ManageToKick);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.ManageToKick);
 
             message.Add(votePlayerId);
             NetworkManager.Instance.SendByte += message.WrittenLength;
-        
+
             NetworkManager.Instance.Client.Send(message);
         }
         public Dictionary<ushort, PlayerListItem> PlayerList = new Dictionary<ushort, PlayerListItem>();
         [SerializeField] public Transform playerListContent;
 
-        public void AddPlayerToContent(string name,ushort id,ulong steamId,bool ownedDlc,ushort kills,ushort deaths,bool isReady,int exp,bool isInfected,int weaponLevel,int stayTime,short ping,bool displayTag, PlayerState playerState)
+        public void AddPlayerToContent(string name, ushort id, ulong steamId, bool ownedDlc, ushort kills, ushort deaths, bool isReady, int exp, bool isInfected, int weaponLevel, int stayTime, short ping, bool displayTag, PlayerState playerState)
         {
             Transform content = playerListContent;
             switch (NetworkManager.ClientGameMode)
@@ -747,8 +747,8 @@ namespace Menu
             PlayerListItem item = Instantiate(PrefabManager.Instance.playerListPrefab, content)
                 .GetComponent<PlayerListItem>();
 
-            string playerName = Chat.Instance.GetPlayerNameNetwork(name,steamId,displayTag, ownedDlc);
-            item.SetPlayerValues(playerName+ " " + ClientPlayer.list[id].GetGroupName(),id,steamId,exp,isInfected,ping, playerState);
+            string playerName = Chat.Instance.GetPlayerNameNetwork(name, steamId, displayTag, ownedDlc);
+            item.SetPlayerValues(playerName + " " + ClientPlayer.list[id].GetGroupName(), id, steamId, exp, isInfected, ping, playerState);
             item.SetKills(kills);
             switch (NetworkManager.ClientGameMode)
             {
@@ -761,27 +761,27 @@ namespace Menu
                 default:
                     item.SetDeaths(deaths);
                     break;
-            
+
             }
 
             Debug.Log($"name is {name}, id is {id}");
 
-            if (PlayerList.TryGetValue(id,out var playerListItem))
+            if (PlayerList.TryGetValue(id, out var playerListItem))
             {
                 Destroy(playerListItem.gameObject);
                 PlayerList.Remove(id);
             }
-            PlayerList.Add(id,item);
+            PlayerList.Add(id, item);
         }
 
         [SerializeField] public GameObject death;
-        [SerializeField] public TextMeshProUGUI deathName,deathTimeText;
+        [SerializeField] public TextMeshProUGUI deathName, deathTimeText;
         [SerializeField] public RawImage deathAvatar;
 
-        public void SetDeath(ushort id,Texture2D weaponTexture2D)
+        public void SetDeath(ushort id, Texture2D weaponTexture2D)
         {
             leftTimeToRespawn = 5;
-            if (!ClientPlayer.list.TryGetValue(id,out var player) || !PlayerList.ContainsKey(id)) return;
+            if (!ClientPlayer.list.TryGetValue(id, out var player) || !PlayerList.ContainsKey(id)) return;
             currentSelectPlayer = PlayerList[id];
             deathName.SetText(player.playerState.Username);
             deathAvatar.texture = player.playerState.AvatarImage;
@@ -795,7 +795,7 @@ namespace Menu
             {
                 damageTakenText.StringReference.Arguments[0] = localPlayer.DamageTracker.GetDamageTaken(id);
                 damageGivenText.StringReference.Arguments[0] = localPlayer.DamageTracker.GetDamageGiven(id);
-                
+
                 damageTakenText.RefreshString();
                 damageGivenText.RefreshString();
             }
@@ -805,7 +805,7 @@ namespace Menu
 
         public RawImage deathWeapon;
         private float leftTimeToRespawn = 0;
-        public void SetDeath(ushort id,string enemyName,Texture2D texture2D,Texture2D weaponTexture2D)
+        public void SetDeath(ushort id, string enemyName, Texture2D texture2D, Texture2D weaponTexture2D)
         {
             deathName.SetText(enemyName);
             deathAvatar.texture = texture2D;
@@ -815,12 +815,12 @@ namespace Menu
             deathLocalizedText.StringReference.Arguments[0] = weaponTexture2D.name;
             deathLocalizedText.RefreshString();
             death.SetActive(true);
-            
+
             if (ClientPlayer.list.TryGetValue(NetworkManager.Instance.Client.Id, out var localPlayer))
             {
                 damageTakenText.StringReference.Arguments[0] = localPlayer.DamageTracker.GetDamageTaken(id);
                 damageGivenText.StringReference.Arguments[0] = localPlayer.DamageTracker.GetDamageGiven(id);
-                
+
                 damageTakenText.RefreshString();
                 damageGivenText.RefreshString();
             }
@@ -831,15 +831,15 @@ namespace Menu
             death.SetActive(false);
         }
 
-   
+
 
         public List<WeaponUI> weaponUis = new();
 
 
         [SerializeField] public Transform killSecured;
         [SerializeField] public CanvasGroup killSecuredCanvas;
-        Vector3 desiredSize =  Vector3.one;
-        private float killSecuredDesiredAlpha=0;
+        Vector3 desiredSize = Vector3.one;
+        private float killSecuredDesiredAlpha = 0;
         [SerializeField] public TextMeshProUGUI killSecuredText;
         private float killSecuredSpeed = 25f;
         public void KillSecured(string killPlayer)
@@ -847,11 +847,11 @@ namespace Menu
             killSecuredText.SetText(killPlayer);
             desiredSize = new Vector3(1.2f, 1.2f, 1.2f);
             killSecuredDesiredAlpha = 1;
-            Invoke("KillSecuredSmall",0.2f);
-            Invoke("UpKillSecuredSpeed",1f);
-            Invoke("ClearKillSecured",0.99f);
+            Invoke("KillSecuredSmall", 0.2f);
+            Invoke("UpKillSecuredSpeed", 1f);
+            Invoke("ClearKillSecured", 0.99f);
         }
-    
+
         void UpKillSecuredSpeed()
         {
             killSecuredSpeed = 15f;
@@ -873,7 +873,7 @@ namespace Menu
         [SerializeField] public GameObject lobbyIdTextObj;
         public TextMeshProUGUI lobbyIdText;
 
-        
+
         public void CopyLobbyId()
         {
             GUIUtility.systemCopyBuffer = LobbyManager.Instance.lobbyId.m_SteamID.ToString();
@@ -882,16 +882,16 @@ namespace Menu
         public LocalizeStringEvent parkourComplete;
         public CanvasGroup parkourTimeGroup;
 
-        private float desiredAlphaParkourTime=0;
+        private float desiredAlphaParkourTime = 0;
 
-        public void SetParkourTime(float timer,string key)
+        public void SetParkourTime(float timer, string key)
         {
             parkourComplete.SetEntry(key);
-            parkourComplete.StringReference.Arguments = new List<object>() {timer.ToString("F2")};
+            parkourComplete.StringReference.Arguments = new List<object>() { timer.ToString("F2") };
             parkourComplete.RefreshString();
-        
+
             desiredAlphaParkourTime = 1f;
-            Invoke(nameof(ClearParkourAlpha),3f);
+            Invoke(nameof(ClearParkourAlpha), 3f);
         }
 
         void ClearParkourAlpha()
@@ -902,14 +902,14 @@ namespace Menu
         public GameObject crossHair, reloadProgressObj;
         public Image reloadProgressBar;
 
-        private float reloadProgress,currentProgress;
+        private float reloadProgress, currentProgress;
         private bool previusState = true;
 
         public void RecordPreviusState()
         {
             previusState = crossHair.activeSelf;
         }
-    
+
 
         public void Reload(float reloadTime)
         {
@@ -950,14 +950,14 @@ namespace Menu
         public RawImage[] levelImages;
         public TextMeshProUGUI levelText, expText;
         public Slider expSlider;
-    
+
         public void OnPointerDown(PointerEventData eventData)
         {
             serverManage.gameObject.SetActive(false);
         }
 
         public PlayerListItem currentSelectPlayer;
-        
+
         public void KickOrBan(bool ban)
         {
             serverManage.gameObject.SetActive(false);
@@ -970,28 +970,28 @@ namespace Menu
                 window.SetReason(UIManager.IsItChinese() ? "你不能踢自己" : "you cant kick yourself");
                 return;
             }
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort) ClientToServerId.ManageServer);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.ManageServer);
 
             ManageType type = ban ? ManageType.Ban : ManageType.Kick;
             //
 
-            message.Add((ushort) type);
+            message.Add((ushort)type);
             message.Add(currentSelectPlayer.connectionId);
-            if(type == ManageType.Ban)
+            if (type == ManageType.Ban)
                 message.Add(currentSelectPlayer.playerSteamId);
-        
+
             NetworkManager.Instance.SendByte += message.WrittenLength;
             NetworkManager.Instance.Client.Send(message);
-        
+
         }
 
 
-        
+
         public void OpenSteamProfile()
         {
-            SteamFriends.ActivateGameOverlayToUser("steamid",(CSteamID)currentSelectPlayer.playerSteamId);
+            SteamFriends.ActivateGameOverlayToUser("steamid", (CSteamID)currentSelectPlayer.playerSteamId);
         }
-    
+
 
         public void SetInfected(bool flag, bool selfControl)
         {
@@ -1001,21 +1001,21 @@ namespace Menu
             if (selfControl)
             {
                 UpgradeInGameMenu.Instance.dashIndex = flag ? 1 : UpgradeInGameMenu.Instance.dashIndex;
-                UpgradeInGameMenu.Instance.dashSlider.gameObject.SetActive(UpgradeInGameMenu.Instance.dashIndex  > 0);
+                UpgradeInGameMenu.Instance.dashSlider.gameObject.SetActive(UpgradeInGameMenu.Instance.dashIndex > 0);
 
                 UpgradeInGameMenu.Instance.doubleJumpIndex = flag ? 10 : UpgradeInGameMenu.Instance.doubleJumpIndex;
-                PlayerMovement.Instance.maxJumpCount=UpgradeInGameMenu.Instance.doubleJumpIndex+1;
+                PlayerMovement.Instance.maxJumpCount = UpgradeInGameMenu.Instance.doubleJumpIndex + 1;
                 PlayerMovement.Instance.jumpLeft = PlayerMovement.Instance.maxJumpCount;
-        
-                UpgradeInGameMenu.Instance.moveSpeedIndex= flag ? 10 : UpgradeInGameMenu.Instance.moveSpeedIndex;
-                PlayerMovement.Instance.moveSpeedFactor = 1f + 0.1f*UpgradeInGameMenu.Instance.moveSpeedIndex;
+
+                UpgradeInGameMenu.Instance.moveSpeedIndex = flag ? 10 : UpgradeInGameMenu.Instance.moveSpeedIndex;
+                PlayerMovement.Instance.moveSpeedFactor = 1f + 0.1f * UpgradeInGameMenu.Instance.moveSpeedIndex;
             }
         }
-    
-    
 
-    
-    
+
+
+
+
 
         public TextMeshProUGUI gameModeText;
 
@@ -1029,38 +1029,38 @@ namespace Menu
         {
             micSpeak.SetActive(true);
             CancelInvoke(nameof(ClearMicSpeak));
-            Invoke(nameof(ClearMicSpeak),0.3f);
+            Invoke(nameof(ClearMicSpeak), 0.3f);
         }
 
         void ClearMicSpeak()
         {
             micSpeak.SetActive(false);
         }
-    
+
         void Respawn(InputAction.CallbackContext obj)
         {
             if (DemoManager.Replaying) return;
-            if (ClientPlayer.list.TryGetValue(NetworkManager.Instance.Client.Id,out var player)&&player.Dead && !player.specting)
+            if (ClientPlayer.list.TryGetValue(NetworkManager.Instance.Client.Id, out var player) && player.Dead && !player.specting)
             {
                 if (leftTimeToRespawn < 4f)
                 {
-                    Message message = Message.Create(MessageSendMode.Reliable,(ushort)ClientToServerId.Respawn);
+                    Message message = Message.Create(MessageSendMode.Reliable, (ushort)ClientToServerId.Respawn);
                     NetworkManager.Instance.SendByte += message.WrittenLength;
                     NetworkManager.Instance.Client.Send(message);
                 }
             }
         }
 
-        public RectTransform wishDir,velDir;
+        public RectTransform wishDir, velDir;
         private Quaternion wishDesiredRot, velDesiredRot;
 
         void Direction()
         {
             Vector3 wish = Vector3.zero;
-        
+
             if (!PlayerMovement.Instance)
             {
-            
+
                 return;
             }
 
@@ -1075,25 +1075,25 @@ namespace Menu
             tRot.x = 0f;
             tRot.y = 0f;
             Vector3 northDir = new Vector3(0, 0, PlayerMovement.Instance.orientation.eulerAngles.y);
-            if(tRot==Quaternion.identity)
-                velDesiredRot = Quaternion.Euler(0,0,0);
+            if (tRot == Quaternion.identity)
+                velDesiredRot = Quaternion.Euler(0, 0, 0);
             else velDesiredRot = tRot * Quaternion.Euler(northDir);
-        
-        
+
+
             tRot = Quaternion.identity;
             if (wish != Vector3.zero)
                 tRot = Quaternion.LookRotation(wish);
             tRot.z = -tRot.y;
             tRot.x = 0f;
             tRot.y = 0f;
-            if(tRot==Quaternion.identity)
-                wishDesiredRot = Quaternion.Euler(0,0,0);
-            else wishDesiredRot= tRot * Quaternion.Euler(northDir);
-        
+            if (tRot == Quaternion.identity)
+                wishDesiredRot = Quaternion.Euler(0, 0, 0);
+            else wishDesiredRot = tRot * Quaternion.Euler(northDir);
+
         }
 
         public GameObject dir;
-        public TextMeshProUGUI throwObjCount,throwKeyText;
+        public TextMeshProUGUI throwObjCount, throwKeyText;
 
         public void SetThrowableCount()
         {
@@ -1119,7 +1119,7 @@ namespace Menu
         {
             CancelInvoke(nameof(ClearMessage));
             messagePanel.SetActive(true);
-            Invoke(nameof(ClearMessage),clearTimer);
+            Invoke(nameof(ClearMessage), clearTimer);
         }
 
         void ClearMessage()
@@ -1132,21 +1132,21 @@ namespace Menu
         {
             CancelInvoke(nameof(ClearWeaponAlpha));
             weaponAlpha = 1f;
-            Invoke(nameof(ClearWeaponAlpha),1.5f);
+            Invoke(nameof(ClearWeaponAlpha), 1.5f);
         }
 
         void ClearWeaponAlpha()
         {
             weaponAlpha = 0f;
         }
-    
+
         public GameObject kick, ban;
 
-        public GameObject firstWinner,secondWinner,thirdWinner;
+        public GameObject firstWinner, secondWinner, thirdWinner;
 
         [SerializeField] public GameObject winnerObj;
 
-        public TextMeshProUGUI winFirstText,winSecondText,winThirdText;
+        public TextMeshProUGUI winFirstText, winSecondText, winThirdText;
         void EndGame()
         {
             scoreBoard.SetActive(true);
@@ -1161,9 +1161,9 @@ namespace Menu
 
             Cursor.visible = true;
             Cursor.lockState = CursorLockMode.None;
-        
+
             winnerObj.SetActive(true);
-        
+
             Color color;
 
             switch (NetworkManager.ClientServerType)
@@ -1171,22 +1171,22 @@ namespace Menu
                 case ServerType.KnockoutRound:
                     if (GameManager.finalRound)
                     {
-                        color = GameManager.win ? new Color(30/255f,144/255f,255/255f) : Color.red;
+                        color = GameManager.win ? new Color(30 / 255f, 144 / 255f, 255 / 255f) : Color.red;
                         end.SetEntry(GameManager.win ? "Win" : "Lose");
                     }
                     else
                     {
-                        color = GameManager.survive ? new Color(74/255f,156/255f,0) : Color.red;
+                        color = GameManager.survive ? new Color(74 / 255f, 156 / 255f, 0) : Color.red;
                         end.SetEntry(GameManager.survive ? "Survive" : "Eliminate");
                     }
                     break;
                 default:
-                    color = GameManager.win ? new Color(30/255f,144/255f,255/255f) : Color.red;
+                    color = GameManager.win ? new Color(30 / 255f, 144 / 255f, 255 / 255f) : Color.red;
                     end.SetEntry(GameManager.win ? "Win" : "Lose");
                     break;
             }
             color.a = 172 / 255f;
-            scoreBoardBG.color =color;
+            scoreBoardBG.color = color;
 
             end.gameObject.SetActive(true);
         }
@@ -1195,8 +1195,8 @@ namespace Menu
         public void EndRound()
         {
             gameEnd = true;
-            Invoke(nameof(EndGame),3f);
-            Invoke(nameof(CloseEndScreen),8f);
+            Invoke(nameof(EndGame), 3f);
+            Invoke(nameof(CloseEndScreen), 8f);
         }
 
         void CloseEndScreen()
@@ -1221,8 +1221,8 @@ namespace Menu
             {
 
                 var items = PlayerList.Values.ToArray();
-            
-                Array.Sort(items,new ComparePlayerByKill());
+
+                Array.Sort(items, new ComparePlayerByKill());
 
                 if (items.Length > 0)
                 {
@@ -1234,7 +1234,7 @@ namespace Menu
             }
         }
 
-        
+
         public void CopyPlayersSteamId()
         {
             serverManage.gameObject.SetActive(false);
@@ -1242,7 +1242,7 @@ namespace Menu
             GUIUtility.systemCopyBuffer = id;
         }
 
-        
+
         public void MutePlayer()
         {
             serverManage.gameObject.SetActive(false);
@@ -1254,18 +1254,18 @@ namespace Menu
 
         [SerializeField] private Transform enemyContent;
         [SerializeField] private EnemyUITracker enemyUiPrefab;
-        public void AddEnemyDot(Transform enemy,ushort id)
+        public void AddEnemyDot(Transform enemy, ushort id)
         {
             if (_enemyUITrackers.ContainsKey(id))
             {
                 Destroy(_enemyUITrackers[id].gameObject);
                 _enemyUITrackers.Remove(id);
             }
-            EnemyUITracker enemyUITracker = Instantiate(enemyUiPrefab,enemyContent);
+            EnemyUITracker enemyUITracker = Instantiate(enemyUiPrefab, enemyContent);
 
             enemyUITracker.target = enemy;
-        
-            _enemyUITrackers.Add(id,enemyUITracker);
+
+            _enemyUITrackers.Add(id, enemyUITracker);
         }
 
         public void RemoveEnemyDot(ushort id)
@@ -1279,23 +1279,23 @@ namespace Menu
 
         private Dictionary<ushort, EnemyUITracker> _enemyUITrackers = new Dictionary<ushort, EnemyUITracker>();
         private Dictionary<ushort, EnemyUITracker> _playerUITrackers = new Dictionary<ushort, EnemyUITracker>();
-    
+
         [SerializeField] private EnemyUITracker playerUiPrefab;
-    
-        public void AddPlayerDot(Transform enemy,ushort id,Vector3 offset,string n,ClientPlayer player)
+
+        public void AddPlayerDot(Transform enemy, ushort id, Vector3 offset, string n, ClientPlayer player)
         {
             if (_playerUITrackers.ContainsKey(id))
             {
                 Destroy(_playerUITrackers[id].gameObject);
                 _playerUITrackers.Remove(id);
             }
-            EnemyUITracker enemyUITracker = Instantiate(playerUiPrefab,enemyContent);
+            EnemyUITracker enemyUITracker = Instantiate(playerUiPrefab, enemyContent);
 
             enemyUITracker.target = enemy;
             enemyUITracker.offset = offset;
             enemyUITracker.text.text = $"{player.Cash}$\n{n}";
-        
-            _playerUITrackers.Add(id,enemyUITracker);
+
+            _playerUITrackers.Add(id, enemyUITracker);
         }
 
         public void SetPlayerDotName(ushort id, ClientPlayer player)
@@ -1305,12 +1305,12 @@ namespace Menu
                 uiTracker.text.text = $"{player.Cash}$\n{player.playerState.Username}";
             }
         }
-        public void DisplayPlayerDot(ushort id,bool flag)
+        public void DisplayPlayerDot(ushort id, bool flag)
         {
-            if (_playerUITrackers.TryGetValue(id,out var dot))
+            if (_playerUITrackers.TryGetValue(id, out var dot))
             {
                 dot.gameObject.SetActive(flag);
-            } 
+            }
         }
 
         public void RemovePlayerDot(ushort id)

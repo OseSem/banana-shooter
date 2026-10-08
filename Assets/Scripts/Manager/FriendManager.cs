@@ -39,14 +39,14 @@ namespace Manager
                 CurrentServer = (CSteamID)id;
             }
         }
-        
+
     }
     public class FriendManager : MonoBehaviour
     {
-        public static readonly Dictionary<CSteamID,Friend> Friends = new Dictionary<CSteamID,Friend>();
+        public static readonly Dictionary<CSteamID, Friend> Friends = new Dictionary<CSteamID, Friend>();
 
         public Action<Friend> FriendAvatarLoaded;
-        
+
         private void Start()
         {
             if (!SteamManager.Initialized) return;
@@ -66,7 +66,7 @@ namespace Manager
 
                 Friend friend = new Friend(friendSteamID, friendName, personaState);
 
-                Friends.Add(friendSteamID,friend);
+                Friends.Add(friendSteamID, friend);
 
                 // int iImage = SteamFriends.GetLargeFriendAvatar(friendSteamID);
                 //
@@ -79,7 +79,7 @@ namespace Manager
                 // FriendAvatarLoaded?.Invoke(friend);
             }
         }
-        
+
         // private void OnImageLoaded(AvatarImageLoaded_t param)
         // {
         //     foreach (var friend in Friends.Values)

@@ -11,20 +11,20 @@ using Random = UnityEngine.Random;
 
 namespace Multiplayer.Entity.Server.Enemy
 {
-    public abstract class ServerEnemy : MonoBehaviour,IEntity,IDamageable
+    public abstract class ServerEnemy : MonoBehaviour, IEntity, IDamageable
     {
         public enum EnemyType
         {
-            None=0,
+            None = 0,
             Jack,
             Zombie,
             Turret,
             Kat
         }
-    
+
         public static Dictionary<ushort, ServerEnemy> list = new Dictionary<ushort, ServerEnemy>();
 
-        public ushort Id { get;private set; }
+        public ushort Id { get; private set; }
 
         public EnemyType enemyType;
         public bool dead = false;
@@ -35,16 +35,16 @@ namespace Multiplayer.Entity.Server.Enemy
 
         public LayerMask whatIsGround;
 
-        [SerializeField]protected float difficulty = 1;
-        
+        [SerializeField] protected float difficulty = 1;
+
         public const int MaxTickStore = 128;
 
         public readonly TransformUpdate[] TransformBuffer = new TransformUpdate[MaxTickStore];
-        
+
         public abstract int MaxHealth { get; set; }
         public int Health { get; set; }
         public bool Dead { get; set; }
-        
+
         protected virtual void Awake()
         {
             rb = GetComponent<Rigidbody>();
@@ -56,8 +56,8 @@ namespace Multiplayer.Entity.Server.Enemy
             float d = 1;
             if (Endless.Instance)
             {
-                difficulty = Endless.Instance.difficulty*2f;
-                difficulty = Mathf.Clamp(difficulty,0.2f,2f);
+                difficulty = Endless.Instance.difficulty * 2f;
+                difficulty = Mathf.Clamp(difficulty, 0.2f, 2f);
                 d = Mathf.Clamp(difficulty, 0.2f, 1f);
             }
             else
@@ -71,25 +71,25 @@ namespace Multiplayer.Entity.Server.Enemy
                 Destroy(gameObject);
                 return;
             }
-            
-            NetworkServerManager.Entity.Entities.Add(Id,this);
+
+            NetworkServerManager.Entity.Entities.Add(Id, this);
 
             _startPos = transform.position;
-        
+
             GameManager.Entities.Add(gameObject);
 
             MaxHealth = (int)(MaxHealth * d);
             Health = MaxHealth;
-        
-            list.Add(Id,this);
+
+            list.Add(Id, this);
 
             NetworkServerManager.Instance.Server.SendToAll(GetSpawnData());
-        
+
         }
 
         public Message GetSpawnData()
         {
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.SpawnEnemy);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.SpawnEnemy);
 
             message.AddUShort(Id);
             message.Add(Health);
@@ -108,9 +108,9 @@ namespace Multiplayer.Entity.Server.Enemy
                 if (transform.position.y < -20)
                     transform.position = _startPos;
                 SendMovement();
-                
-                TransformUpdate transformUpdate = new TransformUpdate(NetworkServerManager.Instance.CurrentTick,false,transform.position);
- 
+
+                TransformUpdate transformUpdate = new TransformUpdate(NetworkServerManager.Instance.CurrentTick, false, transform.position);
+
                 TransformBuffer[NetworkServerManager.Instance.CurrentTick % MaxTickStore] = transformUpdate;
             }
         }
@@ -118,7 +118,7 @@ namespace Multiplayer.Entity.Server.Enemy
         public int enemyIndex = 1;
         void SendMovement()
         {
-            Message message = Message.Create(MessageSendMode.Unreliable,(ushort) ServerToClientId.EnemyMovement);
+            Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ServerToClientId.EnemyMovement);
 
             message.Add(Id);
             message.Add(NetworkServerManager.Instance.CurrentTick);
@@ -126,19 +126,19 @@ namespace Multiplayer.Entity.Server.Enemy
             message.Add(transform.rotation.eulerAngles.y);
             Vector3 vel = transform.InverseTransformDirection(rb.velocity);
             message.Add(vel);
-        
+
             NetworkServerManager.Instance.Server.SendToAll(message);
         }
 
-        [MessageHandler((ushort) ClientToServerId.SpawnEnemy, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ClientToServerId.SpawnEnemy, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void SpawnEnemy(ushort fromClient, Message message)
         {
             if (list.Count >= MaxEnemyCount) return;
-            EnemyType type = (EnemyType) message.GetUShort();
+            EnemyType type = (EnemyType)message.GetUShort();
 
             Vector3 pos = message.GetVector3();
-        
-            SpawnEnemy(type,pos);
+
+            SpawnEnemy(type, pos);
         }
         public LayerMask whatIsHittable;
 
@@ -149,11 +149,11 @@ namespace Multiplayer.Entity.Server.Enemy
         public void TakeDamage(int damage, ushort attacker, uint tick, bool headShot, bool wallbang, ushort weapon, params object[] param)
         {
             // damage = LuaManager.Hook.OnDamage(attacker,damage);
-            
+
             Health -= damage;
             Health = Mathf.Clamp(Health, 0, MaxHealth);
             this.fromClient = attacker;
-            Invoke(nameof(ClearFrom),0.5f);
+            Invoke(nameof(ClearFrom), 0.5f);
             OnTakeDamaged?.Invoke(fromClient);
             if (Health <= 0 && !Dead)
             {
@@ -162,7 +162,7 @@ namespace Multiplayer.Entity.Server.Enemy
                 int addCash = 150;
                 if (NetworkServerManager.ServerType == ServerType.Endless)
                 {
-                    addCash = (int) (addCash * Endless.Instance.difficulty);
+                    addCash = (int)(addCash * Endless.Instance.difficulty);
 
                     if (addCash < 150) addCash = 150;
 
@@ -173,20 +173,20 @@ namespace Multiplayer.Entity.Server.Enemy
                 {
                     player.AddCash(addCash);
                 }
-                
-                
-            
+
+
+
                 Destroy(gameObject);
             }
             else
             {
-                Message message = Message.Create(MessageSendMode.Unreliable,(ushort) ServerToClientId.HitEnemy);
+                Message message = Message.Create(MessageSendMode.Unreliable, (ushort)ServerToClientId.HitEnemy);
 
                 message.Add(Id);
                 message.Add(tick);
                 message.Add(fromClient);
                 message.Add(Health);
-            
+
                 NetworkServerManager.Instance.Server.SendToAll(message);
             }
         }
@@ -197,28 +197,28 @@ namespace Multiplayer.Entity.Server.Enemy
 
         private void OnDestroy()
         {
-            Message msg = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.EnemyDead);
+            Message msg = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.EnemyDead);
 
             msg.Add(Id);
             msg.Add(fromClient);
             msg.Add(transform.position);
-            
+
             NetworkServerManager.Instance.Server.SendToAll(msg);
             GameManager.Entities.Remove(gameObject);
             if (list.ContainsKey(Id))
             {
                 list.Remove(Id);
             }
-            
+
             if (NetworkServerManager.Entity.Entities.ContainsKey(Id))
             {
                 NetworkServerManager.Entity.Entities.Remove(Id);
             }
         }
 
-        public static void SpawnEnemy(EnemyType type,Vector3 pos)
+        public static void SpawnEnemy(EnemyType type, Vector3 pos)
         {
-            ServerEnemy enemy=null;
+            ServerEnemy enemy = null;
             switch (type)
             {
                 case EnemyType.Jack:

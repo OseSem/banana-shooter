@@ -6,14 +6,14 @@ namespace Multiplayer.ServerTypes
     public class KnockoutServer : IServerType
     {
         public int Round { get; private set; } = 0;
-        
+
         public float OverrideGameTime(float defaultTime)
         {
             NewRound();
             // y = 25x + -20t
             float timeFactor = 25f;
             float timeOffset = -20 * 10f;
-            
+
             int playerCount = NetworkServerManager.GetAvailableClientCount();
 
             playerCount = Mathf.Clamp(playerCount, 12, 20);
@@ -24,7 +24,7 @@ namespace Multiplayer.ServerTypes
             {
                 time = defaultTime;
             }
-            
+
             return time;
         }
 

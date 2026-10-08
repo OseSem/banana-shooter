@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Newtonsoft.Json;
 
 namespace SecureServer
@@ -7,12 +7,12 @@ namespace SecureServer
     {
         public bool OwnsApp;
         public bool Permanent;
-        public string TimeStamp  = String.Empty;
+        public string TimeStamp = String.Empty;
         public ulong OwnerSteamId;
         public bool SiteLicense;
-   
-        [JsonConstructor] 
-        public OwnershipItem(bool ownsApp,bool permanent,string timeStamp,ulong ownerSteamId,bool siteLicense)
+
+        [JsonConstructor]
+        public OwnershipItem(bool ownsApp, bool permanent, string timeStamp, ulong ownerSteamId, bool siteLicense)
         {
             OwnsApp = ownsApp;
             Permanent = permanent;
@@ -23,7 +23,7 @@ namespace SecureServer
 
         public OwnershipItem()
         {
-        
+
         }
     }
 }

@@ -19,7 +19,7 @@ namespace CodingDaniel.MapEditor.Graphics
                 if (renderingData.cameraData.camera.commandBufferCount > 0)
                 {
                     CommandBuffer[] cmdBuffer = renderingData.cameraData.camera.GetCommandBuffers(_cameraEvent);
-                    for(int i = 0; i < cmdBuffer.Length; ++i)
+                    for (int i = 0; i < cmdBuffer.Length; ++i)
                     {
                         context.ExecuteCommandBuffer(cmdBuffer[i]);
                     }
@@ -47,15 +47,15 @@ namespace CodingDaniel.MapEditor.Graphics
 
         public override void AddRenderPasses(ScriptableRenderer renderer, ref RenderingData renderingData)
         {
-            for(int i = 0; i < _scriptablePasses.Length; ++i)
+            for (int i = 0; i < _scriptablePasses.Length; ++i)
             {
                 renderer.EnqueuePass(_scriptablePasses[i]);
-            }  
+            }
         }
 
         public RenderPassEvent ToRenderPassEvent(CameraEvent cameraEvent)
         {
-            switch(cameraEvent)
+            switch (cameraEvent)
             {
                 case CameraEvent.BeforeImageEffects:
                     return RenderPassEvent.BeforeRenderingPostProcessing;

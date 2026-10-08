@@ -10,7 +10,7 @@ namespace Menu
 {
     public class PlayerLeaderboardItem : MonoBehaviour
     {
-        [SerializeField]public TextMeshProUGUI text, killCountTextMesh;
+        [SerializeField] public TextMeshProUGUI text, killCountTextMesh;
 
         [SerializeField] private LocalizeStringEvent killCountText;
 
@@ -24,15 +24,15 @@ namespace Menu
 
         [SerializeField] private ItemUIColor defaultItemColor, deActiveItemColor;
 
-        public void Initialize(LobbyDataManager.LobbyData d,uint index, bool eliminate)
+        public void Initialize(LobbyDataManager.LobbyData d, uint index, bool eliminate)
         {
             data = d;
             eliminated = eliminate;
-            killCountText.StringReference.Arguments = new List<object>() {d.kills};
+            killCountText.StringReference.Arguments = new List<object>() { d.kills };
             killCountText.RefreshString();
-            
+
             text.SetText($"{index}. {data.playerName}");
-            
+
             int level = 0;
             float total = 0;
             for (int i = 1; i < 99; i++)
@@ -49,9 +49,9 @@ namespace Menu
 
             levelImage.color = color;
             levelText.color = color;
-            
+
             levelText.SetText(level.ToString());
-            
+
             SetColor();
         }
 
@@ -71,7 +71,7 @@ namespace Menu
                 killCountTextMesh.color = defaultItemColor.killCountColor;
             }
         }
-        
+
         private void OnValidate()
         {
             if (Application.isEditor) SetColor();

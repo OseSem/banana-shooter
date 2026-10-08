@@ -23,13 +23,13 @@ public class Chat : MonoBehaviour
     public static Chat Instance;
     [SerializeField] CanvasGroup group;
 
-    private float desiredAlpha=0,bgAlpha = 0;
+    private float desiredAlpha = 0, bgAlpha = 0;
 
 
     public ulong steamId;
-    [SerializeField]private TMP_InputField input,content;
+    [SerializeField] private TMP_InputField input, content;
 
-    [SerializeField] private GameObject messageObj,prefab;
+    [SerializeField] private GameObject messageObj, prefab;
     private void Awake()
     {
         if (Instance != null) return;
@@ -63,20 +63,20 @@ public class Chat : MonoBehaviour
         }
     }
 
-    [MessageHandler((ushort) ClientToServerId.SendMessage, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+    [MessageHandler((ushort)ClientToServerId.SendMessage, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
     private static void ReceiveMessage(ushort fromClient, Message message)
     {
-        if (NetworkServerManager.ClientData.TryGetValue(fromClient,out var data))
+        if (NetworkServerManager.ClientData.TryGetValue(fromClient, out var data))
         {
             string text = message.GetString();
             int type = message.GetInt();
 
-            if (type==0)
+            if (type == 0)
             {
                 text = Instance.SwearCheck(text);
             }
-            
-            Message msg = Message.Create(MessageSendMode.Reliable,(ushort)ServerToClientId.SendMessage);
+
+            Message msg = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.SendMessage);
             msg.Add(fromClient);
             msg.Add(data.SteamId);
             msg.Add(text);
@@ -84,7 +84,7 @@ public class Chat : MonoBehaviour
             NetworkServerManager.Instance.Server.SendToAll(msg);
         }
     }
-    [MessageHandler((ushort) ServerToClientId.SendMessage, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+    [MessageHandler((ushort)ServerToClientId.SendMessage, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
     private static void SendMessage(Message message)
     {
         ushort fromClient = message.GetUShort();
@@ -95,17 +95,17 @@ public class Chat : MonoBehaviour
         switch (type)
         {
             case 0:
-                Instance.AddChat(text,steamId,fromClient);
+                Instance.AddChat(text, steamId, fromClient);
                 break;
             case 1:
-                Instance.AddMessage(text,Color.green);
+                Instance.AddMessage(text, Color.green);
                 break;
             case 2:
-                Instance.AddChat(text,steamId,0);
+                Instance.AddChat(text, steamId, 0);
                 break;
         }
     }
-    
+
     [SerializeField] private List<string> swear = new List<string>();
     void StartChat(InputAction.CallbackContext obj)
     {
@@ -113,12 +113,12 @@ public class Chat : MonoBehaviour
 
         Cursor.visible = true;
         Cursor.lockState = CursorLockMode.None;
-        
+
         CancelInvoke(nameof(NotDisplay));
         @group.blocksRaycasts = true;
         bgAlpha = 0.7f;
         string text = SwearCheck(input.text);
-        
+
         if (input.isFocused)
         {
             if (string.IsNullOrEmpty(text))
@@ -129,16 +129,16 @@ public class Chat : MonoBehaviour
                 group.alpha = 0f;
                 return;
             }
-            
+
             if (@group.blocksRaycasts && !text.Contains("<color"))
             {
                 if (text.Length > 200)
                 {
-                    AddMessage( UIManager.IsItChinese()?"消息太长":"Message too long",Color.yellow);
+                    AddMessage(UIManager.IsItChinese() ? "消息太长" : "Message too long", Color.yellow);
                 }
                 else
                 {
-                    NetworkManager.Instance.SendMsg(text,0);
+                    NetworkManager.Instance.SendMsg(text, 0);
                 }
                 input.SetTextWithoutNotify(String.Empty);
                 EventSystem.current.SetSelectedGameObject(null);
@@ -148,8 +148,8 @@ public class Chat : MonoBehaviour
                 return;
             }
         }
-        
-        
+
+
         input.SetTextWithoutNotify("");
         Display();
         input.Select();
@@ -174,7 +174,7 @@ public class Chat : MonoBehaviour
                                 str = str.Replace(temp, "banana");
                             }
                         }
-                        
+
                     }
                 }
             }
@@ -182,16 +182,16 @@ public class Chat : MonoBehaviour
 
         return str;
     }
-    
-    
+
+
     private void Update()
     {
         float targetAlpha = NetworkManager.GameState == GameState.Voting ? desiredAlpha : 0;
         if (GameUIManager.Instance)
         {
-            targetAlpha= GameUIManager.Instance.gameScene.activeSelf ? desiredAlpha : desiredAlpha == 0 ? 0 : 0.15f;
+            targetAlpha = GameUIManager.Instance.gameScene.activeSelf ? desiredAlpha : desiredAlpha == 0 ? 0 : 0.15f;
         }
-        
+
         @group.alpha = Mathf.Lerp(@group.alpha, targetAlpha, Time.deltaTime * 15f);
     }
 
@@ -215,19 +215,19 @@ public class Chat : MonoBehaviour
         return @group.blocksRaycasts;
     }
 
-    [SerializeField]private Transform c;
-    void AddChat(string content, ulong steamId,ushort fromClient)
+    [SerializeField] private Transform c;
+    void AddChat(string content, ulong steamId, ushort fromClient)
     {
         DestroyUselessThing();
-        
-        if(!input.isFocused && !CosmeticMenu.Instance.inspectWindow.activeSelf)
+
+        if (!input.isFocused && !CosmeticMenu.Instance.inspectWindow.activeSelf)
             DisableBlockraycast();
 
         GameObject obj = Instantiate(prefab, c);
 
         TextMeshProUGUI text = obj.GetComponentInChildren<TextMeshProUGUI>();
-        
-        Destroy(obj,10f);
+
+        Destroy(obj, 10f);
 
         if (NetworkManager.ClientData.TryGetValue(fromClient, out var data))
         {
@@ -244,22 +244,22 @@ public class Chat : MonoBehaviour
             text.SetText(content);
         }
     }
-    
-    public void AddMessage(string content,Color color)
+
+    public void AddMessage(string content, Color color)
     {
         DestroyUselessThing();
         // Display();
-        if(!input.isFocused)
+        if (!input.isFocused)
             DisableBlockraycast();
 
-        this.content.text += "\n" +content;
-        
+        this.content.text += "\n" + content;
+
         GameObject obj = Instantiate(prefab, c);
 
         TextMeshProUGUI text = obj.GetComponentInChildren<TextMeshProUGUI>();
-        
-        Destroy(obj,10f);
-        
+
+        Destroy(obj, 10f);
+
         text.color = color;
         text.SetText(content);
     }
@@ -278,24 +278,24 @@ public class Chat : MonoBehaviour
     }
     public string GetPlayerName(ulong steamId)
     {
-        string playerName = SteamFriends.GetFriendPersonaName((CSteamID) steamId);
+        string playerName = SteamFriends.GetFriendPersonaName((CSteamID)steamId);
         string name = SwearCheck(playerName);
-        name = GetNameTag(name,steamId);
-        
+        name = GetNameTag(name, steamId);
+
         return name;
     }
-    public string GetPlayerNameNetwork(string playerName ,ulong steamId,bool displayTag, bool ownedDlc = false)
+    public string GetPlayerNameNetwork(string playerName, ulong steamId, bool displayTag, bool ownedDlc = false)
     {
         string name = SwearCheck(playerName);
-        
-        name = displayTag ? GetNameTag(name,steamId,ownedDlc) : name;
-        
+
+        name = displayTag ? GetNameTag(name, steamId, ownedDlc) : name;
+
         return name;
     }
-    string GetNameTag(string playerName,ulong steamId, bool ownedDlc = false)
+    string GetNameTag(string playerName, ulong steamId, bool ownedDlc = false)
     {
-        string name=playerName;
-        
+        string name = playerName;
+
         if (steamId == 76561198983573782)//Dev
         {
             name = $"<color=#ff3c2f>[Dev] {playerName}</color>";
@@ -328,11 +328,11 @@ public class Chat : MonoBehaviour
         {
             name = $"<color=#FFBA00>{playerName}</color>";
         }
-        else if (SteamFriends.HasFriend((CSteamID) steamId, EFriendFlags.k_EFriendFlagImmediate))
+        else if (SteamFriends.HasFriend((CSteamID)steamId, EFriendFlags.k_EFriendFlagImmediate))
         {
             name = $"<color=green>{playerName}</color>";
         }
-        
+
         if (ownedDlc)
         {
             name = $"<color=#ffe800>[DLC]</color> {name}";

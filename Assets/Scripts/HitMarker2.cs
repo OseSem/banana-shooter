@@ -20,15 +20,15 @@ public class HitMarker2 : MonoBehaviour
     private void Start()
     {
         image = GetComponent<RawImage>();
-        
+
     }
 
     public void StartHitMarker(Color color)
     {
         image.color = color;
-        transform.localRotation = Quaternion.Euler(0,0,Random.Range(-15,15f));
-        transform.localScale = Vector3.one*1.3f;
-        desiredSize = color == Color.red ?Vector3.one * 0.7f : Vector3.one * 0.5f;
+        transform.localRotation = Quaternion.Euler(0, 0, Random.Range(-15, 15f));
+        transform.localScale = Vector3.one * 1.3f;
+        desiredSize = color == Color.red ? Vector3.one * 0.7f : Vector3.one * 0.5f;
         speed = 40f;
         Invoke("UpSpeed", 0.05f);
         Invoke("DelayRemove", 0.04f);
@@ -42,11 +42,11 @@ public class HitMarker2 : MonoBehaviour
     {
         speed = 25f;
     }
-    
+
     private float speed = 40f;
     private void Update()
     {
-        transform.localScale = Vector3.Lerp(transform.localScale,desiredSize,Time.deltaTime*speed);
-        transform.localRotation = Quaternion.Lerp(transform.localRotation,Quaternion.identity, Time.deltaTime*20f);
+        transform.localScale = Vector3.Lerp(transform.localScale, desiredSize, Time.deltaTime * speed);
+        transform.localRotation = Quaternion.Lerp(transform.localRotation, Quaternion.identity, Time.deltaTime * 20f);
     }
 }

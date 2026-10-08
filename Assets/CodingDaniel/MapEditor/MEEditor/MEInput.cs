@@ -30,7 +30,7 @@ namespace CodingDaniel.MapEditor.MEEditor
             _component = MESelectionComponent.Instance;
         }
 
-        private bool _isPointerPressed,_isPointerReleased;
+        private bool _isPointerPressed, _isPointerReleased;
 
         /// <summary>Reused so the per-frame hover pick allocates nothing.</summary>
         private readonly List<GameObject> _hoverBuffer = new List<GameObject>(1);
@@ -44,12 +44,12 @@ namespace CodingDaniel.MapEditor.MEEditor
             }
 
             UpdateHoveredObject();
-            
+
             if (Input.GetMouseButtonDown(0))
             {
                 PressPointer();
             }
-            
+
             if (Input.GetMouseButtonUp(0))
             {
                 ReleasePointer();
@@ -62,20 +62,20 @@ namespace CodingDaniel.MapEditor.MEEditor
 
             if (Input.GetKeyDown(KeyCode.Delete) && ProBuilderTool.Instance.GetEditor() == null)
             {
-                
+
                 foreach (var go in _component.Selection.GameObjects)
                 {
-                   
+
                     if (go != null && go.GetComponent<ExposeToEditor>().CanDelete)
                     {
-                    
+
                         Destroy(go);
                     }
                 }
                 _component.TryToClearSelection();
-                
+
             }
-            else if(Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
+            else if (Input.GetKey(KeyCode.LeftControl) && Input.GetKeyDown(KeyCode.D))
             {
                 List<GameObject> objs = new List<GameObject>();
                 if (_component.Selection.GameObjects == null) return;
@@ -94,19 +94,19 @@ namespace CodingDaniel.MapEditor.MEEditor
                                 case ObjectType.Mesh:
                                     PBMesh pbMesh = saveObject.GetComponent<PBMesh>();
                                     var transform1 = saveObject.transform;
-                                    MapData.MeshObjectData meshObjectData = new MapData.MeshObjectData(saveObject.objectItem.ObjectName,transform1.position,
-                                        transform1.rotation, transform1.localScale,pbMesh.Positions,pbMesh.Faces,pbMesh.Textures,pbMesh.GetMaterialIndex());
-                                    
+                                    MapData.MeshObjectData meshObjectData = new MapData.MeshObjectData(saveObject.objectItem.ObjectName, transform1.position,
+                                        transform1.rotation, transform1.localScale, pbMesh.Positions, pbMesh.Faces, pbMesh.Textures, pbMesh.GetMaterialIndex());
+
                                     GameObject obj = MapSaver.Instance.GenerateMesh(meshObjectData);
-                                    
+
                                     obj.transform.SetParent(MEBase.Instance.EditedObject.transform);
 
                                     obj.AddComponent<ExposeToEditor>();
                                     obj.AddComponent<PBMesh>();
                                     obj.AddComponent<MapSaveObject>().Init(saveObject.objectItem);
-                
+
                                     MapSaver.Instance.loadedObject.Add(obj);
-                                    
+
                                     objs.Add(obj);
                                     break;
                                 case ObjectType.Decal:
@@ -117,8 +117,8 @@ namespace CodingDaniel.MapEditor.MEEditor
 
                                     decalProjector.size = ogDecal.size;
 
-                                    InitializeObject(expose.gameObject, saveObject,external,type);
-                                        
+                                    InitializeObject(expose.gameObject, saveObject, external, type);
+
                                     objs.Add(expose.gameObject);
                                     break;
                                 case ObjectType.Light:
@@ -126,7 +126,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                                     ExposeToEditor l = AddObjectMenu.CreateLightExposeToEditor(ogLight.type);
                                     Light li = l.GetComponent<Light>();
 
-                                    InitializeObject(l.gameObject, saveObject,external,type);
+                                    InitializeObject(l.gameObject, saveObject, external, type);
 
                                     li.enabled = ogLight.enabled;
                                     li.intensity = ogLight.intensity;
@@ -134,13 +134,13 @@ namespace CodingDaniel.MapEditor.MEEditor
                                     li.spotAngle = ogLight.spotAngle;
                                     li.innerSpotAngle = ogLight.innerSpotAngle;
                                     li.color = ogLight.color;
-                                    
+
                                     objs.Add(l.gameObject);
                                     break;
                                 case ObjectType.PlayerSpawnPoint:
                                     ExposeToEditor p = AddObjectMenu.CreatePlayerSpawnPointExposeToEditor();
-                
-                                    InitializeObject(p.gameObject, saveObject,external,type);
+
+                                    InitializeObject(p.gameObject, saveObject, external, type);
                                     break;
                                 case ObjectType.Decoration:
                                     ObjectItem item = saveObject.objectItem;
@@ -149,15 +149,15 @@ namespace CodingDaniel.MapEditor.MEEditor
                                     if (external)
                                     {
                                         expose = AddObjectMenu.CreateDecorationExposeToEditor(
-                                            (GameObject)AssetBundleManager.Instance.GetAssetObject(saveObject.n),MEBase.Instance.EditedObject.transform,t.position,t.rotation,t.localScale, (int)decoration.type, decoration.enableCollision,true);
+                                            (GameObject)AssetBundleManager.Instance.GetAssetObject(saveObject.n), MEBase.Instance.EditedObject.transform, t.position, t.rotation, t.localScale, (int)decoration.type, decoration.enableCollision, true);
                                     }
                                     else
                                     {
-                                        expose = AddObjectMenu.CreateDecorationExposeToEditor(item.prefab,MEBase.Instance.EditedObject.transform,t.position,t.rotation,t.localScale, (int)decoration.type, decoration.enableCollision,true); 
+                                        expose = AddObjectMenu.CreateDecorationExposeToEditor(item.prefab, MEBase.Instance.EditedObject.transform, t.position, t.rotation, t.localScale, (int)decoration.type, decoration.enableCollision, true);
                                     }
 
-                                    GameObject o= expose.gameObject;
-                                    InitializeObject(o, saveObject,external,type);
+                                    GameObject o = expose.gameObject;
+                                    InitializeObject(o, saveObject, external, type);
 
                                     objs.Add(o);
                                     break;
@@ -174,8 +174,8 @@ namespace CodingDaniel.MapEditor.MEEditor
                                     source.spatialBlend = audioSource.spatialBlend;
                                     source.dopplerLevel = audioSource.dopplerLevel;
 
-                                    InitializeObject(expose.gameObject, saveObject,external,type);
-                                    
+                                    InitializeObject(expose.gameObject, saveObject, external, type);
+
                                     objs.Add(expose.gameObject);
                                     break;
                             }
@@ -190,19 +190,19 @@ namespace CodingDaniel.MapEditor.MEEditor
             }
         }
 
-        void InitializeObject(GameObject og, MapSaveObject target, bool external=false, ObjectType type=ObjectType.None)
+        void InitializeObject(GameObject og, MapSaveObject target, bool external = false, ObjectType type = ObjectType.None)
         {
             Transform transform1 = og.transform;
             var transform2 = target.transform;
             transform1.position = transform2.position;
             transform1.rotation = transform2.rotation;
             transform1.localScale = transform2.localScale;
-            
-            if(external)
+
+            if (external)
                 og.AddComponent<MapSaveObject>().Init(type, target.n);
             else
                 og.AddComponent<MapSaveObject>().Init(target.objectItem);
-            
+
             MapSaver.Instance.loadedObject.Add(og);
         }
 
@@ -211,11 +211,11 @@ namespace CodingDaniel.MapEditor.MEEditor
             EditorToolState tools = MEBase.Instance.Tools;
             IMESelection selection = _component.Selection;
 
-            if (tools.ActiveTool != null && tools.ActiveTool !=_component.BoxSelection)
+            if (tools.ActiveTool != null && tools.ActiveTool != _component.BoxSelection)
             {
                 return;
             }
-            
+
             if (tools.IsViewing)
             {
                 return;
@@ -225,7 +225,7 @@ namespace CodingDaniel.MapEditor.MEEditor
             {
                 return;
             }
-            
+
             OnSelectGO();
         }
         protected virtual void OnSelectGO()
@@ -352,7 +352,7 @@ namespace CodingDaniel.MapEditor.MEEditor
         {
             _isPointerPressed = true;
         }
-        
+
         void ReleasePointer()
         {
             _isPointerReleased = true;

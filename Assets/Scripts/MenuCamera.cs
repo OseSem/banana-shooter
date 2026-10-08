@@ -7,7 +7,7 @@ public class MenuCamera : MonoBehaviour
 {
     private void Start()
     {
-        Invoke(nameof(Shake),0.5f);
+        Invoke(nameof(Shake), 0.5f);
 
         ListenerManager.Instance.SetCamera(transform);
     }

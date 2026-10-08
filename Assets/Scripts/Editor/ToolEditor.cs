@@ -20,12 +20,12 @@ namespace Editor
             EditorGUI.BeginChangeCheck();
 
             Tool = GUILayout.Toolbar(Tool, Parameters);
-            
+
             OnInspectorGUIOverride();
 
             if (EditorGUI.EndChangeCheck())
             {
-                Undo.RecordObject(target,$"Changed {target.name}");
+                Undo.RecordObject(target, $"Changed {target.name}");
                 EditorUtility.SetDirty(target);
                 serializedObject.ApplyModifiedProperties();
             }

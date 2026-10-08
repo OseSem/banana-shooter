@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace Console.CommandScript
 {
-    [CreateAssetMenu(fileName = "Demo Command",menuName = "Utilities/DeveloperConsole/Commands/Demo Command")]
+    [CreateAssetMenu(fileName = "Demo Command", menuName = "Utilities/DeveloperConsole/Commands/Demo Command")]
     public class DemoCommand : ConsoleCommand
     {
         private DeveloperConsoleUI console;
@@ -25,7 +25,7 @@ namespace Console.CommandScript
             }
         }
 
-        private readonly HashSet<string> _stringVarFunction = new () {"save_point", "load_point", "record", "set_bone"};
+        private readonly HashSet<string> _stringVarFunction = new() { "save_point", "load_point", "record", "set_bone" };
 
         public override bool Process(string[] args)
         {
@@ -59,27 +59,27 @@ namespace Console.CommandScript
                             return true;
                     }
                 }
-                else if (float.TryParse(args[1],out var fValue))
+                else if (float.TryParse(args[1], out var fValue))
                 {
                     switch (args[0])
                     {
                         case "cammovespeed":
                             SpectateMovement.Instance.moveSpeedMultiplier = fValue;
                             return true;
-                        case "camlerp":                            
+                        case "camlerp":
                             SpectateMovement.Instance.lerpAmount = fValue;
                             return true;
-                        case "camzoomspeed":                            
+                        case "camzoomspeed":
                             SpectateMovement.Instance.zoomSpeedMultiplier = fValue;
                             return true;
-                        case "camzoomlerp":                            
+                        case "camzoomlerp":
                             SpectateMovement.Instance.zoomLerpAmount = fValue;
                             return true;
                         case "timescale":
                             if (DemoManager.Replaying)
                             {
                                 Time.timeScale = fValue;
-                                
+
                                 DemoCanvas.Instance.timeScaleText.SetText(fValue.ToString("F1"));
                             }
                             return true;
@@ -107,7 +107,7 @@ namespace Console.CommandScript
                 {
                     case "camera":
                         if (!NetworkManager.Instance.Client.IsConnected) return false;
-                        
+
                         if (!NetworkServerManager.Instance.Server.IsRunning)
                         {
                             if (!RolesManager.Instance.CheckIsAdmin(NetworkManager.Instance.steamId.m_SteamID))

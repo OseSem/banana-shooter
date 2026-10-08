@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 namespace Menu
 {
-    public class UIPerkItem : MonoBehaviour,IPointerEnterHandler,IPointerExitHandler
+    public class UIPerkItem : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
         public Perk perk;
 
@@ -22,7 +22,7 @@ namespace Menu
 
         private void OnEnable()
         {
-           
+
             if (init)
             {
                 btn.interactable = !PerkManager.Instance.HasPerk(perk);
@@ -42,7 +42,7 @@ namespace Menu
         };
         public void OnPointerEnter(PointerEventData eventData)
         {
-            PerkMenu.Instance.SetDescription(key[(int)(perk-1)]);
+            PerkMenu.Instance.SetDescription(key[(int)(perk - 1)]);
         }
 
         public void OnPointerExit(PointerEventData eventData)

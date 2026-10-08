@@ -118,17 +118,17 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         void SelectFaceGroup();
         void ConvertUVs(bool auto);
         void ResetUVs();
-        
+
 
         void FlipNormal();
         void InsertEdgeLoop();
         void RecordState(MeshEditorState oldState, MeshEditorState newState, bool raiseMeshChanged = false);
-        void CreateNewShapeAndRecord(int shapeType,ObjectItem item);
+        void CreateNewShapeAndRecord(int shapeType, ObjectItem item);
         ExposeToEditor CreateNewShape(PBShapeType type);
         void GetPositionAndRotation(out Vector3 position, out Quaternion rotation, bool rotateToTerrain = false);
     }
     [DefaultExecutionOrder(-90)]
-    public class ProBuilderTool : MonoBehaviour,IProBuilderTool
+    public class ProBuilderTool : MonoBehaviour, IProBuilderTool
     {
         public static ProBuilderTool Instance { private set; get; }
         private IME _me;
@@ -138,7 +138,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public event Action SelectionChanging;
         public event Action SelectionChanged;
         public event Action MeshesChanged;
-        
+
         private bool _modeChaning;
         private ProBuilderToolMode _mode = ProBuilderToolMode.Object;
         public ProBuilderToolMode Mode
@@ -148,7 +148,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             {
                 try
                 {
-                    if(_modeChaning)
+                    if (_modeChaning)
                     {
                         return;
                     }
@@ -176,18 +176,18 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             get { return _customTool; }
             set
             {
-                if(_customTool != value)
+                if (_customTool != value)
                 {
                     string oldToolName = _customTool;
                     _customTool = value;
-                    if(CustomToolChanged != null)
+                    if (CustomToolChanged != null)
                     {
                         CustomToolChanged(oldToolName);
                     }
                 }
             }
         }
-         public bool HasSelection
+        public bool HasSelection
         {
             get
             {
@@ -329,13 +329,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             set
             {
                 _currentSelection = value;
-                if(_currentSelection == null)
+                if (_currentSelection == null)
                 {
                     _faceGroupSelection = null;
                 }
                 else
                 {
-                    if(UVEditingMode)
+                    if (UVEditingMode)
                     {
                         _faceGroupSelection = _autoUVEditor.SelectFaceGroup(_currentSelection);
                     }
@@ -356,7 +356,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         [FormerlySerializedAs("m_pivot")]
         public Transform _pivot;
         private Dictionary<string, GameObject> _customTools;
-        
+
         private Vector2 _initialUVOffset;
         private PBTextureMoveTool _textureMoveTool = new PBTextureMoveTool();
         private Vector3 _initialRight;
@@ -379,7 +379,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             lockAxes.ScaleZ = _uvEditingMode;
             lockAxes.PositionZ = _uvEditingMode;
             lockAxes.PivotRotation = _uvEditingMode;
-            
+
             bool noSelectedFacesInUVEditingMode = !HasSelectedFaces && _uvEditingMode;
             lockAxes.PositionX = noSelectedFacesInUVEditingMode;
             lockAxes.PositionY = noSelectedFacesInUVEditingMode;
@@ -397,16 +397,16 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             _materialEditor = gameObject.AddComponent<PBMaterialEditor>();
             _autoUVEditor = gameObject.AddComponent<PBAutoUVEditor>();
             _customTools = new Dictionary<string, GameObject>();
-            
+
             _uv = new PBAutoUnwrapSettings();
             _uv.Changed += OnUVChanged;
-            
+
             bool wasActive = gameObject.activeSelf;
             gameObject.SetActive(false);
             PBVertexSelection vertexSelection = gameObject.AddComponent<PBVertexSelection>();
             PBVertexEditor vertexEditor = gameObject.AddComponent<PBVertexEditor>();
             vertexEditor._vertexSelection = vertexSelection;
-            
+
             PBEdgeSelection edgeSelection = gameObject.AddComponent<PBEdgeSelection>();
             PBEdgeEditor edgeEditor = gameObject.AddComponent<PBEdgeEditor>();
             edgeEditor._edgeSelection = edgeSelection;
@@ -479,7 +479,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 _me.Tools.PivotRotationChanging -= OnPivotRotationChanging;
                 _me.Tools.PivotRotationChanged -= OnPivotRotationChanged;
 
-               
+
             }
 
             UnsubscribeFromEvents();
@@ -507,7 +507,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 Destroy(_pivot.gameObject);
             }
 
-            foreach(GameObject customTool in _customTools.Values)
+            foreach (GameObject customTool in _customTools.Values)
             {
                 Destroy(customTool);
             }
@@ -530,7 +530,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 {
                     _selectionComponent.PositionHandle.BeforeDrag.RemoveListener(OnBeginMove);
                     _selectionComponent.PositionHandle.Drop.RemoveListener(OnEndMove);
-                    if(_selectionComponent.PositionHandle.IsDragging)
+                    if (_selectionComponent.PositionHandle.IsDragging)
                     {
                         OnEndMove(_selectionComponent.PositionHandle);
                     }
@@ -559,7 +559,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         }
         private void OnBeginBoxSelection(object sender, BeginBoxSelectionArgs e)
         {
-            if(Mode != ProBuilderToolMode.Object)
+            if (Mode != ProBuilderToolMode.Object)
             {
                 _boxSelection.MethodOverride = BoxSelectionMethod.PixelPerfectDepthTest;
             }
@@ -584,11 +584,11 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
             Rect rect;
             RectTransform sceneOutput = canvas.GetComponent<RectTransform>();
-            if(sceneOutput.childCount > 0 )
+            if (sceneOutput.childCount > 0)
             {
                 sceneOutput = (RectTransform)sceneOutput.GetChild(0);
             }
-                
+
 
             Camera canvasCamera = canvas.renderMode != RenderMode.ScreenSpaceOverlay ? canvas.worldCamera : null;
 
@@ -613,7 +613,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             _me.Undo.BeginRecord();
 
             MeshSelection oldSelection = CurrentSelection;
-            if (meshEditor.Select(_me.Camera, rect, canvas.pixelRect, e.GameObjects.Where(g => g.GetComponent<ExposeToEditor>() != null).ToArray(), depthTest, MeshEditorSelectionMode.Add) != null) 
+            if (meshEditor.Select(_me.Camera, rect, canvas.pixelRect, e.GameObjects.Where(g => g.GetComponent<ExposeToEditor>() != null).ToArray(), depthTest, MeshEditorSelectionMode.Add) != null)
             {
                 CurrentSelection = meshEditor.GetSelection();
                 RecordSelection(oldSelection, CurrentSelection);
@@ -632,7 +632,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 CurrentSelection = newSelection;
 
                 IMeshEditor meshEditor = GetEditor();
-                if(meshEditor != null)
+                if (meshEditor != null)
                 {
                     meshEditor.SetSelection(CurrentSelection);
                 }
@@ -653,7 +653,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 {
                     meshEditor.SetSelection(CurrentSelection);
                 }
-                
+
                 TryUpdatePivotTransform();
                 TrySelectPivot(meshEditor, false);
                 TryUpdatePivotVisibility();
@@ -673,7 +673,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             {
                 _me.Selection.ActiveObject = _pivot.gameObject;
             }
-     
+
             _me.Undo.Enabled = wasEnabled;
         }
         private void TryUpdatePivotVisibility()
@@ -687,7 +687,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             {
                 IMeshEditor meshEditor = GetEditor();
                 exposeToEditor.CanTransform = meshEditor == null || meshEditor.HasSelection;
-                if(HasSelectedManualUVs && HasSelectedAutoUVs)
+                if (HasSelectedManualUVs && HasSelectedAutoUVs)
                 {
                     exposeToEditor.CanTransform = false;
                 }
@@ -706,7 +706,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         private void OnBeginMove(BaseHandle positionHandle)
         {
             IMeshEditor meshEditor = GetEditor();
-            if(meshEditor != null && CurrentSelection != null && _me.Selection.ActiveGameObject == _pivot.gameObject)
+            if (meshEditor != null && CurrentSelection != null && _me.Selection.ActiveGameObject == _pivot.gameObject)
             {
                 positionHandle.EnableUndo = false;
 
@@ -714,18 +714,18 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 {
                     _hasAutoUVs = HasSelectedAutoUVs;
                     _hasManualUVs = HasSelectedManualUVs;
-                    if(_hasAutoUVs && _hasManualUVs)
+                    if (_hasAutoUVs && _hasManualUVs)
                     {
                         _hasAutoUVs = false;
                         _hasManualUVs = false;
                     }
 
-                    if(_hasAutoUVs)
+                    if (_hasAutoUVs)
                     {
                         _initialUVOffset = UV.offset;
                         _me.Undo.BeginRecordValue(UV, Strong.PropertyInfo((PBAutoUnwrapSettings x) => x.offset));
                     }
-                    else if(_hasManualUVs)
+                    else if (_hasManualUVs)
                     {
                         MeshEditorState oldState = meshEditor.GetState(true);
                         RecordState(oldState, null);
@@ -746,7 +746,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                     RecordStateAndSelection(oldState, null, oldSelection, null);
                 }
-            
+
                 meshEditor.BeginMove();
             }
         }
@@ -760,19 +760,19 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                 if (UVEditingMode)
                 {
-                    if(_hasAutoUVs)
+                    if (_hasAutoUVs)
                     {
                         _me.Undo.EndRecordValue(UV, Strong.PropertyInfo((PBAutoUnwrapSettings x) => x.offset));
                         TryUpdatePivotTransform();
                     }
-                    else if(_hasManualUVs)
+                    else if (_hasManualUVs)
                     {
                         MeshEditorState newState = meshEditor.GetState(true);
                         RecordState(null, newState);
 
                         _textureMoveTool.EndDrag();
                     }
-                    
+
                     PivotPosition = meshEditor.Position;
                 }
                 else
@@ -788,14 +788,14 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         private void OnBeginRotate(BaseHandle rotationHandle)
         {
             IMeshEditor meshEditor = GetEditor();
-            if(meshEditor != null && _me.Selection.ActiveGameObject == _pivot.gameObject)
+            if (meshEditor != null && _me.Selection.ActiveGameObject == _pivot.gameObject)
             {
                 rotationHandle.EnableUndo = false;
 
                 _initialRotation = GetPivotRotation(meshEditor);
                 PivotRotation = _initialRotation;
-                
-                if(UVEditingMode)
+
+                if (UVEditingMode)
                 {
                     _hasAutoUVs = HasSelectedAutoUVs;
                     _hasManualUVs = HasSelectedManualUVs;
@@ -805,13 +805,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                         _hasManualUVs = false;
                     }
 
-                    if(_hasAutoUVs)
+                    if (_hasAutoUVs)
                     {
                         _initialRight = _pivot.TransformDirection(Vector3.right);
                         _initialUVRotation = UV.rotation;
                         _me.Undo.BeginRecordValue(UV, Strong.PropertyInfo((PBAutoUnwrapSettings x) => x.rotation));
                     }
-                    else if(_hasManualUVs)
+                    else if (_hasManualUVs)
                     {
                         MeshEditorState oldState = meshEditor.GetState(true);
                         RecordState(oldState, null);
@@ -824,14 +824,14 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     RecordState(oldState, null);
                 }
                 meshEditor.BeginRotate(_initialRotation);
-                
+
             }
         }
 
         private void OnEndRotate(BaseHandle rotationHandle)
         {
             IMeshEditor meshEditor = GetEditor();
-            if(meshEditor != null && _me.Selection.ActiveGameObject == _pivot.gameObject)
+            if (meshEditor != null && _me.Selection.ActiveGameObject == _pivot.gameObject)
             {
                 rotationHandle.EnableUndo = true;
 
@@ -844,12 +844,12 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                 if (UVEditingMode)
                 {
-                    if(_hasAutoUVs)
+                    if (_hasAutoUVs)
                     {
                         _me.Undo.EndRecordValue(UV, Strong.PropertyInfo((PBAutoUnwrapSettings x) => x.rotation));
                         TryUpdatePivotTransform();
                     }
-                    else if(_hasManualUVs)
+                    else if (_hasManualUVs)
                     {
                         MeshEditorState newState = meshEditor.GetState(true);
                         RecordState(null, newState);
@@ -862,7 +862,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 {
                     MeshEditorState newState = meshEditor.GetState(true);
                     RecordState(null, newState);
-                }  
+                }
             }
         }
 
@@ -883,12 +883,12 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                         _hasManualUVs = false;
                     }
 
-                    if(_hasAutoUVs)
+                    if (_hasAutoUVs)
                     {
                         _initialUVScale = UV.scale;
                         _me.Undo.BeginRecordValue(UV, Strong.PropertyInfo((PBAutoUnwrapSettings x) => x.scale));
                     }
-                    else if(_hasManualUVs)
+                    else if (_hasManualUVs)
                     {
                         MeshEditorState oldState = meshEditor.GetState(true);
                         RecordState(oldState, null);
@@ -899,7 +899,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 {
                     MeshEditorState oldState = meshEditor.GetState(true);
                     RecordState(oldState, null);
-                    
+
                     bool control = Input.GetKey(KeyCode.LeftShift);
                     if (control)
                     {
@@ -929,28 +929,28 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                         _me.Undo.EndRecordValue(UV, Strong.PropertyInfo((PBAutoUnwrapSettings x) => x.scale));
                         TryUpdatePivotTransform();
                     }
-                    else if(_hasManualUVs)
+                    else if (_hasManualUVs)
                     {
                         MeshEditorState newState = meshEditor.GetState(true);
                         RecordState(null, newState);
                         _textureScaleTool.EndDrag();
-                    }                    
+                    }
                 }
                 else
                 {
                     MeshEditorState newState = meshEditor.GetState(true);
                     RecordState(null, newState);
-                } 
+                }
             }
         }
         private void OnUVChanged()
-        {            
-            if(_faceGroupSelection != null)
+        {
+            if (_faceGroupSelection != null)
             {
                 _autoUVEditor.ApplySettings(_uv, _faceGroupSelection);
             }
 
-            if(_selectionComponent == null ||
+            if (_selectionComponent == null ||
                (_selectionComponent.PositionHandle == null || !_selectionComponent.PositionHandle.IsDragging) &&
                (_selectionComponent.RotationHandle == null || !_selectionComponent.RotationHandle.IsDragging) &&
                (_selectionComponent.ScaleHandle == null || !_selectionComponent.ScaleHandle.IsDragging))
@@ -982,7 +982,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         }
         private void OnSelectionChanged()
         {
-            if(SelectionChanging != null)
+            if (SelectionChanging != null)
             {
                 SelectionChanging();
             }
@@ -1031,14 +1031,14 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         private void UpdateCenterMode()
         {
-            if(!string.IsNullOrEmpty(CustomTool))
+            if (!string.IsNullOrEmpty(CustomTool))
             {
                 return;
             }
 
-            foreach(IMeshEditor editor in _meshEditors)
+            foreach (IMeshEditor editor in _meshEditors)
             {
-                if(editor == null)
+                if (editor == null)
                 {
                     continue;
                 }
@@ -1058,7 +1058,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             EditorTool current = _me.Tools.Current;
             if (current != EditorTool.Move && current != EditorTool.Rotate && current != EditorTool.Scale)
             {
-                if(Mode != ProBuilderToolMode.Object)
+                if (Mode != ProBuilderToolMode.Object)
                 {
                     Mode = ProBuilderToolMode.Object;
                 }
@@ -1116,7 +1116,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     continue;
                 }
 
-                if(UVEditingMode)
+                if (UVEditingMode)
                 {
                     editor.GlobalMode = false;
                 }
@@ -1127,7 +1127,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             }
 
             IMeshEditor currentEditor = GetEditor();
-            if(currentEditor != null)
+            if (currentEditor != null)
             {
                 PivotRotation = GetPivotRotation(currentEditor);
             }
@@ -1181,7 +1181,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         }
         private Quaternion GetPivotRotation(IMeshEditor meshEditor)
         {
-            if(UVEditingMode)
+            if (UVEditingMode)
             {
                 return meshEditor.Rotation;
             }
@@ -1203,7 +1203,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             }
 
             //Testign
-            
+
             if (_me.Tools.ActiveTool != null)
             {
                 if (UVEditingMode)
@@ -1240,7 +1240,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                         if (_hasAutoUVs)
                         {
                             Vector3 fwd = _pivot.forward;
-                            if(Math.Abs(Mathf.Sign(UV.scale.x) - Mathf.Sign(UV.scale.y)) > 0.1f)
+                            if (Math.Abs(Mathf.Sign(UV.scale.x) - Mathf.Sign(UV.scale.y)) > 0.1f)
                             {
                                 fwd = -fwd;
                             }
@@ -1257,7 +1257,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                         if (_hasAutoUVs)
                         {
                             Vector2 scale = PivotLocalScale;
-                    
+
                             if (UV.swapUV)
                             {
                                 (scale.x, scale.y) = (scale.y, scale.x);
@@ -1311,7 +1311,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     }
                 }
 
-                if(MeshesChanged != null)
+                if (MeshesChanged != null)
                 {
                     MeshesChanged();
                 }
@@ -1333,7 +1333,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
                     _me.Undo.BeginRecord();
 
-                    if(_me.Selection.ActiveGameObject != _pivot.gameObject)
+                    if (_me.Selection.ActiveGameObject != _pivot.gameObject)
                     {
                         CurrentSelection = null;
                     }
@@ -1342,7 +1342,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     if (meshEditor.Select(_me.Camera, Input.mousePosition, shift, ctrl, true) != null)
                     {
                         CurrentSelection = meshEditor.GetSelection();
-                        
+
                         if (UVEditingMode && Input.GetKey(KeyCode.S) && oldSelection != null && CurrentSelection != null)
                         {
                             PBMesh prevMesh = oldSelection.GetSelectedMeshes().FirstOrDefault();
@@ -1403,7 +1403,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public void SetSelection(IMeshEditor meshEditor)
         {
             CurrentSelection = meshEditor.GetSelection();
-            
+
             if (meshEditor.HasSelection)
             {
                 TryUpdatePivotTransform();
@@ -1459,7 +1459,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             return _customTools.Keys.ToArray();
         }
-        
+
         public void RegisterCustomTool(string name, GameObject prefab, GameObject uiPrefab)
         {
             GameObject customTool = Instantiate(prefab, transform, false);
@@ -1469,7 +1469,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         }
         public void UnregisterCustomTool(string name)
         {
-            if(_customTools.TryGetValue(name, out GameObject customTool))
+            if (_customTools.TryGetValue(name, out GameObject customTool))
             {
                 Destroy(customTool);
                 _customTools.Remove(name);
@@ -1479,14 +1479,14 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             ApplyMaterial(material, -1);
         }
-        
+
         public void ApplyMaterial(Material material, int submeshIndex)
         {
             IMeshEditor editor = GetEditor();
-            if(editor != null)
+            if (editor != null)
             {
                 MeshSelection selection = editor.GetSelection();
-              
+
                 ApplyMaterialResult result = _materialEditor.ApplyMaterial(material, selection);
                 RecordApplyMaterialResult(result);
             }
@@ -1522,14 +1522,14 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             GameObject[] gameObjects = _me.Selection.GameObjects;
             if (gameObjects != null)
             {
-                
+
                 for (int i = 0; i < gameObjects.Length; ++i)
                 {
                     if (gameObjects[i] == null)
                     {
                         continue;
                     }
-                    
+
                     ApplyMaterialResult result = _materialEditor.ApplyMaterial(material, gameObjects[i], submeshIndex);
                     RecordApplyMaterialResult(result);
                 }
@@ -1537,7 +1537,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
             _me.Undo.EndRecord();
         }
-        
+
         public void SetSelection(MeshSelection selection)
         {
             IMeshEditor editor = GetEditor();
@@ -1553,11 +1553,11 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 OnSelectionChanged();
             }
         }
-        
+
         public void SelectFaces(Material material)
         {
             IMeshEditor meshEditor = GetEditor();
-            if(meshEditor != null && _me.Selection.ActiveGameObject == _pivot.gameObject)
+            if (meshEditor != null && _me.Selection.ActiveGameObject == _pivot.gameObject)
             {
                 _me.Undo.BeginRecord();
 
@@ -1575,7 +1575,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 _me.Undo.EndRecord();
             }
         }
-        
+
         public void UnselectFaces(Material material)
         {
             IMeshEditor meshEditor = GetEditor();
@@ -1597,7 +1597,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 _me.Undo.EndRecord();
             }
         }
-        
+
         public void Extrude(float distance)
         {
             IMeshEditor meshEditor = GetEditor();
@@ -1621,7 +1621,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 if (newState != null)
                 {
                     CurrentSelection = newSelection;
-            
+
                     IMeshEditor meshEditor = GetEditor();
                     if (meshEditor != null)
                     {
@@ -1631,7 +1631,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                         {
                             mesh.RaiseChanged(false, true);
                         }
-            
+
                         meshEditor.SetSelection(CurrentSelection);
                     }
                     else
@@ -1642,7 +1642,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                             mesh.RaiseChanged(false, true);
                         }
                     }
-            
+
                     TryUpdatePivotTransform();
                     TrySelectPivot(meshEditor, false);
                     TryUpdatePivotVisibility();
@@ -1657,7 +1657,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 if (oldState != null)
                 {
                     CurrentSelection = oldSelection;
-            
+
                     IMeshEditor meshEditor = GetEditor();
                     if (meshEditor != null)
                     {
@@ -1667,7 +1667,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                         {
                             mesh.RaiseChanged(false, true);
                         }
-            
+
                         meshEditor.SetSelection(CurrentSelection);
                     }
                     else
@@ -1678,7 +1678,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                             mesh.RaiseChanged(false, true);
                         }
                     }
-            
+
                     TryUpdatePivotTransform();
                     TrySelectPivot(meshEditor, false);
                     TryUpdatePivotVisibility();
@@ -1695,7 +1695,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             RunStateChangeAction(meshEditor => meshEditor.Subdivide(), true);
         }
-        
+
         public void MergeFaces()
         {
             RunStateChangeAction(meshEditor => meshEditor.Merge(), true);
@@ -1725,7 +1725,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     {
                         meshes.Add(mesh);
                     }
-                    
+
                 }
 
                 List<ProBuilderMesh> pbMeshes = CombineMeshes.Combine(meshes, mainMesh);
@@ -1735,7 +1735,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     Debug.Log("Combine succeed");
                     foreach (var g in gos)
                     {
-                        if(g!=main)
+                        if (g != main)
                             Destroy(g);
                     }
                 }
@@ -1772,7 +1772,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             if (meshEditor != null && _me.Selection.ActiveGameObject == _pivot.gameObject)
             {
                 MeshSelection oldSelection = CurrentSelection;
-                if(meshEditor.SelectHoles() != null)
+                if (meshEditor.SelectHoles() != null)
                 {
                     CurrentSelection = meshEditor.GetSelection();
                     RecordSelection(oldSelection, CurrentSelection);
@@ -1857,7 +1857,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             RunPBMeshAction(pbMesh => pbMesh.CenterPivot(), true);
         }
-        
+
         public void SelectFaceGroup()
         {
             IMeshEditor meshEditor = GetEditor();
@@ -1868,7 +1868,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
             MeshSelection oldSelection = CurrentSelection;
             MeshSelection faceGroupSelection = _autoUVEditor.SelectFaceGroup(oldSelection);
-            if(faceGroupSelection != null)
+            if (faceGroupSelection != null)
             {
                 meshEditor.SetSelection(faceGroupSelection);
 
@@ -1900,7 +1900,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 if (newState != null)
                 {
                     IMeshEditor meshEditor = GetEditor();
-                    if(meshEditor != null)
+                    if (meshEditor != null)
                     {
                         meshEditor.SetState(newState);
                     }
@@ -1908,8 +1908,8 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     {
                         newState.Apply();
                     }
-            
-                    if(raiseMeshChanged)
+
+                    if (raiseMeshChanged)
                     {
                         foreach (PBMesh mesh in newState.GetMeshes())
                         {
@@ -1938,15 +1938,15 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     {
                         oldState.Apply();
                     }
-            
-                    if(raiseMeshChanged)
+
+                    if (raiseMeshChanged)
                     {
                         foreach (PBMesh mesh in newState.GetMeshes())
                         {
                             mesh.RaiseChanged(false, true);
                         }
                     }
-                    
+
                     TryUpdatePivotTransform();
                     TrySelectPivot(meshEditor, false);
                     TryUpdatePivotVisibility();
@@ -1959,13 +1959,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             _me.Undo.CreateRecord(redo, undo);
             OnSelectionChanged();
         }
-        
-        public void CreateNewShapeAndRecord(int shapeType,ObjectItem item)
+
+        public void CreateNewShapeAndRecord(int shapeType, ObjectItem item)
         {
             ExposeToEditor exposeToEditor = CreateNewShape((PBShapeType)shapeType);
 
             exposeToEditor.gameObject.AddComponent<MapSaveObject>().Init(item);
-            
+
             IMESelectionComponent selectionComponent = _selectionComponent;
 
             _me.Undo.BeginRecord();

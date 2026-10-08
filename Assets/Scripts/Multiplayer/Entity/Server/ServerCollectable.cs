@@ -18,14 +18,14 @@ namespace Multiplayer.Server
         {
             None,
             KillConfirm,
-            
+
         }
 
-        public ushort deadPlayerId,killPlayerId;
+        public ushort deadPlayerId, killPlayerId;
 
 
         public static ushort nextId = 0;
-        public void InitializeKillConfirm(ushort _deadPlayerId,ushort _killPlayerId)
+        public void InitializeKillConfirm(ushort _deadPlayerId, ushort _killPlayerId)
         {
             Id = nextId++;
 
@@ -33,15 +33,16 @@ namespace Multiplayer.Server
             killPlayerId = _killPlayerId;
 
             Type = CollectableType.KillConfirm;
-        
-            list.Add(Id,this);
-            
+
+            list.Add(Id, this);
+
             Init();
 
         }
-        
-        void Init(){
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.CollectableInit);
+
+        void Init()
+        {
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.CollectableInit);
 
             message.Add(Id);
             message.Add((ushort)Type);
@@ -53,21 +54,21 @@ namespace Multiplayer.Server
                     message.Add(killPlayerId);
                     break;
             }
-        
+
             NetworkServerManager.Instance.Server.SendToAll(message);
-            Destroy(gameObject,20f);
+            Destroy(gameObject, 20f);
         }
-    
+
         private void OnDestroy()
         {
             if (list.ContainsKey(Id))
                 list.Remove(Id);
-        
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.GetConfirm);
+
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.GetConfirm);
 
             message.Add(Id);
             message.Add(41);
-                    
+
             NetworkServerManager.Instance.Server.SendToAll(message);
         }
 
@@ -95,23 +96,23 @@ namespace Multiplayer.Server
                     bool flag = false;
                     if (player.Id == killPlayerId)
                     {
-                    
+
                         ServerPlayer.list[killPlayerId].Kills++;
                         ServerPlayer.list[killPlayerId].CurrentLifeKill++;
                         ServerPlayer.list[killPlayerId].Coin++;
-                    
+
                         ServerPlayer.list[deadPlayerId].Deaths++;
-                        if(LobbyDataManager.datas.ContainsKey(ServerPlayer.list[killPlayerId].SteamId))
+                        if (LobbyDataManager.datas.ContainsKey(ServerPlayer.list[killPlayerId].SteamId))
                             LobbyDataManager.datas[ServerPlayer.list[killPlayerId].SteamId].UpdateKill();
-                        if(LobbyDataManager.datas.ContainsKey(ServerPlayer.list[deadPlayerId].SteamId))
+                        if (LobbyDataManager.datas.ContainsKey(ServerPlayer.list[deadPlayerId].SteamId))
                             LobbyDataManager.datas[ServerPlayer.list[deadPlayerId].SteamId].UpdateDeaths();
                         Destroy(gameObject);
 
                         flag = true;
                     }
-                    else if(player.Id == deadPlayerId)
+                    else if (player.Id == deadPlayerId)
                     {
-                    
+
                         Destroy(gameObject);
 
                         flag = true;
@@ -119,14 +120,14 @@ namespace Multiplayer.Server
 
                     if (flag)
                     {
-                        Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.GetConfirm);
+                        Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.GetConfirm);
 
                         message.Add(Id);
                         message.Add(player.Id);
-                    
+
                         NetworkServerManager.Instance.Server.SendToAll(message);
                     }
-                
+
                 }
             }
         }

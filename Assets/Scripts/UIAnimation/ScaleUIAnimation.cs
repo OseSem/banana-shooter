@@ -8,7 +8,7 @@ namespace UIAnimation
     {
         [Header("Transforms which will be used to scale")]
         [SerializeField] private Transform[] transforms = Array.Empty<Transform>();
-        
+
         [Header("Based on the amount of transform provided, the default scale")]
         [SerializeField] private Vector3[] defaultScale = Array.Empty<Vector3>();
         [Header("Scale When hover Each index is the same as transform")]
@@ -45,7 +45,7 @@ namespace UIAnimation
                 _desiredScale[i] = hoverScale[i];
             }
         }
-        
+
         public override void OnPointerExit(PointerEventData eventData)
         {
             base.OnPointerExit(eventData);
@@ -67,7 +67,7 @@ namespace UIAnimation
                 _desiredScale[i] = clickScale[i];
             }
         }
-        
+
         public override void OnPointerUp(PointerEventData eventData)
         {
             if (isToggle && IsSelected)

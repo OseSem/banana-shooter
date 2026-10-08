@@ -23,9 +23,9 @@ namespace CodingDaniel.MapEditor.UI.AddObject
     public class AddExternalObjectMenu : MonoBehaviour
     {
         public static AddExternalObjectMenu Instance { private set; get; }
-        [SerializeField] private Button addNewCustomDecalBtn,addBtn;
+        [SerializeField] private Button addNewCustomDecalBtn, addBtn;
 
-        private int _loadTexture=0;
+        private int _loadTexture = 0;
 
         private IME _me;
         private IMESelectionComponent _selectionComponent;
@@ -34,9 +34,9 @@ namespace CodingDaniel.MapEditor.UI.AddObject
         private void Awake()
         {
             Instance = this;
-            _me=MEBase.Instance;
-            _selectionComponent=MESelectionComponent.Instance;
-            
+            _me = MEBase.Instance;
+            _selectionComponent = MESelectionComponent.Instance;
+
             addNewCustomDecalBtn.onClick.AddListener(TryToAddDecal);
             addBtn.onClick.AddListener(Create);
             addAudioBtn.onClick.AddListener(TryToAddAudioSource);
@@ -58,29 +58,29 @@ namespace CodingDaniel.MapEditor.UI.AddObject
             {
                 var material = tuple.Item2;
                 ObjectItemUI itemUI = Instantiate(prefab, content);
-            
-                itemUI.Init(ObjectType.Decal,material.name,(Texture2D)material.GetTexture(MapSaver.BaseMap),MapSaver.Instance.GetDecalMaterialIndex(material,true),rootCanvas,maskRect,false);
+
+                itemUI.Init(ObjectType.Decal, material.name, (Texture2D)material.GetTexture(MapSaver.BaseMap), MapSaver.Instance.GetDecalMaterialIndex(material, true), rootCanvas, maskRect, false);
 
             }
-            
+
             foreach (var tuple in MapSaver.Instance.externalAudioClips)
             {
                 var clip = tuple.Item2;
                 ObjectItemUI itemUI = Instantiate(prefab, audioContent);
-            
-                itemUI.Init(ObjectType.AudioSource,clip.name,audioTexture,MapSaver.Instance.GetAudioIndex(clip),rootCanvas,maskRect,false);
+
+                itemUI.Init(ObjectType.AudioSource, clip.name, audioTexture, MapSaver.Instance.GetAudioIndex(clip), rootCanvas, maskRect, false);
             }
 
             foreach (var model in MapSaver.Instance.ModelConfigs.Values)
             {
                 ObjectItemUI itemUI = Instantiate(prefab, customModelContent);
-            
-                itemUI.Init(ObjectType.Decoration,model.name,model.previewImage,0,rootCanvas,maskRect,false);
+
+                itemUI.Init(ObjectType.Decoration, model.name, model.previewImage, 0, rootCanvas, maskRect, false);
             }
-            
+
             addNewCustomDecalBtn.transform.SetAsLastSibling();
             addAudioBtn.transform.SetAsLastSibling();
-            
+
         }
 
         private void OnDestroy()
@@ -88,11 +88,11 @@ namespace CodingDaniel.MapEditor.UI.AddObject
             addNewCustomDecalBtn.onClick.RemoveListener(TryToAddDecal);
             addBtn.onClick.RemoveListener(Create);
             addAudioBtn.onClick.RemoveListener(TryToAddAudioSource);
-            
+
             MapSaver.Instance.OnMapLoaded -= Init;
         }
 
-        
+
 
         [SerializeField] private Transform editBar;
 
@@ -103,11 +103,11 @@ namespace CodingDaniel.MapEditor.UI.AddObject
         }
         public void CloseEditBar()
         {
-            if(editBar.gameObject.activeSelf)
+            if (editBar.gameObject.activeSelf)
                 editBar.gameObject.SetActive(false);
         }
 
-        
+
         public void Edit()
         {
             if (SelectItem == null) return;
@@ -119,7 +119,7 @@ namespace CodingDaniel.MapEditor.UI.AddObject
             }
         }
 
-        
+
         public void Remove()
         {
             if (SelectItem == null) return;
@@ -140,7 +140,7 @@ namespace CodingDaniel.MapEditor.UI.AddObject
                             }
                         }
                     }
-            
+
                     if (MapSaver.CurrentMap != null)
                     {
                         string path = Path.Combine(MapSaver.CurrentMap.GetDecalTexturePath(), material.name + ".png");
@@ -150,7 +150,7 @@ namespace CodingDaniel.MapEditor.UI.AddObject
                             File.Delete(path);
                         }
                     }
-            
+
                     MapSaver.Instance.externalDecalMaterials.RemoveAt(SelectItem.decalMaterialIndex);
                     break;
                 case ObjectType.AudioSource:
@@ -178,11 +178,11 @@ namespace CodingDaniel.MapEditor.UI.AddObject
                             File.Delete(path);
                         }
                     }
-                    
+
                     MapSaver.Instance.externalAudioClips.RemoveAt(SelectItem.audioClipIndex);
                     break;
                 case ObjectType.Decoration:
-                    if (MapSaver.Instance.ModelConfigs.TryGetValue(SelectItem.n,out var config))
+                    if (MapSaver.Instance.ModelConfigs.TryGetValue(SelectItem.n, out var config))
                     {
                         foreach (var objectItem in MapSaver.Instance.ObjectsNeedToSave)
                         {
@@ -201,24 +201,24 @@ namespace CodingDaniel.MapEditor.UI.AddObject
 
                             if (Directory.Exists(path))
                             {
-                                Directory.Delete(path,true);
+                                Directory.Delete(path, true);
                             }
                         }
 
                         MapSaver.Instance.ModelConfigs.Remove(SelectItem.n);
                     }
 
-                    
+
                     break;
             }
 
-            
+
             editBar.gameObject.SetActive(false);
-            
+
             Destroy(SelectItem.gameObject);
         }
-        
-        
+
+
         public void Create()
         {
             CloseEditBar();
@@ -228,12 +228,12 @@ namespace CodingDaniel.MapEditor.UI.AddObject
                 case ObjectType.Decal:
                     ExposeToEditor decal =
                         AddObjectMenu.CreateDecalExposeToEditor(MapSaver.Instance.externalDecalMaterials[decalExternalMat].Item2);
-                    
+
                     decal.transform.SetParent(_me.EditedObject.transform);
-                        
-                    
-                    decal.gameObject.AddComponent<MapSaveObject>().Init(ObjectType.Decal,SelectItem.n);
-            
+
+
+                    decal.gameObject.AddComponent<MapSaveObject>().Init(ObjectType.Decal, SelectItem.n);
+
 
                     _me.Undo.BeginRecord();
                     if (_selectionComponent == null || _selectionComponent.CanSelect)
@@ -247,13 +247,13 @@ namespace CodingDaniel.MapEditor.UI.AddObject
                 case ObjectType.AudioSource:
                     ExposeToEditor audioSource =
                         CreateAudioSourceExposeToEditor(MapSaver.Instance.externalAudioClips[audioExternalIndex].Item2);
-                    
+
                     audioSource.transform.SetParent(_me.EditedObject.transform);
 
-                    audioSource.gameObject.AddComponent<MapSaveObject>().Init(ObjectType.AudioSource,SelectItem.n);
-                    
+                    audioSource.gameObject.AddComponent<MapSaveObject>().Init(ObjectType.AudioSource, SelectItem.n);
+
                     _me.Undo.BeginRecord();
-                    
+
                     if (_selectionComponent == null || _selectionComponent.CanSelect)
                     {
                         _me.Selection.ActiveGameObject = audioSource.gameObject;
@@ -267,10 +267,10 @@ namespace CodingDaniel.MapEditor.UI.AddObject
                     Transform t = obj.transform;
                     if (obj == null) break;
                     ExposeToEditor model =
-                        AddObjectMenu.CreateDecorationExposeToEditor(obj,_me.EditedObject.transform,t.position,t.rotation,t.localScale, 0, true,true);
+                        AddObjectMenu.CreateDecorationExposeToEditor(obj, _me.EditedObject.transform, t.position, t.rotation, t.localScale, 0, true, true);
 
-                    model.gameObject.AddComponent<MapSaveObject>().Init(ObjectType.Decoration,SelectItem.n);
-            
+                    model.gameObject.AddComponent<MapSaveObject>().Init(ObjectType.Decoration, SelectItem.n);
+
 
                     _me.Undo.BeginRecord();
                     if (_selectionComponent == null || _selectionComponent.CanSelect)
@@ -318,22 +318,22 @@ namespace CodingDaniel.MapEditor.UI.AddObject
             string path = FileIOUtil.OpenFileDialog(FileType.Texture);
 
             if (string.IsNullOrEmpty(path)) return;
-            StartCoroutine(LoadImage(path,true));
+            StartCoroutine(LoadImage(path, true));
             _adding = false;
         }
         void TryToCreateDecal()
         {
             addDecalPanel.SetActive(true);
-            
+
             decalNameInput.SetTextWithoutNotify("");
             EventSystem.current.SetSelectedGameObject(decalNameInput.gameObject);
         }
-        
+
         [SerializeField] private Transform content;
         [SerializeField] private ObjectItemUI prefab;
 
         private List<Texture2D> _texture2Ds = new List<Texture2D>();
-        
+
         public void CreateDecal()
         {
             if (string.IsNullOrEmpty(decalNameInput.text)) return;
@@ -344,23 +344,23 @@ namespace CodingDaniel.MapEditor.UI.AddObject
             };
             Texture2D texture2D = _texture2Ds[_loadTexture];
 
-            newDecalMaterial.SetTexture(MapSaver.BaseMap,texture2D);
+            newDecalMaterial.SetTexture(MapSaver.BaseMap, texture2D);
 
-            MapSaver.Instance.externalDecalMaterials.Add(new Tuple<string, Material>(_path,newDecalMaterial));
+            MapSaver.Instance.externalDecalMaterials.Add(new Tuple<string, Material>(_path, newDecalMaterial));
 
             ObjectItemUI itemUI = Instantiate(prefab, content);
-            
-            itemUI.Init(ObjectType.Decal,decalNameInput.text,texture2D,MapSaver.Instance.GetDecalMaterialIndex(newDecalMaterial,true),rootCanvas,maskRect,false);
-            
+
+            itemUI.Init(ObjectType.Decal, decalNameInput.text, texture2D, MapSaver.Instance.GetDecalMaterialIndex(newDecalMaterial, true), rootCanvas, maskRect, false);
+
             addDecalPanel.SetActive(false);
-            
+
             addNewCustomDecalBtn.transform.SetAsLastSibling();
             itemUI.Click();
         }
-        private int decalExternalMat=-1;
+        private int decalExternalMat = -1;
         private int audioExternalIndex = -1;
         private string _path = String.Empty;
-        
+
         #endregion
 
         #region Edit
@@ -369,21 +369,21 @@ namespace CodingDaniel.MapEditor.UI.AddObject
         {
             CloseEditBar();
             string path = FileIOUtil.OpenFileDialog(FileType.Texture);
-            
+
             if (string.IsNullOrEmpty(path)) return;
-            StartCoroutine(LoadImage(path,false));
+            StartCoroutine(LoadImage(path, false));
         }
-        
+
         #endregion
 
-        IEnumerator LoadImage(string path,bool create)
+        IEnumerator LoadImage(string path, bool create)
         {
             bool complete = false;
-            byte[] data=null;
+            byte[] data = null;
             var customThread = new Thread(() =>
             {
                 data = SaveSystem.ReadByteFromFile(path);
-                
+
                 complete = true;
             });
             customThread.Start();
@@ -397,23 +397,23 @@ namespace CodingDaniel.MapEditor.UI.AddObject
             customThread.Abort();
             Texture2D texture2D = new Texture2D(1, 1, TextureFormat.RGB24, false);
             texture2D.LoadImage(data);
-            
+
             _texture2Ds.Add(texture2D);
 
             _loadTexture = _texture2Ds.Count - 1;
-            
-            if(create)
+
+            if (create)
                 TryToCreateDecal();
             else
             {
                 MapSaver.Instance.externalDecalMaterials[decalExternalMat] = new Tuple<string, Material>(path,
                     MapSaver.Instance.externalDecalMaterials[decalExternalMat].Item2);
-                MapSaver.Instance.externalDecalMaterials[decalExternalMat].Item2.SetTexture(MapSaver.BaseMap,texture2D);
-                
+                MapSaver.Instance.externalDecalMaterials[decalExternalMat].Item2.SetTexture(MapSaver.BaseMap, texture2D);
+
                 SelectItem.SetTexture(texture2D);
             }
         }
-        
+
         #endregion
 
         #region AudioSource
@@ -428,24 +428,24 @@ namespace CodingDaniel.MapEditor.UI.AddObject
         #region Add
 
         private int _loadAudioIndex = -1;
-        
+
         void TryToAddAudioSource()
         {
             if (_adding) return;
             _adding = true;
             CloseEditBar();
-            
+
             string path = FileIOUtil.OpenFileDialog(FileType.Audio);
 
-            StartCoroutine(LoadAudio(path,true));
+            StartCoroutine(LoadAudio(path, true));
             _adding = false;
         }
 
-        IEnumerator LoadAudio(string path,bool create)
+        IEnumerator LoadAudio(string path, bool create)
         {
             if (string.IsNullOrEmpty(path))
             {
-                _loadAudioPath=String.Empty;
+                _loadAudioPath = String.Empty;
                 yield break;
             }
             _loadAudioPath = path;
@@ -455,7 +455,7 @@ namespace CodingDaniel.MapEditor.UI.AddObject
                 // download the audio data using DownloadHandlerAudioClip
                 DownloadHandlerAudioClip handler = new DownloadHandlerAudioClip(webRequest.url, audioType);
                 webRequest.downloadHandler = handler;
-                
+
                 yield return webRequest.SendWebRequest();
 
                 if (webRequest.result != UnityWebRequest.Result.Success)
@@ -467,31 +467,31 @@ namespace CodingDaniel.MapEditor.UI.AddObject
 
                     _loadAudioIndex = _clips.Count;
                     _clips.Add(handler.audioClip);
-                
-                    audioNameInput.SetTextWithoutNotify(""); 
-                    
+
+                    audioNameInput.SetTextWithoutNotify("");
+
                     EventSystem.current.SetSelectedGameObject(audioNameInput.gameObject);
                 }
             }
         }
 
-        
+
         public void AbandonToCreate()
         {
-            if (_loadAudioIndex < _clips.Count && _loadAudioIndex >=0)
+            if (_loadAudioIndex < _clips.Count && _loadAudioIndex >= 0)
             {
                 _clips.RemoveAt(_loadAudioIndex);
                 _loadAudioIndex = -1;
-                _loadAudioPath= String.Empty;
+                _loadAudioPath = String.Empty;
             }
         }
-        
+
         string _loadAudioPath = String.Empty;
 
         [SerializeField] private Texture2D audioTexture;
         [SerializeField] private Transform audioContent;
 
-        
+
         public void CreateAudio()
         {
             string audioName = audioNameInput.text;
@@ -503,17 +503,17 @@ namespace CodingDaniel.MapEditor.UI.AddObject
             clip.name = audioName;
 
             int index = MapSaver.Instance.externalAudioClips.Count;
-            
-            MapSaver.Instance.externalAudioClips.Add(new Tuple<string, AudioClip>(_loadAudioPath,clip));
-            
+
+            MapSaver.Instance.externalAudioClips.Add(new Tuple<string, AudioClip>(_loadAudioPath, clip));
+
             ObjectItemUI itemUI = Instantiate(prefab, audioContent);
-            
-            itemUI.Init(ObjectType.AudioSource,audioName,audioTexture,index,rootCanvas,maskRect,false);
-            
+
+            itemUI.Init(ObjectType.AudioSource, audioName, audioTexture, index, rootCanvas, maskRect, false);
+
             addAudioPanel.SetActive(false);
-            
+
             addAudioBtn.transform.SetAsLastSibling();
-            
+
             itemUI.Click();
         }
         #endregion
@@ -523,12 +523,12 @@ namespace CodingDaniel.MapEditor.UI.AddObject
         public static ExposeToEditor CreateAudioSourceExposeToEditor(AudioClip clip)
         {
             ExposeToEditor exposeToEditor = CreateAudioSource(clip).gameObject.AddComponent<ExposeToEditor>();
-            
+
             exposeToEditor.transform.position = AddObjectMenu.GetPosition();
 
             return exposeToEditor;
         }
-        
+
         public static AudioSource CreateAudioSource(AudioClip clip)
         {
             GameObject obj = new GameObject();
@@ -549,6 +549,6 @@ namespace CodingDaniel.MapEditor.UI.AddObject
             return source;
         }
     }
-    
-    
+
+
 }

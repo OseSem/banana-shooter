@@ -6,9 +6,9 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class ButtonSelect : MonoBehaviour,IPointerEnterHandler
+public class ButtonSelect : MonoBehaviour, IPointerEnterHandler
 {
-    private bool _interactable=true;
+    private bool _interactable = true;
 
     private IEnumerator Start()
     {
@@ -21,7 +21,7 @@ public class ButtonSelect : MonoBehaviour,IPointerEnterHandler
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if(_interactable)
+        if (_interactable)
             AudioManager.Instance.Play("select_button");
     }
 }

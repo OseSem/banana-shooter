@@ -19,7 +19,7 @@ namespace CodingDaniel.MapEditor.UI
         {
             Instance = this;
 
-            ListenerManager.Instance.SetCamera( MEBase.Instance.Camera.transform);
+            ListenerManager.Instance.SetCamera(MEBase.Instance.Camera.transform);
         }
 
         public bool Menu
@@ -27,7 +27,7 @@ namespace CodingDaniel.MapEditor.UI
             private set;
             get;
         } = false;
-        [SerializeField] private GameObject editorMenu, normalMenu,savingMenu;
+        [SerializeField] private GameObject editorMenu, normalMenu, savingMenu;
 
         public GameObject SavingMenu
         {
@@ -41,11 +41,11 @@ namespace CodingDaniel.MapEditor.UI
             }
         }
 
-        
+
         public void OpenOrCloseMenu()
         {
             Menu = !Menu;
-            
+
             editorMenu.SetActive(!Menu && !MEBase.Instance.IsPlayMode);
             normalMenu.SetActive(Menu);
 
@@ -64,14 +64,14 @@ namespace CodingDaniel.MapEditor.UI
             }
         }
 
-        
+
         public void ButtonSound()
         {
             AudioManager.Instance.PlayButton();
         }
 
         [SerializeField] private GameObject exitPanel;
-        
+
         public void TryToQuit()
         {
             MESelectionComponent.Instance.TryToClearSelection();
@@ -85,7 +85,7 @@ namespace CodingDaniel.MapEditor.UI
             QuitToMenu();
         }
 
-        
+
         public void SaveToQuit()
         {
             StartCoroutine(StartToSaveToQuit());
@@ -100,11 +100,11 @@ namespace CodingDaniel.MapEditor.UI
             {
                 yield return null;
             }
-            
+
             QuitToMenu();
         }
-        
-        
+
+
         public void QuitToMenu()
         {
             CursorHelper.Instance.SetCursor(null, Vector2.one * 0.5f, CursorMode.Auto);
@@ -112,7 +112,7 @@ namespace CodingDaniel.MapEditor.UI
             MapSaver.CurrentMap = null;
             MapSaver.Instance.Cleanup();
             LoadingManager.Instance.Menu();
-            
+
             if (GameManager.Instance)
             {
                 QualitySettings.SetQualityLevel(GameManager.Instance.setting.quality);

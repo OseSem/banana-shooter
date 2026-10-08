@@ -25,7 +25,7 @@ namespace CodingDaniel.MapEditor.UI.Component
 
         private IMESelection _selection;
 
-        [SerializeField] private Texture2D lightingTexture,decalTexture,audioTexture;
+        [SerializeField] private Texture2D lightingTexture, decalTexture, audioTexture;
 
         private void Awake()
         {
@@ -36,12 +36,12 @@ namespace CodingDaniel.MapEditor.UI.Component
         private void Start()
         {
             ClosePanel();
-            
-            _selection=MEBase.Instance.Selection;
+
+            _selection = MEBase.Instance.Selection;
 
             _selection.SelectionChanged += OnSelectionChanged;
-            
-            InvokeRepeating(nameof(RefreshWidth),0,5f);
+
+            InvokeRepeating(nameof(RefreshWidth), 0, 5f);
 
             _camera = MEBase.Instance.Graphics.GetOrCreateCamera(MEBase.Instance.Camera, CameraEvent.AfterImageEffectsOpaque);
         }
@@ -49,7 +49,7 @@ namespace CodingDaniel.MapEditor.UI.Component
         void RefreshWidth()
         {
             screenWidth = Screen.width;
-            
+
         }
 
         private void OnDestroy()
@@ -59,7 +59,7 @@ namespace CodingDaniel.MapEditor.UI.Component
 
         private void Update()
         {
-            rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition,_desiredPos,Time.deltaTime*15f);
+            rectTransform.anchoredPosition = Vector2.Lerp(rectTransform.anchoredPosition, _desiredPos, Time.deltaTime * 15f);
         }
 
         void ClosePanel()
@@ -83,9 +83,9 @@ namespace CodingDaniel.MapEditor.UI.Component
                 {
                     Destroy(p.gameObject);
                 }
-                
+
             }
-            
+
             properties.Clear();
         }
 
@@ -96,7 +96,7 @@ namespace CodingDaniel.MapEditor.UI.Component
         [SerializeField] private EnumPropertyUI enumPrefab;
         [SerializeField] private ColorPropertyUI colorPrefab;
 
-        public readonly Dictionary<object,Dictionary<string,BaseProperty>> properties = new Dictionary<object,Dictionary<string,BaseProperty>>();
+        public readonly Dictionary<object, Dictionary<string, BaseProperty>> properties = new Dictionary<object, Dictionary<string, BaseProperty>>();
 
         private readonly Dictionary<object, UnityEngine.Component> _gizmos = new Dictionary<object, UnityEngine.Component>();
 
@@ -108,7 +108,7 @@ namespace CodingDaniel.MapEditor.UI.Component
                 foreach (var obj in unselectedobjects)
                 {
                     var go = obj as GameObject;
-                    
+
                     Light l = go.GetComponent<Light>();
                     DecalProjector decal = go.GetComponent<DecalProjector>();
                     AudioSource au = go.GetComponent<AudioSource>();
@@ -154,7 +154,7 @@ namespace CodingDaniel.MapEditor.UI.Component
                 }
             }
 
-            if (_selection==null||_selection.ActiveGameObject==null||_selection.GameObjects==null || _selection.GameObjects.Length > 1)
+            if (_selection == null || _selection.ActiveGameObject == null || _selection.GameObjects == null || _selection.GameObjects.Length > 1)
             {
                 ClosePanel();
                 return;
@@ -170,28 +170,28 @@ namespace CodingDaniel.MapEditor.UI.Component
                 var exp = light.GetComponent<ExposeToEditor>();
                 bool canEdit = exp != null && exp.CanDelete;
                 ObjectGizmoBehaviour gizmo = ObjectGizmoBehaviour.Attach(light);
-                _gizmos.Add(light,gizmo);
-                
+                _gizmos.Add(light, gizmo);
+
                 OpenPanel();
                 //Set the name
                 nameText.SetEntry("Lighting");
                 //Set the texture
                 iconImg.texture = lightingTexture;
-                
+
                 //Properties
 
-                Dictionary<string,BaseProperty> pr = new Dictionary<string,BaseProperty>();
+                Dictionary<string, BaseProperty> pr = new Dictionary<string, BaseProperty>();
 
                 //1.Bool -- enable 
                 BoolPropertyUI enableUI = Instantiate(boolPrefab, content);
-                enableUI.Init("Enable",light.enabled,canEdit);
-                
+                enableUI.Init("Enable", light.enabled, canEdit);
+
                 enableUI.onValueSet += (o =>
                 {
                     light.enabled = (bool)o;
                 });
-                pr.Add("enable",enableUI);
-                
+                pr.Add("enable", enableUI);
+
                 //2. enum -- mode
                 EnumPropertyUI type = Instantiate(enumPrefab, content);
                 List<string> str = new List<string>();
@@ -199,33 +199,33 @@ namespace CodingDaniel.MapEditor.UI.Component
                 str.Add(LightType.Directional.ToString());
                 str.Add(LightType.Point.ToString());
                 type.SetDropdown(str);
-                type.Init("Type",(int)light.type,canEdit);
+                type.Init("Type", (int)light.type, canEdit);
 
                 type.onValueSet += (o =>
                 {
-                    light.type = (LightType) o;
-                    
-                    _selection.Select(null,null);
-                    _selection.Select(light.gameObject,new Object[]{light.gameObject});
+                    light.type = (LightType)o;
+
+                    _selection.Select(null, null);
+                    _selection.Select(light.gameObject, new Object[] { light.gameObject });
                 });
-                pr.Add("type",type);
-                
+                pr.Add("type", type);
+
                 //3.float -- Intensity
                 FloatPropertyUI intensityPropertyUI = Instantiate(floatPrefab, content);
-                intensityPropertyUI.Init("Intensity",light.intensity,true);
+                intensityPropertyUI.Init("Intensity", light.intensity, true);
 
                 intensityPropertyUI.onValueSet += (o =>
                 {
                     light.intensity = float.Parse(o.ToString());
                 });
-                
-                pr.Add("intensity",intensityPropertyUI);
+
+                pr.Add("intensity", intensityPropertyUI);
 
                 if (light.type != LightType.Directional)
                 {
                     //4.float -- Range
                     FloatPropertyUI rangePropertyUI = Instantiate(floatPrefab, content);
-                    rangePropertyUI.Init("Range",light.range,true);
+                    rangePropertyUI.Init("Range", light.range, true);
 
                     rangePropertyUI.onValueSet += (o =>
                     {
@@ -233,80 +233,80 @@ namespace CodingDaniel.MapEditor.UI.Component
                         {
                             light.range = result;
                         }
-                        
+
                         _camera.RefreshCommandBuffer();
                     });
-                
-                    pr.Add("range",rangePropertyUI);
+
+                    pr.Add("range", rangePropertyUI);
                 }
-                
+
                 //Color -- color
                 ColorPropertyUI colorPropertyUI = Instantiate(colorPrefab, content);
-                colorPropertyUI.Init("Color",light.color,true);
+                colorPropertyUI.Init("Color", light.color, true);
 
                 colorPropertyUI.onValueSet += (color =>
                 {
                     light.color = (Color)color;
                 });
-                
-                pr.Add("color",colorPropertyUI);
-                
+
+                pr.Add("color", colorPropertyUI);
+
                 if (light.type == LightType.Spot)
                 {
                     //4.float -- Spot angle out
                     FloatPropertyUI rangePropertyUI = Instantiate(floatPrefab, content);
-                    rangePropertyUI.Init("Spot Angle",light.spotAngle,true);
+                    rangePropertyUI.Init("Spot Angle", light.spotAngle, true);
 
                     rangePropertyUI.onValueSet += (o =>
                     {
                         light.spotAngle = float.Parse(o.ToString());
-                        light.innerSpotAngle = light.spotAngle *.8f;
+                        light.innerSpotAngle = light.spotAngle * .8f;
                         _camera.RefreshCommandBuffer();
                     });
-                
-                    pr.Add("spotangle",rangePropertyUI);
-                    
+
+                    pr.Add("spotangle", rangePropertyUI);
+
                     //5.float -- Spot angle inner
                     FloatPropertyUI innerPropertyUI = Instantiate(floatPrefab, content);
-                    innerPropertyUI.Init("Inner Spot Angle",light.innerSpotAngle,true);
+                    innerPropertyUI.Init("Inner Spot Angle", light.innerSpotAngle, true);
 
                     innerPropertyUI.onValueSet += (o =>
                     {
                         light.innerSpotAngle = float.Parse(o.ToString());
-                        
+
                     });
-                
-                    pr.Add("innerspotangle",innerPropertyUI);
+
+                    pr.Add("innerspotangle", innerPropertyUI);
                 }
-                
-                properties.Add(light,pr);
+
+                properties.Add(light, pr);
             }
-            else if (decalProjector!=null && !_gizmos.ContainsKey(decalProjector))
+            else if (decalProjector != null && !_gizmos.ContainsKey(decalProjector))
             {
                 ObjectGizmoBehaviour gizmo = ObjectGizmoBehaviour.Attach(decalProjector);
-                _gizmos.Add(decalProjector,gizmo);
-                
+                _gizmos.Add(decalProjector, gizmo);
+
                 OpenPanel();
                 //Set the name
                 nameText.SetEntry("Decal");
                 //Set the texture
                 iconImg.texture = decalTexture;
-                
-                Dictionary<string,BaseProperty> pr = new Dictionary<string,BaseProperty>();
-                
+
+                Dictionary<string, BaseProperty> pr = new Dictionary<string, BaseProperty>();
+
                 //1.Bool -- enable 
                 BoolPropertyUI enableUI = Instantiate(boolPrefab, content);
-                enableUI.Init("Enable",decalProjector.enabled,true);
-                
+                enableUI.Init("Enable", decalProjector.enabled, true);
+
                 enableUI.onValueSet += (o =>
                 {
                     decalProjector.enabled = (bool)o;
                 });
-                pr.Add("enable",enableUI);
-                
+                pr.Add("enable", enableUI);
+
                 //2.float -- Width
                 FloatPropertyUI widthPropertyUI = Instantiate(floatPrefab, content);
-                widthPropertyUI.Init("Width",decalProjector.size.x,true);
+                widthPropertyUI.Init("Width", decalProjector.size.x, true);
 
                 widthPropertyUI.onValueSet += (o =>
                 {
@@ -314,15 +314,15 @@ namespace CodingDaniel.MapEditor.UI.Component
                     {
                         decalProjector.size = new Vector3(value, decalProjector.size.y, decalProjector.size.z);
                     }
-                    
+
                     gizmo.Refresh();
                 });
-                
-                pr.Add("width",widthPropertyUI);
+
+                pr.Add("width", widthPropertyUI);
 
                 //3.float -- geight
                 FloatPropertyUI heightPropertyUI = Instantiate(floatPrefab, content);
-                heightPropertyUI.Init("Height",decalProjector.size.y,true);
+                heightPropertyUI.Init("Height", decalProjector.size.y, true);
 
                 heightPropertyUI.onValueSet += (o =>
                 {
@@ -332,65 +332,65 @@ namespace CodingDaniel.MapEditor.UI.Component
                     }
                     gizmo.Refresh();
                 });
-                
-                pr.Add("height",heightPropertyUI);
+
+                pr.Add("height", heightPropertyUI);
                 //4.float -- depth
                 FloatPropertyUI depthPropertyUI = Instantiate(floatPrefab, content);
-                depthPropertyUI.Init("Depth",decalProjector.size.z,true);
+                depthPropertyUI.Init("Depth", decalProjector.size.z, true);
 
                 depthPropertyUI.onValueSet += (o =>
                 {
                     if (float.TryParse(o.ToString(), out var value))
                     {
-                        decalProjector.size = new Vector3(decalProjector.size.x, decalProjector.size.y,value);
+                        decalProjector.size = new Vector3(decalProjector.size.x, decalProjector.size.y, value);
                     }
                     gizmo.Refresh();
                 });
-                
-                pr.Add("depth",depthPropertyUI);
-                properties.Add(decalProjector,pr);
+
+                pr.Add("depth", depthPropertyUI);
+                properties.Add(decalProjector, pr);
             }
             else if (audioSource != null && !_gizmos.ContainsKey(audioSource))
             {
                 ObjectGizmoBehaviour gizmo = ObjectGizmoBehaviour.Attach(audioSource);
 
-                _gizmos.Add(audioSource,gizmo);
-                
+                _gizmos.Add(audioSource, gizmo);
+
                 audioSource.Play();
-                
+
                 OpenPanel();
-                
+
                 //Set the name
                 nameText.SetEntry("AudioSource");
                 //Set the texture
                 iconImg.texture = audioTexture;
-                
-                Dictionary<string,BaseProperty> pr = new Dictionary<string,BaseProperty>();
-                
+
+                Dictionary<string, BaseProperty> pr = new Dictionary<string, BaseProperty>();
+
                 //1.Bool -- enable 
                 BoolPropertyUI enableUI = Instantiate(boolPrefab, content);
-                enableUI.Init("Enable",audioSource.enabled,true);
-                
+                enableUI.Init("Enable", audioSource.enabled, true);
+
                 enableUI.onValueSet += (o =>
                 {
                     audioSource.enabled = (bool)o;
-                    if(audioSource.enabled)
+                    if (audioSource.enabled)
                         audioSource.Play();
                 });
-                pr.Add("enable",enableUI);
-                
+                pr.Add("enable", enableUI);
+
                 BoolPropertyUI loopUI = Instantiate(boolPrefab, content);
-                loopUI.Init("Loop",audioSource.loop,true);
-                
+                loopUI.Init("Loop", audioSource.loop, true);
+
                 loopUI.onValueSet += (o =>
                 {
                     audioSource.loop = (bool)o;
                 });
-                pr.Add("loop",loopUI);
-                
+                pr.Add("loop", loopUI);
+
                 //2.float -- audioSource.maxDistance
                 FloatPropertyUI maxDistancePrr = Instantiate(floatPrefab, content);
-                maxDistancePrr.Init("Max Distance",audioSource.maxDistance,true);
+                maxDistancePrr.Init("Max Distance", audioSource.maxDistance, true);
 
                 maxDistancePrr.onValueSet += (o =>
                 {
@@ -398,15 +398,15 @@ namespace CodingDaniel.MapEditor.UI.Component
                     {
                         audioSource.maxDistance = value;
                     }
-                    
+
                     gizmo.Refresh();
                 });
-                
-                pr.Add("maxDistance",maxDistancePrr);
-                
+
+                pr.Add("maxDistance", maxDistancePrr);
+
                 //2.float -- audioSource.maxDistance
                 FloatPropertyUI minDistancePrr = Instantiate(floatPrefab, content);
-                minDistancePrr.Init("Min Distance",audioSource.minDistance,true);
+                minDistancePrr.Init("Min Distance", audioSource.minDistance, true);
 
                 minDistancePrr.onValueSet += (o =>
                 {
@@ -414,14 +414,14 @@ namespace CodingDaniel.MapEditor.UI.Component
                     {
                         audioSource.minDistance = value;
                     }
-                    
+
                     gizmo.Refresh();
                 });
-                
-                pr.Add("minDistance",minDistancePrr);
-                
+
+                pr.Add("minDistance", minDistancePrr);
+
                 FloatPropertyUI spatialBlendPr = Instantiate(floatPrefab, content);
-                spatialBlendPr.Init("Spatial Blend",audioSource.spatialBlend,true);
+                spatialBlendPr.Init("Spatial Blend", audioSource.spatialBlend, true);
 
                 spatialBlendPr.onValueSet += (o =>
                 {
@@ -429,47 +429,47 @@ namespace CodingDaniel.MapEditor.UI.Component
                     {
                         audioSource.spatialBlend = value;
                     }
-                    
+
                 });
-                
-                pr.Add("spatialBlend",spatialBlendPr);
-                
+
+                pr.Add("spatialBlend", spatialBlendPr);
+
                 FloatPropertyUI dopplerLevelPr = Instantiate(floatPrefab, content);
-                dopplerLevelPr.Init("Doppler Level",audioSource.dopplerLevel,true);
+                dopplerLevelPr.Init("Doppler Level", audioSource.dopplerLevel, true);
 
                 dopplerLevelPr.onValueSet += (o =>
                 {
                     if (float.TryParse(o.ToString(), out var value))
                     {
-                        audioSource.dopplerLevel = Mathf.Clamp(value,0,1f);
+                        audioSource.dopplerLevel = Mathf.Clamp(value, 0, 1f);
                     }
-                    
+
                 });
-                
-                pr.Add("dopplerLevel",dopplerLevelPr);
-                
-                properties.Add(audioSource,pr);
+
+                pr.Add("dopplerLevel", dopplerLevelPr);
+
+                properties.Add(audioSource, pr);
             }
             else if (decoration != null)
             {
                 OpenPanel();
-                
+
                 //Set the name
                 nameText.SetEntry("Model");
                 //Set the texture
                 iconImg.texture = audioTexture;
-                
-                Dictionary<string,BaseProperty> pr = new Dictionary<string,BaseProperty>();
-                
+
+                Dictionary<string, BaseProperty> pr = new Dictionary<string, BaseProperty>();
+
                 BoolPropertyUI enableUI = Instantiate(boolPrefab, content);
-                enableUI.Init("EnableCollision",decoration.enableCollision,true);
-                
+                enableUI.Init("EnableCollision", decoration.enableCollision, true);
+
                 enableUI.onValueSet += (o =>
                 {
                     decoration.enableCollision = (bool)o;
                 });
-                pr.Add("enablecollistion",enableUI);
-                
+                pr.Add("enablecollistion", enableUI);
+
                 EnumPropertyUI type = Instantiate(enumPrefab, content);
                 List<string> str = new List<string>();
                 str.Add(MEDecoration.EDecorationType.None.ToString());
@@ -477,15 +477,15 @@ namespace CodingDaniel.MapEditor.UI.Component
                 str.Add(MEDecoration.EDecorationType.Water.ToString());
                 str.Add(MEDecoration.EDecorationType.GrapplePoint.ToString());
                 type.SetDropdown(str);
-                type.Init("Type",(int)decoration.type,true);
+                type.Init("Type", (int)decoration.type, true);
 
                 type.onValueSet += (o =>
                 {
-                    decoration.type = (MEDecoration.EDecorationType) o;
+                    decoration.type = (MEDecoration.EDecorationType)o;
                 });
-                pr.Add("type",type);
+                pr.Add("type", type);
 
-                properties.Add(decoration,pr);
+                properties.Add(decoration, pr);
             }
             else
             {
@@ -495,7 +495,7 @@ namespace CodingDaniel.MapEditor.UI.Component
 
         public bool IsHoverOn()
         {
-            return check.Hover || (screenWidth*7f/8f <Input.mousePosition.y);
+            return check.Hover || (screenWidth * 7f / 8f < Input.mousePosition.y);
         }
     }
 }

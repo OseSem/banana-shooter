@@ -40,7 +40,7 @@ namespace CodingDaniel.MapEditor.MECommon
 
         public bool IsEmpty
         {
-            get { return _renderers.Count == 0;  }
+            get { return _renderers.Count == 0; }
         }
 
         public Material MaterialOverride
@@ -59,7 +59,7 @@ namespace CodingDaniel.MapEditor.MECommon
 
         public void Add(Renderer[] renderers, bool forceRender = true, bool forceMatrixRecalculationPerRender = false)
         {
-            for(int i = 0; i < renderers.Length; ++i)
+            for (int i = 0; i < renderers.Length; ++i)
             {
                 Add(renderers[i], forceRender, forceMatrixRecalculationPerRender);
             }
@@ -77,12 +77,12 @@ namespace CodingDaniel.MapEditor.MECommon
         {
             bool isRendererEnabled = renderer.enabled;
             bool forceMatrixRecalculation = false;
-            
+
             if (renderer is SkinnedMeshRenderer)
             {
                 SkinnedMeshRenderer skinnedMeshRenderer = (SkinnedMeshRenderer)renderer;
                 forceMatrixRecalculation = skinnedMeshRenderer.forceMatrixRecalculationPerRender;
-                if(forceMatrixRecalcuationPerRender)
+                if (forceMatrixRecalcuationPerRender)
                 {
                     skinnedMeshRenderer.forceMatrixRecalculationPerRender = true;
                 }
@@ -100,7 +100,7 @@ namespace CodingDaniel.MapEditor.MECommon
                     renderer.enabled = false;
                     _renderers.Add(renderer);
                     _settingsBackup.Add(new Tuple<bool?, bool?>(isRendererEnabled, forceMatrixRecalculation));
-                }   
+                }
             }
 
         }
@@ -108,13 +108,13 @@ namespace CodingDaniel.MapEditor.MECommon
         public void Remove(Renderer renderer)
         {
             int index = _renderers.IndexOf(renderer);
-            if(index < 0)
+            if (index < 0)
             {
                 return;
             }
 
             Tuple<bool?, bool?> settings = _settingsBackup[index];
-            if(settings.Item2 != null)
+            if (settings.Item2 != null)
             {
                 if (renderer is SkinnedMeshRenderer)
                 {
@@ -124,15 +124,15 @@ namespace CodingDaniel.MapEditor.MECommon
 
             }
 
-            if(settings.Item1 != null)
+            if (settings.Item1 != null)
             {
                 renderer.enabled = settings.Item1.Value;
             }
-            
+
             _renderers.RemoveAt(index);
             _settingsBackup.RemoveAt(index);
-            
-            
+
+
         }
 
         public void Refresh()

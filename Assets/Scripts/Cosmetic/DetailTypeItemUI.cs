@@ -16,7 +16,7 @@ namespace Cosmetic
             toggle.onValueChanged.RemoveAllListeners();
         }
 
-        public void Initialize(string key,int i,ToggleGroup typeGroup)
+        public void Initialize(string key, int i, ToggleGroup typeGroup)
         {
             text.SetEntry(key);
             toggle.onValueChanged.AddListener(delegate { CosmeticMenu.Instance.SetSubType(i); });

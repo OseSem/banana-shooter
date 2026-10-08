@@ -14,12 +14,12 @@ namespace Multiplayer.Entity.Server.Enemy
         /// </summary>
         public enum EZombieState
         {
-            Awake=0,
+            Awake = 0,
             Idle,
             Roam,
             Trace
         }
-        public float moveSpeed = 3500f,maxSpeed=10;
+        public float moveSpeed = 3500f, maxSpeed = 10;
         private EZombieState state = EZombieState.Idle;
         NavMeshAgent agent;
         public override int MaxHealth { get; set; } = 150;
@@ -31,8 +31,8 @@ namespace Multiplayer.Entity.Server.Enemy
             base.Awake();
             agent = GetComponent<NavMeshAgent>();
             _transform = transform;
-            InvokeRepeating(nameof(GetNavMeshPos),0.2f,.5f);
-            InvokeRepeating(nameof(FindPlayer),0.2f,0.5f);
+            InvokeRepeating(nameof(GetNavMeshPos), 0.2f, .5f);
+            InvokeRepeating(nameof(FindPlayer), 0.2f, 0.5f);
         }
 
         Quaternion rot;
@@ -56,7 +56,7 @@ namespace Multiplayer.Entity.Server.Enemy
                             break;
                         }
                     }
-                    if (!flag&&dis < 3f)
+                    if (!flag && dis < 3f)
                     {
                         if (rb.velocity.sqrMagnitude < 1f)
                         {
@@ -66,10 +66,10 @@ namespace Multiplayer.Entity.Server.Enemy
                     }
                     rot = Quaternion.LookRotation(nextPos - myPos);
                     _transform.rotation = Quaternion.Euler(0f, rot.eulerAngles.y, 0f);
-                
+
                     //Move
                     Vector3 dir = moveSpeed * Time.fixedDeltaTime * _transform.forward;
-                    rb.velocity = new Vector3(dir.x,rb.velocity.y,dir.z);
+                    rb.velocity = new Vector3(dir.x, rb.velocity.y, dir.z);
                     break;
             }
         }
@@ -80,12 +80,12 @@ namespace Multiplayer.Entity.Server.Enemy
         void ChangeState(EZombieState s)
         {
             state = s;
-            Message message= Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.EnemyState);
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.EnemyState);
 
             message.Add(Id);
-                        
-            message.Add((ushort) state);
-                        
+
+            message.Add((ushort)state);
+
             NetworkServerManager.Instance.Server.SendToAll(message);
         }
 
@@ -95,15 +95,15 @@ namespace Multiplayer.Entity.Server.Enemy
         }
         void FindPlayer()
         {
-            if (state != EZombieState.Trace&&state != EZombieState.Awake)
+            if (state != EZombieState.Trace && state != EZombieState.Awake)
             {
-                int cnt = Physics.OverlapSphereNonAlloc(_transform.position, 120f,cols,GameManager.Instance.serverPlayer);
+                int cnt = Physics.OverlapSphereNonAlloc(_transform.position, 120f, cols, GameManager.Instance.serverPlayer);
 
                 if (cnt > 0)
                 {
                     target = cols[0].transform;
                     ChangeState(EZombieState.Awake);
-                    Invoke(nameof(ReadyToTrace),1f);
+                    Invoke(nameof(ReadyToTrace), 1f);
                 }
             }
         }
@@ -118,12 +118,12 @@ namespace Multiplayer.Entity.Server.Enemy
             if (agent.isOnNavMesh)
             {
                 NavMeshPath path = new NavMeshPath();
-                Vector3  targetPos = target!=null? target.position : Vector3.zero;
+                Vector3 targetPos = target != null ? target.position : Vector3.zero;
                 if (Physics.Raycast(targetPos, Vector3.down, out var hit, 1000, whatIsGround))
                 {
                     targetPos = hit.point;
                 }
-             
+
                 Vector3 desiredPos = Vector3.zero;
                 switch (state)
                 {
@@ -137,7 +137,7 @@ namespace Multiplayer.Entity.Server.Enemy
                 if (agent.CalculatePath(desiredPos, path))
                 {
                     agent.path = path;
-                
+
                     // for (int i = 1; i < path.corners.Length; i++)
                     // {
                     //     Debug.DrawLine(path.corners[i],path.corners[i-1],Color.red,1f);
@@ -150,7 +150,7 @@ namespace Multiplayer.Entity.Server.Enemy
             agent.enabled = false;
 
         }
-    
-    
+
+
     }
 }

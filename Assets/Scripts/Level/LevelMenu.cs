@@ -12,18 +12,18 @@ namespace Level
 {
     public class LevelMenu : MonoBehaviour
     {
-        [SerializeField] private RectTransform obj,levelObj;
+        [SerializeField] private RectTransform obj, levelObj;
 
         private Vector2 desiredPos;
 
         public RawImage[] images;
 
         public AudioSource source;
-        
-        public TextMeshProUGUI levelText,experienceText;
+
+        public TextMeshProUGUI levelText, experienceText;
         private LevelSystemAnimated levelSystemAnimated;
 
-        private int _maxValue = 0,_minValue=0;
+        private int _maxValue = 0, _minValue = 0;
 
         [SerializeField] private Image defaultFill, addFill;
 
@@ -47,7 +47,7 @@ namespace Level
         private void OnDisable()
         {
             LevelManager.Instance.OnInitialize -= Init;
-            
+
         }
 
         void Init()
@@ -57,7 +57,7 @@ namespace Level
 
         public void Display()
         {
-            desiredPos=Vector2.zero;
+            desiredPos = Vector2.zero;
         }
 
         public void UnDisplay()
@@ -92,18 +92,18 @@ namespace Level
             _shaking = false;
         }
 
-        private void SetExperienceBarSize(int exp,int expToNext)
+        private void SetExperienceBarSize(int exp, int expToNext)
         {
-            addFill.fillAmount= (float)(exp - _minValue) / (_maxValue - _minValue);
+            addFill.fillAmount = (float)(exp - _minValue) / (_maxValue - _minValue);
             experienceText.SetText($"{exp} / {expToNext}xp");
         }
-    
-        private void SetLevelNumber(int levelNumber,int lastExp,int expToNext)
+
+        private void SetLevelNumber(int levelNumber, int lastExp, int expToNext)
         {
             _minValue = lastExp;
             _maxValue = expToNext;
             levelText.text = levelNumber.ToString();
-            defaultFill.fillAmount= 0;
+            defaultFill.fillAmount = 0;
 
             Color color = LevelManager.Instance.GetColor(levelNumber);
 
@@ -117,14 +117,15 @@ namespace Level
             addFill.color = color;
         }
 
-        void SetLevelSystemAnimated(LevelSystemAnimated levelSystemAnimated) {
+        void SetLevelSystemAnimated(LevelSystemAnimated levelSystemAnimated)
+        {
             // Set the LevelSystemAnimated object
             this.levelSystemAnimated = levelSystemAnimated;
             this.levelSystemAnimated.source = source;
-        
+
             // Update the starting values
-            SetLevelNumber(levelSystemAnimated.GetLevel(),levelSystemAnimated.GetMinExp(),levelSystemAnimated.GetExpToNext());
-            SetExperienceBarSize(levelSystemAnimated.GetExp(),levelSystemAnimated.GetExpToNext());
+            SetLevelNumber(levelSystemAnimated.GetLevel(), levelSystemAnimated.GetMinExp(), levelSystemAnimated.GetExpToNext());
+            SetExperienceBarSize(levelSystemAnimated.GetExp(), levelSystemAnimated.GetExpToNext());
 
             defaultFill.fillAmount = (float)(levelSystemAnimated.GetExp() - _minValue) / (_maxValue - _minValue);
             experienceText.SetText($"{levelSystemAnimated.GetExp()} / {levelSystemAnimated.GetExpToNext()}xp");
@@ -134,7 +135,7 @@ namespace Level
             levelSystemAnimated.OnLevelChanged += LevelSystemAnimated_OnLevelChanged;
             levelSystemAnimated.OnAnimateStart += OnAnimateStart;
             levelSystemAnimated.OnAnimateStop += OnAnimateStop;
-            
+
         }
 
         private void OnAnimateStop(object sender, EventArgs e)
@@ -148,28 +149,28 @@ namespace Level
         {
             var color = LevelManager.Instance.GetColor(levelSystemAnimated.GetLevel());
             var c = color * 0.55f;
-            var unColor=new Color(c.r,c.g,c.b,1f);
+            var unColor = new Color(c.r, c.g, c.b, 1f);
             var desiredColor = color;
             defaultFill.fillAmount = addFill.fillAmount;
 
             float speed = 3f;
             while ((defaultFill.color - desiredColor).Magnitude() > 0.03f)
             {
-                defaultFill.color = Color.Lerp(defaultFill.color, desiredColor,Time.deltaTime*speed);
+                defaultFill.color = Color.Lerp(defaultFill.color, desiredColor, Time.deltaTime * speed);
                 yield return null;
             }
 
             desiredColor = unColor;
             while ((defaultFill.color - desiredColor).Magnitude() > 0.03f)
             {
-                defaultFill.color = Color.Lerp(defaultFill.color, desiredColor,Time.deltaTime*speed);
+                defaultFill.color = Color.Lerp(defaultFill.color, desiredColor, Time.deltaTime * speed);
                 yield return null;
             }
-            
+
             desiredColor = color;
             while ((defaultFill.color - desiredColor).Magnitude() > 0.03f)
             {
-                defaultFill.color = Color.Lerp(defaultFill.color, desiredColor,Time.deltaTime*speed);
+                defaultFill.color = Color.Lerp(defaultFill.color, desiredColor, Time.deltaTime * speed);
                 yield return null;
             }
 
@@ -180,23 +181,24 @@ namespace Level
 
         private void OnAnimateStart(object sender, EventArgs e)
         {
-            Color color = LevelManager.Instance.GetColor(((LevelSystemAnimated) sender).GetLevel()) * 0.55f;
-            defaultFill.color = new Color(color.r,color.g,color.b,1f);
-            
+            Color color = LevelManager.Instance.GetColor(((LevelSystemAnimated)sender).GetLevel()) * 0.55f;
+            defaultFill.color = new Color(color.r, color.g, color.b, 1f);
+
             _shaking = true;
             Display();
             StopAllCoroutines();
         }
 
-        private void LevelSystemAnimated_OnLevelChanged(object sender, EventArgs e) {
+        private void LevelSystemAnimated_OnLevelChanged(object sender, EventArgs e)
+        {
             // Level changed, update text
-            SetLevelNumber(levelSystemAnimated.GetLevel(),levelSystemAnimated.GetMinExp(),levelSystemAnimated.GetExpToNext());
-        
+            SetLevelNumber(levelSystemAnimated.GetLevel(), levelSystemAnimated.GetMinExp(), levelSystemAnimated.GetExpToNext());
+
             AudioManager.Instance.Play("Reward");
 
-            levelDesiredScale = Vector3.one*1.25f;
-            
-            Invoke(nameof(ResetLevelScale),0.7f);
+            levelDesiredScale = Vector3.one * 1.25f;
+
+            Invoke(nameof(ResetLevelScale), 0.7f);
 
             if (levelSystemAnimated.GetLevel() % 5 == 0)
                 InventoryManager.Instance.GetLevelUpReward();
@@ -204,12 +206,13 @@ namespace Level
 
         void ResetLevelScale()
         {
-            levelDesiredScale=Vector3.one;
+            levelDesiredScale = Vector3.one;
         }
 
-        private void LevelSystemAnimated_OnExperienceChanged(object sender, EventArgs e) {
+        private void LevelSystemAnimated_OnExperienceChanged(object sender, EventArgs e)
+        {
             // Experience changed, update bar size
-            SetExperienceBarSize(levelSystemAnimated.GetExp(),levelSystemAnimated.GetExpToNext());
+            SetExperienceBarSize(levelSystemAnimated.GetExp(), levelSystemAnimated.GetExpToNext());
         }
     }
 }

@@ -9,27 +9,27 @@ namespace Weapon
     public class MultiplayerWeapon : MonoBehaviour
     {
         public WeaponStat stat;
-        
+
         [Header("Knife")]
         public Firearms.WeaponType Type;
 
         public Animator animator;
-    
+
         [Header("Gun")]
         public string name;
         public Transform leftHand, rightHand;
         public Transform tip;
         public float spreadAngle;
         public ParticleSystem particleSystem;
-        public AudioClip shoot,reload,reset;
-        public bool isLocal,dual=false;
-    
+        public AudioClip shoot, reload, reset;
+        public bool isLocal, dual = false;
+
         public Transform lTip, rTip;
         public ParticleSystem lPart, rPart;
 
         public bool leftSide = false;
 
-        public bool useGravity=false;
+        public bool useGravity = false;
         private void Start()
         {
             startPos = base.transform.localPosition;
@@ -47,15 +47,15 @@ namespace Weapon
         #region Dynamic
         void Update()
         {
-            if (isLocal) return;   
+            if (isLocal) return;
             ReloadGun();
             RecoilGun();
             MovementBob();
             SpeedBob();
 
             Rotation();
-            Vector3 b3=startPos+ desiredBob + speedBob + recoilOffset + new Vector3(0f, 0f - reloadPosOffset, 0f);
-        
+            Vector3 b3 = startPos + desiredBob + speedBob + recoilOffset + new Vector3(0f, 0f - reloadPosOffset, 0f);
+
             transform.localPosition = Vector3.Lerp(transform.localPosition, b3, Time.deltaTime * 15f);
         }
 
@@ -85,12 +85,12 @@ namespace Weapon
         public void ShootAnim()
         {
             float num = 1.5f;
-            recoilOffset += -(Vector3.forward + Vector3.up * shootVertical- Vector3.right *shootHorizontal);
-            recoilRotation += -new Vector3(shootRotX, UnityEngine.Random.Range(10f, 30f)*shootRotYMultiplier, UnityEngine.Random.Range(-50f, 50f)*shootRotZMultiplier) * num;
+            recoilOffset += -(Vector3.forward + Vector3.up * shootVertical - Vector3.right * shootHorizontal);
+            recoilRotation += -new Vector3(shootRotX, UnityEngine.Random.Range(10f, 30f) * shootRotYMultiplier, UnityEngine.Random.Range(-50f, 50f) * shootRotZMultiplier) * num;
         }
 
         [SerializeField] private float shootVertical = 0.3f, shootHorizontal = 0.35f;
-        [SerializeField] private float shootRotX = 90f,shootRotZMultiplier=1f,shootRotYMultiplier=1f;
+        [SerializeField] private float shootRotX = 90f, shootRotZMultiplier = 1f, shootRotYMultiplier = 1f;
         private void RecoilGun()
         {
             recoilOffset = Vector3.SmoothDamp(recoilOffset, Vector3.zero, ref recoilOffsetVel, 0.05f);
@@ -122,7 +122,7 @@ namespace Weapon
             desiredReloadRotation = -360 * num;
             reloadPosOffset = 0.45f;
         }
-    
+
 
         private Vector3 startPos;
 

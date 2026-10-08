@@ -14,7 +14,7 @@ namespace CodingDaniel.MapEditor.UI
 
         [SerializeField] private Transform content;
         [SerializeField] private SourceItemUI itemPrefab;
-        
+
         [SerializeField] private List<Material> skyboxes;
 
         private void Awake()
@@ -32,14 +32,14 @@ namespace CodingDaniel.MapEditor.UI
             foreach (var skybox in skyboxes)
             {
                 SourceItemUI item = Instantiate(itemPrefab, content);
-                
+
                 Texture texture = GetSkyboxTexture(skybox);
-                item.Init(skybox.name,texture,skybox);
-                
+                item.Init(skybox.name, texture, skybox);
+
                 _items.Add(item);
             }
-            
-            
+
+
         }
         public static Texture GetSkyboxTexture(Material skybox)
         {
@@ -70,7 +70,7 @@ namespace CodingDaniel.MapEditor.UI
             {
                 Destroy(item.gameObject);
             }
-            
+
             _items.Clear();
         }
 

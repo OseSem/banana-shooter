@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Console.CommandScript
 {
-    [CreateAssetMenu(fileName = "Debug Command",menuName = "Utilities/DeveloperConsole/Commands/Debug Command")]
+    [CreateAssetMenu(fileName = "Debug Command", menuName = "Utilities/DeveloperConsole/Commands/Debug Command")]
     public class DebugCommand : ConsoleCommand
     {
         private DeveloperConsoleUI console;
@@ -16,7 +16,7 @@ namespace Console.CommandScript
             }
         }
 
-        private readonly HashSet<string> _stringVarFunction = new () {"save", "load", "record"};
+        private readonly HashSet<string> _stringVarFunction = new() { "save", "load", "record" };
 
         public override bool Process(string[] args)
         {

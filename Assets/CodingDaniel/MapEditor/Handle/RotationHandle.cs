@@ -18,7 +18,7 @@ namespace CodingDaniel.MapEditor.Handle
         private float _deltaX;
         private float _deltaY;
         private Vector2 _prevPointer;
-  
+
         private Quaternion _targetInverse = Quaternion.identity;
         private Matrix4x4 _targetInverseMatrix;
         private Vector3 _startingRotationAxis = Vector3.zero;
@@ -58,11 +58,11 @@ namespace CodingDaniel.MapEditor.Handle
         public override Transform[] Targets
         {
             get { return base.Targets; }
-            set 
+            set
             {
-                base.Targets = value; 
+                base.Targets = value;
 
-                if(ActiveRealTargets != null)
+                if (ActiveRealTargets != null)
                 {
                     _exposedTargets = ActiveRealTargets.Select(t => t.GetComponent<ExposeToEditor>()).ToArray();
                     _startingEuler = new Vector3[_exposedTargets.Length];
@@ -205,15 +205,15 @@ namespace CodingDaniel.MapEditor.Handle
         }
 
         private bool _forceScreenRotationMode;
-        
+
         protected override bool OnBeginDrag()
         {
-            if(Target == null)
+            if (Target == null)
             {
                 return false;
             }
 
-     
+
             _targetRotation = Target.rotation;
             _targetInverseMatrix = Matrix4x4.TRS(Target.position, Target.rotation * StartingRotationInv, Vector3.one).inverse;
 
@@ -431,7 +431,7 @@ namespace CodingDaniel.MapEditor.Handle
                 _deltaX = 0.0f;
                 _deltaY = 0.0f;
             }
-           
+
 
             if (EffectiveGridUnitSize == 0.0f)
             {
@@ -443,7 +443,7 @@ namespace CodingDaniel.MapEditor.Handle
             for (int i = 0; i < _exposedTargets.Length; i++)
             {
                 ExposeToEditor exposed = _exposedTargets[i];
-                if(exposed != null)
+                if (exposed != null)
                 {
                     _localRotationsBuffer[i] = exposed.transform.localRotation;
                 }
@@ -456,10 +456,10 @@ namespace CodingDaniel.MapEditor.Handle
             }
 
 #if UPDATE_LOCAL_EULER
-            for(int i = 0; i < _exposedTargets.Length; i++)
+            for (int i = 0; i < _exposedTargets.Length; i++)
             {
                 ExposeToEditor exposed = _exposedTargets[i];
-                if(exposed != null)
+                if (exposed != null)
                 {
                     Quaternion localRotation = exposed.transform.localRotation;
 

@@ -35,17 +35,17 @@ namespace CodingDaniel.MapEditor.UI
 
         private void Start()
         {
-            _materialPaletteUI=MaterialPaletteUI.Instance;
-            Invoke(nameof(ResetCanvas),0.1f);
-            InvokeRepeating(nameof(RefreshOffset),0,5f);
-            
+            _materialPaletteUI = MaterialPaletteUI.Instance;
+            Invoke(nameof(ResetCanvas), 0.1f);
+            InvokeRepeating(nameof(RefreshOffset), 0, 5f);
+
             SteamFriends.SetRichPresence("steam_display", "#MapEditor");
         }
 
         void RefreshOffset()
         {
             offset = Screen.height * 8f / 9f;
-            
+
         }
         void ResetCanvas()
         {
@@ -67,17 +67,17 @@ namespace CodingDaniel.MapEditor.UI
                 _desiredAlpha = (y > offset || TabList.Instance.isSelected) && !DragWindow.IsDragging ? 1f : 0f;
 
             }
-           
+
             canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, _desiredAlpha, Time.deltaTime * 15f);
         }
 
         public bool UsingUI()
         {
-            return Math.Abs(_desiredAlpha - 1f) < 0.1f || _materialPaletteUI.DisplayingUI|| TabList.Instance.isSelected || DragWindow.IsDragging || ComponentMenu.Instance.IsHoverOn() || EditorMenu.Instance.Menu ||
+            return Math.Abs(_desiredAlpha - 1f) < 0.1f || _materialPaletteUI.DisplayingUI || TabList.Instance.isSelected || DragWindow.IsDragging || ComponentMenu.Instance.IsHoverOn() || EditorMenu.Instance.Menu ||
                    PublishMenu.Instance.IsUsingUI() || UVEditorUI.Instance.hoverOnUICheck.Hover;
         }
 
-        
+
         public void SelectAll()
         {
             IMESelectionComponent selectionComponent = MESelectionComponent.Instance;
@@ -89,20 +89,20 @@ namespace CodingDaniel.MapEditor.UI
             MEInput.Instance.SelectAll();
         }
 
-        
 
-        [SerializeField] public TMP_InputField mapNameInput,mapDescriptionInput;
+
+        [SerializeField] public TMP_InputField mapNameInput, mapDescriptionInput;
         [SerializeField] private GameObject saveWindow;
         [SerializeField] private RawImage img;
-        
-        
+
+
         public void Save()
         {
             StartCoroutine(SaveMap(false));
 
         }
 
-        
+
         public void SaveAs()
         {
             StartCoroutine(SaveMap(true));
@@ -120,7 +120,7 @@ namespace CodingDaniel.MapEditor.UI
             MapBoundVisual.Instance.enabled = false;
             MEBase.Instance.Selection.ActiveGameObject = null;
             SceneGridVisual.Instance.enabled = false;
-            
+
             //TODO: Disable all player spawn point to prevent it got screenshot in preview image
             List<MapSaveObject> disabledObjs = new List<MapSaveObject>();
             for (int i = 0; i < MapSaver.Instance.ObjectsNeedToSave.Count; i++)
@@ -131,13 +131,13 @@ namespace CodingDaniel.MapEditor.UI
                     MapSaver.Instance.ObjectsNeedToSave[i].gameObject.SetActive(false);
                 }
             }
-            
+
             yield return null;
 
             int width = 1920;
             int height = 1080;
-            Rect rect = new Rect(0, 0,width ,height );
-            
+            Rect rect = new Rect(0, 0, width, height);
+
             // Create a new RenderTexture with the desired resolution
             RenderTexture rt = new RenderTexture(width, height, 24);
 
@@ -149,13 +149,13 @@ namespace CodingDaniel.MapEditor.UI
             currentCamera.targetTexture = rt;
             currentCamera.Render();
 
-            texture2D = new Texture2D(width,height, TextureFormat.RGB24, false);
-            
-            texture2D.ReadPixels(rect,0,0);
+            texture2D = new Texture2D(width, height, TextureFormat.RGB24, false);
+
+            texture2D.ReadPixels(rect, 0, 0);
             texture2D.Apply();
 
             mainCanvas.alpha = 1f;
-            
+
             SpriteGizmoManager.Instance.enabled = true;
             MapBoundVisual.Instance.enabled = settingMenu.activeSelf;
             SceneGridVisual.Instance.enabled = true;
@@ -165,8 +165,8 @@ namespace CodingDaniel.MapEditor.UI
             {
                 mapSaveObject.gameObject.SetActive(true);
             }
-            
-            if (flag||!MapSaver.Instance.Save(mapNameInput.text,mapDescriptionInput.text,texture2D,flag))
+
+            if (flag || !MapSaver.Instance.Save(mapNameInput.text, mapDescriptionInput.text, texture2D, flag))
             {
                 OpenSaveWindow();
             }
@@ -181,7 +181,7 @@ namespace CodingDaniel.MapEditor.UI
         void OpenSaveWindow()
         {
             img.texture = texture2D;
-            
+
             saveWindow.SetActive(true);
         }
 

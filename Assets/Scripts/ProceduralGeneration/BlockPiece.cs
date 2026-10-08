@@ -8,8 +8,8 @@ namespace ProceduralGeneration
 {
     public class BlockPiece : MonoBehaviour
     {
-        public static readonly List<BlockPiece> List = new ( 10 );
-        
+        public static readonly List<BlockPiece> List = new(10);
+
         [SerializeField] public PieceData pieceData;
 
         public PieceType currentType;
@@ -20,8 +20,8 @@ namespace ProceduralGeneration
 
         public int iteration = 0;
 
-        [Header( "AI" )]
-        public bool hasAI = false; 
+        [Header("AI")]
+        public bool hasAI = false;
         public Vector3 origin;
         public Vector3 size;
 
@@ -31,45 +31,45 @@ namespace ProceduralGeneration
 
         private void Awake()
         {
-            List.Add( this );
+            List.Add(this);
         }
 
         private void OnDestroy()
         {
-            List.Remove( this );
+            List.Remove(this);
         }
 
-        public void Init( int it )
+        public void Init(int it)
         {
 
             iteration = it;
         }
 
-        public void InitDoors( DoorEntrance prefab )
+        public void InitDoors(DoorEntrance prefab)
         {
             doors = new List<DoorEntrance>();
 
             doorsInited = true;
 
-            SpawnDoor( prefab, pieceData.forwardDoor );
-            SpawnDoor( prefab, pieceData.backwardDoor );
-            SpawnDoor( prefab, pieceData.rightDoor );
-            SpawnDoor( prefab, pieceData.leftDoor );
+            SpawnDoor(prefab, pieceData.forwardDoor);
+            SpawnDoor(prefab, pieceData.backwardDoor);
+            SpawnDoor(prefab, pieceData.rightDoor);
+            SpawnDoor(prefab, pieceData.leftDoor);
         }
 
-        private void SpawnDoor( DoorEntrance prefab, Transform trans )
+        private void SpawnDoor(DoorEntrance prefab, Transform trans)
         {
-            if ( trans != null )
+            if (trans != null)
             {
-                var door = Instantiate( prefab, trans.position, trans.rotation );
-                
-                door.transform.SetParent( transform );
+                var door = Instantiate(prefab, trans.position, trans.rotation);
 
-                door.gameObject.SetActive( true );
+                door.transform.SetParent(transform);
 
-                door.Init( this );
-                
-                doors.Add( door );
+                door.gameObject.SetActive(true);
+
+                door.Init(this);
+
+                doors.Add(door);
             }
         }
 

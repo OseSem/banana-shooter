@@ -8,18 +8,18 @@ namespace Movement
         //Assingables
         PlayerMovement PlayerMovement { get; set; }
         Transform PlayerTransform { get; set; }
-        Transform PlayerCam { get;set; }
-        Transform Orientation{ get;set; }
-        GameObject PlayerSmokeFx{ get;set; }
+        Transform PlayerCam { get; set; }
+        Transform Orientation { get; set; }
+        GameObject PlayerSmokeFx { get; set; }
         //Other
-        Rigidbody Rb{ get;set; }
+        Rigidbody Rb { get; set; }
         CapsuleCollider Collider { get; set; }
-        
-        void MyAwake(PlayerMovement playerMovement,Transform playerCam,Transform orientation,GameObject playerSmokeFx,Rigidbody rb,CapsuleCollider collider,Transform playerTransform);
+
+        void MyAwake(PlayerMovement playerMovement, Transform playerCam, Transform orientation, GameObject playerSmokeFx, Rigidbody rb, CapsuleCollider collider, Transform playerTransform);
 
         void MyOnEnable();
         void MyOnDisable();
-        
+
         void MyFixedUpdate();
         void MyUpdate();
         void MyLateUpdate();

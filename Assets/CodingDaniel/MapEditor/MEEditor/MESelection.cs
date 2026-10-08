@@ -62,7 +62,7 @@ namespace CodingDaniel.MapEditor.MEEditor
     public class MESelection : IMESelection
     {
         public event RuntimeSelectionChanged SelectionChanged;
-        
+
         private bool _isEnabled = true;
         public bool Enabled
         {
@@ -78,7 +78,7 @@ namespace CodingDaniel.MapEditor.MEEditor
         }
 
         public bool EnableUndo { get; set; } = true;
-        
+
         void RaiseSelectionChanged(Object[] unselectedObjects)
         {
             if (SelectionChanged != null)
@@ -86,7 +86,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 SelectionChanged(unselectedObjects);
             }
         }
-        
+
         public GameObject ActiveGameObject
         {
             get { return ActiveObject as GameObject; }
@@ -138,7 +138,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 }
             }
         }
-        
+
         public int Length
         {
             get
@@ -158,7 +158,7 @@ namespace CodingDaniel.MapEditor.MEEditor
         }
 
         private HashSet<Object> _selectionHS = null;
-        
+
         public bool IsSelected(Object obj)
         {
             if (_selectionHS == null)
@@ -219,13 +219,13 @@ namespace CodingDaniel.MapEditor.MEEditor
             {
                 return;
             }
-            
+
             Object[] oldObjects = _objects != null ? _objects.Where(obj => obj != null).ToArray() : _objects;
             if (value == null)
             {
                 _objects = null;
                 _activeObject = null;
-                
+
                 // Debug.Log("null reference");
             }
             else
@@ -254,7 +254,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 return _objects.OfType<GameObject>().ToArray();
             }
         }
-        
+
         public Transform ActiveTransform
         {
             get

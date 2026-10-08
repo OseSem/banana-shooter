@@ -9,7 +9,7 @@ namespace Audio
         public float timeStep;
         public float timeToBeat;
         public float restSmoothTime;
-        
+
         private float _previousAudioValue;
         private float _audioValue;
         private float _timer;
@@ -28,13 +28,13 @@ namespace Audio
 
             if (_previousAudioValue > bias && _audioValue <= bias)
             {
-                if(_timer > timeStep)
+                if (_timer > timeStep)
                     OnBeat();
             }
 
             if (_previousAudioValue <= bias && _audioValue > bias)
             {
-                if(_timer > timeStep)
+                if (_timer > timeStep)
                     OnBeat();
             }
 

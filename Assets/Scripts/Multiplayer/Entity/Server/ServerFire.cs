@@ -7,21 +7,21 @@ namespace Multiplayer.Entity.Server
 {
     public class ServerFire : MonoBehaviour
     {
-        public ushort PlayerId { get;private set; } = 0;
-    
+        public ushort PlayerId { get; private set; } = 0;
+
         private static ushort nextId = 0;
 
         public void Initialize(ushort playerId)
         {
             PlayerId = playerId;
-        
-            Message message = Message.Create(MessageSendMode.Reliable,(ushort) ServerToClientId.FireInit);
+
+            Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.FireInit);
 
             message.Add(transform.position);
-        
+
             NetworkServerManager.Instance.Server.SendToAll(message);
-        
-            Destroy(gameObject,3);
+
+            Destroy(gameObject, 3);
         }
 
 
@@ -37,7 +37,7 @@ namespace Multiplayer.Entity.Server
         {
             if (ready)
             {
-                int cnt = Physics.OverlapSphereNonAlloc(transform.position, 2f,cols);
+                int cnt = Physics.OverlapSphereNonAlloc(transform.position, 2f, cols);
 
                 for (int i = 0; i < cnt; i++)
                 {
@@ -46,14 +46,14 @@ namespace Multiplayer.Entity.Server
 
                     if (damageable != null)
                     {
-                        damageable.TakeDamage(5,PlayerId,NetworkServerManager.Instance.CurrentTick,false,false,1003);
+                        damageable.TakeDamage(5, PlayerId, NetworkServerManager.Instance.CurrentTick, false, false, 1003);
                         ready = false;
-                        Invoke(nameof(GetReady),0.5f);
+                        Invoke(nameof(GetReady), 0.5f);
                     }
                 }
             }
 
-        
+
         }
     }
 }

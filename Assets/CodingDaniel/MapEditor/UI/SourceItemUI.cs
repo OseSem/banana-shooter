@@ -12,12 +12,12 @@ namespace CodingDaniel.MapEditor.UI
 
         public object source;
 
-        public void Init(string name, Texture texture,object ob)
+        public void Init(string name, Texture texture, object ob)
         {
             text.SetText(name);
             img.texture = texture;
             source = ob;
-            
+
         }
 
         private void Start()
@@ -29,6 +29,6 @@ namespace CodingDaniel.MapEditor.UI
         {
             SourceUI.Instance.Apply(this);
         }
-        
+
     }
 }

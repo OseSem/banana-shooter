@@ -22,15 +22,15 @@ public class ReceiveBoxItem : MonoBehaviour
 
         // nameText.StringReference.Arguments = new List<object>() { name,item.name };
         // nameText.RefreshString();
-        
+
         nameText.RefreshString();
-        
+
 
         image.texture = item.icon;
     }
 
     private void Update()
     {
-        t.localPosition = Vector3.Lerp(t.localPosition,Vector3.zero, Time.deltaTime*15f);
+        t.localPosition = Vector3.Lerp(t.localPosition, Vector3.zero, Time.deltaTime * 15f);
     }
 }

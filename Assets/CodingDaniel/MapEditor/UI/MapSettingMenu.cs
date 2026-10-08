@@ -15,7 +15,7 @@ namespace CodingDaniel.MapEditor.UI
         private void Awake()
         {
             Instance = this;
-            
+
             RefreshSkybox();
             RefreshDirectionalLighting();
         }
@@ -23,20 +23,20 @@ namespace CodingDaniel.MapEditor.UI
         private void OnEnable()
         {
             enableDirectionalLighting.onValueChanged.AddListener(SetDirectionalLighting);
-            
-            boundXInput.onEndEdit.AddListener(delegate(string arg0) { OnBoundInput(arg0, 0); });
-            boundYInput.onEndEdit.AddListener(delegate(string arg0) { OnBoundInput(arg0, 1); });
-            boundZInput.onEndEdit.AddListener(delegate(string arg0) { OnBoundInput(arg0, 2); });
-            
-            boundCenterXInput.onEndEdit.AddListener(delegate(string arg0) { OnBoundCenterInput(arg0, 0); });
-            boundCenterYInput.onEndEdit.AddListener(delegate(string arg0) { OnBoundCenterInput(arg0, 1); });
-            boundCenterZInput.onEndEdit.AddListener(delegate(string arg0) { OnBoundCenterInput(arg0, 2); });
+
+            boundXInput.onEndEdit.AddListener(delegate (string arg0) { OnBoundInput(arg0, 0); });
+            boundYInput.onEndEdit.AddListener(delegate (string arg0) { OnBoundInput(arg0, 1); });
+            boundZInput.onEndEdit.AddListener(delegate (string arg0) { OnBoundInput(arg0, 2); });
+
+            boundCenterXInput.onEndEdit.AddListener(delegate (string arg0) { OnBoundCenterInput(arg0, 0); });
+            boundCenterYInput.onEndEdit.AddListener(delegate (string arg0) { OnBoundCenterInput(arg0, 1); });
+            boundCenterZInput.onEndEdit.AddListener(delegate (string arg0) { OnBoundCenterInput(arg0, 2); });
         }
 
         private void OnDisable()
         {
             enableDirectionalLighting.onValueChanged.RemoveListener(SetDirectionalLighting);
-            
+
             boundXInput.onEndEdit.RemoveAllListeners();
             boundYInput.onEndEdit.RemoveAllListeners();
             boundZInput.onEndEdit.RemoveAllListeners();
@@ -45,11 +45,11 @@ namespace CodingDaniel.MapEditor.UI
         [SerializeField] public RawImage skyboxImg;
         [SerializeField] public TextMeshProUGUI skyboxText;
 
-        
+
         public void TryOpenSkyboxSource()
         {
             SourceUI.Instance.onApply += SetSkybox;
-            
+
             SourceUI.Instance.DisplaySkybox();
         }
 
@@ -58,10 +58,10 @@ namespace CodingDaniel.MapEditor.UI
             SourceUI.Instance.onApply -= SetSkybox;
 
             Material skybox = (Material)item.source;
-            
+
 
             RenderSettings.skybox = skybox;
-            
+
             RefreshSkybox();
         }
 
@@ -69,7 +69,7 @@ namespace CodingDaniel.MapEditor.UI
         {
             skyboxColorImg.color = RenderSettings.ambientLight;
             Material skybox = RenderSettings.skybox;
-            
+
             if (skybox == null)
             {
 
@@ -84,7 +84,7 @@ namespace CodingDaniel.MapEditor.UI
             }
         }
 
-        void OnBoundInput(string str,int index)
+        void OnBoundInput(string str, int index)
         {
             if (float.TryParse(str, out var f))
             {
@@ -105,8 +105,8 @@ namespace CodingDaniel.MapEditor.UI
                 MapBoundVisual.Instance.MECamera.RefreshCommandBuffer();
             }
         }
-        
-        void OnBoundCenterInput(string str,int index)
+
+        void OnBoundCenterInput(string str, int index)
         {
             if (float.TryParse(str, out var f))
             {
@@ -123,7 +123,7 @@ namespace CodingDaniel.MapEditor.UI
                         break;
                 }
 
-                MapBoundVisual.Instance.Bounds = new Bounds(new Vector3(_boundCenterX,_boundCenterY,_boundCenterZ), new Vector3(_boundX, _boundY, _boundZ));
+                MapBoundVisual.Instance.Bounds = new Bounds(new Vector3(_boundCenterX, _boundCenterY, _boundCenterZ), new Vector3(_boundX, _boundY, _boundZ));
                 MapBoundVisual.Instance.MECamera.RefreshCommandBuffer();
             }
         }
@@ -133,26 +133,26 @@ namespace CodingDaniel.MapEditor.UI
             _boundX = b.x;
             _boundY = b.y;
             _boundZ = b.z;
-            
+
             _boundCenterX = center.x;
             _boundCenterY = center.y;
             _boundCenterZ = center.z;
-            
+
             boundXInput.SetTextWithoutNotify(_boundX.ToString("F1"));
             boundYInput.SetTextWithoutNotify(_boundY.ToString("F1"));
             boundZInput.SetTextWithoutNotify(_boundZ.ToString("F1"));
-            
+
             boundCenterXInput.SetTextWithoutNotify(_boundCenterX.ToString("F1"));
             boundCenterYInput.SetTextWithoutNotify(_boundCenterY.ToString("F1"));
             boundCenterZInput.SetTextWithoutNotify(_boundCenterZ.ToString("F1"));
-            
-            MapBoundVisual.Instance.Bounds = new Bounds(new Vector3(_boundCenterX,_boundCenterY,_boundCenterZ), new Vector3(_boundX, _boundY, _boundZ));
+
+            MapBoundVisual.Instance.Bounds = new Bounds(new Vector3(_boundCenterX, _boundCenterY, _boundCenterZ), new Vector3(_boundX, _boundY, _boundZ));
             MapBoundVisual.Instance.MECamera.RefreshCommandBuffer();
         }
 
         [SerializeField] public Toggle enableDirectionalLighting;
         [SerializeField] private Light directionalLighting;
-        
+
         [SerializeField] Color disabledLightingLight = Color.black;
         [SerializeField] Color enabledLightingLight = Color.white;
 
@@ -161,8 +161,8 @@ namespace CodingDaniel.MapEditor.UI
 
         [SerializeField] private TMP_InputField boundXInput, boundYInput, boundZInput;
         [SerializeField] private TMP_InputField boundCenterXInput, boundCenterYInput, boundCenterZInput;
-        private float _boundX=20f, _boundY=10f, _boundZ=20f;
-        private float _boundCenterX=0f, _boundCenterY=0f, _boundCenterZ=0f;
+        private float _boundX = 20f, _boundY = 10f, _boundZ = 20f;
+        private float _boundCenterX = 0f, _boundCenterY = 0f, _boundCenterZ = 0f;
         void SetDirectionalLighting(bool value)
         {
             directionalLighting.enabled = value;
@@ -175,7 +175,7 @@ namespace CodingDaniel.MapEditor.UI
             enableDirectionalLighting.SetIsOnWithoutNotify(directionalLighting.enabled);
         }
 
-        
+
         public void TryEditSkyboxColor()
         {
             ColorPickerControl.Instance.OnColorChanged += (color =>

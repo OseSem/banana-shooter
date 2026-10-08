@@ -44,7 +44,7 @@ namespace Quest
         bool[] _claimed = new bool[5];
 
         public static readonly int delay = 86400;
-        public DateTime LastRecordTime,FirstPlayTime;
+        public DateTime LastRecordTime, FirstPlayTime;
         private void Awake()
         {
             Instance = this;
@@ -60,9 +60,9 @@ namespace Quest
 
             CoroutineWithData cd = new CoroutineWithData(this, SaveSystem.LoadBinaryDataAsync("quest/quest_first_time"));
             yield return cd.coroutine;
-            
+
             Preload.Instance.NextStep();
-            
+
             if (cd.result is DateTime time)
             {
                 FirstPlayTime = time;
@@ -79,43 +79,43 @@ namespace Quest
             }
             cd = new CoroutineWithData(this, SaveSystem.LoadBinaryDataAsync("quest/quest_index"));
             yield return cd.coroutine;
-            
+
             Preload.Instance.NextStep();
-            
+
             //Get Quest Index
             if (cd.result is int[] index)
             {
                 _questIndex = index;
-                
+
                 cd = new CoroutineWithData(this, SaveSystem.LoadBinaryDataAsync("quest/quest_claimed"));
                 yield return cd.coroutine;
-                
+
                 Preload.Instance.NextStep();
-                
+
                 if (cd.result is bool[] achieved)
                 {
                     _claimed = achieved;
                 }
-                
+
                 cd = new CoroutineWithData(this, SaveSystem.LoadBinaryDataAsync("quest/quest_progress"));
                 yield return cd.coroutine;
-                
+
                 Preload.Instance.NextStep();
-                
+
                 if (cd.result is int[] progresses)
                 {
                     _progresses = progresses;
                 }
-                
+
                 cd = new CoroutineWithData(this, SaveSystem.LoadBinaryDataAsync("quest/quest_time"));
                 yield return cd.coroutine;
-                
+
                 Preload.Instance.NextStep();
-                
+
                 if (cd.result is DateTime data)
                 {
                     LastRecordTime = data;
-                    
+
                     Preload.Instance.NextStep(2);
 
                     if ((DateTime.Now - LastRecordTime).TotalSeconds >= delay)
@@ -124,18 +124,18 @@ namespace Quest
                         Initialized = true;
                         yield break;
                     }
-                    
-                    InvokeRepeating(nameof(CheckTime),5,5);
+
+                    InvokeRepeating(nameof(CheckTime), 5, 5);
                 }
                 else
                 {
                     var task = SaveSystem.SaveDataAsync("quest/quest_time", DateTime.Now);
-                    
+
                     while (!task.IsCompleted)
                     {
                         yield return null;
                     }
-                    
+
                     Preload.Instance.NextStep(2);
                 }
 
@@ -144,10 +144,10 @@ namespace Quest
                     int id = index[i];
 
                     if (quests.Count <= id)
-                        continue;   
-                        
+                        continue;
+
                     int progress = _progresses[i];
-                    _currentQuest[i] = new Quest(i,_claimed[i],progress,quests[id]);
+                    _currentQuest[i] = new Quest(i, _claimed[i], progress, quests[id]);
                     _currentQuest[i].ProgressChanged += ProgressChanged;
                     _currentQuest[i].OnClaim += OnClaim;
                 }
@@ -193,7 +193,7 @@ namespace Quest
             SaveSystem.SaveData("quest/quest_claimed", _claimed);
             OnClaimed?.Invoke();
         }
-        void ProgressChanged(int id,int progress)
+        void ProgressChanged(int id, int progress)
         {
             _progresses[id] = progress;
             SaveSystem.SaveData("quest/quest_progress", _progresses);
@@ -215,7 +215,7 @@ namespace Quest
                 exist[id] = true;
                 _claimed[i] = false;
                 _questIndex[i] = id;
-                _currentQuest[i] = new Quest(i,false,0,quests[id]);
+                _currentQuest[i] = new Quest(i, false, 0, quests[id]);
                 _currentQuest[i].ProgressChanged += ProgressChanged;
                 _currentQuest[i].OnClaim += OnClaim;
                 _progresses[i] = 0;
@@ -233,14 +233,14 @@ namespace Quest
                 exist[id] = true;
                 _claimed[i] = false;
                 _questIndex[i] = id;
-                _currentQuest[i] = new Quest(i,false,0,quests[id]);
+                _currentQuest[i] = new Quest(i, false, 0, quests[id]);
                 _currentQuest[i].ProgressChanged += ProgressChanged;
                 _currentQuest[i].OnClaim += OnClaim;
                 _progresses[i] = 0;
             }
 
             CancelInvoke(nameof(CheckTime));
-            InvokeRepeating(nameof(CheckTime),20,20);
+            InvokeRepeating(nameof(CheckTime), 20, 20);
             DateTime now = DateTime.Now;
             var day = (now - FirstPlayTime).Days;
             // LastRecordTime = (new DateTime(time.Year + FirstPlayTime.Year,time.m + FirstPlayTime.Day, time.Days + FirstPlayTime.Day,FirstPlayTime.Hour,FirstPlayTime.Minute,FirstPlayTime.Second));
@@ -256,8 +256,8 @@ namespace Quest
             foreach (var quest in _currentQuest)
             {
                 if (quest == null)
-                    continue;   
-                
+                    continue;
+
                 quest.ProgressChanged -= ProgressChanged;
                 quest.OnClaim -= OnClaim;
             }

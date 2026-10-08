@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Console.CommandScript
 {
-    [CreateAssetMenu(fileName = "DoF Command",menuName = "Utilities/DeveloperConsole/Commands/DoF Command")]
+    [CreateAssetMenu(fileName = "DoF Command", menuName = "Utilities/DeveloperConsole/Commands/DoF Command")]
     public class DoFCommand : ConsoleCommand
     {
         private readonly string[] _intMethod = { "mode" };
@@ -50,9 +50,9 @@ namespace Console.CommandScript
                     }
                 }
             }
-            
-            
-            
+
+
+
             return false;
         }
     }

@@ -6,8 +6,8 @@ using UnityEngine;
 public class GrappleHint : MonoBehaviour
 {
     public static GrappleHint Instance;
-    
-     public Transform hint;
+
+    public Transform hint;
 
     private Transform cameraTransform;
     private Camera camera;
@@ -62,7 +62,7 @@ public class GrappleHint : MonoBehaviour
 
         Vector2 max = new Vector2(sizeDelta.x / 2f, sizeDelta.y / 2f) * multiplier;
         Vector2 min = new Vector2(-sizeDelta.x / 2f, -sizeDelta.y / 2f) * multiplier;
-        
+
         if (localPoint.x > max.x)
         {
             localPoint.x = max.x;
@@ -96,10 +96,10 @@ public class GrappleHint : MonoBehaviour
     private void LateUpdate()
     {
         if (!show) return;
-        hint.localScale = Vector3.Lerp(hint.localScale,size*Vector3.one,Time.deltaTime*15f);
-        
+        hint.localScale = Vector3.Lerp(hint.localScale, size * Vector3.one, Time.deltaTime * 15f);
+
         if (!init) return;
-        hint.Rotate(Vector3.forward*Mathf.PingPong(Time.time,1f),1f);
+        hint.Rotate(Vector3.forward * Mathf.PingPong(Time.time, 1f), 1f);
 
         Vector3 targetPos = VectorExtension.CalculateWorldPosition(desiredPos, cameraTransform);
         Vector2 screenPoint = camera.WorldToScreenPoint(targetPos);
@@ -109,7 +109,7 @@ public class GrappleHint : MonoBehaviour
 
         Vector2 max = new Vector2(sizeDelta.x / 2f, sizeDelta.y / 2f) * multiplier;
         Vector2 min = new Vector2(-sizeDelta.x / 2f, -sizeDelta.y / 2f) * multiplier;
-        
+
         if (localPoint.x > max.x)
         {
             localPoint.x = max.x;
@@ -127,7 +127,7 @@ public class GrappleHint : MonoBehaviour
             localPoint.y = min.y;
         }
 
-        hint.localPosition = Vector3.Lerp(hint.localPosition,localPoint,Time.deltaTime*15f);
+        hint.localPosition = Vector3.Lerp(hint.localPosition, localPoint, Time.deltaTime * 15f);
     }
 
 }

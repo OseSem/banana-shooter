@@ -11,7 +11,7 @@ namespace Web
 {
     public static class HttpClient
     {
-        public static async Task<T> Get<T>(string endpoint,bool debug=false)
+        public static async Task<T> Get<T>(string endpoint, bool debug = false)
         {
             try
             {
@@ -33,8 +33,8 @@ namespace Web
                 return default;
             }
         }
-        
-        public static async Task<string> Post(string endpoint,object payload)
+
+        public static async Task<string> Post(string endpoint, object payload)
         {
             try
             {
@@ -68,7 +68,7 @@ namespace Web
             }
 
             request.downloadHandler = new DownloadHandlerBuffer();
-            request.SetRequestHeader("Content-Type","application/json");
+            request.SetRequestHeader("Content-Type", "application/json");
 
             return request;
         }
@@ -76,29 +76,29 @@ namespace Web
 
     public static class EndPoint
     {
-        
+
 #if ONLINE
         const string Base = "https://www.bsserver.uk/";
 #else
         const string Base = "https://localhost:44395/";
 #endif
-        
+
 
         public static string GetCheatingReports = $"{Base}Steamworks/GetCheatingReports/";
         public static string GetPlayerSummaries = $"{Base}Steamworks/GetPlayerSummaries/";
         public static string GetPlayerBansSummaries = $"{Base}Steamworks/GetPlayerBans/";
-        
+
         public static string GetRoles = $"{Base}Roles/GetRoles/";
         public static string ReportCheating = $"{Base}Steamworks/ReportPlayerCheating/";
         public static string RequestDailyReward = $"{Base}Steamworks/RequestDailyReward/";
         public static string AntiCheatDetection = $"{Base}Steamworks/AntiCheatDetection/";
-        
+
         public static string GetNews = $"{Base}Steamworks/News/";
     }
 
     public enum RequestType
     {
-        GET =0,
+        GET = 0,
         POST,
     }
 }

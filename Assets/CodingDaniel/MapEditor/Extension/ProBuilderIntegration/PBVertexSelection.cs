@@ -58,7 +58,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         {
             get
             {
-                if(_meshes.Count == 0)
+                if (_meshes.Count == 0)
                 {
                     return null;
                 }
@@ -102,13 +102,13 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         private PBBaseEditor _editor;
         private void Awake()
         {
-            
+
             _editor = GetComponent<PBBaseEditor>();
 
             _material = new Material(PBBuiltinMaterials.PointsMaterial);
             _material.SetColor("_Color", Color.white);
             _material.SetInt("_HandleZTest", (int)_zTest);
-            _material.SetFloat("_Scale", _scale); 
+            _material.SetFloat("_Scale", _scale);
         }
 
         private void OnDestroy()
@@ -118,10 +118,10 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 Destroy(_material);
             }
 
-            for(int i = 0; i < _pbMeshes.Count; ++i)
+            for (int i = 0; i < _pbMeshes.Count; ++i)
             {
                 PBMesh pbMesh = _pbMeshes[i];
-                if(pbMesh != null)
+                if (pbMesh != null)
                 {
                     pbMesh.RaiseUnselected();
                 }
@@ -137,7 +137,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public bool IsSelected(ProBuilderMesh mesh, int index)
         {
             HashSet<int> indicesHs;
-            if(_meshToIndices.TryGetValue(mesh, out indicesHs))
+            if (_meshToIndices.TryGetValue(mesh, out indicesHs))
             {
                 return indicesHs.Contains(index);
             }
@@ -152,7 +152,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
         public IList<int> GetVertices(ProBuilderMesh mesh)
         {
             List<int> result;
-            if(_meshToIndicesList.TryGetValue(mesh, out result))
+            if (_meshToIndicesList.TryGetValue(mesh, out result))
             {
                 return result;
             }
@@ -166,11 +166,11 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             {
                 ProBuilderMesh mesh = _meshes[i];
                 MeshFilter filter = _meshToSelection[mesh];
-                if(filter != null)
+                if (filter != null)
                 {
                     Destroy(filter.gameObject);
                 }
-                
+
                 PBMesh pbMesh = _pbMeshes[i];
                 if (pbMesh != null)
                 {
@@ -192,7 +192,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public void Hover(ProBuilderMesh mesh, int index)
         {
-            if(_hoveredMesh != null)
+            if (_hoveredMesh != null)
             {
                 Leave();
             }
@@ -209,7 +209,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             _hoveredIndices[0] = index;
 
             if (indicesHs.Contains(_hoveredIndices[0]))
-            {    
+            {
                 SetVerticesColor(mesh, vertices, _selectedColor, _hoveredIndices);
             }
             else
@@ -220,7 +220,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
 
         public void Leave()
         {
-            if (_hoveredMesh == null) 
+            if (_hoveredMesh == null)
             {
                 return;
             }
@@ -275,20 +275,20 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             }
 
             int[] notSelectedIndices = indices.Where(i => !indicesHs.Contains(i)).ToArray();
-            SetVerticesColor(mesh, vertices, _selectedColor, notSelectedIndices); 
-            for(int i = 0; i < notSelectedIndices.Length; ++i)
+            SetVerticesColor(mesh, vertices, _selectedColor, notSelectedIndices);
+            for (int i = 0; i < notSelectedIndices.Length; ++i)
             {
                 indicesHs.Add(notSelectedIndices[i]);
                 indicesList.Add(notSelectedIndices[i]);
             }
 
-            if(notSelectedIndices.Length > 0)
+            if (notSelectedIndices.Length > 0)
             {
                 Vertex[] notSelectedVertices = mesh.GetVertices(notSelectedIndices);
                 _lastPosition = notSelectedVertices.Last().position;
                 _lastNormal = notSelectedVertices.Last().normal;
 
-                for(int i = 0; i < notSelectedIndices.Length; i++)
+                for (int i = 0; i < notSelectedIndices.Length; i++)
                 {
                     _selectedVerticesCount++;
                     if (_selectedVerticesCount == 1)
@@ -333,16 +333,16 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     indicesList.Clear();
                 }
 
-                if(indicesHs.Count == 0)
+                if (indicesHs.Count == 0)
                 {
                     _meshToIndices.Remove(mesh);
                     _meshToIndicesList.Remove(mesh);
                     _meshToSelection.Remove(mesh);
-                    
+
                     Destroy(vertices.gameObject);
 
                     int index = _meshes.IndexOf(mesh);
-                    if(index != -1)
+                    if (index != -1)
                     {
                         _meshes.RemoveAt(index);
                         PBMesh pbMesh = _pbMeshes[index];
@@ -362,7 +362,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                 }
                 else
                 {
-                    if(LastMesh != null)
+                    if (LastMesh != null)
                     {
                         Vertex[] lastVertex = LastMesh.GetVertices(new[] { _meshToIndicesList[LastMesh].Last() });
                         _lastPosition = lastVertex[0].position;
@@ -403,7 +403,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             if (IsGeometryShadersSupported)
             {
                 List<int> coincident = new List<int>();
-                foreach(int index in indices)
+                foreach (int index in indices)
                 {
                     mesh.GetCoincidentVertices(index, coincident);
                     Color[] colors = vertices.sharedMesh.colors;
@@ -413,7 +413,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
                     }
                     vertices.sharedMesh.colors = colors;
                     coincident.Clear();
-                }       
+                }
             }
             else
             {
@@ -481,7 +481,7 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             }
         }
 
-     
+
         private static void CopyTransform(Transform src, Transform dst)
         {
             //dst.position = src.position;
@@ -502,8 +502,8 @@ namespace CodingDaniel.MapEditor.Extension.ProBuilderIntegration
             }
 
             _centerOfMass = centerOfMass;
-            _lastNormal = LastMesh.transform.InverseTransformDirection(lastNormal.normalized);  
-            _lastPosition = LastMesh.transform.InverseTransformPoint(lastPosition);    
+            _lastNormal = LastMesh.transform.InverseTransformDirection(lastNormal.normalized);
+            _lastPosition = LastMesh.transform.InverseTransformPoint(lastPosition);
         }
     }
 }

@@ -8,12 +8,12 @@ namespace Map
         Rainy,
         Snowy,
     }
-    
-    [CreateAssetMenu(menuName = "Banana Shooter/Map",fileName = "New Map")]
+
+    [CreateAssetMenu(menuName = "Banana Shooter/Map", fileName = "New Map")]
     public class Map : ScriptableObject
     {
         public Texture2D texture;
 
-        public MapExternal external=MapExternal.None;
+        public MapExternal external = MapExternal.None;
     }
 }

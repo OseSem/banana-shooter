@@ -27,7 +27,7 @@ namespace CodingDaniel.MapEditor.MEEditor
         event ObjectEvent TransformChanged;
         IEnumerable<ExposeToEditor> Get(bool rootsOnly, bool useCache = true);
     }
-    public class MEObjects : MonoBehaviour,IMEObjects
+    public class MEObjects : MonoBehaviour, IMEObjects
     {
         public event ObjectEvent Awaked;
         public event ObjectEvent Started;
@@ -38,17 +38,17 @@ namespace CodingDaniel.MapEditor.MEEditor
         public event ObjectEvent MarkAsDestroyedChanging;
         public event ObjectEvent MarkAsDestroyedChanged;
         public event ObjectEvent TransformChanged;
-        
+
         private IME _editor;
         private ExposeToEditor[] _enabledObjects;
         private UnityObject[] _selectedObjects;
-        
+
         private HashSet<ExposeToEditor> _objects;
-        
-        
+
+
         public IEnumerable<ExposeToEditor> Get(bool rootsOnly, bool useCache)
         {
-            if(rootsOnly)
+            if (rootsOnly)
             {
                 if (!useCache)
                 {
@@ -65,7 +65,7 @@ namespace CodingDaniel.MapEditor.MEEditor
 
             return _objects;
         }
-        
+
         private static List<ExposeToEditor> FindAll()
         {
             if (SceneManager.GetActiveScene().isLoaded)
@@ -82,7 +82,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                     continue;
                 }
 
-                if(!HasValidState(obj))
+                if (!HasValidState(obj))
                 {
                     continue;
                 }
@@ -117,27 +117,27 @@ namespace CodingDaniel.MapEditor.MEEditor
         {
             return exposeToEditor != null &&
                    !exposeToEditor.MarkAsDestroyed &&
-                   (exposeToEditor.hideFlags & HideFlags.HideInHierarchy) == 0 && 
+                   (exposeToEditor.hideFlags & HideFlags.HideInHierarchy) == 0 &&
                    (exposeToEditor.IsAwaked || !exposeToEditor.ActiveInHierarchy);
         }
 
         private void Awake()
         {
             _editor = MEBase.Instance;
-            
+
             List<ExposeToEditor> objects = FindAll();
-            for(int i = 0; i < objects.Count; ++i)
+            for (int i = 0; i < objects.Count; ++i)
             {
                 objects[i].Init();
             }
             _objects = new HashSet<ExposeToEditor>(objects);
-            
+
             foreach (ExposeToEditor obj in _objects)
             {
                 TryToAddColliders(obj);
                 obj.SendMessage("OnRuntimeEditorOpened", SendMessageOptions.DontRequireReceiver);
             }
-            
+
             ExposeToEditor.Awaked += OnAwaked;
             ExposeToEditor.Enabled += OnEnabled;
             ExposeToEditor.Started += OnStarted;
@@ -149,7 +149,7 @@ namespace CodingDaniel.MapEditor.MEEditor
             ExposeToEditor.TransformChanged += OnTransformChanged;
 
         }
-        
+
         private void OnDestroy()
         {
 
@@ -186,7 +186,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                         {
                             MeshCollider collider = obj.boundsObject.GetComponent<MeshCollider>();
                             if (collider == null)
-                                collider=obj.boundsObject.AddComponent<MeshCollider>();
+                                collider = obj.boundsObject.AddComponent<MeshCollider>();
                             collider.isTrigger = false;
                             collider.convex = false;
                             collider.sharedMesh = obj.MeshFilter.sharedMesh;
@@ -195,7 +195,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                     }
                     else if (obj.SkinnedMeshRenderer != null)
                     {
-                        if ( !isRigidBody)
+                        if (!isRigidBody)
                         {
                             MeshCollider collider = obj.boundsObject.AddComponent<MeshCollider>();
                             collider.convex = false;
@@ -221,7 +221,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                         {
                             MeshCollider collider = obj.boundsObject.GetComponent<MeshCollider>();
                             if (collider == null)
-                                collider=obj.boundsObject.AddComponent<MeshCollider>();
+                                collider = obj.boundsObject.AddComponent<MeshCollider>();
                             collider.convex = false;
                             collider.sharedMesh = obj.MeshFilter.sharedMesh;
                             colliders.Add(collider);
@@ -273,7 +273,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 obj.Colliders = colliders.ToArray();
             }
         }
-        
+
         private void TryToDestroyColliders(ExposeToEditor obj)
         {
             if (obj != null && obj.Colliders != null)
@@ -289,10 +289,10 @@ namespace CodingDaniel.MapEditor.MEEditor
                 obj.Colliders = null;
             }
         }
-        
+
         private void OnAwaked(ExposeToEditor obj)
         {
-            
+
             obj.SendMessage("EditorAwake", SendMessageOptions.DontRequireReceiver);
 
             if (!_objects.Contains(obj))
@@ -323,7 +323,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 TryToDestroyColliders(obj);
             }
 
-            if(_editor.Selection.IsSelected(obj.gameObject))
+            if (_editor.Selection.IsSelected(obj.gameObject))
             {
                 _editor.Selection.Objects = _editor.Selection.Objects.Where(o => o != obj.gameObject).ToArray();
             }
@@ -347,12 +347,12 @@ namespace CodingDaniel.MapEditor.MEEditor
                 SendMessageTo(obj.gameObject, "OnMarkAsRestored");
             }
 
-            if(MarkAsDestroyedChanging != null)
+            if (MarkAsDestroyedChanging != null)
             {
                 MarkAsDestroyedChanging(obj);
             }
         }
-        
+
         void SendMessageTo(GameObject gameobject, string methodName, params object[] parameters)
         {
             MonoBehaviour[] components = gameobject.GetComponentsInChildren<MonoBehaviour>(true);
@@ -361,11 +361,11 @@ namespace CodingDaniel.MapEditor.MEEditor
                 InvokeIfExists(m, methodName, parameters);
             }
         }
-        
+
         private void InvokeIfExists(object objectToCheck, string methodName, params object[] parameters)
         {
             Type type = objectToCheck.GetType();
-            
+
             MethodInfo methodInfo = type.GetMethod(methodName);
             if (methodInfo != null)
             {
@@ -387,7 +387,7 @@ namespace CodingDaniel.MapEditor.MEEditor
                 Enabled(obj);
             }
         }
-        
+
         private void OnStarted(ExposeToEditor obj)
         {
             obj.SendMessage("EditorStart", SendMessageOptions.DontRequireReceiver);
@@ -417,6 +417,6 @@ namespace CodingDaniel.MapEditor.MEEditor
             }
         }
     }
-    
-    
+
+
 }

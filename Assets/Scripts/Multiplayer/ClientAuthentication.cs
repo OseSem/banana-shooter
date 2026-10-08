@@ -10,7 +10,7 @@ namespace Multiplayer
         private readonly HashSet<ulong> _authorized = new();
 
         public IReadOnlyCollection<ulong> SteamIds => _clientBySteamId.Keys.ToList();
-        
+
         public bool TryBind(ushort client, ulong transportSteamId, ulong claimedSteamId)
         {
             if (transportSteamId == 0 || transportSteamId != claimedSteamId) return false;

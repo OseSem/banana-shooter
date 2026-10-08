@@ -14,9 +14,9 @@ public class Laptop : MonoBehaviour
         light.SetActive(on);
     }
 
-    private bool on=false;
+    private bool on = false;
 
-    
+
     public void TurnLaptop()
     {
         AudioManager.Instance.Play("tip");

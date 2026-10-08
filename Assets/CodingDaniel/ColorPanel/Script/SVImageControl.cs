@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 namespace CodingDaniel.ColorPanel.Script
 {
-    public class SVImageControl : MonoBehaviour,IDragHandler,IPointerClickHandler
+    public class SVImageControl : MonoBehaviour, IDragHandler, IPointerClickHandler
     {
         [SerializeField] private RawImage pickerImage;
 
@@ -46,20 +46,20 @@ namespace CodingDaniel.ColorPanel.Script
             pickerTransform.localPosition = pos;
 
             pickerImage.color = Color.HSVToRGB(0, 0, 1 - yNorm);
-            
-            cc.SetSv(xNorm,yNorm);
+
+            cc.SetSv(xNorm, yNorm);
         }
 
         public void UpdatePicker()
         {
             float sat = cc.currentSat;
             float val = cc.currentVal;
-            
+
             var sizeDelta = rectTransform.sizeDelta;
 
             float x = sat * sizeDelta.x;
             float y = val * sizeDelta.y;
-            
+
             float deltaX = sizeDelta.x * 0.5f;
             float deltaY = sizeDelta.y * 0.5f;
 
@@ -67,7 +67,7 @@ namespace CodingDaniel.ColorPanel.Script
             y -= deltaY;
 
             pickerTransform.localPosition = new Vector3(x, y, 0);
-            
+
             pickerImage.color = Color.HSVToRGB(0, 0, 1 - val);
         }
 

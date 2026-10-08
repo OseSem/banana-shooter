@@ -11,7 +11,7 @@ namespace UIAnimation
             if (SelectedUI != null)
             {
                 SelectedUI.DeSelect();
-            } 
+            }
             SelectedUI = uiAnimation;
             SelectedUI.Select();
         }

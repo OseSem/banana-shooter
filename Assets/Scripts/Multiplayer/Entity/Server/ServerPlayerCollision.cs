@@ -21,10 +21,10 @@ namespace Multiplayer.Server
             Rigidbody rb = other.rigidbody;
             Vector3 dir = -other.contacts[0].normal;
 
-            if (dir!=Vector3.down && Vector3.Angle(dir, _rb.velocity) < 30)
+            if (dir != Vector3.down && Vector3.Angle(dir, _rb.velocity) < 30)
             {
-                dir +=Vector3.up;
-                rb.AddForce(0.01f*kickForce*Time.deltaTime*dir,ForceMode.Impulse);
+                dir += Vector3.up;
+                rb.AddForce(0.01f * kickForce * Time.deltaTime * dir, ForceMode.Impulse);
             }
         }
 
@@ -33,9 +33,9 @@ namespace Multiplayer.Server
             Rigidbody rb = other.rigidbody;
             Vector3 dir = -other.contacts[0].normal;
 
-            if (dir!=Vector3.down && Vector3.Angle(dir, _rb.velocity) < 30)
+            if (dir != Vector3.down && Vector3.Angle(dir, _rb.velocity) < 30)
             {
-                rb.AddForce(kickForce*Time.deltaTime*dir,ForceMode.Force);
+                rb.AddForce(kickForce * Time.deltaTime * dir, ForceMode.Force);
             }
         }
     }

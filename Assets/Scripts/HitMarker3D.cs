@@ -5,10 +5,10 @@ using TMPro;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
-public class HitMarker3D : MonoBehaviour,IPooledObject
+public class HitMarker3D : MonoBehaviour, IPooledObject
 {
     public TextMeshProUGUI text;
-    
+
     private Vector3 desiredDir;
 
     private Vector3 desiredScale;
@@ -35,7 +35,7 @@ public class HitMarker3D : MonoBehaviour,IPooledObject
         if (!MoveCamera.Instance) return;
         transform.LookAt(base.transform.position + (transform.position - MoveCamera.Instance.transform.position));
     }
-    
+
     private void DestroySelf()
     {
         gameObject.SetActive(false);
@@ -50,13 +50,13 @@ public class HitMarker3D : MonoBehaviour,IPooledObject
         desiredScale = transform1.localScale;
         transform1.localScale = Vector3.zero;
 
-        transform.LookAt(base.transform.position + (transform1.position -MoveCamera.Instance.transform.position));
-        Invoke(nameof(DestroySelf),1.6f);
+        transform.LookAt(base.transform.position + (transform1.position - MoveCamera.Instance.transform.position));
+        Invoke(nameof(DestroySelf), 1.6f);
     }
 
     public void OnObjectInit()
     {
         cg = GetComponent<CanvasGroup>();
-        
+
     }
 }

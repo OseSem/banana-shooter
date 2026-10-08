@@ -7,7 +7,7 @@ using UnityEngine.Localization.Settings;
 
 namespace Console.CommandScript
 {
-    [CreateAssetMenu(fileName = "SteamLanguage Command",menuName = "Utilities/DeveloperConsole/Commands/SteamLanguage Command")]
+    [CreateAssetMenu(fileName = "SteamLanguage Command", menuName = "Utilities/DeveloperConsole/Commands/SteamLanguage Command")]
     public class SteamLanguageCommand : ConsoleCommand
     {
         public override bool Process(string[] args)
@@ -28,7 +28,7 @@ namespace Console.CommandScript
                 {
                     menu.languageNext.interactable = !flag;
                     menu.languagePreview.interactable = !flag;
-                
+
                     if (flag)
                     {
                         string language = SteamApps.GetCurrentGameLanguage();
@@ -46,7 +46,7 @@ namespace Console.CommandScript
                                 break;
                         }
                     }
-                
+
                 }
                 return true;
             }

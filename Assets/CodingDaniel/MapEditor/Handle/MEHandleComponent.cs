@@ -21,7 +21,7 @@ namespace CodingDaniel.MapEditor.Handle
         [SerializeField] private ScriptableRendererData rendererData;
 
         private int _colorIndex = 0;
-        
+
         [SerializeField]
         [FormerlySerializedAs("m_colors")]
         private GizmoPalette[] _colors = new GizmoPalette[1];
@@ -54,7 +54,7 @@ namespace CodingDaniel.MapEditor.Handle
             get { return _handleScale; }
             set { _handleScale = value; }
         }
-        
+
         [SerializeField]
         [FormerlySerializedAs("m_selectionMargin")]
         private float _selectionMargin = 1;
@@ -101,7 +101,7 @@ namespace CodingDaniel.MapEditor.Handle
         }
         void Update()
         {
-            if(_oldHandleScale != _handleScale || _oldInvertZAxis != _invertZAxis)
+            if (_oldHandleScale != _handleScale || _oldInvertZAxis != _invertZAxis)
             {
                 _oldHandleScale = _handleScale;
                 _oldInvertZAxis = _invertZAxis;

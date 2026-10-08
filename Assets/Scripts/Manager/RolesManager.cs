@@ -35,17 +35,17 @@ namespace Manager
         {
             return Roles?.Admins?.Contains(id) == true;
         }
-        
+
         public bool CheckIsHelper(ulong id)
         {
             return Roles?.Helpers?.Contains(id) == true;
         }
-        
+
         public bool CheckIsBananaMan(ulong id)
         {
             return Roles?.BananaMen?.Contains(id) == true;
         }
-        
+
         public bool CheckIsDiscordMan(ulong id)
         {
             return Roles?.DiscordMen?.Contains(id) == true;

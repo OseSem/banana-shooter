@@ -7,7 +7,7 @@ public class RadioInteractor : MonoBehaviour
 
     private void Update()
     {
-        if (Physics.SphereCast(transform.position,1f, transform.forward, out var hit,5f, whatIsRadio, QueryTriggerInteraction.Collide))
+        if (Physics.SphereCast(transform.position, 1f, transform.forward, out var hit, 5f, whatIsRadio, QueryTriggerInteraction.Collide))
         {
             Radio radio = hit.transform.root.GetComponent<Radio>();
 

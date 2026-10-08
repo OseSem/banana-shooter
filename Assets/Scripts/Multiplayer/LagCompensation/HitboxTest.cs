@@ -9,7 +9,7 @@ namespace Multiplayer.LagCompensation
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.red;
-            
+
             Gizmos.DrawMesh(mesh, 0, transform.position, Quaternion.identity);
         }
     }

@@ -132,7 +132,7 @@ namespace CodingDaniel.MapEditor.Interaction
         public void Reset()
         {
             PositionX = PositionY = PositionZ = false;
-            RotationX = RotationY = RotationZ = RotationFree = RotationScreen =  false;
+            RotationX = RotationY = RotationZ = RotationFree = RotationScreen = false;
             ScaleX = ScaleY = ScaleZ = false;
             RectXY = RectXZ = RectYZ = false;
             PivotMode = false;
@@ -144,7 +144,7 @@ namespace CodingDaniel.MapEditor.Interaction
         public static LockObject Eval(LockAxes[] lockAxes)
         {
             LockObject lockObject = new LockObject();
-            if(lockAxes != null)
+            if (lockAxes != null)
             {
                 lockObject.PositionX = lockAxes.Any(la => la.PositionX);
                 lockObject.PositionY = lockAxes.Any(la => la.PositionY);
@@ -165,20 +165,20 @@ namespace CodingDaniel.MapEditor.Interaction
                 lockObject.RectXZ = lockAxes.Any(la => la.RectXZ);
 
                 lockObject.PivotMode = null;
-                if(lockAxes.Any(la => la.PivotMode))
+                if (lockAxes.Any(la => la.PivotMode))
                 {
-                    if(lockAxes.All(la => la.PivotModeValue == MEPivotMode.Center))
+                    if (lockAxes.All(la => la.PivotModeValue == MEPivotMode.Center))
                     {
-                        lockObject.PivotMode =MEPivotMode.Center;
+                        lockObject.PivotMode = MEPivotMode.Center;
                     }
-                    else if(lockAxes.All(la => la.PivotModeValue == MEPivotMode.Pivot))
+                    else if (lockAxes.All(la => la.PivotModeValue == MEPivotMode.Pivot))
                     {
                         lockObject.PivotMode = MEPivotMode.Pivot;
                     }
                 }
 
                 lockObject.PivotRotation = null;
-                if(lockAxes.Any(la => la.PivotRotation))
+                if (lockAxes.Any(la => la.PivotRotation))
                 {
                     if (lockAxes.All(la => la.PivotRotationValue == MEPivotRotation.Global))
                     {

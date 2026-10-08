@@ -14,7 +14,7 @@ namespace Extensions
 
         private void Update()
         {
-            if(getBones)
+            if (getBones)
             {
                 getBones = false;
 

@@ -14,7 +14,7 @@ namespace Demo.UI
     public class DemoMenu : MonoBehaviour
     {
         private DemoUIObj[] _objs = Array.Empty<DemoUIObj>();
-        
+
         [SerializeField] private Transform demoContentTrans;
 
         [SerializeField] private DemoUIObj prefab;
@@ -27,7 +27,7 @@ namespace Demo.UI
 
         private int _sortingType = 1;
 
-        private bool _descent=true;
+        private bool _descent = true;
 
         private void Start()
         {
@@ -55,12 +55,12 @@ namespace Demo.UI
                 FileInfo info = fileInfos[i];
 
                 DemoUIObj obj = Instantiate(prefab, demoContentTrans);
-                
-                obj.Initialize(info, i , Select);
+
+                obj.Initialize(info, i, Select);
 
                 _objs[i] = obj;
             }
-            
+
             SortObjs();
         }
 
@@ -98,14 +98,14 @@ namespace Demo.UI
                     sortedObjs = _descent ? _objs.OrderByDescending(n => n.FileInfo.Length).ToArray() : _objs.OrderBy(n => n.FileInfo.Length).ToArray();
                     break;
             }
-            
+
             for (int i = 0; i < sortedObjs.Length; i++)
             {
                 sortedObjs[i].transform.SetAsLastSibling();
             }
         }
 
-        
+
         public void SetSortingType(int type)
         {
             if (_sortingType == type)
@@ -121,7 +121,7 @@ namespace Demo.UI
             SortObjs();
         }
 
-        
+
         public void Play()
         {
             if (_selectIndex != -1)
@@ -137,7 +137,7 @@ namespace Demo.UI
             Display();
         }
 
-        
+
         public void Delete()
         {
             if (_selectIndex != -1)
@@ -154,8 +154,8 @@ namespace Demo.UI
         public static void OpenDemoFolder()
         {
             string path = DemoManager.SavePath;
-            
-            Application.OpenURL("file://"+path);
+
+            Application.OpenURL("file://" + path);
         }
     }
 }

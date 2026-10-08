@@ -21,7 +21,7 @@ namespace CodingDaniel.MapEditor.Graphics
         [SerializeField] private Vector3 _gridOffset = new Vector3(0f, 0.01f, 0f);
 
         private float _gridSize = 0.5f;
-        
+
         public float SizeOfGrid
         {
             get { return _gridSize; }
@@ -48,7 +48,7 @@ namespace CodingDaniel.MapEditor.Graphics
             get { return _zTest; }
             set
             {
-                if(_zTest != value)
+                if (_zTest != value)
                 {
                     _zTest = value;
                     Rebuild();
@@ -69,7 +69,7 @@ namespace CodingDaniel.MapEditor.Graphics
 
         private void OnDisable()
         {
-            if(_meCamera != null)
+            if (_meCamera != null)
             {
                 _meCamera.CommandBufferRefresh -= OnCommandBufferRefresh;
             }
@@ -117,8 +117,8 @@ namespace CodingDaniel.MapEditor.Graphics
             int[] indices = new int[count * 8];
             Vector3[] vertices = new Vector3[count * 8];
             Color[] colors = new Color[count * 8];
-            
-            for(int i = -count; i < count; ++i)
+
+            for (int i = -count; i < count; ++i)
             {
                 vertices[index] = new Vector3(i * spacing, 0, -count * spacing);
                 vertices[index + 1] = new Vector3(i * spacing, 0, count * spacing);
@@ -161,7 +161,7 @@ namespace CodingDaniel.MapEditor.Graphics
                 Destroy(_grid1Mesh);
             }
         }
-        
+
         private void OnCommandBufferRefresh(IMECamera obj)
         {
             float h = GetCameraOffset();
@@ -220,12 +220,12 @@ namespace CodingDaniel.MapEditor.Graphics
 
         private Material CreateGridMaterial(float scale, bool zTest)
         {
-            Shader shader =  Shader.Find("CodingDaniel/MEHandles/Grid");
+            Shader shader = Shader.Find("CodingDaniel/MEHandles/Grid");
             Material material = new Material(shader);
 
             material.SetColor("_GridColor", MEBase.Instance.Appearance.Colors.GridColor);
             material.SetFloat("_ZTest", zTest ? (float)CompareFunction.LessEqual : (float)CompareFunction.Always);
-            
+
             return material;
         }
 

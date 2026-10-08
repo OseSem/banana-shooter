@@ -28,7 +28,7 @@ namespace Console
 
         [SerializeField] public Transform tipContent;//CommandTipItem
 
-        public bool enableLog = true,enableError=true,enableWarning=true;
+        public bool enableLog = true, enableError = true, enableWarning = true;
         public DeveloperConsole DeveloperConsole
         {
             get
@@ -86,7 +86,7 @@ namespace Console
                 Application.logMessageReceived += HandleLog;
             }
         }
-    
+
         void OnDisable()
         {
             _inputManager.Console.Toggle.performed -= Toggle;
@@ -103,7 +103,7 @@ namespace Console
             ComputerDetails.Refresh();
             infoText.SetTextWithoutNotify(ComputerDetails.GetDetails());
         }
-        
+
         private void QuickTip(InputAction.CallbackContext obj)
         {
             if (cmds.Count <= 0)
@@ -120,7 +120,7 @@ namespace Console
             }
 
             string cmd = cmds[cmdIndex];
-        
+
             for (int i = 0; i < tipContent.childCount; i++)
             {
                 Destroy(tipContent.GetChild(i).gameObject);
@@ -142,34 +142,34 @@ namespace Console
         IEnumerator MoveCursorToEnd()
         {
             yield return new WaitForEndOfFrame();
-            inputField.caretPosition = inputField.text.Length ;
+            inputField.caretPosition = inputField.text.Length;
             inputField.ForceLabelUpdate();
         }
         private void PreviewIndex(InputAction.CallbackContext obj)
         {
             if (!uiCanvas.activeSelf) return;
-            
+
             if ((inputField.text.Length <= 0 && !_rewinding) || _rewinding)
             {
                 _rewinding = true;
 
                 _rewindIndex--;
-                
+
                 ProcessRewind();
             }
-            
+
             cmdIndex--;
-            if (cmdIndex < 0) cmdIndex = toggles.Count-1;
-        
-            if(toggles.Count>0)
+            if (cmdIndex < 0) cmdIndex = toggles.Count - 1;
+
+            if (toggles.Count > 0)
                 toggles[cmdIndex].isOn = true;
             StartCoroutine(MoveCursorToEnd());
         }
-    
+
         private void NextIndex(InputAction.CallbackContext obj)
         {
             if (!uiCanvas.activeSelf) return;
-            
+
             if ((inputField.text.Length <= 0 && !_rewinding) || _rewinding)
             {
                 _rewinding = true;
@@ -178,11 +178,11 @@ namespace Console
 
                 ProcessRewind();
             }
-        
+
             cmdIndex++;
             if (cmdIndex > toggles.Count - 1) cmdIndex = 0;
 
-            if(toggles.Count>0)
+            if (toggles.Count > 0)
                 toggles[cmdIndex].isOn = true;
             StartCoroutine(MoveCursorToEnd());
         }
@@ -193,7 +193,7 @@ namespace Console
             else if (_rewindIndex >= _rewindCommands.Count) _rewindIndex = 0;
 
             if (_rewindCommands.Count <= 0) return;
-            
+
             inputField.SetTextWithoutNotify(_rewindCommands[_rewindIndex]);
         }
 
@@ -211,7 +211,7 @@ namespace Console
                         _rewindCommands.RemoveAt(i);
                     }
                 }
-                
+
                 DeveloperConsole.ProcessCommand(inputField.text);
                 inputField.text = String.Empty;
                 inputField.ActivateInputField();
@@ -221,9 +221,9 @@ namespace Console
         public void Close()
         {
             uiCanvas.SetActive(false);
-            if ((GameUIManager.Instance && !GameUIManager.Instance.pause) 
+            if ((GameUIManager.Instance && !GameUIManager.Instance.pause)
                 && (!EndScreenUI.Instance.endScreen.activeSelf)
-                &&(TeamSelector.Instance && !TeamSelector.Instance.IsSelecting))
+                && (TeamSelector.Instance && !TeamSelector.Instance.IsSelecting))
             {
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
@@ -246,10 +246,10 @@ namespace Console
             }
         }
 
-    
+
         void HandleLog(string logMessage, string stackTrace, LogType type)
         {
-            string _message= string.Empty;
+            string _message = string.Empty;
             switch (type)
             {
                 case LogType.Log:
@@ -260,7 +260,7 @@ namespace Console
                     break;
                 case LogType.Error:
                     if (enableError)
-                        _message = "<color=red>"+ logMessage + "</color>";
+                        _message = "<color=red>" + logMessage + "</color>";
                     else
                         return;
                     break;
@@ -272,7 +272,7 @@ namespace Console
                     break;
             }
 
-            if(!string.IsNullOrEmpty(_message))
+            if (!string.IsNullOrEmpty(_message))
                 AddMessageToConsole(_message);
 
         }
@@ -325,18 +325,18 @@ namespace Console
                     list.Add(arg);
                 }
             }
-            if(string.IsNullOrEmpty(args[^1]))
+            if (string.IsNullOrEmpty(args[^1]))
                 list.Add("");
 
             args = list.ToArray();
 
-        
+
             if (args.Length <= 1)
             {
                 foreach (var command in commands)
                 {
                     SpawnTip(command.CommandWord, args[0], command.ArgsHint, command.Description);
-                    
+
                     // if (command.CommandWord.Contains(args[0]) && args[0] != command.CommandWord) 
                     // {
                     //     Toggle toggle = Instantiate(PrefabManager.Instance.GetPrefab("CommandTipItem"), tipContent).GetComponent<Toggle>();
@@ -346,7 +346,7 @@ namespace Console
                     //     cmds.Add(command.CommandWord);
                     // }
                 }
-            
+
             }
             else if (args.Length >= 2)
             {
@@ -383,7 +383,7 @@ namespace Console
                                     {
                                         foreach (var arg in command.args[args.Length - 2].args)
                                         {
-                                            SpawnTip(arg,args[^1]);
+                                            SpawnTip(arg, args[^1]);
                                             // if (arg.ToLower().Contains(args[^1].ToLower()) && arg != args[^1])
                                             // {
                                             //     Toggle toggle =
@@ -402,7 +402,7 @@ namespace Console
                                 case "bindings":
                                     foreach (var key in GameManager.CustomInputActions.Keys)
                                     {
-                                        SpawnTip(key,args[^1]);
+                                        SpawnTip(key, args[^1]);
                                     }
                                     break;
                                 case "crate":
@@ -498,10 +498,10 @@ namespace Console
                                             {
                                                 foreach (var bone in SpectateMovement.Instance.Target.Bones)
                                                 {
-                                                    SpawnTip(bone.name.ToLower(),args[^1]);
+                                                    SpawnTip(bone.name.ToLower(), args[^1]);
                                                 }
                                             }
-                                            
+
                                             break;
                                     }
 
@@ -518,23 +518,23 @@ namespace Console
                                 {
                                     foreach (var arg in command.args[args.Length - 2].args)
                                     {
-                                        SpawnTip(arg,args[^1]);
+                                        SpawnTip(arg, args[^1]);
                                     }
                                 }
                             }
                         }
-                        
+
 
                         break;
                     }
                 }
             }
-        
-            if(toggles.Count>0)
+
+            if (toggles.Count > 0)
                 toggles[cmdIndex].isOn = true;
         }
 
-        void SpawnTip(string tip,string arg,string argsHint="",string desc="")
+        void SpawnTip(string tip, string arg, string argsHint = "", string desc = "")
         {
             string de = "<color=#01c600>" + argsHint + "</color>";
             if (!string.IsNullOrEmpty(desc)) de += " - " + "<color=#eac300>" + desc + "</color>";
@@ -559,7 +559,7 @@ namespace Console
 
                 text.pointSize += input;
             }
-            
+
         }
     }
 }

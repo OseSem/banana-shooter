@@ -13,7 +13,7 @@ using UnityEngine.UI;
 
 namespace Menu
 {
-    
+
     public enum SearchLobbyType
     {
         Normal,
@@ -26,16 +26,16 @@ namespace Menu
         private void Awake()
         {
             Instance = this;
-        
-        
+
+
         }
-        
+
         private void Start()
         {
             // closeServerOnlyToggle.isOn =
             //     LobbyManager.Instance.filter == ELobbyDistanceFilter.k_ELobbyDistanceFilterDefault;
             // closeServerOnlyToggle.onValueChanged.AddListener(SetCloseServerOnly);
-            
+
             NetworkServerManager.SetServerType(ServerType.Normal);
         }
 
@@ -94,7 +94,7 @@ namespace Menu
         //         StopCoroutine(joinLobbyAsync);
         //     joinLobbyAsync = StartCoroutine(JoinLobbyAsync(ulong.Parse(lobbyIDInput.text)));
         // }
-        
+
         public LocalizeStringEvent loadingText;
         #endregion
 
@@ -104,24 +104,24 @@ namespace Menu
 
         public bool isMatching = false;
         public float matchTime = 0;
-    
+
         public Button button;
         public void JoinLobby(ulong lobbyId)
         {
             UIManager.Instance.StartConnecting();
-            
+
             foreach (var gameObject in UIManager.Instance.withoutLoading)
             {
                 gameObject.SetActive(false);
             }
             UIManager.Instance.SetButton(button);
-            if(joinLobbyAsync!=null)
+            if (joinLobbyAsync != null)
                 StopCoroutine(joinLobbyAsync);
             joinLobbyAsync = StartCoroutine(JoinLobbyAsync(lobbyId));
 
         }
 
-        
+
         public void JoinLobbyThroughCode(TMP_InputField inputField)
         {
             if (ulong.TryParse(inputField.text, out var id))
@@ -129,18 +129,18 @@ namespace Menu
                 JoinLobby(id);
             }
         }
-        
+
         IEnumerator JoinLobbyAsync(ulong lobbyId)
         {
             // Debug.Log(NetworkManager.Instance.connecting);
             while (NetworkManager.Instance.connecting)
             {
-                if(NetworkManager.Instance.Client.IsConnected)yield break;
+                if (NetworkManager.Instance.Client.IsConnected) yield break;
                 yield return null;
             }
             LobbyManager.Instance.JoinLobby(lobbyId);
         }
-    
+
         #endregion
 
         private void Update()
@@ -152,21 +152,21 @@ namespace Menu
                 if (matchTime >= 10)
                 {
                     isMatching = false;
-                
+
                     UIManager.Instance.enableWorkshopPanel.SetActive(true);
                 }
 
-            
+
                 if (matchTime >= 7)
                 {
                     loadingText.SetEntry("creating");
-                    loadingText.StringReference.Arguments = new List<object>() {matchTime.ToString("F2")};
+                    loadingText.StringReference.Arguments = new List<object>() { matchTime.ToString("F2") };
                     loadingText.RefreshString();
                 }
                 else
                 {
                     loadingText.SetEntry("searching");
-                    loadingText.StringReference.Arguments = new List<object>() {matchTime.ToString("F2")};
+                    loadingText.StringReference.Arguments = new List<object>() { matchTime.ToString("F2") };
                     loadingText.RefreshString();
                 }
             }
@@ -178,7 +178,7 @@ namespace Menu
         }
 
         [SerializeField] private GameObject warning;
-        
+
         public void TryToCreate(bool flag)
         {
             warning.SetActive(!GameManager.hostGameDontShowMeThisAgain && !flag);

@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 
 namespace Cosmetic.Editor
 {
-    [CustomEditor(typeof(CosmeticItem)),CanEditMultipleObjects]
+    [CustomEditor(typeof(CosmeticItem)), CanEditMultipleObjects]
     public class CosmeticItemEditor : ToolEditor<CosmeticItem>
     {
         protected override void OnEnableOverride()
@@ -18,7 +18,7 @@ namespace Cosmetic.Editor
         protected override void OnInspectorGUIOverride()
         {
             // Undo.RecordObject(Target,"Cosmetic changed");
-            
+
             switch (Tool)
             {
                 case 0: //Base
@@ -31,9 +31,9 @@ namespace Cosmetic.Editor
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.description)), new GUIContent("Description", "The description of the item"));
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.tag)), new GUIContent("Tag", "The tag of the item (most likely will use on particle items)"));
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.index)), new GUIContent("Index", "The index of the item"));
-                    
+
                     GUILayout.Space(Space);
-                    
+
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.type)), new GUIContent("Type", "The type of this item"));
                     if (Target.type != CosmeticItem.Type.None && Target.type != CosmeticItem.Type.Rag &&
                         Target.type != CosmeticItem.Type.Other && Target.type != CosmeticItem.Type.Particle)
@@ -43,9 +43,9 @@ namespace Cosmetic.Editor
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.rarity)), new GUIContent("Rarity", "The rarity of this item"));
 
                     GUILayout.EndVertical();
-                    
+
                     GUILayout.Space(Space);
-                    
+
                     EditorGUI.indentLevel = 0;
                     GUILayout.BeginVertical("FrameBox");
                     EditorGUILayout.LabelField("Misc", EditorStyles.boldLabel);
@@ -63,9 +63,9 @@ namespace Cosmetic.Editor
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.mesh)), new GUIContent("Mesh", "The mesh of the item"));
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.materials)), new GUIContent("Materials", "The Materials of the item"));
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.alpha)), new GUIContent("Alpha", "The alpha of the item"));
-                    
+
                     GUILayout.Space(Space);
-                    
+
                     EditorGUI.indentLevel = 0;
                     EditorGUILayout.LabelField("Settings", EditorStyles.boldLabel);
                     EditorGUI.indentLevel = 1;
@@ -76,15 +76,15 @@ namespace Cosmetic.Editor
                     GUILayout.EndVertical();
                     break;
             }
-            
+
             GUILayout.BeginHorizontal("FrameBox");
-            
+
 
             if (GUILayout.Button("Showcase"))
             {
                 ShowcaseManager showcaseManager = FindObjectOfType<ShowcaseManager>();
-                
-                if(showcaseManager)
+
+                if (showcaseManager)
                     showcaseManager.Showcase(Target);
             }
 
@@ -92,7 +92,7 @@ namespace Cosmetic.Editor
             {
                 Target.size /= 2f;
             }
-            
+
             GUILayout.EndHorizontal();
         }
 
@@ -100,13 +100,13 @@ namespace Cosmetic.Editor
         {
             var item = (CosmeticItem)target;
 
-            if (item == null || item.icon ==null)
+            if (item == null || item.icon == null)
             {
                 return null;
             }
 
             var texture = new Texture2D(width, height);
-            EditorUtility.CopySerialized(item.icon,texture);
+            EditorUtility.CopySerialized(item.icon, texture);
             return texture;
         }
     }

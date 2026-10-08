@@ -23,7 +23,7 @@ namespace Multiplayer.Entity.Client.Enemy
         protected EnemyAnimation EnemyAnimation;
 
         public DemoEnemy demoEnemy;
-            
+
         [SerializeField] public Interpolator interpolator;
 
         [SerializeField] public EnemyState enemyState;
@@ -39,7 +39,7 @@ namespace Multiplayer.Entity.Client.Enemy
                 Destroy(this);
             }
         }
-        void Initialize(ushort id, int health,ServerEnemy.EnemyType enemyType,int index)
+        void Initialize(ushort id, int health, ServerEnemy.EnemyType enemyType, int index)
         {
             Id = id;
 
@@ -50,14 +50,14 @@ namespace Multiplayer.Entity.Client.Enemy
 
             if (NetworkManager.ClientServerType == ServerType.Endless)
             {
-                GameUIManager.Instance.AddEnemyDot(dot,Id);
+                GameUIManager.Instance.AddEnemyDot(dot, Id);
             }
-            list.Add(Id,this);
-            
+            list.Add(Id, this);
+
             DemoManager.Instance.AddEnemySpawned(this);
         }
 
-        [MessageHandler((ushort) ServerToClientId.EnemyDead, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.EnemyDead, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void EnemyDead(Message message)
         {
             ushort id = message.GetUShort();
@@ -69,7 +69,7 @@ namespace Multiplayer.Entity.Client.Enemy
                 if (enemy != null) enemy.EnemyDead(fromClient);
             }
         }
-        [MessageHandler((ushort) ServerToClientId.HitEnemy, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.HitEnemy, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void HitEnemy(Message message)
         {
             ushort id = message.GetUShort();
@@ -78,8 +78,8 @@ namespace Multiplayer.Entity.Client.Enemy
             if (list.TryGetValue(id, out var enemy))
             {
                 int health = message.GetInt();
-            
-                enemy.TakeDamage(health,playerId,tick);
+
+                enemy.TakeDamage(health, playerId, tick);
             }
         }
 
@@ -90,7 +90,7 @@ namespace Multiplayer.Entity.Client.Enemy
             if (!outline) return;
             outline.enabled = true;
             CancelInvoke(nameof(ClearOutline));
-            Invoke(nameof(ClearOutline),0.35f);
+            Invoke(nameof(ClearOutline), 0.35f);
         }
 
         void ClearOutline()
@@ -111,7 +111,7 @@ namespace Multiplayer.Entity.Client.Enemy
             {
                 isLocal = player.playerState.IsLocal;
                 demoEnemy.attackerId = player.demoPlayer.Id;
-                
+
                 enemyState.Dead(isLocal);
                 if (flag)
                 {
@@ -119,7 +119,7 @@ namespace Multiplayer.Entity.Client.Enemy
                     {
                         player.lastCoin = player.coins;
                         player.coins++;
-                        if(player.IsLocal)
+                        if (player.IsLocal)
                             UpgradeInGameMenu.Instance.AutoUpgrade();
                     }
                 }
@@ -133,14 +133,14 @@ namespace Multiplayer.Entity.Client.Enemy
                 {
                     Endless.Instance.RlKillCount++;
                     Endless.Instance.killCount = Endless.Instance.RlKillCount.GetValue().ToString();
-                    
+
                     QuestManager.Instance.GetProgress(QuestType.EndlessKiller);
                 }
             }
 
             Destroy(gameObject);
-            
-            
+
+
         }
 
         private void OnDestroy()
@@ -151,7 +151,7 @@ namespace Multiplayer.Entity.Client.Enemy
             }
         }
 
-        void TakeDamage(int health,ushort playerId,uint tick)
+        void TakeDamage(int health, ushort playerId, uint tick)
         {
             bool local = NetworkManager.Instance.Client.Id == playerId;
 
@@ -160,7 +160,7 @@ namespace Multiplayer.Entity.Client.Enemy
             {
                 if (local)
                 {
-                    localPlayer.DamageTracker.DamageGiven(Id,damage);
+                    localPlayer.DamageTracker.DamageGiven(Id, damage);
                     DisplayOutline();
 
                     if (!WeaponManager.Instance.ShootingBuffer[tick % WeaponManager.MaxStoredSize])
@@ -168,20 +168,20 @@ namespace Multiplayer.Entity.Client.Enemy
                         HitMarker.Instance.StartHitMarkerRobot(Color.white);
                     }
                 }
-                DemoManager.Instance.AddEnemyTakeDamage(demoEnemy.Id,health, localPlayer.demoPlayer.Id);
+                DemoManager.Instance.AddEnemyTakeDamage(demoEnemy.Id, health, localPlayer.demoPlayer.Id);
             }
-            
+
         }
 
-        [MessageHandler((ushort) ServerToClientId.EnemyMovement, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.EnemyMovement, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void EnemyMovement(Message message)
         {
             ushort id = message.GetUShort();
             uint tick = message.GetUInt();
-            if (list.TryGetValue(id,out var enemy))
+            if (list.TryGetValue(id, out var enemy))
             {
                 Vector3 pos = message.GetVector3();
-                enemy.enemyState.desiredRot = Quaternion.Euler(0,message.GetFloat(),0);
+                enemy.enemyState.desiredRot = Quaternion.Euler(0, message.GetFloat(), 0);
 
                 if (enemy.EnemyAnimation != null)
                 {
@@ -191,11 +191,11 @@ namespace Multiplayer.Entity.Client.Enemy
                         : enemy.enemyState.selfTransform.InverseTransformDirection(dir) * 4f);
                 }
 
-                enemy.interpolator.NewUpdate(tick,false,pos);
+                enemy.interpolator.NewUpdate(tick, false, pos);
             }
         }
 
-        [MessageHandler((ushort) ServerToClientId.SpawnEnemy, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+        [MessageHandler((ushort)ServerToClientId.SpawnEnemy, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void SpawnEnemy(Message message)
         {
             ushort id = message.GetUShort();
@@ -205,15 +205,15 @@ namespace Multiplayer.Entity.Client.Enemy
                 list.Remove(id);
             }
             int health = message.GetInt();
-            ServerEnemy.EnemyType type = (ServerEnemy.EnemyType) message.GetUShort();
+            ServerEnemy.EnemyType type = (ServerEnemy.EnemyType)message.GetUShort();
             int index = message.GetInt();
             Vector3 pos = message.GetVector3();
-            ClientEnemy enemy = State.EnemyState.InstantiateEnemy(type,pos,index).GetComponent<ClientEnemy>();
-            
-            enemy.Initialize(id,health,type,index);
+            ClientEnemy enemy = State.EnemyState.InstantiateEnemy(type, pos, index).GetComponent<ClientEnemy>();
+
+            enemy.Initialize(id, health, type, index);
         }
-    
-        [MessageHandler((ushort) ServerToClientId.EnemyState, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
+
+        [MessageHandler((ushort)ServerToClientId.EnemyState, NetworkManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void EnemyState(Message message)
         {
             ushort id = message.GetUShort();
@@ -224,26 +224,26 @@ namespace Multiplayer.Entity.Client.Enemy
                 switch (enemy.enemyState.enemyType)
                 {
                     case ServerEnemy.EnemyType.Jack:
-                        ServerJack.EJackState state = (ServerJack.EJackState) message.GetUShort();
+                        ServerJack.EJackState state = (ServerJack.EJackState)message.GetUShort();
 
                         JackAnimation jackAnimation = (JackAnimation)enemy.EnemyAnimation;
                         JackState jackState = (JackState)enemy.enemyState;
-                        
+
                         jackState.SetState(state, jackAnimation);
-                        
-                        DemoManager.Instance.AddEnemyState(enemy.demoEnemy.Id,(int)state);
+
+                        DemoManager.Instance.AddEnemyState(enemy.demoEnemy.Id, (int)state);
                         break;
                     case ServerEnemy.EnemyType.Zombie:
-                        ServerZombie.EZombieState eZombieState = (ServerZombie.EZombieState) message.GetUShort();
+                        ServerZombie.EZombieState eZombieState = (ServerZombie.EZombieState)message.GetUShort();
                         ZombieState zombieState = (ZombieState)enemy.enemyState;
-                        
+
                         zombieState.SetState(eZombieState);
-                        
-                        DemoManager.Instance.AddEnemyState(enemy.demoEnemy.Id,(int)eZombieState);
+
+                        DemoManager.Instance.AddEnemyState(enemy.demoEnemy.Id, (int)eZombieState);
                         break;
                     case ServerEnemy.EnemyType.Turret:
-                        ServerTurret.ETurretState eTurretState = (ServerTurret.ETurretState) message.GetUShort();
-                        TurretState turretState = (TurretState) enemy.enemyState;
+                        ServerTurret.ETurretState eTurretState = (ServerTurret.ETurretState)message.GetUShort();
+                        TurretState turretState = (TurretState)enemy.enemyState;
 
                         t = null;
                         if (eTurretState == ServerTurret.ETurretState.Shooting)
@@ -255,11 +255,11 @@ namespace Multiplayer.Entity.Client.Enemy
                                 t = player.player.transform;
                             }
                         }
-                        
-                        turretState.SetState(eTurretState,t);
+
+                        turretState.SetState(eTurretState, t);
                         break;
                     case ServerEnemy.EnemyType.Kat:
-                        ServerKat.EKatState eKatState = (ServerKat.EKatState) message.GetUShort();
+                        ServerKat.EKatState eKatState = (ServerKat.EKatState)message.GetUShort();
                         KatState katState = (KatState)enemy.enemyState;
 
                         t = null;
@@ -273,10 +273,10 @@ namespace Multiplayer.Entity.Client.Enemy
                                 targetId = player.demoPlayer.Id;
                             }
                         }
-                        katState.SetState(eKatState,t);
-                        
-                        DemoManager.Instance.AddEnemyStateTarget(enemy.demoEnemy.Id,(int)eKatState,targetId);
-                        break; 
+                        katState.SetState(eKatState, t);
+
+                        DemoManager.Instance.AddEnemyStateTarget(enemy.demoEnemy.Id, (int)eKatState, targetId);
+                        break;
                 }
             }
         }

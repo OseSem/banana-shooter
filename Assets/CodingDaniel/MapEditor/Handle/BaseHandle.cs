@@ -29,7 +29,7 @@ namespace CodingDaniel.MapEditor.Handle
     {
         private IME _editor;
         protected IME Editor => _editor;
-        
+
         public BaseHandleUnityEvent BeforeDrag = new BaseHandleUnityEvent();
         public BaseHandleUnityEvent Drag = new BaseHandleUnityEvent();
         public BaseHandleUnityEvent Drop = new BaseHandleUnityEvent();
@@ -37,7 +37,7 @@ namespace CodingDaniel.MapEditor.Handle
         private IMECamera _meCamera;
 
         public IMECamera MeCamera => _meCamera;
-        
+
         private Vector3 _prevScale;
         private Vector3 _prevCamPosition;
         private Quaternion _prevCamRotation;
@@ -46,11 +46,11 @@ namespace CodingDaniel.MapEditor.Handle
         private Rect _prevCamRect;
 
         public MEHandleComponent appearance;
-        
-        
+
+
 
         protected virtual Plane DragPlane { get; set; }
-        
+
         public virtual bool IsDragging { set; get; }
         public MEHitTester HitTester;
         public bool EnableUndo = true;
@@ -58,7 +58,7 @@ namespace CodingDaniel.MapEditor.Handle
         {
             get { return EditorTool.Custom; }
         }
-        
+
         /// <summary>
         /// Quaternion Rotation based on selected coordinate system (local or global)
         /// </summary>
@@ -95,7 +95,7 @@ namespace CodingDaniel.MapEditor.Handle
         }
 
         public virtual bool UnitSnapping { get; set; }
-        
+
         public virtual bool SnapToGrid
         {
             get;
@@ -107,7 +107,7 @@ namespace CodingDaniel.MapEditor.Handle
             get;
             set;
         }
-        
+
         /// <summary>
         /// current size of grid 
         /// </summary>
@@ -121,14 +121,14 @@ namespace CodingDaniel.MapEditor.Handle
         {
             get { return 0.0f; }
         }
-        
+
         private LockObject _sharedLockObject;
         private LockObject _rawLockObject;
 
         protected virtual LockObject SharedLockObject
         {
             get { return _sharedLockObject; }
-            set 
+            set
             {
                 _rawLockObject = value;
                 _sharedLockObject = ApplyViewModeLocks(value);
@@ -156,7 +156,7 @@ namespace CodingDaniel.MapEditor.Handle
             definition.LocksFor(_currentMode).ApplyTo(forced);
             return forced;
         }
-        
+
         private ViewMode _currentMode;
 
         /// <summary>
@@ -212,10 +212,10 @@ namespace CodingDaniel.MapEditor.Handle
         public virtual void SetVertexSnapping(bool snapping)
         {
         }
-        
+
         protected void UpdateCurrentMode()
         {
-            if(IsDragging)
+            if (IsDragging)
             {
                 return;
             }
@@ -225,16 +225,16 @@ namespace CodingDaniel.MapEditor.Handle
             Vector3 camPos = _cam.transform.position;
             Vector3 toCam = _cam.orthographic ? _cam.transform.forward : (Position - camPos).normalized;
             Quaternion rotation = Rotation;
-            
-            if(Mathf.Abs(Vector3.Dot(toCam,  rotation * Vector3.forward)) >= threshold)
+
+            if (Mathf.Abs(Vector3.Dot(toCam, rotation * Vector3.forward)) >= threshold)
             {
                 CurrentMode = ViewMode.XY2D;
             }
-            else if(Mathf.Abs(Vector3.Dot(toCam, rotation * Vector3.up)) >= threshold)
+            else if (Mathf.Abs(Vector3.Dot(toCam, rotation * Vector3.up)) >= threshold)
             {
                 CurrentMode = ViewMode.XZ2D;
             }
-            else if(Mathf.Abs(Vector3.Dot(toCam, rotation * Vector3.right)) >= threshold)
+            else if (Mathf.Abs(Vector3.Dot(toCam, rotation * Vector3.right)) >= threshold)
             {
                 CurrentMode = ViewMode.YZ2D;
             }
@@ -243,13 +243,13 @@ namespace CodingDaniel.MapEditor.Handle
                 CurrentMode = ViewMode.XYZ3D;
             }
         }
-        
+
         public virtual Vector3 Position
         {
             get => transform.position;
             set => transform.position = value;
         }
-        
+
         /// <summary>
         /// Target objects which will be affected by handle (for example if _targets array contains O1 and O2 objects and O1 is parent of O2 then _activeTargets array will contain only O1 object)
         /// </summary>
@@ -270,17 +270,17 @@ namespace CodingDaniel.MapEditor.Handle
         {
             get
             {
-                if(_realTargets == null)
+                if (_realTargets == null)
                 {
                     return Targets;
                 }
                 return _realTargets;
             }
         }
-        
+
         private Transform[] _commonCenter;
         private Transform[] _commonCenterTarget;
-        
+
         private BaseHandleInput _input;
 
         private static List<BaseHandle> _allHandles = new List<BaseHandle>();
@@ -288,10 +288,10 @@ namespace CodingDaniel.MapEditor.Handle
         {
             get { return _allHandles; }
         }
-        
+
         private void GetActiveRealTargets()
         {
-            if(_realTargets == null)
+            if (_realTargets == null)
             {
                 _activeRealTargets = null;
                 return;
@@ -335,7 +335,7 @@ namespace CodingDaniel.MapEditor.Handle
 
             _activeRealTargets = targetsHS.ToArray();
         }
-        
+
         /// <summary>
         /// All Target objects
         /// </summary>
@@ -393,9 +393,9 @@ namespace CodingDaniel.MapEditor.Handle
             get { return _targets; }
             set
             {
-             
+
                 _targets = value;
-                if(_targets == null)
+                if (_targets == null)
                 {
                     SharedLockObject = LockAxes.Eval(null);
                     _activeTargets = null;
@@ -418,18 +418,18 @@ namespace CodingDaniel.MapEditor.Handle
                     _activeTargets = new Transform[0];
                     return;
                 }
-                else if(_targets.Length == 1)
+                else if (_targets.Length == 1)
                 {
-                    _activeTargets = new [] { _targets[0] };
+                    _activeTargets = new[] { _targets[0] };
                 }
 
-                for(int i = 0; i < _targets.Length; ++i)
+                for (int i = 0; i < _targets.Length; ++i)
                 {
                     Transform target = _targets[i];
                     Transform p = target.parent;
-                    while(p != null)
+                    while (p != null)
                     {
-                        if(targetsHS.Contains(p))
+                        if (targetsHS.Contains(p))
                         {
                             targetsHS.Remove(target);
                             break;
@@ -441,7 +441,7 @@ namespace CodingDaniel.MapEditor.Handle
 
                 _activeTargets = targetsHS.ToArray();
                 LockObject lockObject = LockAxes.Eval(_activeTargets.Where(t => t.GetComponent<LockAxes>() != null).Select(t => t.GetComponent<LockAxes>()).ToArray());
-                if(_activeTargets.Any(target => target.gameObject.isStatic))
+                if (_activeTargets.Any(target => target.gameObject.isStatic))
                 {
                     lockObject.PositionX = lockObject.PositionY = lockObject.PositionZ = true;
                     lockObject.RotationX = lockObject.RotationY = lockObject.RotationZ = true;
@@ -458,12 +458,12 @@ namespace CodingDaniel.MapEditor.Handle
 
             }
         }
-        
+
         public Transform Target
         {
             get
             {
-                if(Targets == null || Targets.Length == 0)
+                if (Targets == null || Targets.Length == 0)
                 {
                     return null;
                 }
@@ -484,7 +484,7 @@ namespace CodingDaniel.MapEditor.Handle
                 return Editor.Tools.PivotMode;
             }
         }
-        
+
         protected virtual MEPivotRotation PivotRotation
         {
             get
@@ -498,7 +498,7 @@ namespace CodingDaniel.MapEditor.Handle
                 return Editor.Tools.PivotRotation;
             }
         }
-        
+
         protected virtual Vector3 GetCenterPosition(Transform target)
         {
             return target.GetCenter();
@@ -513,7 +513,7 @@ namespace CodingDaniel.MapEditor.Handle
         {
             _editor = MEBase.Instance;
             _allHandles.Add(this);
-            
+
             HitTester = _editor.HitTester;
             appearance = _editor.Appearance;
             IMEGraphic graphic = _editor.Graphics;
@@ -521,37 +521,37 @@ namespace CodingDaniel.MapEditor.Handle
             {
                 _meCamera = graphic.GetOrCreateCamera(Camera.main, CameraEvent.AfterImageEffectsOpaque);
             }
-            if (_targets != null && _targets.Length > 0 )
+            if (_targets != null && _targets.Length > 0)
             {
                 LockObject lockObject = SharedLockObject;
-                if(_commonCenter == null || _commonCenter.Length == 0 || _commonCenter[0] != _targets[0])
+                if (_commonCenter == null || _commonCenter.Length == 0 || _commonCenter[0] != _targets[0])
                 {
                     Targets = _targets;
                 }
                 SharedLockObject = lockObject;
             }
-            
+
             if (Targets == null || Targets.Length == 0)
             {
                 LockObject lockObject = SharedLockObject;
                 Targets = new[] { transform };
                 SharedLockObject = lockObject;
             }
-            
+
         }
 
         protected virtual void Start()
         {
             _cam = Camera.main;
-            _input =  GetComponent<BaseHandleInput>();
+            _input = GetComponent<BaseHandleInput>();
 
             if (_input == null || _input.Handle != this)
             {
                 _input = gameObject.AddComponent<BaseHandleInput>();
                 _input.Handle = this;
             }
-            
-            
+
+
 
             if (_meCamera != null)
             {
@@ -563,7 +563,7 @@ namespace CodingDaniel.MapEditor.Handle
                 _prevCamOrthographic = _meCamera.Camera.orthographic;
                 _prevCamOrthographicsSize = _meCamera.Camera.orthographicSize;
                 _prevCamRect = _meCamera.Camera.rect;
-                
+
                 // Subscription is owned by OnEnable/OnDisable. It used to be added here as well, which
                 // left a second, never-removed handler: a handle deactivated by a tool switch kept
                 // redrawing itself into the camera command buffer, so the previous handle stayed on
@@ -585,12 +585,12 @@ namespace CodingDaniel.MapEditor.Handle
             {
                 HitTester.Add(this);
             }
-            
-            if(_input != null)
+
+            if (_input != null)
             {
                 _input.enabled = true;
             }
-            
+
             if (_meCamera != null)
             {
                 // Idempotent on purpose: exactly one subscription must exist per enabled handle, so the
@@ -613,19 +613,19 @@ namespace CodingDaniel.MapEditor.Handle
             {
                 HitTester.Remove(this);
             }
-            
+
             Editor.Tools.PivotRotationChanged -= OnPivotRotationChanged;
             Editor.Tools.PivotModeChanged -= OnPivotModeChanged;
             Editor.Tools.ToolChanged -= OnRuntimeToolChanged;
             Editor.Tools.LockAxesChanged -= OnLockAxesChanged;
             Editor.Undo.UndoCompleted -= OnUndoCompleted;
             Editor.Undo.RedoCompleted -= OnRedoCompleted;
-            
-            
-            DestroyCommonCenter(false);
-            
 
-            if ( Editor.Tools != null && Editor.Tools.ActiveTool == this)
+
+            DestroyCommonCenter(false);
+
+
+            if (Editor.Tools != null && Editor.Tools.ActiveTool == this)
             {
                 Editor.Tools.ActiveTool = null;
             }
@@ -639,22 +639,22 @@ namespace CodingDaniel.MapEditor.Handle
         protected void OnDestroy()
         {
             _allHandles.Remove(this);
-            
+
             if (_input != null && _input.Handle == this)
             {
                 Destroy(_input);
             }
-            
+
             if (_meCamera != null)
             {
                 _meCamera.CommandBufferRefresh -= OnCommandBufferRefresh;
                 _meCamera.RefreshCommandBuffer();
             }
-            
+
             DestroyCommonCenter(false);
 
 
-            if ( Editor.Tools != null && Editor.Tools.ActiveTool == this)
+            if (Editor.Tools != null && Editor.Tools.ActiveTool == this)
             {
                 Editor.Tools.ActiveTool = null;
             }
@@ -666,9 +666,9 @@ namespace CodingDaniel.MapEditor.Handle
             {
                 for (int i = 0; i < _commonCenter.Length; ++i)
                 {
-                    if(_commonCenter[i])
+                    if (_commonCenter[i])
                     {
-                        if(destroyImmediate)
+                        if (destroyImmediate)
                         {
                             DestroyImmediate(_commonCenter[i].gameObject);
                         }
@@ -677,7 +677,7 @@ namespace CodingDaniel.MapEditor.Handle
                             Destroy(_commonCenter[i].gameObject);
                         }
                     }
-                    
+
                 }
             }
 
@@ -685,7 +685,7 @@ namespace CodingDaniel.MapEditor.Handle
             {
                 for (int i = 0; i < _commonCenterTarget.Length; ++i)
                 {
-                    if(_commonCenterTarget[i])
+                    if (_commonCenterTarget[i])
                     {
                         if (destroyImmediate)
                         {
@@ -722,13 +722,13 @@ namespace CodingDaniel.MapEditor.Handle
                     {
                         EffectiveGridUnitSize = 0;
                     }
-                    
+
                     OnDrag();
                 }
             }
-            
+
             UpdateOverride();
-            
+
             if (IsDragging)
             {
                 if (PivotMode == MEPivotMode.Center && _commonCenterTarget != null && _realTargets != null && _realTargets.Length > 1)
@@ -754,7 +754,7 @@ namespace CodingDaniel.MapEditor.Handle
                     for (int i = 0; i < _allHandles.Count; ++i)
                     {
                         BaseHandle handle = _allHandles[i];
-                        if ( handle.gameObject.activeSelf)
+                        if (handle.gameObject.activeSelf)
                         {
                             handle._commonCenter[0].position = _commonCenter[0].position;
                             handle._commonCenter[0].rotation = _commonCenter[0].rotation;
@@ -763,7 +763,7 @@ namespace CodingDaniel.MapEditor.Handle
                     }
                 }
             }
-            
+
             TryRefreshCommandBuffer();
         }
         protected virtual void UpdateOverride()
@@ -824,10 +824,10 @@ namespace CodingDaniel.MapEditor.Handle
         {
 
         }
-        
+
         protected virtual void LateUpdate()
-        {            
-            if(!IsDragging)
+        {
+            if (!IsDragging)
             {
                 if (Editor.Tools.ActiveTool == this)
                 {
@@ -835,7 +835,7 @@ namespace CodingDaniel.MapEditor.Handle
                 }
             }
 
-            
+
             Camera camera = _meCamera.Camera;
             if (_prevCamPosition != camera.transform.position ||
                 _prevCamRotation != camera.transform.rotation ||
@@ -851,11 +851,11 @@ namespace CodingDaniel.MapEditor.Handle
                 TryRefreshCommandBuffer();
             }
         }
-        
+
 
         public virtual void BeginDrag()
         {
-            if(Editor.Tools.IsViewing)
+            if (Editor.Tools.IsViewing)
             {
                 return;
             }
@@ -878,13 +878,13 @@ namespace CodingDaniel.MapEditor.Handle
             }
             else
             {
-                if(Editor.Tools.ActiveTool == this)
+                if (Editor.Tools.ActiveTool == this)
                 {
                     Editor.Tools.ActiveTool = null;
                 }
             }
         }
-        
+
         public virtual void EndDrag()
         {
             if (IsDragging)
@@ -905,7 +905,7 @@ namespace CodingDaniel.MapEditor.Handle
         {
 
         }
-        
+
         protected virtual bool OnBeginDrag()
         {
             if (Target == null)
@@ -918,12 +918,12 @@ namespace CodingDaniel.MapEditor.Handle
             if (!_editor.HasChanged) _editor.HasChanged = true;
             return true;
         }
-        
+
         protected virtual void OnRuntimeToolChanged()
         {
             EndDrag();
         }
-        
+
         protected virtual void OnPivotModeChanged()
         {
             if (RealTargets != null)
@@ -933,10 +933,10 @@ namespace CodingDaniel.MapEditor.Handle
 
             if (PivotMode != MEPivotMode.Center)
             {
-                _realTargets = null;   
+                _realTargets = null;
             }
-            
-            if(Target != null)
+
+            if (Target != null)
             {
                 transform.position = Target.position;
             }
@@ -948,15 +948,15 @@ namespace CodingDaniel.MapEditor.Handle
         {
             TryRefreshCommandBuffer();
 
-            if (_commonCenter is {Length: > 0})
+            if (_commonCenter is { Length: > 0 })
             {
                 Targets = RealTargets;
             }
         }
-        
+
         protected virtual void OnLockAxesChanged()
         {
-            if(SharedLockObject != null)
+            if (SharedLockObject != null)
             {
                 LockObject lockObject = SharedLockObject;
                 SharedLockObject = lockObject;
@@ -964,7 +964,7 @@ namespace CodingDaniel.MapEditor.Handle
 
             TryRefreshCommandBuffer();
         }
-        
+
         protected virtual void BeginRecordTransform()
         {
             if (!EnableUndo)
@@ -975,17 +975,17 @@ namespace CodingDaniel.MapEditor.Handle
             for (int i = 0; i < _activeRealTargets.Length; ++i)
             {
                 Transform target = _activeRealTargets[i];
-                if(target != null)
+                if (target != null)
                 {
                     Editor.Undo.BeginRecordTransform(target);
                 }
             }
             Editor.Undo.EndRecord();
         }
-        
+
         protected virtual void EndRecordTransform()
         {
-            if(!EnableUndo)
+            if (!EnableUndo)
             {
                 return;
             }
@@ -1005,7 +1005,7 @@ namespace CodingDaniel.MapEditor.Handle
         {
             if (PivotMode == MEPivotMode.Center)
             {
-                if(_realTargets != null && (_realTargets.Length != 1 || _realTargets[0] != transform))
+                if (_realTargets != null && (_realTargets.Length != 1 || _realTargets[0] != transform))
                 {
                     Targets = _realTargets;
                 }
@@ -1022,19 +1022,19 @@ namespace CodingDaniel.MapEditor.Handle
                 }
             }
         }
-        
+
         public virtual HandleAxis HitTest(out float distance)
         {
             distance = float.PositiveInfinity;
             return HandleAxis.None;
         }
-        
+
         protected virtual Plane GetDragPlane(Matrix4x4 matrix, Vector3 axis)
         {
             Plane plane = new Plane(matrix.MultiplyVector(axis).normalized, matrix.MultiplyPoint(Vector3.zero));
             return plane;
         }
-        
+
         protected virtual Plane GetDragPlane(Vector3 axis)
         {
             Vector3 toCam;
@@ -1044,13 +1044,13 @@ namespace CodingDaniel.MapEditor.Handle
             }
             else
             {
-                toCam = _meCamera.Camera.cameraToWorldMatrix.MultiplyVector(Vector3.forward); 
+                toCam = _meCamera.Camera.cameraToWorldMatrix.MultiplyVector(Vector3.forward);
             }
-            
+
             Plane dragPlane = new Plane(toCam.normalized, transform.position);
             return dragPlane;
         }
-        
+
         protected virtual bool GetPointOnDragPlane(Ray ray, out Vector3 point)
         {
             return GetPointOnDragPlane(DragPlane, ray, out point);
@@ -1068,7 +1068,7 @@ namespace CodingDaniel.MapEditor.Handle
             point = Vector3.zero;
             return false;
         }
-        
+
         protected Vector3 GetGridOffset(float gridSize, Vector3 position)
         {
             Vector3 currentPosition = position;
@@ -1081,7 +1081,7 @@ namespace CodingDaniel.MapEditor.Handle
 
         protected virtual void OnCommandBufferRefresh(IMECamera camera)
         {
-            if(Target != null)
+            if (Target != null)
             {
                 RefreshCommandBuffer(camera);
             }

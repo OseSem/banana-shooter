@@ -1,4 +1,4 @@
-﻿
+
 using System;
 
 namespace SecureServer
@@ -12,7 +12,7 @@ namespace SecureServer
         public uint Duration = 0;
         public uint Flags = 0;
 
-        public PlayerGameBan(string key,ulong steamId, ulong reportId, string cheatDescription)
+        public PlayerGameBan(string key, ulong steamId, ulong reportId, string cheatDescription)
         {
             Key = key;
             SteamId = steamId;

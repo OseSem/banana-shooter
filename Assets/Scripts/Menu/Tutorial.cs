@@ -33,7 +33,7 @@ namespace Menu
             {
                 Destroy(gameObject);
             }
-        
+
         }
 
         private IEnumerator Start()
@@ -42,17 +42,17 @@ namespace Menu
             {
                 yield return null;
             }
-            
+
             while (!GameManager.Initialized)
             {
                 yield return null;
             }
-            
+
             while (!MapSaver.Initialized)
             {
                 yield return null;
             }
-            
+
             while (!SteamWorkshopManager.Initialized)
             {
                 yield return null;
@@ -63,20 +63,20 @@ namespace Menu
                 yield return null;
             }
             yield return new WaitForSeconds(1f);
-            
+
             Set();
         }
 
         void Set()
         {
-            SetText("StartGameTip",4);
+            SetText("StartGameTip", 4);
         }
 
-        [SerializeField]private GameObject textPrefab;
+        [SerializeField] private GameObject textPrefab;
 
         [SerializeField] private Transform content;
 
-        public void SetText(string entry,float time = 10)
+        public void SetText(string entry, float time = 10)
         {
             if (!GameManager.Instance.setting.enableTutorial)
             {
@@ -88,24 +88,24 @@ namespace Menu
             {
                 TutorialItem item = Instantiate(textPrefab, content).GetComponent<TutorialItem>();
 
-                item.SetValues(entry,time);
+                item.SetValues(entry, time);
             }
             else
             {
-                SetTutorial(entry,time);
-            
+                SetTutorial(entry, time);
+
             }
         }
 
-        void SetTutorial(string entry,float time)
+        void SetTutorial(string entry, float time)
         {
             desiredSize = Vector3.one;
             desiredAlpha = 1f;
-                
+
             text.SetEntry(entry);
-            
+
             CancelInvoke(nameof(ClearTutorial));
-            Invoke(nameof(ClearTutorial),time);
+            Invoke(nameof(ClearTutorial), time);
         }
 
         void ClearTutorial()
@@ -117,7 +117,7 @@ namespace Menu
         private void Update()
         {
             //textTransform.localScale = Vector3.Slerp(textTransform.localScale,desiredSize,Time.deltaTime*15f);
-            canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, desiredAlpha, Time.deltaTime*5f);
+            canvasGroup.alpha = Mathf.Lerp(canvasGroup.alpha, desiredAlpha, Time.deltaTime * 5f);
         }
     }
 }

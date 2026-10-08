@@ -6,7 +6,7 @@ namespace Multiplayer.Entity.Client.Enemy.Animation
     {
         protected Animator Animator;
 
-        protected Vector3 Input,InputInterpolate;
+        protected Vector3 Input, InputInterpolate;
 
         protected EnemyAnimation(Animator animator)
         {

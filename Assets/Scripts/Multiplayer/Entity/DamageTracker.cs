@@ -5,7 +5,7 @@ namespace Multiplayer.Entity
 {
     public class DamageTracker
     {
-        private Dictionary<ushort, int> _damageTaken = new(), _damageGiven = new ();
+        private Dictionary<ushort, int> _damageTaken = new(), _damageGiven = new();
 
         public void DamageTaken(ushort from, int damage)
         {

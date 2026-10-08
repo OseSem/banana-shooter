@@ -5,14 +5,14 @@ using UnityEngine;
 
 namespace Manager.Editor
 {
-    [CustomEditor(typeof(InventoryManager)),CanEditMultipleObjects]
+    [CustomEditor(typeof(InventoryManager)), CanEditMultipleObjects]
     public class InventoryManagerEditor : UnityEditor.Editor
     {
         private InventoryManager _inventory;
 
         private void OnEnable()
         {
-            _inventory = (InventoryManager) target;
+            _inventory = (InventoryManager)target;
         }
 
         public override void OnInspectorGUI()
@@ -21,16 +21,16 @@ namespace Manager.Editor
                 return;
 
             float space = 10f;
-            
+
             EditorGUI.indentLevel = 0;
             GUILayout.BeginVertical("Box");
             EditorGUILayout.LabelField("Cosmetics", EditorStyles.boldLabel);
             EditorGUI.indentLevel = 1;
             EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(_inventory.cosmeticItems)), new GUIContent("Cosmetic Items", "All the cosmetics the game contains"));
             GUILayout.EndVertical();
-            
+
             GUILayout.Space(space);
-            
+
             EditorGUI.indentLevel = 0;
             GUILayout.BeginVertical("Box");
             EditorGUILayout.LabelField("Particles", EditorStyles.boldLabel);
@@ -43,9 +43,9 @@ namespace Manager.Editor
             {
                 foreach (var cosmeticItem in _inventory.cosmeticItems)
                 {
-                    if(cosmeticItem.type == CosmeticItem.Type.MenuScene || cosmeticItem.type == CosmeticItem.Type.Particle)
+                    if (cosmeticItem.type == CosmeticItem.Type.MenuScene || cosmeticItem.type == CosmeticItem.Type.Particle)
                         continue;
-                    
+
                     string path = AssetDatabase.GetAssetPath(cosmeticItem.GetInstanceID());
                     if (cosmeticItem.mesh == null)
                     {
@@ -68,7 +68,7 @@ namespace Manager.Editor
                 }
             }
             GUILayout.EndVertical();
-            
+
             serializedObject.ApplyModifiedProperties();
         }
     }
