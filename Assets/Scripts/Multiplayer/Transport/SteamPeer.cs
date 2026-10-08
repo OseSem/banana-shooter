@@ -20,6 +20,7 @@ namespace Riptide.Transports.Steam
         protected const int MaxMessages = 256;
 
         private readonly byte[] receiveBuffer;
+        private readonly IntPtr[] ptrs = new IntPtr[MaxMessages];
 
         protected SteamPeer()
         {
@@ -28,8 +29,6 @@ namespace Riptide.Transports.Steam
 
         protected void Receive(SteamConnection fromConnection)
         {
-            IntPtr[] ptrs = new IntPtr[MaxMessages]; // TODO: remove allocation?
-
             // TODO: consider using poll groups -> https://partner.steamgames.com/doc/api/ISteamNetworkingSockets#functions_poll_groups
             int messageCount = SteamNetworkingSockets.ReceiveMessagesOnConnection(fromConnection.SteamNetConnection, ptrs, MaxMessages);
             if (messageCount > 0)
