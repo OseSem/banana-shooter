@@ -440,6 +440,8 @@ namespace Multiplayer
 
         private void OnApplicationQuit()
         {
+            if (!SteamManager.Initialized) return;
+
             Client.Connected -= DidConnect;
             Client.ConnectionFailed -= FailedToConnect;
             Client.Disconnected -= DidDisconnect;

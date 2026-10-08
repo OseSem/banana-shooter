@@ -1,9 +1,9 @@
 #if UNITY_SERVER
 using System;
 using System.Collections;
-using System.Collections.Concurrent;
 using System.IO;
-using System.Threading;
+using System.Runtime.InteropServices;
+using System.Text;
 using Manager;
 using MapEditor;
 using Multiplayer;
@@ -32,7 +32,8 @@ namespace Dedicated
         ushort _maxPlayers = 40;
         Config _config;
 
-        readonly ConcurrentQueue<string> _commands = new();
+        readonly StringBuilder _consoleInput = new();
+        bool _consoleOpen = true;
 
         Callback<SteamServersConnected_t> _steamConnected;
         Callback<SteamServerConnectFailure_t> _steamFailed;
@@ -82,8 +83,6 @@ namespace Dedicated
 
             if (_config.Server.UpdateRestart)
                 InvokeRepeating(nameof(CheckForUpdate), UpdateCheckInterval, UpdateCheckInterval);
-
-            new Thread(ReadConsole) { IsBackground = true }.Start();
         }
 
         bool StartSteam()
@@ -121,8 +120,7 @@ namespace Dedicated
             if (_steamConnected != null)
                 GameServer.RunCallbacks();
 
-            while (_commands.TryDequeue(out var line))
-                RunCommand(line);
+            PollConsole();
         }
 
         void OnApplicationQuit()
@@ -177,12 +175,50 @@ namespace Dedicated
 
         void Quit() => Application.Quit();
 
-        void ReadConsole()
+        // A thread blocked in Console.ReadLine keeps IL2CPP from finishing shutdown while stdin is open
+        // (terminal, docker -it), so stdin is polled on the main thread instead.
+#if UNITY_STANDALONE_LINUX
+        [StructLayout(LayoutKind.Sequential)]
+        struct PollFd
         {
-            string line;
-            while ((line = System.Console.ReadLine()) != null)
-                _commands.Enqueue(line);
+            public int Fd;
+            public short Events;
+            public short Revents;
         }
+
+        const short PollIn = 1;
+
+        [DllImport("libc.so.6", EntryPoint = "poll")]
+        static extern int Poll(ref PollFd fds, uint count, int timeoutMs);
+
+        [DllImport("libc.so.6", EntryPoint = "read")]
+        static extern IntPtr Read(int fd, byte[] buffer, IntPtr count);
+
+        readonly byte[] _readBuffer = new byte[1024];
+
+        void PollConsole()
+        {
+            var stdin = new PollFd { Fd = 0, Events = PollIn };
+            while (_consoleOpen && Poll(ref stdin, 1, 0) > 0)
+            {
+                int read = (int)Read(0, _readBuffer, (IntPtr)_readBuffer.Length);
+                if (read <= 0)
+                {
+                    _consoleOpen = false;
+                    return;
+                }
+
+                _consoleInput.Append(Encoding.UTF8.GetString(_readBuffer, 0, read));
+                for (int newline; (newline = _consoleInput.ToString().IndexOf('\n')) >= 0;)
+                {
+                    RunCommand(_consoleInput.ToString(0, newline));
+                    _consoleInput.Remove(0, newline + 1);
+                }
+            }
+        }
+#else
+        void PollConsole() { }
+#endif
 
         void RunCommand(string line)
         {
