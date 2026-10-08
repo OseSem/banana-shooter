@@ -401,6 +401,8 @@ namespace Multiplayer
 
         private void Update()
         {
+            if (!SteamManager.Initialized) return;
+
             Client.Update();
         }
 
@@ -631,6 +633,7 @@ namespace Multiplayer
 
         public void SetRichPreference(string gamemodeName, string mapName)
         {
+            if (!SteamManager.Initialized) return;
             SteamFriends.SetRichPresence("gamemode", gamemodeName);
             SteamFriends.SetRichPresence("map", mapName);
             SteamFriends.SetRichPresence("steam_display", "#Playing");

@@ -8,6 +8,11 @@ using Quest;
 using Riptide;
 using Steamworks;
 using UnityEngine;
+#if UNITY_SERVER
+using Inventory = Steamworks.SteamGameServerInventory;
+#else
+using Inventory = Steamworks.SteamInventory;
+#endif
 
 namespace Manager
 {
@@ -128,7 +133,7 @@ namespace Manager
             if (SteamApps.BIsDlcInstalled(new AppId_t(2238100)))
             {
                 HandleQueue.Enqueue(InventoryHandleType.ItemDrop);
-                SteamInventory.AddPromoItem(out inventoryHandle, (SteamItemDef_t)223);
+                Inventory.AddPromoItem(out inventoryHandle, (SteamItemDef_t)223);
             }
         }
 
@@ -154,7 +159,7 @@ namespace Manager
             EquippedItems.Clear();
 
             HandleQueue.Enqueue(InventoryHandleType.SerializeInventory);
-            if (SteamInventory.GetItemsByID(out inventoryHandle, ids.ToArray(), (uint)ids.Count))
+            if (Inventory.GetItemsByID(out inventoryHandle, ids.ToArray(), (uint)ids.Count))
             {
                 Debug.Log("Try to serialize inventory...");
             }
@@ -164,7 +169,11 @@ namespace Manager
         public static float sizeFactor = 1f;
         private void OnEnable()
         {
+#if UNITY_SERVER
+            result = Callback<SteamInventoryResultReady_t>.CreateGameServer(OnResultLoaded);
+#else
             result = Callback<SteamInventoryResultReady_t>.Create(OnResultLoaded);
+#endif
         }
 
         void SetTags(SteamItemStored steamItemStored, CosmeticItem cosmeticItem, string[] tags)
@@ -206,15 +215,15 @@ namespace Manager
             Debug.Log(handleType);
             // if (handleType == InventoryHandleType.None)
             // {
-            //     SteamInventory.DestroyResult(resultT.m_handle);
+            //     Inventory.DestroyResult(resultT.m_handle);
             //     return;
             // }
 
             //Check if call secceeded or not
-            if (resultT.m_result != EResult.k_EResultOK || SteamInventory.GetResultStatus(resultT.m_handle) != EResult.k_EResultOK)
+            if (resultT.m_result != EResult.k_EResultOK || Inventory.GetResultStatus(resultT.m_handle) != EResult.k_EResultOK)
             {
                 Debug.LogError("Failed to load inventory " + resultT.m_result);
-                SteamInventory.DestroyResult(inventoryHandle);
+                Inventory.DestroyResult(inventoryHandle);
                 return;
             }
 
@@ -225,7 +234,7 @@ namespace Manager
                 foreach (var clientData in PendingUserSteamIds)
                 {
                     CSteamID steamId = new CSteamID(clientData.SteamId);
-                    if (SteamInventory.CheckResultSteamID(resultT.m_handle, steamId))
+                    if (Inventory.CheckResultSteamID(resultT.m_handle, steamId))
                     {
                         Debug.Log($"{steamId} Inventory Result Got loaded");
 
@@ -235,7 +244,7 @@ namespace Manager
 
                         nItems = MaxItems;
                         resultItems = new SteamItemDetails_t[nItems];
-                        SteamInventory.GetResultItems(resultT.m_handle, resultItems, ref nItems);
+                        Inventory.GetResultItems(resultT.m_handle, resultItems, ref nItems);
 
                         CosmeticItem cosmeticItem = null;
 
@@ -255,7 +264,7 @@ namespace Manager
                             }
 
                             propertyValueBuffer = PropertyValueStringLengthMax;
-                            SteamInventory.GetResultItemProperty(resultT.m_handle, (uint)i, "tags", out var tags,
+                            Inventory.GetResultItemProperty(resultT.m_handle, (uint)i, "tags", out var tags,
                                 ref propertyValueBuffer);
 
                             int itemIndex = cosmeticItem.index;
@@ -376,15 +385,15 @@ namespace Manager
                     }
                 }
                 Debug.Log($"Doesnt Find The Inventory Result({resultT.m_handle.m_SteamInventoryResult}) Owner");
-                SteamInventory.DestroyResult(resultT.m_handle);
+                Inventory.DestroyResult(resultT.m_handle);
                 return;
             }
 
             //Check if result belongs to correct user
             CSteamID expectedId = NetworkManager.Instance.steamId;
-            if (!SteamInventory.CheckResultSteamID(resultT.m_handle, expectedId))
+            if (!Inventory.CheckResultSteamID(resultT.m_handle, expectedId))
             {
-                SteamInventory.DestroyResult(resultT.m_handle);
+                Inventory.DestroyResult(resultT.m_handle);
 
                 Debug.LogError("Tried to get an inventory that does not belong to self");
                 return;
@@ -392,7 +401,7 @@ namespace Manager
 
             nItems = MaxItems;
             resultItems = new SteamItemDetails_t[nItems];
-            SteamInventory.GetResultItems(inventoryHandle, resultItems, ref nItems);
+            Inventory.GetResultItems(inventoryHandle, resultItems, ref nItems);
 
             if (handleType == InventoryHandleType.GetInventory)
             {
@@ -412,7 +421,7 @@ namespace Manager
                 }
 
                 propertyValueBuffer = PropertyValueStringLengthMax;
-                SteamInventory.GetResultItemProperty(inventoryHandle, i, "tags", out var tags,
+                Inventory.GetResultItemProperty(inventoryHandle, i, "tags", out var tags,
                     ref propertyValueBuffer);
 
                 CosmeticItem cosmeticItem = CosmeticManager.ItemIdToItem[itemdefid];
@@ -634,7 +643,7 @@ namespace Manager
                     break;
             }
 
-            SteamInventory.DestroyResult(resultT.m_handle);
+            Inventory.DestroyResult(resultT.m_handle);
         }
 
         public void CheckBulkOpen()
@@ -653,7 +662,7 @@ namespace Manager
             SteamItemDef_t[] outItemDefTs = { GetCrateDef(item.itemDetails.m_iDefinition.m_SteamItemDef) };
             HandleQueue.Enqueue(CrateOpenAnimationEnable ? InventoryHandleType.Exchange : InventoryHandleType.None);
 
-            SteamInventory.ExchangeItems(out inventoryHandle, outItemDefTs, outCount, 1, new[] { item.itemDetails.m_itemId },
+            Inventory.ExchangeItems(out inventoryHandle, outItemDefTs, outCount, 1, new[] { item.itemDetails.m_itemId },
                 inputCount, 1);
         }
 
@@ -768,7 +777,7 @@ namespace Manager
             // }
 
             HandleQueue.Enqueue(InventoryHandleType.DeserializeInventory);
-            if (SteamInventory.DeserializeResult(out inventoryHandle, pBuffer, (uint)pBuffer.Length))
+            if (Inventory.DeserializeResult(out inventoryHandle, pBuffer, (uint)pBuffer.Length))
             {
                 PendingUserSteamIds.Add(user);
 
@@ -790,7 +799,7 @@ namespace Manager
             //         Debug.Log($"{i - 1024} {pBuffer[i]} {SerializeInventory[i]}");
             // }
             HandleQueue.Enqueue(InventoryHandleType.DeserializeNewItem);
-            if (SteamInventory.DeserializeResult(out inventoryHandle, pBuffer, (uint)pBuffer.Length))
+            if (Inventory.DeserializeResult(out inventoryHandle, pBuffer, (uint)pBuffer.Length))
             {
                 PendingUserSteamIds.Add(user);
 
@@ -825,7 +834,7 @@ namespace Manager
             HandleQueue.Enqueue(InventoryHandleType.SerializeNewItem);
             var ids = new SteamItemInstanceID_t[] { new(id) };
 
-            if (SteamInventory.GetItemsByID(out inventoryHandle, ids, (uint)ids.Length))
+            if (Inventory.GetItemsByID(out inventoryHandle, ids, (uint)ids.Length))
             {
                 Debug.Log($"Try to serialize new item {id}...");
             }
@@ -834,11 +843,11 @@ namespace Manager
         void SerializeNewItemResult(SteamInventoryResultReady_t resultT)
         {
             uint punOutBufferSize = 0;
-            if (SteamInventory.SerializeResult(resultT.m_handle, null, out punOutBufferSize))
+            if (Inventory.SerializeResult(resultT.m_handle, null, out punOutBufferSize))
             {
                 var newItem = new byte[punOutBufferSize];
 
-                SteamInventory.SerializeResult(resultT.m_handle, newItem, out punOutBufferSize);
+                Inventory.SerializeResult(resultT.m_handle, newItem, out punOutBufferSize);
 
                 Debug.Log($"Serialize New Item Success, Size: {punOutBufferSize}");
 
@@ -855,11 +864,11 @@ namespace Manager
         void SerializeResult(SteamInventoryResultReady_t resultT)
         {
             uint punOutBufferSize = 0;
-            if (SteamInventory.SerializeResult(resultT.m_handle, null, out punOutBufferSize))
+            if (Inventory.SerializeResult(resultT.m_handle, null, out punOutBufferSize))
             {
                 SerializeInventory = new byte[punOutBufferSize];
 
-                SteamInventory.SerializeResult(resultT.m_handle, SerializeInventory, out punOutBufferSize);
+                Inventory.SerializeResult(resultT.m_handle, SerializeInventory, out punOutBufferSize);
 
                 Debug.Log($"Serialize Inventory Success, Size: {punOutBufferSize}");
 
@@ -870,13 +879,13 @@ namespace Manager
         void GetItem()
         {
             HandleQueue.Enqueue(InventoryHandleType.GetInventory);
-            SteamInventory.GetAllItems(out inventoryHandle);
+            Inventory.GetAllItems(out inventoryHandle);
         }
 
         public void GetBox()
         {
             HandleQueue.Enqueue(InventoryHandleType.ItemDrop);
-            SteamInventory.TriggerItemDrop(out inventoryHandle, (SteamItemDef_t)11);
+            Inventory.TriggerItemDrop(out inventoryHandle, (SteamItemDef_t)11);
             // Debug.Log("get Box  ");
         }
 
@@ -891,7 +900,7 @@ namespace Manager
         public void GetLevelUpReward()
         {
             HandleQueue.Enqueue(InventoryHandleType.ItemDrop);
-            SteamInventory.AddPromoItem(out inventoryHandle, (SteamItemDef_t)1112);
+            Inventory.AddPromoItem(out inventoryHandle, (SteamItemDef_t)1112);
         }
 
         [Serializable]

@@ -25,6 +25,11 @@ using Utils;
 using Weapon;
 using Weapon.WeaponStats;
 using Random = UnityEngine.Random;
+#if UNITY_SERVER
+using SteamAuth = Steamworks.SteamGameServer;
+#else
+using SteamAuth = Steamworks.SteamUser;
+#endif
 
 namespace Multiplayer
 {
@@ -378,9 +383,20 @@ namespace Multiplayer
             }
         }
 
+        // The dedicated server never initializes the client Steam API (see SteamManager).
+#if UNITY_SERVER
+        static bool SteamReady => true;
+#else
+        static bool SteamReady => SteamManager.Initialized;
+#endif
+
+        public static ushort MinimalPlayerCount { get; set; } = 2;
+
+        public static bool DlcOnly { get; set; }
+
         private void Start()
         {
-            if (!SteamManager.Initialized)
+            if (!SteamReady)
             {
                 return;
             }
@@ -391,15 +407,19 @@ namespace Multiplayer
             RiptideLogger.Initialize(Debug.Log, true);
 #endif
 
+#if UNITY_SERVER
+            m_ValidateAuthTicketResponse = Callback<ValidateAuthTicketResponse_t>.CreateGameServer(OnValidateAuthTicketResponse);
+#else
             m_ValidateAuthTicketResponse = Callback<ValidateAuthTicketResponse_t>.Create(OnValidateAuthTicketResponse);
+#endif
 
             InitGame();
         }
 
         private void Update()
         {
-            if (!SteamManager.Initialized) return;
-            if (GameState == GameState.Voting && ClientData.Count >= CurrentServer.OverrideMinimalPlayerCount(2))
+            if (!SteamReady) return;
+            if (GameState == GameState.Voting && ClientData.Count >= CurrentServer.OverrideMinimalPlayerCount(MinimalPlayerCount))
             {
                 _votingTime -= Time.deltaTime;
 
@@ -412,7 +432,7 @@ namespace Multiplayer
 
         private void FixedUpdate()
         {
-            if (!SteamManager.Initialized) return;
+            if (!SteamReady) return;
 
             if (Server.IsRunning)
             {
@@ -463,7 +483,7 @@ namespace Multiplayer
         {
             foreach (var id in Authentication.SteamIds)
             {
-                SteamUser.EndAuthSession(new CSteamID(id));
+                SteamAuth.EndAuthSession(new CSteamID(id));
             }
             Authentication.Clear();
             Server.Stop();
@@ -607,7 +627,7 @@ namespace Multiplayer
 
                             msg.Add(_votingTime);
 
-                            msg.AddUShort(CurrentServer.OverrideMinimalPlayerCount(2));
+                            msg.AddUShort(CurrentServer.OverrideMinimalPlayerCount(MinimalPlayerCount));
 
                             msg.Add((ushort)ClientData.Count);
 
@@ -812,18 +832,23 @@ namespace Multiplayer
                 return;
             }
 
-            var result = SteamUser.BeginAuthSession(ticket, ticket.Length, id);
+            var result = SteamAuth.BeginAuthSession(ticket, ticket.Length, id);
 
             if (result == EBeginAuthSessionResult.k_EBeginAuthSessionResultDuplicateRequest)
             {
-                SteamUser.EndAuthSession(id);
-                result = SteamUser.BeginAuthSession(ticket, ticket.Length, id);
+                SteamAuth.EndAuthSession(id);
+                result = SteamAuth.BeginAuthSession(ticket, ticket.Length, id);
             }
 
             switch (result)
             {
                 case EBeginAuthSessionResult.k_EBeginAuthSessionResultOK:
-                    _userHasDlc[id.m_SteamID] = SteamUser.UserHasLicenseForApp(id, new AppId_t(2238100));
+                    _userHasDlc[id.m_SteamID] = SteamAuth.UserHasLicenseForApp(id, new AppId_t(2238100));
+                    if (DlcOnly && _userHasDlc[id.m_SteamID] != EUserHasLicenseForAppResult.k_EUserHasLicenseResultHasLicense)
+                    {
+                        Instance.Server.DisconnectClient(fromClient, GetDisconnectMessage("This server is DLC only"));
+                        return;
+                    }
                     Debug.Log($"Ticket is valid for this game 1949740 and this Steam ID {id}.");
                     return;
                 case EBeginAuthSessionResult.k_EBeginAuthSessionResultInvalidTicket:
@@ -981,7 +1006,7 @@ namespace Multiplayer
 
             if (Authentication.Remove(e.Client.Id, out var steamId))
             {
-                SteamUser.EndAuthSession(new CSteamID(steamId));
+                SteamAuth.EndAuthSession(new CSteamID(steamId));
                 _userHasDlc.Remove(steamId);
             }
 
@@ -1059,7 +1084,7 @@ namespace Multiplayer
 
         bool VerifyVote()
         {
-            if (ClientData.Count < CurrentServer.OverrideMinimalPlayerCount(2))
+            if (ClientData.Count < CurrentServer.OverrideMinimalPlayerCount(MinimalPlayerCount))
             {
                 return false;
             }
@@ -1283,6 +1308,10 @@ namespace Multiplayer
                 }
             }
             message.Release();
+
+#if UNITY_SERVER
+            Dedicated.DedicatedServer.Instance.LoadMap();
+#endif
         }
 
         public void StopGame()
@@ -1327,6 +1356,9 @@ namespace Multiplayer
         IEnumerator GotoReady()
         {
             yield return new WaitForSeconds(15f);
+#if UNITY_SERVER
+            Dedicated.DedicatedServer.ClearPlayers();
+#endif
             SetGameState(GameState.Voting, false);
             int playerCount = Server.ClientCount;
 
@@ -1340,7 +1372,7 @@ namespace Multiplayer
 
                 message.Add(_votingTime);
 
-                message.AddUShort(CurrentServer.OverrideMinimalPlayerCount(2));
+                message.AddUShort(CurrentServer.OverrideMinimalPlayerCount(MinimalPlayerCount));
 
                 message.Add((ushort)ClientData.Count);
 
