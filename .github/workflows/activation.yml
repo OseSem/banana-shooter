@@ -7,7 +7,8 @@ jobs:
     name: Activate Unity credentials
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/checkout@v4
+        with:
+          lfs: true
       - name: Activate Unity credentials
         uses: game-ci/unity-activate@v2
-        with:
-          unityVersion: auto
