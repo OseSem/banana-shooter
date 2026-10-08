@@ -44,7 +44,7 @@ On first start the server writes `Servers/<server>/Config.json` in the working d
 
 ## Console
 
-Type into the server's stdin: `status`, `kick <id>`, `start` (skip voting), `quit`.
+Type into the server's stdin: `status`, `kick <id>`, `start` (skip voting), `quit`. Linux builds only. `SIGTERM` (`docker stop`, systemd) also shuts down cleanly.
 
 ## Not supported yet
 
