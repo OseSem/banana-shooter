@@ -7,6 +7,7 @@ using Multiplayer;
 using Quest;
 using Riptide;
 using Steamworks;
+using Steamworks.NET;
 using UnityEngine;
 #if UNITY_SERVER
 using Inventory = Steamworks.SteamGameServerInventory;
@@ -139,6 +140,9 @@ namespace Manager
 
         public void TryToSerializeItem()
         {
+            // The local player's own inventory; a dedicated server has none.
+            if (!SteamManager.Initialized) return;
+
             List<SteamItemInstanceID_t> ids = new List<SteamItemInstanceID_t>();
 
             for (int i = 0; i < cosmeticIndex.ids.Length + cosmeticIndex.weaponIds.Length; i++)
@@ -776,9 +780,11 @@ namespace Manager
             //         Debug.Log($"{i - 1024} {pBuffer[i]} {SerializeInventory[i]}");
             // }
 
-            HandleQueue.Enqueue(InventoryHandleType.DeserializeInventory);
+            // Results arrive on a later RunCallbacks, so queueing after a successful call keeps
+            // the queue in step; a failed call queued first would shift every later result.
             if (Inventory.DeserializeResult(out inventoryHandle, pBuffer, (uint)pBuffer.Length))
             {
+                HandleQueue.Enqueue(InventoryHandleType.DeserializeInventory);
                 PendingUserSteamIds.Add(user);
 
                 CheckUserInventoryDeserializationFailed(user);
@@ -798,9 +804,9 @@ namespace Manager
             //     if(pBuffer[i] != SerializeInventory[i])
             //         Debug.Log($"{i - 1024} {pBuffer[i]} {SerializeInventory[i]}");
             // }
-            HandleQueue.Enqueue(InventoryHandleType.DeserializeNewItem);
             if (Inventory.DeserializeResult(out inventoryHandle, pBuffer, (uint)pBuffer.Length))
             {
+                HandleQueue.Enqueue(InventoryHandleType.DeserializeNewItem);
                 PendingUserSteamIds.Add(user);
 
                 Debug.Log($"Trying to Deserialize {user.Name}'s New Item, Size: {pBuffer.Length}");
