@@ -85,6 +85,13 @@ namespace Menu
             loadingText.SetEntry(state.ToString());
         }
 
+        public void ShowLoadingError(string error)
+        {
+            loadingText.enabled = false;
+            if (loadingText.TryGetComponent<TMP_Text>(out var text))
+                text.text = error;
+        }
+
         public void SetProgress(int currentStep,float offset)
         {
             progressBar.value = (float)currentStep / Preload.Step + offset;

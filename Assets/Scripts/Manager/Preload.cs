@@ -46,12 +46,16 @@ namespace Manager
         }
 
         [SerializeField] private PreloadMenu menu;
+        [SerializeField] private float initializationTimeout = 60f;
+        private bool _loadingFailed;
         public static bool Initialized = false;
 
         private void Awake()
         {
                 
             Instance = this;
+            Initialized = false;
+            _loadingFailed = false;
                 
             //GameManager -- 8
             //QuestManager -- 7
@@ -75,32 +79,22 @@ namespace Manager
 
         private IEnumerator Start()
         {
+            if (!SteamManager.Initialized) yield break;
+            
             Authenticate();
             RolesManager.Instance.TryToInitialize();
             LeaderboardManager.Instance.Refresh();
             
             Stopwatch stopwatch = Stopwatch.StartNew();
 
-            menu.SetLoadingStateText(LoadingState.Loading_Main_Game);
+            yield return WaitForInitialization(() => GameManager.Initialized, LoadingState.Loading_Main_Game);
+            if (_loadingFailed) yield break;
 
-            while (!GameManager.Initialized)
-            {
-                yield return null;
-            }
+            yield return WaitForInitialization(() => QuestManager.Initialized, LoadingState.Loading_Quests);
+            if (_loadingFailed) yield break;
 
-            menu.SetLoadingStateText(LoadingState.Loading_Quests);
-
-            while (!QuestManager.Initialized)
-            {
-                yield return null;
-            }
-
-            menu.SetLoadingStateText(LoadingState.Loading_Map_Editor);
-
-            while (!MapSaver.Initialized)
-            {
-                yield return null;
-            }
+            yield return WaitForInitialization(() => MapSaver.Initialized, LoadingState.Loading_Map_Editor);
+            if (_loadingFailed) yield break;
 
             // menu.SetLoadingStateText(LoadingState.Loading_Inventory);
             //
@@ -108,51 +102,26 @@ namespace Manager
             // {
             //     yield return null;
             // }
+            
+            yield return WaitForInitialization(() => SteamWorkshopManager.Initialized, LoadingState.Loading_Steam_Workshop);
+            if (_loadingFailed) yield break;
 
-            menu.SetLoadingStateText(LoadingState.Loading_Steam_Workshop);
-
-            while (!SteamWorkshopManager.Initialized)
-            {
-                yield return null;
-            }
-
-            //TODO: Loading Level
-            menu.SetLoadingStateText(LoadingState.Loading_Level);
-
+            // Loading Level
             LevelManager.Instance.Refresh();
-
-            while (!LevelManager.Initialized)
-            {
-                yield return null;
-            }
+            yield return WaitForInitialization(() => LevelManager.Initialized, LoadingState.Loading_Level);
+            if (_loadingFailed) yield break;
 
 
-            //TODO: Requesting Roles
-            menu.SetLoadingStateText(LoadingState.Loading_Roles);
+            // Requesting Roles
+            yield return WaitForInitialization(() => RolesManager.Initialized, LoadingState.Loading_Roles);
+            if (_loadingFailed) yield break;
 
-            while (!RolesManager.Initialized)
-            {
-                yield return null;
-            }
-
-            //TODO: Loading Leaderboard
-            menu.SetLoadingStateText(LoadingState.Loading_Leaderboard);
-
-            while (!LeaderboardManager.Initialized)
-            {
-                yield return null;
-            }
-
-            #region Authenticate
-
-            menu.SetLoadingStateText(LoadingState.Authenticating);
-
-            while (!Initialized)
-            {
-                yield return null;
-            }
-
-            #endregion
+            // Loading Leaderboard
+            yield return WaitForInitialization(() => LeaderboardManager.Initialized, LoadingState.Loading_Leaderboard);
+            if (_loadingFailed) yield break;
+            
+            yield return WaitForInitialization(() => Initialized, LoadingState.Authenticating);
+            if (_loadingFailed) yield break;
 
             #region Load
 
@@ -191,25 +160,44 @@ namespace Manager
             PlayerBansResponse(){}
         }
         
+        private IEnumerator WaitForInitialization(Func<bool> isReady, LoadingState state)
+        {
+            menu.SetLoadingStateText(state);
+            float deadline = Time.realtimeSinceStartup + Math.Max(1f, initializationTimeout);
+            while (!isReady())
+            {
+                if (Time.realtimeSinceStartup >= deadline)
+                {
+                    _loadingFailed = true;
+                    string error = $"Unable to finish loading {state}. Check Steam and your connection, then restart the game.";
+                    Debug.LogError(error);
+                    menu.ShowLoadingError(error);
+                    yield break;
+                }
+                yield return null;
+            }
+        }
+        
         async void Authenticate()
         {
-            PlayerBansResponse response = await HttpClient.Get<PlayerBansResponse>(EndPoint.GetPlayerBansSummaries + SteamUser.GetSteamID(),false);
-            
-            Initialized = true;
-            
-            if (response is { players: { Count: > 0 } })
+            try
             {
-                SteamManager.CurrentUserBanSummary = response.players[0];
-                Debug.Log("Authenticated! ");
+                PlayerBansResponse response = await HttpClient.Get<PlayerBansResponse>(EndPoint.GetPlayerBansSummaries + SteamUser.GetSteamID(), false);
+                PlayerBanSummary summary = response?.players?.Find(player => player != null) ?? new PlayerBanSummary();
+                summary.Bans ??= new List<GameBan>();
+                summary.Bans.RemoveAll(ban => ban == null);
+                SteamManager.CurrentUserBanSummary = summary;
             }
-            else
+            catch (Exception e)
             {
-                //TODO: Failed to authenticate
+                Debug.LogError($"Authentication request failed: {e.Message}");
                 SteamManager.CurrentUserBanSummary = new PlayerBanSummary();
-                Debug.Log("Failed to authenticate");
             }
-            
-            NextStep();
+            finally
+            {
+                Initialized = true;
+                if (!_loadingFailed && this != null) NextStep();
+            }
         }
     }
 }

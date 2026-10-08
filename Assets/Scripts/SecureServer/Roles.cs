@@ -13,10 +13,10 @@ namespace SecureServer
         [JsonConstructor]
         public Roles(List<ulong> admins, List<ulong> helpers,List<ulong> bananaMen, List<ulong> discordMen)
         {
-            Admins = admins;
-            Helpers = helpers;
-            BananaMen = bananaMen;
-            DiscordMen = discordMen;
+            Admins = admins ?? new List<ulong>();
+            Helpers = helpers ?? new List<ulong>();
+            BananaMen = bananaMen ?? new List<ulong>();
+            DiscordMen = discordMen ?? new List<ulong>();
         }
 
         public Roles()

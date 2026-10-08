@@ -1,5 +1,6 @@
 
 #define ONLINE
+using System;
 using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -12,61 +13,57 @@ namespace Web
     {
         public static async Task<T> Get<T>(string endpoint,bool debug=false)
         {
-            var getRequest = CreateRequest(endpoint);
-            getRequest.timeout = 5;
-
-            getRequest.SendWebRequest();
-
-
-            while (!getRequest.isDone)
+            try
             {
-                await Task.Delay(10);
-            }
+                using var request = CreateRequest(endpoint);
+                if (!await SendAsync(request)) return default;
 
-            if (getRequest.result != UnityWebRequest.Result.Success)
+                string text = request.downloadHandler.text;
+                if (string.IsNullOrWhiteSpace(text)) return default;
+                if (debug) Debug.Log(text);
+
+                return JsonConvert.DeserializeObject<T>(text, new JsonSerializerSettings
+                {
+                    ReferenceLoopHandling = ReferenceLoopHandling.Ignore
+                });
+            }
+            catch (Exception e)
             {
-                Debug.LogError(getRequest.error);
+                Debug.LogError($"GET request failed: {e.Message}");
+                return default;
             }
-            
-            string text = getRequest.downloadHandler.text;
-            getRequest.Dispose();
-
-            if (string.IsNullOrEmpty(text))
-                return default(T);
-            else if(debug)
-            {
-                Debug.Log(text);
-            }
-
-            return JsonConvert.DeserializeObject<T>(text, new JsonSerializerSettings(){ReferenceLoopHandling = ReferenceLoopHandling.Ignore});
         }
         
         public static async Task<string> Post(string endpoint,object payload)
         {
-            var getRequest = CreateRequest(endpoint,RequestType.POST,payload);
-            
-            getRequest.SendWebRequest();
-
-            while (!getRequest.isDone)
+            try
             {
-                await Task.Delay(10);
+                using var request = CreateRequest(endpoint, RequestType.POST, payload);
+                return await SendAsync(request) ? request.downloadHandler.text : null;
             }
-            string text =getRequest.downloadHandler.text;
-
-            getRequest.Dispose();
-            return text;
-            // return JsonConvert.DeserializeObject<T>(getRequest.downloadHandler.text);
+            catch (Exception e)
+            {
+                Debug.LogError($"POST request failed: {e.Message}");
+                return null;
+            }
         }
 
-        private static UnityWebRequest CreateRequest(string path, RequestType type = RequestType.GET,
-            object data = null)
+        private static async Task<bool> SendAsync(UnityWebRequest request)
         {
-            var request = new UnityWebRequest(path, type.ToString());
+            request.SendWebRequest();
+            while (!request.isDone) await Task.Delay(10);
+            if (request.result == UnityWebRequest.Result.Success) return true;
+            Debug.LogError($"HTTP request failed ({request.responseCode}): {request.error}");
+            return false;
+        }
+
+        private static UnityWebRequest CreateRequest(string path, RequestType type = RequestType.GET, object data = null)
+        {
+            byte[] bodyRaw = data == null ? null : Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
+            var request = new UnityWebRequest(path, type.ToString()) { timeout = 5 };
 
             if (data != null)
             {
-                string json = JsonConvert.SerializeObject(data);
-                var bodyRaw = Encoding.UTF8.GetBytes(json);
                 request.uploadHandler = new UploadHandlerRaw(bodyRaw);
             }
 

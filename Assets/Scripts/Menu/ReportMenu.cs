@@ -92,6 +92,7 @@ namespace Menu
         async void SetValue(ReportPlayerCheatingItem reportPlayerCheatingItem)
         {
             string result =await HttpClient.Post(EndPoint.ReportCheating, reportPlayerCheatingItem);
+            if (result == null) return;
             
             Debug.Log(result);
 
