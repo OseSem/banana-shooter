@@ -1,19 +1,13 @@
-name: Acquire activation file
+name: Activate Unity credentials
 on:
   workflow_dispatch:
 
 jobs:
   activation:
-    name: Request manual activation file
+    name: Activate Unity credentials
     runs-on: ubuntu-latest
     steps:
-      - name: Request manual activation file
-        id: getManualLicenseFile
-        uses: game-ci/unity-request-activation-file@v2
+      - name: Activate Unity credentials
+        uses: game-ci/unity-activate@v2
         with:
           unityVersion: auto
-      - name: Expose as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.getManualLicenseFile.outputs.filePath }}
-          path: ${{ steps.getManualLicenseFile.outputs.filePath }}
