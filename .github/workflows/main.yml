@@ -15,6 +15,9 @@ jobs:
       - uses: actions/cache@v4
         with:
           path: Library
+          key: Library
+          restore-keys: |
+            Library-
       - name: Free disk space
         uses: jlumbroso/free-disk-space@main
         with:
