@@ -1517,13 +1517,22 @@ namespace Multiplayer.Entity.Client
                         // wrong: that array is sized after the whole weapon list, so it
                         // also holds weapon ids that are never handed out in Gun Game
                         // and the check could therefore never succeed.
-                        bool flag = true;
-                        foreach (short gunGameWeapon in Mode.GunGame.WeaponIds)
+                        // In Gun Game, knife and throwable kills also advance the level but
+                        // are credited to the knife/throwable, so a rotation weapon can be
+                        // skipped without a kill of its own. A kill on the last level means
+                        // the whole rotation was played through, which is what counts.
+                        bool flag = NetworkManager.ClientGameMode == GameMode.GunGame &&
+                                    list[fromClient].WeaponLevel >= Mode.GunGame.WeaponIds.Length - 1;
+                        if (!flag)
                         {
-                            if (gunGameWeapon < 0 || gunGameWeapon >= gunKills.Length || gunKills[gunGameWeapon] <= 0)
+                            flag = true;
+                            foreach (short gunGameWeapon in Mode.GunGame.WeaponIds)
                             {
-                                flag = false;
-                                break;
+                                if (gunGameWeapon < 0 || gunGameWeapon >= gunKills.Length || gunKills[gunGameWeapon] <= 0)
+                                {
+                                    flag = false;
+                                    break;
+                                }
                             }
                         }
 
