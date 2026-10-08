@@ -116,10 +116,16 @@ namespace Manager
             }
         }
 
+        // Steam rejects a serialized inventory after about an hour (k_EResultExpired), and servers kick
+        // players whose inventory can't be verified, so the snapshot sent on join is refreshed well before that.
+        const float SerializeRefreshInterval = 30 * 60f;
+
         private void Start()
         {
             if (Instance == this)
             {
+                InvokeRepeating(nameof(TryToSerializeItem), SerializeRefreshInterval, SerializeRefreshInterval);
+
                 foreach (var cosmetic in cosmeticItems)
                 {
                     if (cosmetic != null)
