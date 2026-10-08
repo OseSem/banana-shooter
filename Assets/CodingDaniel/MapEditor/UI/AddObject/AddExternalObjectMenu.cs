@@ -369,7 +369,8 @@ namespace CodingDaniel.MapEditor.UI.AddObject
         {
             CloseEditBar();
             string path = FileIOUtil.OpenFileDialog(FileType.Texture);
-
+            
+            if (string.IsNullOrEmpty(path)) return;
             StartCoroutine(LoadImage(path,false));
         }
         

@@ -1,8 +1,8 @@
-
-
+using System.ComponentModel;
+using System.Diagnostics;
 using System;
 using System.Runtime.InteropServices;
-using UnityEngine;
+using Debug = UnityEngine.Debug;
 
 namespace CodingDaniel.FileBrowser
 {
@@ -65,6 +65,9 @@ namespace CodingDaniel.FileBrowser
     {
         public static string OpenFileDialog(FileType type)
         {
+#if UNITY_STANDALONE_LINUX || UNITY_EDITOR_LINUX
+            return OpenLinuxFileDialog(type);
+#else
             OpenFileName ofn = new OpenFileName();
             ofn.structSize = Marshal.SizeOf(ofn);
             switch (type)
@@ -101,6 +104,49 @@ namespace CodingDaniel.FileBrowser
                 Debug.Log("failed");
             }
             return null;
+#endif
+        }
+
+        private static string OpenLinuxFileDialog(FileType type)
+        {
+            string patterns = type switch
+            {
+                FileType.Texture => "*.png *.jpg",
+                FileType.Audio => "*.mp3 *.wav",
+                _ => null,
+            };
+
+            string zenityArguments = "--file-selection --title=\"Select Files\"" + (patterns == null ? "" : $" --file-filter=\"{patterns}\"");
+            string path = RunDialog("zenity", zenityArguments, out bool started);
+            if (started) return path;
+
+            string kdialogArguments = "--getopenfilename ." + (patterns == null ? "" : $" \"{patterns}\"");
+            path = RunDialog("kdialog", kdialogArguments, out started);
+            if (!started) Debug.LogError("No file dialog available. Install zenity or kdialog.");
+            return path;
+        }
+        
+        private static string RunDialog(string program, string arguments, out bool started)
+        {
+            started = false;
+            try
+            {
+                using Process process = Process.Start(new ProcessStartInfo(program, arguments)
+                {
+                    RedirectStandardOutput = true,
+                    UseShellExecute = false,
+                });
+                if (process == null) return null;
+
+                started = true;
+                string output = process.StandardOutput.ReadToEnd().Trim();
+                process.WaitForExit();
+                return process.ExitCode == 0 && output.Length > 0 ? output : null;
+            }
+            catch (Win32Exception)
+            {
+                return null;
+            }
         }
     }
 }
