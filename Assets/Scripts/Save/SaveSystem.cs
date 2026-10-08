@@ -4,9 +4,11 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
-using System.Threading;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using UnityEngine;
@@ -23,17 +25,15 @@ namespace Save
             string path = GetPath(saveName);
             BinaryFormatter formatter = GetBinaryFormatter();
 
-            FileStream file = File.Create(path);
+            using FileStream file = File.Create(path);
         
             formatter.Serialize(file,data);
         
-            file.Close();
-
             return true;
         }
         static BinaryFormatter GetBinaryFormatter()
         {
-            BinaryFormatter formatter = new BinaryFormatter();
+            BinaryFormatter formatter = new BinaryFormatter { Binder = new SaveTypeBinder() };
 
             return formatter;
         }
@@ -46,17 +46,15 @@ namespace Save
             }
             BinaryFormatter formatter = GetBinaryFormatter();
 
-            FileStream file = File.Open(GetPath(saveName), FileMode.Open);
+            using FileStream file = File.OpenRead(GetPath(saveName));
 
             try
             {
                 object data = formatter.Deserialize(file);
-                file.Close();
                 return data;
             }
             catch (Exception e)
             {
-                file.Close();
                 Debug.Log(e.Message);
                 return null;
             }
@@ -66,14 +64,12 @@ namespace Save
         {
             string path = GetPath(saveName);
 
-            byte[] binaryData = SerializeToBinary(obj);
-        
             bool flag=false;
 
             try
             {
-                await using FileStream stream = new FileStream(path, FileMode.Create, FileAccess.Write, FileShare.ReadWrite, 4096, true);
-                await stream.WriteAsync(binaryData, 0, binaryData.Length);
+                byte[] binaryData = SerializeToBinary(obj);
+                await WriteToFileAsync(path, binaryData);
                 flag = true;
             }
             catch (Exception e)
@@ -115,7 +111,8 @@ namespace Save
             string deserializeError = null;
             try
             {
-                data = GetBinaryFormatter().Deserialize(new MemoryStream(readTask.Result));
+                using MemoryStream stream = new MemoryStream(readTask.Result);
+                data = GetBinaryFormatter().Deserialize(stream);
             }
             catch (Exception e)
             {
@@ -212,94 +209,66 @@ namespace Save
             writer.Write (content);
         }
 
-        public static async Task<float> WriteToFileAsync(string path, string content)
+        public static Task<float> WriteToFileAsync(string path, string content)
         {
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            using (StreamWriter writer = new StreamWriter(path))
-            {
-                await writer.WriteAsync(EncryptDecrypt(content));
-            }
-            stopwatch.Stop();
-            return stopwatch.ElapsedMilliseconds / 1000f;
+            return WriteToFileAsync(path, Encoding.UTF8.GetBytes(EncryptDecrypt(content)));
         }
         public static async Task<float> WriteToFileAsync(string path, byte[] bytes)
         {
             Stopwatch stopwatch = Stopwatch.StartNew();
-            using (FileStream writer = new FileStream(path,FileMode.OpenOrCreate,FileAccess.Write))
+            string temporaryPath = path + ".tmp";
+            try
             {
-                await writer.WriteAsync(bytes, 0, bytes.Length);
+                using (FileStream writer = new FileStream(temporaryPath,FileMode.Create,FileAccess.Write))
+                {
+                    await writer.WriteAsync(bytes, 0, bytes.Length);
+                }
+
+                if (File.Exists(path))
+                    File.Replace(temporaryPath, path, null);
+                else
+                    File.Move(temporaryPath, path);
+            }
+            catch
+            {
+                if (File.Exists(temporaryPath))
+                    File.Delete(temporaryPath);
+                throw;
             }
             stopwatch.Stop();
             return stopwatch.ElapsedMilliseconds / 1000f;
         }
-        public static async Task<float> WriteToFileAsyncThread(string path,string content)
+        public static Task<float> WriteToFileAsyncThread(string path,string content)
         {
-            TaskCompletionSource<bool> complete = new TaskCompletionSource<bool>();
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            var thread = new Thread(() =>
-            {
-                using (StreamWriter writer = new StreamWriter(path))
-                {
-                    writer.Write(EncryptDecrypt(content));
-                }
-                stopwatch.Stop();
-                complete.SetResult(true);
-            });
-            thread.Start();
-
-            await complete.Task;
-        
-            thread.Abort();
-        
-            return stopwatch.ElapsedMilliseconds / 1000f;
+            return WriteToFileAsync(path, content);
         }
-        public static async Task<float> WriteToFileAsyncThread(string path, byte[] bytes)
+        public static Task<float> WriteToFileAsyncThread(string path, byte[] bytes)
         {
-            TaskCompletionSource<bool> complete = new TaskCompletionSource<bool>();
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            var thread = new Thread(() =>
-            {
-                using (FileStream writer = new FileStream(path,FileMode.OpenOrCreate,FileAccess.Write))
-                {
-                    writer.Write(bytes, 0, bytes.Length);
-                }
-                stopwatch.Stop();
-                complete.SetResult(true);
-            });
-            thread.Start();
-
-            await complete.Task;
-        
-            thread.Abort();
-        
-            return stopwatch.ElapsedMilliseconds / 1000f;
+            return WriteToFileAsync(path, bytes);
         }
         public static async void WriteToFileAsyncThread(string path, byte[] bytes,Action action)
         {
-            TaskCompletionSource<bool> complete = new TaskCompletionSource<bool>();
-            Stopwatch stopwatch = Stopwatch.StartNew();
-            var thread = new Thread(() =>
+            try
             {
-                using (FileStream writer = new FileStream(path,FileMode.OpenOrCreate,FileAccess.Write))
-                {
-                    writer.Write(bytes, 0, bytes.Length);
-                }
-                stopwatch.Stop();
-                complete.SetResult(true);
-            
+                await WriteToFileAsync(path, bytes);
                 action?.Invoke();
-            });
-            thread.Start();
-
-            await complete.Task;
-        
-            thread.Abort();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"Failed to write {path}: {e.Message}");
+            }
         }
         public static async Task<byte[]> ReadByteFromFileAsync(string path)
         {
             await using FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite, 4096, FileOptions.Asynchronous);
             byte[] buffer = new byte[fileStream.Length];
-            var readAsync = await fileStream.ReadAsync(buffer, 0, (int)fileStream.Length);
+            int offset = 0;
+            while (offset < buffer.Length)
+            {
+                int read = await fileStream.ReadAsync(buffer, offset, buffer.Length - offset);
+                if (read == 0) throw new EndOfStreamException($"Unexpected end of file: {path}");
+                offset += read;
+            }
             return buffer;
         }
     
@@ -308,7 +277,13 @@ namespace Save
             using (FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
             {
                 byte[] buffer = new byte[fileStream.Length];
-                var read = fileStream.Read(buffer, 0, (int)fileStream.Length);
+                int offset = 0;
+                while (offset < buffer.Length)
+                {
+                    int read = fileStream.Read(buffer, offset, buffer.Length - offset);
+                    if (read == 0) throw new EndOfStreamException($"Unexpected end of file: {path}");
+                    offset += read;
+                }
                 return buffer;
             }
         }
@@ -384,6 +359,38 @@ namespace Save
             }
 
             return result.ToString();
+        }
+    }
+
+    public sealed class SaveTypeBinder : SerializationBinder
+    {
+        private static readonly Dictionary<string, Type> AllowedTypes = new[]
+        {
+            typeof(bool), typeof(int), typeof(short), typeof(string), typeof(DateTime),
+            typeof(bool[]), typeof(int[]), typeof(short[]), typeof(string[]), typeof(List<bool>)
+        }.ToDictionary(type => WithoutAssemblies(type.FullName));
+
+        public override Type BindToType(string assemblyName, string typeName)
+        {
+            if (AllowedTypes.TryGetValue(WithoutAssemblies(typeName), out var allowed))
+                return allowed;
+
+            Assembly gameAssembly = typeof(SaveSystem).Assembly;
+
+            if (new AssemblyName(assemblyName).Name == gameAssembly.GetName().Name)
+            {
+                Type type = gameAssembly.GetType(typeName);
+
+                if (type != null && type.IsEnum)
+                    return type;
+            }
+
+            throw new SerializationException($"Type {typeName} is not allowed in save files");
+        }
+
+        private static string WithoutAssemblies(string typeName)
+        {
+            return Regex.Replace(typeName, @",[^\[\]]*", "");
         }
     }
 
