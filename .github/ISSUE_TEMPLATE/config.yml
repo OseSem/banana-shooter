@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Questions & discussion
+    url: https://github.com/Squalive/banana-shooter/discussions
+    about: Ask questions and share ideas here instead of opening an issue.
+  - name: Chat
+    url: https://discord.gg/KfBjPE7seE
+    about: Come hang out and talk to other contributors.

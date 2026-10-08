@@ -16,6 +16,10 @@ This repo is for those who are curious about the **Behind the scenes**, and is a
 
 Side node: this project does not hold a good standard at best practices when using Unity, please dont follow what I have done here!
 
+# Run the game
+
+Official builds are distributed on Steam, just go to Steam and play it, do not easily trust third party downloaders.
+
 # Seeing it in the Editor
 
 See [Project Setup] for more details
