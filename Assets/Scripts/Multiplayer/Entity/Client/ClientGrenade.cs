@@ -112,8 +112,8 @@ namespace Multiplayer.Entity.Client
             DemoThrowable = gameObject.GetComponent<DemoThrowable>();
             
             DemoManager.Instance.AddThrowableSpawned(this);
-
-            throwable.Initialize(this.type, dir, isLocal,PlayerMovement.Instance.GetCollider());
+            
+            throwable.Initialize(this.type, dir, isLocal,PlayerMovement.Instance ? PlayerMovement.Instance.GetCollider() : null);
 
             if (PlayerId == NetworkManager.Instance.Client.Id)
             {
