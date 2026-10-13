@@ -45,5 +45,10 @@
       "76561198394826007"
     ]
   },
-  "officialServers": []
+  "officialServers": [
+    {
+      "steamId": "85568392936848009",
+      "name": "Banana Shooter | EU #1"
+    }
+  ]
 }

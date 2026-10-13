@@ -229,6 +229,12 @@ partial class Program
             Check(manifest["com.unity.ugui"].ToString() == "1.0.0", "uGUI incompatible with Unity 2021");
             return Task.CompletedTask;
         });
+        await Test("repo manifest.json parses and every official server has an id and name", () => {
+            var parsed = (Web.Manifest)ParseManifest(File.ReadAllText(Path.Combine(root.FullName, "manifest.json")));
+            Check(parsed != null, "manifest.json does not parse; every client would lose staff roles and official servers");
+            Check(parsed.OfficialServers.All(server => server.SteamId != 0 && !string.IsNullOrEmpty(server.Name)), "official server without a Steam ID or name");
+            return Task.CompletedTask;
+        });
         await Test("every configured build scene exists", () => {
             foreach (var line in File.ReadLines(Path.Combine(root.FullName, "ProjectSettings/EditorBuildSettings.asset")))
                 if (line.Trim().StartsWith("path: ")) Check(File.Exists(Path.Combine(root.FullName, line.Trim().Substring(6))), "missing build scene: " + line);
