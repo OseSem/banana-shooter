@@ -317,9 +317,9 @@ namespace Multiplayer
         {
             if (!SteamManager.Initialized)
             {
-                Debug.LogError("Steam is not initialized!");
                 return;
             }
+
 #if UNITY_EDITOR
             RiptideLogger.Initialize(Debug.Log, Debug.Log, Debug.LogWarning, Debug.LogError, false);
 #else

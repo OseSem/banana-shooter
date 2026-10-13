@@ -65,7 +65,6 @@ namespace Multiplayer
         {
             if (!SteamManager.Initialized)
             {
-                Debug.LogError("Steam is not initialized!");
                 return;
             }
 
@@ -168,7 +167,7 @@ namespace Multiplayer
             SteamMatchmaking.SetLobbyData(lobbyId, "WorkshopEnable", NetworkServerManager.ServerEnableWorkshop ? "1" : "0");
 
             // if (NetworkServerManager.ServerEnableWorkshop)
-            // { 
+            // {
             //     StringBuilder workshopMaps = new StringBuilder();
             //
             //     foreach (var id in NetworkServerManager.EnabledWorkshopMaps)

@@ -37,6 +37,8 @@ namespace UI
 
         private void Start()
         {
+            if (!SteamManager.Initialized) return;
+
             _mySteamId = SteamUser.GetSteamID();
         }
 

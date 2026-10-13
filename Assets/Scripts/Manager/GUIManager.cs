@@ -3,6 +3,7 @@ using System;
 using System.Text;
 using Manager.Interface;
 using Steamworks;
+using Steamworks.NET;
 using UnityEngine;
 
 namespace Manager
@@ -17,6 +18,7 @@ namespace Manager
 
         private void Start()
         {
+            if (!SteamManager.Initialized) return;
             _isBeta = SteamApps.GetCurrentBetaName(out _betaName, 128);
         }
 
