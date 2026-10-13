@@ -1383,11 +1383,16 @@ namespace Multiplayer
 
         IEnumerator KickLoadFailedPlayer()
         {
+            // Only players who were here when the map loaded. Anyone who joins in the next
+            // 10 seconds is still loading it. Compared by reference because Riptide reuses ids.
+            var loading = ClientData.Values.ToList();
+
             yield return new WaitForSeconds(10);
 
-            foreach (var client in ClientData.Values.ToList())
+            foreach (var client in loading)
             {
-                if (!ServerPlayer.list.ContainsKey(client.Id))
+                if (ClientData.TryGetValue(client.Id, out var current) && current == client
+                    && !ServerPlayer.list.ContainsKey(client.Id))
                 {
                     Server.DisconnectClient(client.Id);
                 }
