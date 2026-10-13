@@ -54,6 +54,15 @@ namespace Dedicated
         Callback<SteamServerConnectFailure_t> _steamFailed;
         Callback<DownloadItemResult_t> _workshopDownloaded;
 
+        // The project logs a stack trace with every Debug.Log, which buries the server console.
+        // Errors and exceptions keep theirs.
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        static void QuietLogs()
+        {
+            Application.SetStackTraceLogType(LogType.Log, StackTraceLogType.None);
+            Application.SetStackTraceLogType(LogType.Warning, StackTraceLogType.None);
+        }
+
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         static void Boot()
         {
