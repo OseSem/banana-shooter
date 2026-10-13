@@ -12,6 +12,7 @@ using MapEditor;
 using Multiplayer;
 using Multiplayer.Entity.Server;
 using Newtonsoft.Json;
+using Riptide;
 using Save;
 using Steamworks;
 using Unity.Jobs.LowLevel.Unsafe;
@@ -30,7 +31,9 @@ namespace Dedicated
         public static DedicatedServer Instance { get; private set; }
 
         const float UpdateCheckInterval = 300f;
-        const float UpdateShutdownDelay = 180f;
+        const float RestartDelay = 180f;
+        // Seconds before the restart, the old server's defaults.
+        static readonly int[] RestartWarnings = { 180, 60, 30, 15, 3, 2, 1 };
         const float SteamLogOnTimeout = 30f;
         const float WorkshopDownloadTimeout = 300f;
         static readonly AppId_t AppId = new(1949740);
@@ -41,6 +44,7 @@ namespace Dedicated
         Config _config;
         string _serverDir;
         bool _loggedOn;
+        bool _restarting;
 
         readonly StringBuilder _consoleInput = new();
         bool _consoleOpen = true;
@@ -285,12 +289,53 @@ namespace Dedicated
             if (!SteamGameServer.WasRestartRequested()) return;
 
             CancelInvoke(nameof(CheckForUpdate));
-            float delay = NetworkServerManager.Instance.Server.ClientCount == 0 ? 0f : UpdateShutdownDelay;
-            Debug.Log($"[Dedicated] Steam requested a restart for a game update, shutting down in {delay}s");
-            Invoke(nameof(Quit), delay);
+            Debug.Log("[Dedicated] Steam requested a restart for a game update");
+            Restart("Server restarting for a game update");
         }
 
-        void Quit() => Application.Quit();
+        void Restart(string announcement)
+        {
+            if (_restarting) return;
+            _restarting = true;
+
+            if (NetworkServerManager.Instance.Server.ClientCount == 0)
+            {
+                Application.Quit();
+                return;
+            }
+
+            StartCoroutine(RestartCountdown(announcement));
+        }
+
+        IEnumerator RestartCountdown(string announcement)
+        {
+            Debug.Log($"[Dedicated] {announcement} in {RestartDelay}s");
+            float end = Time.realtimeSinceStartup + RestartDelay;
+
+            foreach (int left in RestartWarnings)
+            {
+                if (left > RestartDelay) continue;
+
+                yield return new WaitForSecondsRealtime(Mathf.Max(0f, end - left - Time.realtimeSinceStartup));
+                string time = left >= 60 ? $"{left / 60} min" : $"{left} s";
+                Broadcast($"{announcement} in {time}");
+            }
+
+            yield return new WaitForSecondsRealtime(Mathf.Max(0f, end - Time.realtimeSinceStartup));
+            Application.Quit();
+        }
+
+        /// <summary>System message in every player's chat (green, no sender).</summary>
+        static void Broadcast(string text)
+        {
+            Debug.Log($"[Dedicated] Chat: {text}");
+            var message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.SendMessage);
+            message.Add((ushort)0);
+            message.Add(0UL);
+            message.Add(text);
+            message.Add(1);
+            NetworkServerManager.Instance.Server.SendToAll(message);
+        }
 
         // A thread blocked in Console.ReadLine keeps IL2CPP from finishing shutdown while stdin is open
         // (terminal, docker -it), so stdin is polled on the main thread instead.
@@ -356,11 +401,14 @@ namespace Dedicated
                 case "start":
                     server.ForceStart();
                     break;
+                case "restart":
+                    Restart("Server restarting");
+                    break;
                 case "quit":
                     Application.Quit();
                     break;
                 default:
-                    Debug.Log("[Dedicated] Commands: status, kick <id>, start, quit");
+                    Debug.Log("[Dedicated] Commands: status, kick <id>, start, restart, quit");
                     break;
             }
         }
