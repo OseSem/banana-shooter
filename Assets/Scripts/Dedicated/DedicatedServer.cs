@@ -31,6 +31,7 @@ namespace Dedicated
         public static DedicatedServer Instance { get; private set; }
 
         const float UpdateCheckInterval = 300f;
+        const float BrowserPlayersInterval = 5f;
         const float RestartDelay = 180f;
         // Seconds before the restart, the old server's defaults.
         static readonly int[] RestartWarnings = { 180, 60, 30, 15, 3, 2, 1 };
@@ -109,6 +110,17 @@ namespace Dedicated
 
             if (_config.Server.UpdateRestart)
                 InvokeRepeating(nameof(CheckForUpdate), UpdateCheckInterval, UpdateCheckInterval);
+            InvokeRepeating(nameof(UpdateBrowserPlayers), BrowserPlayersInterval, BrowserPlayersInterval);
+        }
+
+        // Names and kills for the player list in the Steam server browser. Steam tracks play time itself.
+        void UpdateBrowserPlayers()
+        {
+            foreach (var data in NetworkServerManager.ClientData.Values)
+            {
+                uint kills = LobbyDataManager.datas.TryGetValue(data.SteamId, out var lobby) ? lobby.kills : 0;
+                SteamGameServer.BUpdateUserData(new CSteamID(data.SteamId), data.Name, kills);
+            }
         }
 
         bool StartSteam()
