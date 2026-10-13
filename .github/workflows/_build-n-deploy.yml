@@ -1,0 +1,226 @@
+# This is intended as an automation for deploying updates, but since it's using secrets everywhere, forked repos can't run this workflow
+
+on:
+  workflow_call:
+    inputs:
+      # 'nightly' or 'semantic'
+      version_scheme:
+        required: true
+        type: string
+      build_description:
+        required: true
+        type: string
+    secrets:
+      UNITY_LICENSE: { required: true }
+      UNITY_EMAIL: { required: true }
+      UNITY_PASSWORD: { required: true }
+      R2_ACCESS_KEY_ID: { required: true }
+      R2_ACCOUNT_ID: { required: true }
+      R2_SECRET_ACCESS_KEY: { required: true }
+      STEAM_USERNAME: { required: true }
+      STEAM_CONFIG_VDF: { required: true }
+
+jobs:
+  build:
+    name: Build for ${{ matrix.targetPlatform }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2022
+            targetPlatform: StandaloneWindows64
+          - os: ubuntu-latest
+            targetPlatform: StandaloneLinux64
+
+    steps:
+      - name: Free Disk Space (Ubuntu)
+        if: runner.os == 'Linux'
+        uses: jlumbroso/free-disk-space@v2
+        with:
+          tool-cache: false
+
+      - name: Install Banana Shooter Unlicensed Backup CLI
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            ARCHIVE="bsubp-x86_64-pc-windows-msvc.zip"
+            EXPECTED_SHA256="19bf8213133082d28347c29472171e63af82857c84dd941d003c46fab30d3eb5"
+          elif [ "${{ runner.os }}" = "macOS" ]; then
+            ARCHIVE="bsubp-x86_64-apple-darwin.tar.gz"
+            EXPECTED_SHA256="3981a7e58b31dd10605b9bd5d11a671506829c72deb54aacd9ebda35fae0e78d"
+          else
+            ARCHIVE="bsubp-x86_64-unknown-linux-gnu.tar.gz"
+            EXPECTED_SHA256="2bac353ffe8630f995f5ba37283e57039bf4a10d73a5ea9d32a379107ff84b28"
+          fi
+
+          INSTALL_DIR="$HOME/.local/bin"
+          mkdir -p "$INSTALL_DIR"
+
+          curl -fsSL -o "$ARCHIVE" \
+            "https://github.com/Squalive/bsubp/releases/download/v1.1.0/$ARCHIVE"
+
+          echo "$EXPECTED_SHA256  $ARCHIVE" | sha256sum -c -
+
+          if [[ "$ARCHIVE" == *.zip ]]; then
+            7z x "$ARCHIVE" -o"$INSTALL_DIR" -y > /dev/null
+            rm "$ARCHIVE"
+          else
+            tar -xzf "$ARCHIVE" -C "$INSTALL_DIR"
+            rm "$ARCHIVE"
+          fi
+
+          chmod +x "$INSTALL_DIR"/bsubp* 2>/dev/null || true
+          ls -la "$INSTALL_DIR"
+
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            cygpath -w "$INSTALL_DIR" >> "$GITHUB_PATH"
+          else
+            echo "$INSTALL_DIR" >> "$GITHUB_PATH"
+          fi
+
+      # Checkout (without LFS)
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Git LFS
+      - name: Create LFS file list
+        run: git lfs ls-files -l | cut -d' ' -f1 | sort > .lfs-assets-id
+
+      - name: Restore LFS cache
+        uses: actions/cache@v4
+        id: lfs-cache
+        with:
+          path: .git/lfs
+          key: ${{ runner.os }}-lfs-${{ hashFiles('.lfs-assets-id') }}
+
+      - name: Git LFS Pull
+        run: |
+          git lfs pull
+          git add .
+          git reset --hard
+
+      - name: Compute version
+        id: version
+        shell: bash
+        run: |
+          if [[ "${{ inputs.version_scheme }}" == "nightly" ]]; then
+            BASE=$(git describe --tags --abbrev=0 --match "v*" 2>/dev/null || echo "v0.0.0")
+            BASE=${BASE#v}
+            DATE=$(date +'%Y%m%d')
+            SHA=$(echo ${{ github.sha }} | cut -c1-7)
+            echo "versioning=Custom" >> "$GITHUB_OUTPUT"
+            echo "version=${BASE}-nightly.${DATE}.${SHA}" >> "$GITHUB_OUTPUT"
+          else
+            echo "versioning=Semantic" >> "$GITHUB_OUTPUT"
+            echo "version=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Restore Unlicensed Assets
+        env:
+          R2_ACCESS_KEY_ID: ${{ secrets.R2_ACCESS_KEY_ID }}
+          R2_ACCOUNT_ID: ${{ secrets.R2_ACCOUNT_ID }}
+          R2_SECRET_ACCESS_KEY: ${{ secrets.R2_SECRET_ACCESS_KEY }}
+        run: |
+            bsubp restore 2026-10-13T09-37-48Z -c
+
+      - name: Cache library
+        uses: actions/cache@v4
+        with:
+          path: Library
+          key: Library-${{ matrix.targetPlatform }}-${{ hashFiles('Assets/**', 'Packages/**', 'ProjectSettings/**') }}
+          restore-keys: |
+            Library-${{ matrix.targetPlatform }}-
+            Library-
+
+      - name: Build Project
+        uses: game-ci/unity-builder@v4
+        id: build
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          targetPlatform: ${{ matrix.targetPlatform }}
+          unityVersion: 2021.3.45f2
+          versioning: ${{ steps.version.outputs.versioning }}
+          version: ${{ steps.version.outputs.version }}
+          buildName: Banana Shooter
+
+      - name: Remove IL2CPP/Burst debug directories
+        shell: bash
+        run: |
+          SUDO=""
+          if [ "${{ runner.os }}" = "Linux" ]; then SUDO="sudo"; fi
+
+          $SUDO find build -type d \( \
+            -name '*_BackUpThisFolder_ButDontShipItWithYourGame' -o \
+            -name '*_BurstDebugInformation_DoNotShip' \
+          \) -prune -exec rm -rf {} +
+
+          if [ -n "$SUDO" ]; then
+            $SUDO chown -R "$(id -u):$(id -g)" build
+          fi
+
+          echo "Remaining build contents:"
+          find build -maxdepth 2 -type d
+
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Build-${{ matrix.targetPlatform }}
+          path: build/${{ matrix.targetPlatform }}
+          retention-days: 1
+
+  deploy:
+    name: Deploy to Steam
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+
+    steps:
+    - name: Download Windows Build
+      uses: actions/download-artifact@v4
+      with:
+        name: Build-StandaloneWindows64
+        path: build/StandaloneWindows64
+
+    - name: Download Linux Build
+      uses: actions/download-artifact@v4
+      with:
+        name: Build-StandaloneLinux64
+        path: build/StandaloneLinux64
+
+    - name: Deploy to Steam
+      uses: game-ci/steam-deploy@v3
+      with:
+        username: ${{ secrets.STEAM_USERNAME }}
+        configVdf: ${{ secrets.STEAM_CONFIG_VDF }}
+        appId: 1949740
+        buildDescription: ${{ inputs.build_description }}
+        rootPath: build
+        depot1Path: StandaloneWindows64
+        depot2Path: StandaloneLinux64
+        releaseBranch: nightly
+
+    - name: Delete artifacts
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const artifacts = await github.rest.actions.listWorkflowRunArtifacts({
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            run_id: context.runId,
+          });
+          for (const artifact of artifacts.data.artifacts) {
+            await github.rest.actions.deleteArtifact({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              artifact_id: artifact.id,
+            });
+          }

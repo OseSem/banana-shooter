@@ -1,0 +1,31 @@
+# Every pushes/merges to main branch will trigger a new deploy to Steam nightly branch.
+#
+# Tags mark as stable release
+
+name: Nightly
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'Assets/**'
+      - 'Packages/**'
+      - 'ProjectSettings/**'
+      - '.github/workflows/nightly.yml'
+      - '.github/workflows/_build-n-deploy.yml'
+  workflow_dispatch:
+
+# When merging bunch of PRs at once, canceling previous CD is necessary to save CD usage
+concurrency:
+  group: steam-nightly
+  cancel-in-progress: true
+
+jobs:
+  build-n-deploy:
+    permissions:
+      actions: write
+    uses: ./.github/workflows/_build-n-deploy.yml
+    with:
+      version_scheme: nightly
+      build_description: nightly-${{ github.run_number }}-${{ github.sha }}
+    secrets: inherit

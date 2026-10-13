@@ -1,0 +1,21 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+
+concurrency:
+  group: steam-default
+  cancel-in-progress: false
+
+jobs:
+  build-n-deploy:
+    permissions:
+      actions: write
+    uses: ./.github/workflows/_build-n-deploy.yml
+    with:
+      version_scheme: semantic
+      build_description: release-${{ github.ref_name }}
+    secrets: inherit

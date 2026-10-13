@@ -105,6 +105,8 @@ InitTestScene*.unity*
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
 
+/target/
+
 /Build/*
 
 /Assets/Unlicensed
@@ -119,4 +121,5 @@ InitTestScene*.unity*
 /Assets/SteamWorkshopTemp/*
 /Assets/SteamWorkshopTemp.meta
 
-/demos/*
+!/tools/verification/RegressionTests.csproj
+/tools/verification/.build/

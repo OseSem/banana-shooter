@@ -190,6 +190,9 @@ namespace Multiplayer.Entity.Server
         [MessageHandler((ushort)ClientToServerId.UpdateWeaponIndex, NetworkServerManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void UpdateWeaponIndex(ushort fromClient, Message message)
         {
+            int index = message.GetInt();
+            if (index < 0 || index > 3) return;
+
             if (list.TryGetValue(fromClient, out var player))
             {
                 var currentWeapon = player.GetCurrentWeapon();
@@ -197,7 +200,7 @@ namespace Multiplayer.Entity.Server
                 {
                     currentWeapon.Disable();
                 }
-                player.CurrentWeaponIndex = message.GetInt();
+                player.CurrentWeaponIndex = index;
 
                 currentWeapon = player.GetCurrentWeapon();
                 if (currentWeapon != null)
@@ -236,10 +239,9 @@ namespace Multiplayer.Entity.Server
                     switch (upgrade)
                     {
                         case 0:
-                            player.MaxHealth += 20;
-                            player.MaxHealth = Mathf.Clamp(player.MaxHealth, 100, 200);
-                            if (player.HasPerk(Perk.Fat))
-                                player.MaxHealth = (int)(player.MaxHealth * 1.25f);
+                            float fat = player.HasPerk(Perk.Fat) ? PerkManager.FatMultiplier : 1f;
+                            int baseHealth = Mathf.RoundToInt(player.MaxHealth / fat);
+                            player.MaxHealth = (int)(Mathf.Clamp(baseHealth + 20, 100, 200) * fat);
 
                             ((ServerPlayer)player).CancelInvoke(nameof(Breathe));
                             ((ServerPlayer)player).Invoke(nameof(Breathe), 4);
@@ -420,6 +422,9 @@ namespace Multiplayer.Entity.Server
             {
                 short weapon = message.GetShort();
 
+                var weapons = NetworkServerManager.Instance.weaponInfo;
+                if (weapon < 0 || weapon >= weapons.Count || !weapons[weapon].specialWeapon) return;
+
                 player.CurrentWeaponIndex = 3;
 
                 var w = player.GetCurrentWeapon();
@@ -448,6 +453,8 @@ namespace Multiplayer.Entity.Server
 
             if (list.TryGetValue(kickId, out var player))
             {
+                if (NetworkManager.Instance != null && NetworkManager.Instance.Client != null && NetworkManager.Instance.Client.Id == kickId) return;
+
                 ulong SteamId = player.SteamId;
 
                 if (RolesManager.Instance.CheckIsAdmin(SteamId)
@@ -853,9 +860,12 @@ namespace Multiplayer.Entity.Server
         [MessageHandler((ushort)ClientToServerId.GetWeapon, NetworkServerManager.PlayerHostedDemoMessageHandlerGroupId)]
         private static void ChangeWeapon(ushort fromClient, Message message)
         {
+            short[] weapons = message.GetShorts();
+            if (!ClientInputValidation.IsValidLoadout(weapons, 3, NetworkServerManager.Instance.weaponInfo.Count)) return;
+
             if (list.TryGetValue(fromClient, out var player))
             {
-                player.PlayerGetWeapon(message.GetShorts());
+                player.PlayerGetWeapon(weapons);
             }
         }
 
@@ -965,7 +975,7 @@ namespace Multiplayer.Entity.Server
                                 var weaponIndex = weapons[i];
 
                                 if (weaponIndex != -1 &&
-                                    (!NetworkServerManager.AllowedWeapon[weapons[i]] || weaponIndex == 6))
+                                    (!NetworkServerManager.AllowedWeapon[weapons[i]] || weaponIndex == 6 || NetworkServerManager.Instance.weaponInfo[weaponIndex].specialWeapon))
                                 {
                                     weaponIndex = -1;
                                 }
@@ -1143,6 +1153,9 @@ namespace Multiplayer.Entity.Server
 
             if (clearKick != null)
                 StopCoroutine(clearKick);
+
+            if (Vote == null || Vote.PlayerId != Id) return;
+
             Vote = null;
             Message message = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.ClearKick);
             NetworkServerManager.Instance.Server.SendToAll(message);
@@ -1479,6 +1492,13 @@ namespace Multiplayer.Entity.Server
             SetHasBanana(false);
             if (attacker != Id && list.TryGetValue(attacker, out var fromPlayer))
             {
+                if (NetworkServerManager.ServerGameMode != GameMode.KillConfirm)
+                {
+                    fromPlayer.Kills++;
+                    fromPlayer.CurrentLifeKill++;
+                    fromPlayer.Coin++;
+                }
+
                 switch (NetworkServerManager.ServerGameMode)
                 {
                     case GameMode.KillConfirm:
@@ -1515,13 +1535,6 @@ namespace Multiplayer.Entity.Server
 
                         break;
 
-                }
-
-                if (NetworkServerManager.ServerGameMode != GameMode.KillConfirm)
-                {
-                    fromPlayer.Kills++;
-                    fromPlayer.CurrentLifeKill++;
-                    fromPlayer.Coin++;
                 }
 
                 if (!fromPlayer.IsCrazy)

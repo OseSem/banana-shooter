@@ -82,18 +82,15 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 4cb8b0e1f5c639c42830199c17d2a7a9, type: 2}
   - {fileID: 2100000, guid: 0cb4b4dfd34ab674c9096ca856ba6d45, type: 2}
   - {fileID: 2100000, guid: 2ab8149ec4775284bada96c1b85b4a09, type: 2}
-  externalMaterials: []
   skyboxes:
   - {fileID: 2100000, guid: 71f14a2d79f732f4d9893ef1b911f4ff, type: 2}
   - {fileID: 2100000, guid: 0ffaa0b7117ba8c47a9d05ae701d4b4d, type: 2}
   - {fileID: 2100000, guid: 4067de1a02072244798361060c5e7325, type: 2}
-  - {fileID: 2100000, guid: 8162517b6ec2309499f99e303b29f146, type: 2}
-  - {fileID: 2100000, guid: aa87107d0c3535c4983a4edb2d0e9f7b, type: 2}
+  - {fileID: 2100000, guid: 3a253cab252a165478338fba0f03e63a, type: 2}
+  - {fileID: 2100000, guid: 7a8675eb396637d43b4ba0a69cc715a5, type: 2}
   decalMaterials:
   - {fileID: 2100000, guid: 92a9e7532486f224583c62771b8b3032, type: 2}
   - {fileID: 2100000, guid: c9f80dbec54d2484a9dc97d337b10c28, type: 2}
-  externalDecalMaterials: []
-  externalAudioClips: []
   objectItems:
   - {fileID: 11400000, guid: 87cd2e538ca66a74da7191c989b396a7, type: 2}
   - {fileID: 11400000, guid: d12dd374b02318e4f8e4f99a2914278e, type: 2}
