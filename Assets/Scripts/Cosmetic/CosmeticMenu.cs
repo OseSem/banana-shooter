@@ -610,7 +610,7 @@ namespace Cosmetic
                 Destroy(_spawnItem);
             SetMesh(item, steamItemStored);
 
-            if (item.type != CosmeticItem.Type.Box && item.type != CosmeticItem.Type.Rag)
+            if (item.recyclable && item.type != CosmeticItem.Type.Box && item.type != CosmeticItem.Type.Rag)
             {
                 recycleBtn.SetActive(true);
             }
@@ -1048,6 +1048,9 @@ namespace Cosmetic
 
         public void Recycle()
         {
+            if (!selectItem.recyclable)
+                return;
+
             selectItemObj.gameObject.SetActive(false);
             AudioManager.Instance.PlayButton();
             recycleBtn.SetActive(false);

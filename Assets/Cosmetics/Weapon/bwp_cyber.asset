@@ -32,3 +32,4 @@ MonoBehaviour:
   sizeMultiplier: 1.09
   relatedItem: []
   canApplyParticle: 0
+  recyclable: 0

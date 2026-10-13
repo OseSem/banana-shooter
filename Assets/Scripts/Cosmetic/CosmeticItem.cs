@@ -188,6 +188,8 @@ namespace Cosmetic
 
         public bool canApplyParticle = true;
 
+        public bool recyclable = true;
+
         private void OnValidate()
         {
             if (SceneManager.GetActiveScene().name == "ItemShowcase")
