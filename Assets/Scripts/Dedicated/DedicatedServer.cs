@@ -214,6 +214,8 @@ namespace Dedicated
             var server = NetworkServerManager.Instance;
             ClearPlayers();
 
+            Debug.Log($"[Dedicated] Loading {NetworkServerManager.ServerGameMode} on map '{MapName(server)}', {server.Server.ClientCount}/{_maxPlayers} players");
+
             // Game modes enable themselves by comparing against the client-side mode.
             NetworkManager.ClientGameMode = NetworkServerManager.ServerGameMode;
 
@@ -235,6 +237,9 @@ namespace Dedicated
 
             server.StartGameFromLoad();
         }
+
+        static string MapName(NetworkServerManager server) =>
+            server.IsWorkshopMap ? $"workshop {server.WorkshopMap}" : server.CurrentMap;
 
         // Same steps as the client's LoadingManager.JoinWorkshopMap: read the map file, load the empty
         // CustomMap scene, then build the map's geometry (and colliders) into it.
@@ -341,8 +346,7 @@ namespace Dedicated
             switch (args[0].ToLowerInvariant())
             {
                 case "status":
-                    string map = server.IsWorkshopMap ? $"workshop {server.WorkshopMap}" : server.CurrentMap;
-                    Debug.Log($"[Dedicated] {NetworkServerManager.GameState}, map '{map}', {server.Server.ClientCount}/{_maxPlayers} players");
+                    Debug.Log($"[Dedicated] {NetworkServerManager.GameState}, map '{MapName(server)}', {server.Server.ClientCount}/{_maxPlayers} players");
                     foreach (var data in NetworkServerManager.ClientData.Values)
                         Debug.Log($"  {data.Id}  {data.SteamId}  {data.Name}");
                     break;
