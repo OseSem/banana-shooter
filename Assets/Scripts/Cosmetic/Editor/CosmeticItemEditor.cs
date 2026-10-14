@@ -50,6 +50,7 @@ namespace Cosmetic.Editor
                     GUILayout.BeginVertical("FrameBox");
                     EditorGUILayout.LabelField("Misc", EditorStyles.boldLabel);
                     EditorGUI.indentLevel = 1;
+                    EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.recyclable)));
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.canApplyParticle)), new GUIContent("Particles Applable", "Is this item particle applable?"));
                     EditorGUILayout.PropertyField(serializedObject.FindProperty(nameof(Target.relatedItem)), new GUIContent("Related Items", "Related Items"));
                     GUILayout.EndVertical();
