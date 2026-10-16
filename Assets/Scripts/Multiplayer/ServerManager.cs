@@ -237,7 +237,7 @@ namespace Multiplayer
 
             // NetworkManager.Instance.Client.ChangeTransport(new UdpClient());
 
-            NetworkManager.Instance.Client.Connect($"{ip}:{port}", 5, NetworkManager.PlayerHostedDemoMessageHandlerGroupId);
+            NetworkManager.Instance.Client.Connect($"{ip}:{port}", 5, NetworkManager.PlayerHostedDemoMessageHandlerGroupId, NetworkProtocol.ConnectMessage());
         }
         public void Connect(string hostAddress)
         {

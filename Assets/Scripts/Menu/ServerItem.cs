@@ -22,7 +22,7 @@ namespace Menu
 
         public string Name;
 
-        public string Version;
+        public int ProtocolVersion;
 
         public string Mode;
 
@@ -45,7 +45,7 @@ namespace Menu
         public bool IsPlayerHost = false;
 
         public List<Friend> FriendsPlaying = new List<Friend>();
-        public ServerDetail(CSteamID id, bool workshopEnable, int playerAmount, int playerMaxAmount, string name, string version, string mode, string serverMode, bool tournamentEnable, ServerFilter.SearchServerType searchServerType, int ping, bool isPlayerHost, string descShort)
+        public ServerDetail(CSteamID id, bool workshopEnable, int playerAmount, int playerMaxAmount, string name, int protocolVersion, string mode, string serverMode, bool tournamentEnable, ServerFilter.SearchServerType searchServerType, int ping, bool isPlayerHost, string descShort)
         {
             Id = id;
             DescShort = descShort;
@@ -53,7 +53,7 @@ namespace Menu
             PlayerAmount = playerAmount;
             PlayerMaxAmount = playerMaxAmount;
             Name = name;
-            Version = version;
+            ProtocolVersion = protocolVersion;
             Mode = mode;
             ServerMode = serverMode;
             TournamentEnable = tournamentEnable;
@@ -98,11 +98,7 @@ namespace Menu
             nameText.SetText(serverDetail.Name);
             pingText.SetText($"{serverDetail.Ping} ms");
 
-            string version = serverDetail.Version;
-            // versionImage.color =
-            //     version == Application.version ? Color.green : Color.red;
-            // this.version.SetText(version);
-            joinBtn.interactable = version == Application.version;
+            joinBtn.interactable = serverDetail.ProtocolVersion == NetworkProtocol.Version;
             joinBtn.onClick.AddListener(UIManager.Instance.ButtonSound);
 
             if (serverDetail.IsPlayerHost)

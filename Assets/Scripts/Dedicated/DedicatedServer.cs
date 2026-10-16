@@ -165,10 +165,10 @@ namespace Dedicated
             return true;
         }
 
-        // The server browser reads these by position: server type; workshop; DLC only; description.
+        // The server browser reads these by position: server type; workshop; DLC only; description; protocol version.
         void SetGameTags()
         {
-            SteamGameServer.SetGameTags($"{(int)NetworkServerManager.ServerType};{(NetworkServerManager.ServerEnableWorkshop ? 1 : 0)};{(_config.Server.DlcOnly ? 1 : 0)};{_config.Browser.DescriptionShort}");
+            SteamGameServer.SetGameTags($"{(int)NetworkServerManager.ServerType};{(NetworkServerManager.ServerEnableWorkshop ? 1 : 0)};{(_config.Server.DlcOnly ? 1 : 0)};{_config.Browser.DescriptionShort};{NetworkProtocol.Version}");
         }
 
         IEnumerator DownloadWorkshopMaps()

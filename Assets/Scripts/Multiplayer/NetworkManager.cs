@@ -510,7 +510,7 @@ namespace Multiplayer
             connecting = false;
         }
 
-        void FailedToConnect(object sender, EventArgs e)
+        void FailedToConnect(object sender, ConnectionFailedEventArgs e)
         {
             connecting = false;
             if (SceneManager.GetActiveScene().name != "Menu")
@@ -518,8 +518,18 @@ namespace Multiplayer
                 if (LoadingManager.Instance.menuType == LoadingManager.MenuType.None)
                     LoadingManager.Instance.menuType = LoadingManager.MenuType.HostQuit;
                 LoadingManager.Instance.Menu();
+                return;
             }
-            else UIManager.Instance.disConnectBtn.onClick.Invoke();
+
+            UIManager.Instance.disConnectBtn.onClick.Invoke();
+
+            // Only custom rejections, like the protocol version check, carry a reason.
+            if (e.Message == null || e.Message.UnreadLength == 0) return;
+
+            FailedWindow window = Instantiate(PrefabManager.Instance.failedWindow, UIManager.Instance.transform)
+                .GetComponent<FailedWindow>();
+            window.SetTitle("Join Failed");
+            window.SetReason(e.Message.GetString());
         }
 
         void ClientPlayerLeft(object sender, ClientDisconnectedEventArgs e)

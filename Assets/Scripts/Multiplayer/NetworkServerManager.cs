@@ -473,10 +473,23 @@ namespace Multiplayer
             CashedSteamServer = new SteamServer();
             Server = new Riptide.Server(CashedSteamServer);
 
+            // Direct IP joins skip the browser and lobby checks, so this is the one that always runs.
+            Server.HandleConnection = HandleConnectionAttempt;
             Server.ClientConnected += NewPlayerConnect;
             Server.ClientDisconnected += ClientDisconnect;
 
             InitializeIds();
+        }
+
+        void HandleConnectionAttempt(Connection pendingConnection, Message connectMessage)
+        {
+            if (NetworkProtocol.IsCompatible(connectMessage))
+            {
+                Server.Accept(pendingConnection);
+                return;
+            }
+
+            Server.Reject(pendingConnection, Message.Create().AddString("Incorrect version"));
         }
 
         public void StopServer()

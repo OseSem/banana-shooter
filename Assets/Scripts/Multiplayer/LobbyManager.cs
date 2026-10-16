@@ -157,6 +157,7 @@ namespace Multiplayer
                 : Chat.Instance.SwearCheck(CreateServerMenu.Instance.serverName);
             SteamMatchmaking.SetLobbyData(lobbyId, "ashdaghj", serverName);
             SteamMatchmaking.SetLobbyData(lobbyId, "Version", Application.version);
+            SteamMatchmaking.SetLobbyData(lobbyId, NetworkProtocol.LobbyKey, NetworkProtocol.Version.ToString());
             owner = SteamMatchmaking.GetLobbyOwner(lobbyId);
             SteamMatchmaking.SetLobbyData(lobbyId, "LobbyOwner", owner.ToString());
 
@@ -202,7 +203,7 @@ namespace Multiplayer
             NetworkServerManager.Instance.Server.Start(0, (ushort)CreateServerMenu.Instance.maxPlayer, NetworkManager.PlayerHostedDemoMessageHandlerGroupId);
 
             // NetworkManager.Instance.Client.ChangeTransport(new SteamClient(NetworkServerManager.Instance.CashedSteamServer));
-            NetworkManager.Instance.Client.Connect("127.0.0.1", 5, NetworkManager.PlayerHostedDemoMessageHandlerGroupId);
+            NetworkManager.Instance.Client.Connect("127.0.0.1", 5, NetworkManager.PlayerHostedDemoMessageHandlerGroupId, NetworkProtocol.ConnectMessage());
 
             NetworkServerManager.SetWorkshopMapVote();
         }
@@ -231,8 +232,8 @@ namespace Multiplayer
             lobbyId = new CSteamID(callback.m_ulSteamIDLobby);
             owner = SteamMatchmaking.GetLobbyOwner(lobbyId);
             // Debug.Log(owner.m_SteamID);
-            string version = SteamMatchmaking.GetLobbyData(lobbyId, "Version");
-            if (version != Application.version)
+            string protocolVersion = SteamMatchmaking.GetLobbyData(lobbyId, NetworkProtocol.LobbyKey);
+            if (protocolVersion != NetworkProtocol.Version.ToString())
             {
                 LeaveLobby();
                 if (UIManager.Instance)
@@ -290,7 +291,7 @@ namespace Multiplayer
 
             NetworkManager.Instance.connecting = true;
             // NetworkManager.Instance.Client.ChangeTransport(new SteamClient(NetworkServerManager.Instance.CashedSteamServer));
-            NetworkManager.Instance.Client.Connect(hostAddress, 5, NetworkManager.PlayerHostedDemoMessageHandlerGroupId);
+            NetworkManager.Instance.Client.Connect(hostAddress, 5, NetworkManager.PlayerHostedDemoMessageHandlerGroupId, NetworkProtocol.ConnectMessage());
         }
 
         [HideInInspector]

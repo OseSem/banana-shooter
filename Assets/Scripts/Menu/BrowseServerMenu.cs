@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Text;
 
 using Manager;
 using Multiplayer;
@@ -252,10 +251,12 @@ namespace Menu
                                     ref localPingLocation);
                             }
 
+                            int.TryParse(SteamMatchmaking.GetLobbyData(id, NetworkProtocol.LobbyKey), out int protocolVersion);
+
                             ServerDetail serverDetail = new ServerDetail(id, workshopEnable,
                                 SteamMatchmaking.GetNumLobbyMembers(id),
                                 SteamMatchmaking.GetLobbyMemberLimit(id), serverName,
-                                SteamMatchmaking.GetLobbyData(id, "Version"), gameMode, serverMode,
+                                protocolVersion, gameMode, serverMode,
                                 SteamMatchmaking.GetLobbyData(id, "tournament_enable") == "1", ServerFilter.SearchServerType.P2P, ping, true, String.Empty);
 
                             if (IsAvailable(serverDetail))
@@ -305,6 +306,7 @@ namespace Menu
             bool workshopEnable = false;
 
             string descShort = String.Empty;
+            int protocolVersion = 0;
             if (tags.Length >= 2)
             {
                 if (int.TryParse(tags[0], out var index))
@@ -318,16 +320,18 @@ namespace Menu
                 {
                     descShort = tags[3];
                 }
+
+                // Last, so a ';' in the description can't shift it.
+                if (tags.Length >= 5)
+                {
+                    int.TryParse(tags[tags.Length - 1], out protocolVersion);
+                }
             }
-
-            StringBuilder version = new StringBuilder(gameserveritemT.m_nServerVersion.ToString());
-
-            version = version.Insert(1, '.');
 
             ServerDetail serverDetail = new ServerDetail(gameserveritemT.m_steamID, workshopEnable,
                 gameserveritemT.m_nPlayers,
                 gameserveritemT.m_nMaxPlayers, gameserveritemT.GetServerName(),
-                version.ToString(), "", serverMode,
+                protocolVersion, "", serverMode,
                 false, type, gameserveritemT.m_nPing, false, descShort)
             {
                 NetAdr = gameserveritemT.m_NetAdr,
