@@ -250,7 +250,7 @@ public partial class @InputManager: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""dad0264f-c211-40d5-bc09-6a8a005d7c49"",
-                    ""path"": ""<Joystick>/trigger"",
+                    ""path"": ""<HID::PXN Android Gamepad>/trigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""controller"",
@@ -547,7 +547,7 @@ public partial class @InputManager: IInputActionCollection2, IDisposable
                 {
                     ""name"": """",
                     ""id"": ""83f6f111-f08c-460d-a222-4f8f99b883ac"",
-                    ""path"": ""<Joystick>/trigger"",
+                    ""path"": ""<HID::PXN Android Gamepad>/trigger"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": ""controller"",
