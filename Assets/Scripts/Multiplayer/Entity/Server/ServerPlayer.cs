@@ -457,7 +457,7 @@ namespace Multiplayer.Entity.Server
 
                 ulong SteamId = player.SteamId;
 
-                if (RolesManager.Instance.CheckIsAdmin(SteamId)
+                if (HostCommands.IsHost(SteamId)
                     || RolesManager.Instance.CheckIsHelper(SteamId) ||
                     RolesManager.Instance.CheckIsDiscordMan(SteamId)
                     || RolesManager.Instance.CheckIsBananaMan(SteamId))
@@ -531,7 +531,7 @@ namespace Multiplayer.Entity.Server
                     int minutes = NetworkServerManager.VoteKickBanMinutes;
                     if (minutes > 0)
                     {
-                        NetworkServerManager.Bans.Add(list[Vote.PlayerId].SteamId, "Vote kicked", TimeSpan.FromMinutes(minutes));
+                        NetworkServerManager.Bans.Add(list[Vote.PlayerId].SteamId, list[Vote.PlayerId].Username, "Vote kicked", TimeSpan.FromMinutes(minutes));
                         reason = $"Vote kicked, you can rejoin in {minutes} min";
                     }
                     Debug.Log($"[VoteKick] {VoteName(Vote.PlayerId)} was vote kicked ({Vote.agreeCount} yes, {Vote.disAgreeCount} no), " + (minutes > 0 ? $"banned for {minutes} min" : "not banned"));
@@ -1445,7 +1445,7 @@ namespace Multiplayer.Entity.Server
 
         public async void Ban()
         {
-            NetworkServerManager.Bans.Add(SteamId, "Banned from this server");
+            NetworkServerManager.Bans.Add(SteamId, Username, "Banned from this server");
             Debug.Log($"[Ban] {SteamId} ({Username}) banned until the server restarts");
             await Task.Delay(500);
             NetworkServerManager.Instance.Server.DisconnectClient(Id, NetworkServerManager.GetDisconnectMessage("Banned from this server"));

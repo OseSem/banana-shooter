@@ -815,7 +815,7 @@ namespace Multiplayer
                         LobbyManager.Instance.LeaveLobby();
                     }
                     steamId = message.GetULong();
-                    Bans.Add(steamId, "Banned from this server");
+                    Bans.Add(steamId, ClientData.TryGetValue(id, out var banned) ? banned.Name : null, "Banned from this server");
                     Debug.Log($"[Ban] Admin {senderSteamId} banned {steamId} until the server restarts");
                     Instance.Server.DisconnectClient(id, GetDisconnectMessage("Banned from this server"));
                     break;
