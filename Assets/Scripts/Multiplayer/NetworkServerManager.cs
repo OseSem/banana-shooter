@@ -229,7 +229,8 @@ namespace Multiplayer
         //The banned player from server
         public static readonly ServerBans Bans = new ServerBans();
         //How long a passed vote kick keeps the player out, 0 kicks without a ban
-        public static int VoteKickBanMinutes { get; set; } = 30;
+        public const int DefaultVoteKickBanMinutes = 30;
+        public static int VoteKickBanMinutes { get; set; } = DefaultVoteKickBanMinutes;
         //The weapons that server allows to use
         public static List<bool> AllowedWeapon = new List<bool>();
         //Store the client datas
@@ -815,9 +816,9 @@ namespace Multiplayer
                         LobbyManager.Instance.LeaveLobby();
                     }
                     steamId = message.GetULong();
-                    Bans.Add(steamId, "Banned from this server");
+                    Bans.Add(steamId, ServerBans.AdminBanReason);
                     Debug.Log($"[Ban] Admin {senderSteamId} banned {steamId} until the server restarts");
-                    Instance.Server.DisconnectClient(id, GetDisconnectMessage("Banned from this server"));
+                    Instance.Server.DisconnectClient(id, GetDisconnectMessage(ServerBans.AdminBanReason));
                     break;
             }
         }
@@ -1410,7 +1411,7 @@ namespace Multiplayer
                 if (ClientData.TryGetValue(client.Id, out var current) && current == client
                     && !ServerPlayer.list.ContainsKey(client.Id))
                 {
-                    Server.DisconnectClient(client.Id);
+                    Server.DisconnectClient(client.Id, GetDisconnectMessage("Took too long to load the map"));
                 }
             }
         }

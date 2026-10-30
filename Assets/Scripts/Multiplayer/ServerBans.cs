@@ -9,6 +9,9 @@ namespace Multiplayer
     /// </summary>
     public class ServerBans
     {
+        public const string VoteKickReason = "Vote kicked";
+        public const string AdminBanReason = "Banned from this server";
+
         public readonly struct Ban
         {
             public readonly ulong SteamId;

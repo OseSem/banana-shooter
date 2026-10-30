@@ -508,7 +508,7 @@ namespace Dedicated
                 [JsonProperty("DLC_Only")] public bool DlcOnly;
                 [JsonProperty("Enable_Update_Restart")] public bool UpdateRestart = true;
                 // 0 kicks without a ban.
-                [JsonProperty("Vote_Kick_Ban_Minutes")] public int VoteKickBanMinutes = 30;
+                [JsonProperty("Vote_Kick_Ban_Minutes")] public int VoteKickBanMinutes = NetworkServerManager.DefaultVoteKickBanMinutes;
             }
 
             public class BrowserSection
