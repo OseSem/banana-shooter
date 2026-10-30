@@ -542,7 +542,8 @@ namespace Multiplayer.Entity.Server
 
                     Message m = Message.Create(MessageSendMode.Reliable, (ushort)ServerToClientId.VoteToKickFinish);
                     m.Add(Vote.PlayerId);
-                    NetworkServerManager.Instance.Server.SendToAll(m);
+                    // Not to the kicked player: clients leave on their own result and would miss the reason below
+                    NetworkServerManager.Instance.Server.SendToAll(m, Vote.PlayerId);
 
                     NetworkServerManager.Instance.Server.DisconnectClient(Vote.PlayerId, NetworkServerManager.GetDisconnectMessage(reason));
                 }
