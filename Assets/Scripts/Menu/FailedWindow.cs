@@ -15,7 +15,7 @@ public class FailedWindow : MonoBehaviour
 
     public float removeTime = 2;
     // Menu popups stay until closed. In game the cursor is locked, so those close on their own.
-    public bool closeByItself;
+    [System.NonSerialized] public bool closeByItself;
 
     private Camera canvasCamera;
 
